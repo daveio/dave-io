@@ -12,7 +12,11 @@ enabled = true
 [placement]
 mode = "smart"
 
-# Variable bindings. These are arbitrary, plaintext strings (similar to environment variables)
+[[routes]]
+pattern = "api.dave.io/*"
+zone_name = "dave.io"
+
+# Variable bindings. These are arbitrary, plaintext strings (similar to envinment variables)
 # Docs:
 # - https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 # Note: Use secrets to store sensitive data.
