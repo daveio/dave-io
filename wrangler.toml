@@ -13,8 +13,8 @@ enabled = true
 mode = "smart"
 
 [[routes]]
-pattern = "api.dave.io/*"
-zone_name = "dave.io"
+pattern = "api.dave.io"
+custom_domain = true
 
 # Variable bindings. These are arbitrary, plaintext strings (similar to envinment variables)
 # Docs:
