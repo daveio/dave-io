@@ -1,8 +1,8 @@
 import { Bool, Num, OpenAPIRoute } from "chanfana";
 import { z } from "zod";
-import { Task } from "../types";
+import { Redirect } from "../types";
 
-export class TaskList extends OpenAPIRoute {
+export class UrlList extends OpenAPIRoute {
   schema = {
     tags: ["Tasks"],
     summary: "List Tasks",

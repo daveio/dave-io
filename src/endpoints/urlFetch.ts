@@ -2,7 +2,7 @@ import { Bool, OpenAPIRoute, Str } from "chanfana";
 import { z } from "zod";
 import { Task } from "../types";
 
-export class TaskFetch extends OpenAPIRoute {
+export class UrlFetch extends OpenAPIRoute {
   schema = {
     tags: ["Tasks"],
     summary: "Get a single Task by slug",
