@@ -71,11 +71,12 @@ async function getRedirectUrl(c, slug) {
 async function getRedirectsList(c, keys) {
   let out = [];
   keys.forEach((i) => {
+    let url = getRedirectUrl(c, i.name);
     out.push({
       slug: i.name,
       redirect: {
         slug: i.name,
-        url: await getRedirectUrl(c, i.name),
+        url: url,
       },
     });
   });
