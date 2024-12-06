@@ -1,34 +1,40 @@
-import { Bool, Num, OpenAPIRoute } from "chanfana";
+import { Bool, OpenAPIRoute, Str } from "chanfana";
 import { z } from "zod";
 import { Redirect } from "../types";
 
 export class UrlList extends OpenAPIRoute {
   schema = {
-    tags: ["Tasks"],
-    summary: "List Tasks",
+    tags: ["Redirects"],
+    summary: "Get all redirect URLs",
     request: {
-      query: z.object({
-        page: Num({
-          description: "Page number",
-          default: 0,
-        }),
-        isCompleted: Bool({
-          description: "Filter by completed flag",
-          required: false,
-        }),
-      }),
+      params: z.object({}),
     },
     responses: {
       "200": {
-        description: "Returns a list of tasks",
+        description: "Returns all redirects",
         content: {
           "application/json": {
             schema: z.object({
               series: z.object({
                 success: Bool(),
-                result: z.object({
-                  tasks: Task.array(),
-                }),
+                redirects: z.array(
+                  z.object({
+                    slug: Str(),
+                    redirect: Redirect,
+                  }),
+                ),
+              }),
+            }),
+          },
+        },
+      },
+      "404": {
+        description: "No redirects found",
+        content: {
+          "application/json": {
+            schema: z.object({
+              series: z.object({
+                success: Bool(),
               }),
             }),
           },
@@ -38,32 +44,22 @@ export class UrlList extends OpenAPIRoute {
   };
 
   async handle(c) {
-    // Get validated data
     const data = await this.getValidatedData<typeof this.schema>();
-
-    // Retrieve the validated parameters
-    const { page, isCompleted } = data.query;
-
-    // Implement your own object list here
-
-    return {
-      success: true,
-      tasks: [
+    let val = await c.env.GDIO_REDIRECTS.list();
+    if (val === null) {
+      return Response.json(
         {
-          name: "Clean my room",
-          slug: "clean-room",
-          description: null,
-          completed: false,
-          due_date: "2025-01-05",
+          success: false,
         },
         {
-          name: "Build something awesome with Cloudflare Workers",
-          slug: "cloudflare-workers",
-          description: "Lorem Ipsum",
-          completed: true,
-          due_date: "2022-12-24",
+          status: 404,
         },
-      ],
-    };
+      );
+    } else {
+      return {
+        success: true,
+        redirects: val,
+      };
+    }
   }
 }

@@ -1,7 +1,7 @@
 import { fromHono } from "chanfana";
 import { Hono } from "hono";
 import { Ping } from "endpoints/ping";
-// import { UrlList } from "./endpoints/urlList";
+import { UrlList } from "./endpoints/urlList";
 import { UrlFetch } from "./endpoints/urlFetch";
 
 type Bindings = {
@@ -18,7 +18,7 @@ const openapi = fromHono(app, {
 
 // Register OpenAPI endpoints
 openapi.get("/ping", Ping);
-// openapi.post("/url", UrlList);
+openapi.post("/url", UrlList);
 openapi.get("/url/:slug", UrlFetch);
 
 // Export the Hono app
