@@ -43,34 +43,26 @@ export class UrlFetch extends OpenAPIRoute {
   };
 
   async handle(c) {
-    // Get validated data
     const data = await this.getValidatedData<typeof this.schema>();
-
-    // Retrieve the validated slug
     const { slug } = data.params;
-
-    // Implement your own object fetch here
-
     let val = await c.env.GDIO_REDIRECTS.get(slug);
-
-    // // @ts-ignore: check if the object exists
-    // if (exists === false) {
-    //   return Response.json(
-    //     {
-    //       success: false,
-    //     },
-    //     {
-    //       status: 404,
-    //     },
-    //   );
-    // }
-
-    return {
-      success: true,
-      redirect: {
-        slug: slug,
-        url: val,
-      },
-    };
+    if (val === null) {
+      return Response.json(
+        {
+          success: false,
+        },
+        {
+          status: 404,
+        },
+      );
+    } else {
+      return {
+        success: true,
+        redirect: {
+          slug: slug,
+          url: val,
+        },
+      };
+    }
   }
 }
