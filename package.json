@@ -1,5 +1,5 @@
 {
-  "name": "cloudflare-workers-openapi",
+  "name": "api.dave.io",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,12 +9,12 @@
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
-    "chanfana": "^2.3.0",
-    "hono": "^4.6.12",
+    "chanfana": "^2.4.2",
+    "hono": "^4.6.13",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241202.0",
+    "@cloudflare/workers-types": "^4.20241205.0",
     "@types/node": "^22.10.1",
     "@types/service-worker-mock": "^2.0.4",
     "wrangler": "^3.92.0"
