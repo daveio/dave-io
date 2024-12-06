@@ -55,12 +55,13 @@ export class UrlList extends OpenAPIRoute {
         },
       );
     } else {
+      let redirects = val.keys.map(async (i) => ({
+        slug: i.name,
+        url: await getRedirectUrl(c, i.name),
+      }));
       return {
         success: true,
-        redirects: val.keys.map(async (i) => ({
-          slug: i.name,
-          url: await getRedirectUrl(c, i.name),
-        })),
+        redirects: redirects,
       };
     }
   }
