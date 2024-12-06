@@ -2,10 +2,14 @@ import { fromHono } from "chanfana";
 import { Hono } from "hono";
 import { Ping } from "endpoints/ping";
 // import { UrlList } from "./endpoints/urlList";
-// import { UrlFetch } from "./endpoints/urlFetch";
+import { UrlFetch } from "./endpoints/urlFetch";
+
+type Bindings = {
+  GDIO_REDIRECTS: KVNamespace;
+};
 
 // Start a Hono app
-const app = new Hono();
+const app = new Hono<{ Bindings: Bindings }>();
 
 // Setup OpenAPI registry
 const openapi = fromHono(app, {
@@ -15,7 +19,7 @@ const openapi = fromHono(app, {
 // Register OpenAPI endpoints
 openapi.get("/ping", Ping);
 // openapi.post("/url", UrlList);
-// openapi.get("/url/:slug", UrlFetch);
+openapi.get("/url/:slug", UrlFetch);
 
 // Export the Hono app
 export default app;

@@ -4,23 +4,23 @@ import { Redirect } from "../types";
 
 export class UrlFetch extends OpenAPIRoute {
   schema = {
-    tags: ["Tasks"],
-    summary: "Get a single Task by slug",
+    tags: ["Redirects"],
+    summary: "Get the URL for a redirect by slug",
     request: {
       params: z.object({
-        taskSlug: Str({ description: "Task slug" }),
+        slug: Str({ description: "Redirect slug" }),
       }),
     },
     responses: {
       "200": {
-        description: "Returns a single task if found",
+        description: "Returns the URL for a redirect",
         content: {
           "application/json": {
             schema: z.object({
               series: z.object({
                 success: Bool(),
-                result: z.object({
-                  task: Task,
+                redirect: z.object({
+                  redirect: Redirect,
                 }),
               }),
             }),
@@ -28,13 +28,12 @@ export class UrlFetch extends OpenAPIRoute {
         },
       },
       "404": {
-        description: "Task not found",
+        description: "Redirect not found",
         content: {
           "application/json": {
             schema: z.object({
               series: z.object({
                 success: Bool(),
-                error: Str(),
               }),
             }),
           },
@@ -48,33 +47,30 @@ export class UrlFetch extends OpenAPIRoute {
     const data = await this.getValidatedData<typeof this.schema>();
 
     // Retrieve the validated slug
-    const { taskSlug } = data.params;
+    const { slug } = data.params;
 
     // Implement your own object fetch here
 
-    const exists = true;
+    let val = await c.env.GDIO_REDIRECTS.list();
+    console.log(val);
 
-    // @ts-ignore: check if the object exists
-    if (exists === false) {
-      return Response.json(
-        {
-          success: false,
-          error: "Object not found",
-        },
-        {
-          status: 404,
-        },
-      );
-    }
+    // // @ts-ignore: check if the object exists
+    // if (exists === false) {
+    //   return Response.json(
+    //     {
+    //       success: false,
+    //     },
+    //     {
+    //       status: 404,
+    //     },
+    //   );
+    // }
 
     return {
       success: true,
-      task: {
-        name: "my task",
-        slug: taskSlug,
-        description: "this needs to be done",
-        completed: false,
-        due_date: new Date().toISOString().slice(0, 10),
+      redirect: {
+        slug: slug,
+        url: val,
       },
     };
   }
