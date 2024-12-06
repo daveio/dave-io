@@ -17,11 +17,9 @@ export class UrlFetch extends OpenAPIRoute {
         content: {
           "application/json": {
             schema: z.object({
-              series: z.object({
-                success: Bool({ example: true }),
-                redirect: z.object({
-                  redirect: Redirect,
-                }),
+              success: Bool({ example: true }),
+              redirect: z.object({
+                redirect: Redirect,
               }),
             }),
           },
@@ -32,9 +30,7 @@ export class UrlFetch extends OpenAPIRoute {
         content: {
           "application/json": {
             schema: z.object({
-              series: z.object({
-                success: Bool({ example: false }),
-              }),
+              success: Bool({ example: false }),
             }),
           },
         },
