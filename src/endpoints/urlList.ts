@@ -44,7 +44,6 @@ export class UrlList extends OpenAPIRoute {
   };
 
   async handle(c) {
-    const data = await this.getValidatedData<typeof this.schema>();
     let val = await c.env.GDIO_REDIRECTS.list();
     if (val === null) {
       return Response.json(
