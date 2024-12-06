@@ -1,4 +1,4 @@
-import { Bool, OpenAPIRoute, Str } from "chanfana";
+import { OpenAPIRoute, Str } from "chanfana";
 import { z } from "zod";
 import { Redirect } from "../types";
 
@@ -17,7 +17,6 @@ export class UrlFetch extends OpenAPIRoute {
         content: {
           "application/json": {
             schema: z.object({
-              success: Bool({ example: true, default: true }),
               redirect: z.object({
                 redirect: Redirect,
               }),
@@ -27,13 +26,6 @@ export class UrlFetch extends OpenAPIRoute {
       },
       "404": {
         description: "Redirect not found",
-        content: {
-          "application/json": {
-            schema: z.object({
-              success: Bool({ example: false, default: false }),
-            }),
-          },
-        },
       },
     },
   };
