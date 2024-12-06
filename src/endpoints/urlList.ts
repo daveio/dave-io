@@ -68,14 +68,14 @@ async function getRedirectUrl(c, slug) {
   return url;
 }
 
-function getRedirectsList(c, keys) {
+async function getRedirectsList(c, keys) {
   let out = [];
   keys.forEach((i) => {
     out.push({
       slug: i.name,
       redirect: {
         slug: i.name,
-        url: getRedirectUrl(c, i.name),
+        url: await getRedirectUrl(c, i.name),
       },
     });
   });
