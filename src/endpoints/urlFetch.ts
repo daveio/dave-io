@@ -35,7 +35,7 @@ export class UrlFetch extends OpenAPIRoute {
     const { slug } = data.params;
     let val = await c.env.GDIO_REDIRECTS.get(slug);
     if (val === null) {
-      return Response.json({ success: false }, { status: 404 });
+      return new Response(null, { status: 404 });
     } else {
       return {
         success: true,
