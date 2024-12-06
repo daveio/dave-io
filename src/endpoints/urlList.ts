@@ -45,7 +45,7 @@ export class UrlList extends OpenAPIRoute {
 
   async handle(c) {
     let val = await c.env.GDIO_REDIRECTS.list();
-    if (val === null) {
+    if (val === null || val.keys.length === 0) {
       return Response.json(
         {
           success: false,
@@ -57,8 +57,16 @@ export class UrlList extends OpenAPIRoute {
     } else {
       return {
         success: true,
-        redirects: val,
+        redirects: val.keys.map((i) => ({
+          slug: i.name,
+          url: getRedirectUrl(c, i.name),
+        })),
       };
     }
   }
+}
+
+async function getRedirectUrl(c, slug) {
+  let url = await c.env.GDIO_REDIRECTS.get(slug);
+  return url;
 }
