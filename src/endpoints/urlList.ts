@@ -70,7 +70,7 @@ async function getRedirectUrl(c, slug) {
 
 function getRedirectsList(c, keys) {
   let out = [];
-  keys.array.forEach((i) => {
+  keys.forEach((i) => {
     out.push({
       slug: i.name,
       redirect: {
