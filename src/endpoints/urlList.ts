@@ -55,13 +55,9 @@ export class UrlList extends OpenAPIRoute {
         },
       );
     } else {
-      let redirects = val.keys.map(async (i) => ({
-        slug: i.name,
-        url: await getRedirectUrl(c, i.name),
-      }));
       return {
         success: true,
-        redirects: redirects,
+        redirects: getRedirectsList(c, val.keys),
       };
     }
   }
@@ -70,4 +66,18 @@ export class UrlList extends OpenAPIRoute {
 async function getRedirectUrl(c, slug) {
   let url = await c.env.GDIO_REDIRECTS.get(slug);
   return url;
+}
+
+function getRedirectsList(c, keys) {
+  let out = [];
+  keys.array.forEach((i) => {
+    out.push({
+      slug: i.name,
+      redirect: {
+        slug: i.name,
+        url: getRedirectUrl(c, i.name),
+      },
+    });
+  });
+  return out;
 }
