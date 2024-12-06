@@ -57,9 +57,9 @@ export class UrlList extends OpenAPIRoute {
     } else {
       return {
         success: true,
-        redirects: val.keys.map((i) => ({
+        redirects: val.keys.map(async (i) => ({
           slug: i.name,
-          url: getRedirectUrl(c, i.name),
+          url: await getRedirectUrl(c, i.name),
         })),
       };
     }
