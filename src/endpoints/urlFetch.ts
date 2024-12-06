@@ -51,8 +51,7 @@ export class UrlFetch extends OpenAPIRoute {
 
     // Implement your own object fetch here
 
-    let val = await c.env.GDIO_REDIRECTS.list();
-    console.log(val);
+    let val = await c.env.GDIO_REDIRECTS.get(slug);
 
     // // @ts-ignore: check if the object exists
     // if (exists === false) {
