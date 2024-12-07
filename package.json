@@ -1,22 +1,33 @@
 {
-  "name": "api.dave.io",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
-    "start": "wrangler dev",
-    "cf-typegen": "wrangler types"
-  },
+  "author": "Dave Williams <dave@dave.io>",
   "dependencies": {
     "chanfana": "^2.4.2",
     "hono": "^4.6.13",
     "zod": "^3.23.8"
   },
+  "description": "multipurpose personal API",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241205.0",
     "@types/node": "^22.10.1",
     "@types/service-worker-mock": "^2.0.4",
-    "wrangler": "^3.92.0"
-  }
+    "wrangler": "^3.93.0"
+  },
+  "engines": {
+    "node": ">= 18",
+    "bun": "~1.1.38"
+  },
+  "license": "MIT",
+  "name": "api.dave.io",
+  "packageManager": "bun@1.1.38",
+  "private": true,
+  "repository": "https://github.com/daveio/api.dave.io.git",
+  "scripts": {
+    "cf-typegen": "wrangler types",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev"
+  },
+  "trustedDependencies": [],
+  "type": "module",
+  "version": "0.1.0"
 }
