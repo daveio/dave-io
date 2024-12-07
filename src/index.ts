@@ -17,7 +17,9 @@ const openapi = fromHono(app, {
 
 // Register OpenAPI endpoints
 openapi.get("/ping", Ping);
+openapi.get("/api/ping", Ping);
 openapi.get("/url/:slug", UrlFetch);
+openapi.get("/api/url/:slug", UrlFetch);
 
 // Export the Hono app
 export default app;

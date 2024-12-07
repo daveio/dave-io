@@ -12,6 +12,7 @@ export class Ping extends OpenAPIRoute {
         content: {
           "application/json": {
             schema: z.object({
+              service: z.string(),
               response: z.string(),
             }),
           },
@@ -21,6 +22,6 @@ export class Ping extends OpenAPIRoute {
   };
 
   async handle(c: Context) {
-    return c.json({ response: "pong" });
+    return c.json({ service: "api", response: "pong" });
   }
 }

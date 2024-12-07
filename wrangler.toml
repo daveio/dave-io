@@ -16,6 +16,10 @@ mode = "smart"
 pattern = "api.dave.io"
 custom_domain = true
 
+[[routes]]
+pattern = "dave.io/api/*"
+zone_id = "cce768dd1ffadb4f24ae8fce0f7e979a"
+
 # Variable bindings. These are arbitrary, plaintext strings (similar to envinment variables)
 # Docs:
 # - https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
