@@ -12,7 +12,7 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 // Setup OpenAPI registry
 const openapi = fromHono(app, {
-  docs_url: "/docs",
+  docs_url: "/api/docs",
 });
 
 // Register OpenAPI endpoints
