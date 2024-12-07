@@ -4,7 +4,7 @@ import { Ping } from "endpoints/ping";
 import { UrlFetch } from "./endpoints/urlFetch";
 
 type Bindings = {
-  GDIO_REDIRECTS: KVNamespace;
+	GDIO_REDIRECTS: KVNamespace;
 };
 
 // Start a Hono app
@@ -12,9 +12,9 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 // Setup OpenAPI registry
 const openapi = fromHono(app, {
-  docs_url: "/api/docs",
-  redoc_url: "/api/redocs",
-  openapi_url: "/api/openapi.json",
+	docs_url: "/api/docs",
+	redoc_url: "/api/redocs",
+	openapi_url: "/api/openapi.json",
 });
 
 // Register OpenAPI endpoints

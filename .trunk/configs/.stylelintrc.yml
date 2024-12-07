@@ -1,0 +1,2 @@
+cache: true
+extends: stylelint-config-standard
