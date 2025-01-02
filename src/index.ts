@@ -5,6 +5,7 @@ import { UrlFetch } from "./endpoints/urlFetch";
 
 type Bindings = {
 	GDIO_REDIRECTS: KVNamespace;
+	ANALYTICS: AnalyticsEngineDataset;
 };
 
 // Start a Hono app

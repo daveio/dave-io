@@ -22,6 +22,10 @@ export class Ping extends OpenAPIRoute {
 	};
 
 	async handle(c: Context) {
+		c.env.ANALYTICS.writeDataPoint({
+			blobs: ["ping_request"],
+			indexes: ["ping"],
+		});
 		return c.json({ service: "api", response: "pong" });
 	}
 }
