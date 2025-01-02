@@ -31,12 +31,12 @@ export class UrlFetch extends OpenAPIRoute {
 	};
 
 	async handle(c) {
-		c.env.ANALYTICS.writeDataPoint({
-			blobs: ["urlFetch_request"],
-			indexes: ["urlFetch"],
-		});
 		const data = await this.getValidatedData<typeof this.schema>();
 		const { slug } = data.params;
+		c.env.ANALYTICS.writeDataPoint({
+			blobs: ["urlFetch_request", slug],
+			indexes: ["urlFetch"],
+		});
 		const val = await c.env.GDIO_REDIRECTS.get(slug);
 		if (val === null) {
 			return new Response(null, { status: 404 });
