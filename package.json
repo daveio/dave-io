@@ -15,7 +15,7 @@
 	},
 	"dependencies": {
 		"chanfana": "2.5.2",
-		"hono": "4.6.15",
+		"hono": "4.6.16",
 		"zod": "3.24.1"
 	},
 	"devDependencies": {
