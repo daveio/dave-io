@@ -25,10 +25,9 @@
 		"stylelint-config-standard": "^37.0.0",
 		"wrangler": "3.113.0"
 	},
-	"packageManager": "pnpm@10.5.2",
+	"packageManager": "bun@1.2.4",
 	"engines": {
-		"node": "~22.14.0",
-		"pnpm": "~10.5.0"
-	},
-	"trustedDependencies": []
+		"bun": "~1.2.4",
+		"node": "~22.14.0"
+	}
 }
