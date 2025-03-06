@@ -15,8 +15,8 @@ importers:
         specifier: 4.7.4
         version: 4.7.4
       zod:
-        specifier: 3.24.1
-        version: 3.24.1
+        specifier: 3.24.2
+        version: 3.24.2
     devDependencies:
       '@cloudflare/workers-types':
         specifier: 4.20250303.0
@@ -897,15 +897,15 @@ packages:
   youch@3.3.4:
     resolution: {integrity: sha512-UeVBXie8cA35DS6+nBkls68xaBBXCye0CNznrhszZjTbRVnJKQuNsyLKBTTL4ln1o1rh2PKtv35twV7irj5SEg==}
 
-  zod@3.24.1:
-    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
+  zod@3.24.2:
+    resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
 
 snapshots:
 
-  '@asteasolutions/zod-to-openapi@7.3.0(zod@3.24.1)':
+  '@asteasolutions/zod-to-openapi@7.3.0(zod@3.24.2)':
     dependencies:
       openapi3-ts: 4.4.0
-      zod: 3.24.1
+      zod: 3.24.2
 
   '@babel/code-frame@7.26.2':
     dependencies:
@@ -1114,10 +1114,10 @@ snapshots:
 
   chanfana@2.6.3:
     dependencies:
-      '@asteasolutions/zod-to-openapi': 7.3.0(zod@3.24.1)
+      '@asteasolutions/zod-to-openapi': 7.3.0(zod@3.24.2)
       js-yaml: 4.1.0
       openapi3-ts: 4.4.0
-      zod: 3.24.1
+      zod: 3.24.2
 
   chokidar@4.0.3:
     dependencies:
@@ -1373,7 +1373,7 @@ snapshots:
       workerd: 1.20241218.0
       ws: 8.18.0
       youch: 3.3.4
-      zod: 3.24.1
+      zod: 3.24.2
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -1666,4 +1666,4 @@ snapshots:
       mustache: 4.2.0
       stacktracey: 2.1.8
 
-  zod@3.24.1: {}
+  zod@3.24.2: {}
