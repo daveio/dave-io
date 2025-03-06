@@ -20,14 +20,14 @@
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "4.20250303.0",
-		"@types/node": "22.10.3",
+		"@types/node": "22.13.9",
 		"@types/service-worker-mock": "^2.0.4",
 		"stylelint-config-standard": "^37.0.0",
 		"wrangler": "3.99.0"
 	},
 	"packageManager": "pnpm@10.5.2",
 	"engines": {
-		"node": "~22.12.0",
+		"node": "~22.14.0",
 		"pnpm": "~10.5.0"
 	},
 	"trustedDependencies": []
