@@ -23,7 +23,7 @@
 		"@types/node": "22.13.9",
 		"@types/service-worker-mock": "^2.0.4",
 		"stylelint-config-standard": "^37.0.0",
-		"wrangler": "3.113.0"
+		"wrangler": "3.114.0"
 	},
 	"packageManager": "bun@1.2.4",
 	"engines": {
