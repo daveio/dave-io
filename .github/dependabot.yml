@@ -3,7 +3,7 @@ updates:
 
   # Configuration for npm
   - package-ecosystem: npm
-    directory: "/"
+    directory: /
     schedule:
       interval: daily
     open-pull-requests-limit: 10
