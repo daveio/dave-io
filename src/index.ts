@@ -1,6 +1,6 @@
 import { fromHono } from "chanfana";
-import { Hono } from "hono";
 import { Ping } from "endpoints/ping";
+import { Hono } from "hono";
 import { UrlFetch } from "./endpoints/urlFetch";
 
 type Bindings = {

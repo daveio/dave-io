@@ -2,4 +2,4 @@
 // After adding bindings to `wrangler.toml`, regenerate this interface via `npm run cf-typegen`
 /* trunk-ignore(biome/lint/suspicious/noEmptyInterface) */
 /* trunk-ignore(rome/lint/suspicious/noEmptyInterface) */
-interface Env {}
+type Env = {};

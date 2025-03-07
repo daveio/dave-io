@@ -1,6 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
-import { z } from "zod";
 import type { Context } from "hono";
+import { z } from "zod";
 
 export class Ping extends OpenAPIRoute {
 	schema = {
