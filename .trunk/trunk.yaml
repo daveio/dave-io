@@ -29,6 +29,7 @@ actions:
     - trunk-upgrade-available
 lint:
   disabled:
+    - renovate
     - cspell
     - eslint
     - prettier
