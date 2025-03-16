@@ -14,7 +14,7 @@
 		"start": "wrangler dev"
 	},
 	"dependencies": {
-		"chanfana": "2.6.3",
+		"chanfana": "2.7.0",
 		"hono": "4.7.4",
 		"zod": "3.24.2"
 	},
@@ -25,9 +25,9 @@
 		"stylelint-config-standard": "^37.0.0",
 		"wrangler": "4.0.0"
 	},
-	"packageManager": "bun@1.2.4",
+	"packageManager": "bun@1.2.5",
 	"engines": {
-		"bun": "~1.2.4",
+		"bun": "~1.2.5",
 		"node": "~22.14.0"
 	}
 }

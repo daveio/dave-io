@@ -5,5 +5,5 @@ ADIO_MISE_ACTIVE = "true"
 env_file = '.env'
 
 [tools]
-bun = '1.2.4'
+bun = '1.2.5'
 node = '22.14.0'
