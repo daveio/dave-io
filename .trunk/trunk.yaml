@@ -55,3 +55,8 @@ lint:
     - trufflehog-git@3.88.15
     - trufflehog@3.88.15
     - yamllint@1.35.1
+merge:
+  required_statuses:
+    - CodeQL
+    - devskim
+    - codacy
