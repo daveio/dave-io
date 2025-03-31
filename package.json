@@ -14,7 +14,7 @@
 		"start": "wrangler dev"
 	},
 	"dependencies": {
-		"chanfana": "2.7.2",
+		"chanfana": "2.8.0",
 		"hono": "4.7.5",
 		"zod": "3.24.2"
 	},
