@@ -20,7 +20,7 @@
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "4.20250407.0",
-		"@types/node": "22.13.14",
+		"@types/node": "22.14.0",
 		"@types/service-worker-mock": "^2.0.4",
 		"stylelint-config-standard": "^38.0.0",
 		"wrangler": "4.7.2"
