@@ -19,7 +19,7 @@
 		"zod": "3.24.2"
 	},
 	"devDependencies": {
-		"@cloudflare/workers-types": "4.20250410.0",
+		"@cloudflare/workers-types": "4.20250414.0",
 		"@types/node": "22.14.0",
 		"@types/service-worker-mock": "^2.0.4",
 		"stylelint-config-standard": "^38.0.0",
