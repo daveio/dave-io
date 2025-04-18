@@ -1,9 +1,9 @@
 [env]
-ADIO_MISE_ACTIVE = "true"
+ADIO_MISE_ACTIVE = 'true'
 
 [settings]
 env_file = '.env'
 
 [tools]
-bun = '1.2.8'
+bun = '1.2.9'
 node = '23.11.0'
