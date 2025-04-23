@@ -17,12 +17,5 @@ loadFeed()
 async function loadFeed() {
 	const response = await fetch("https://api.dave.io/dashboard/demo");
 	const json = await response.json();
-	return json.items.map((item) => {
-		return {
-			title: item.title,
-			subtitle: item.summary,
-			linkURL: item.url,
-			imageURL: item.image,
-		};
-	});
+	return json.data.items;
 }
