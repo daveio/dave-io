@@ -52,6 +52,7 @@ export class Dashboard extends OpenAPIRoute {
 			case "demo":
 				return c.json({
 					dashboard: name,
+					error: null,
 					items: [
 						{
 							title: "Item 1",
@@ -66,24 +67,27 @@ export class Dashboard extends OpenAPIRoute {
 							imageURL: "https://example.com/image.png",
 						},
 					],
-					error: null,
 					timestamp: Date.now(),
 				});
 			case "hacker-news":
 				try {
+					const response = await fetch("https://news.ycombinator.com/rss");
+					if (!response.ok) {
+						throw new Error(`HTTP error! status: ${response.status}`);
+					}
+					const feedText = await response.text();
+
 					const parser = new Parser();
-					const feed = await parser.parseURL(
-						"https://news.ycombinator.com/rss",
-					);
+					const feed = await parser.parseString(feedText);
 
 					return c.json({
 						dashboard: name,
+						error: null,
 						items: feed.items.map((item) => ({
 							title: item.title || "No Title",
 							subtitle: item.creator || "Hacker News",
 							linkURL: item.link || "https://news.ycombinator.com",
 						})),
-						error: null,
 						timestamp: Date.now(),
 					});
 				} catch (error: unknown) {
