@@ -1,5 +1,6 @@
 import { OpenAPIRoute, Str } from "chanfana";
 import type { Context } from "hono";
+import Parser from "rss-parser";
 import { z } from "zod";
 
 export class Dashboard extends OpenAPIRoute {
@@ -70,6 +71,35 @@ export class Dashboard extends OpenAPIRoute {
 					error: null,
 					timestamp: Date.now(),
 				});
+			case "hacker-news":
+				try {
+					const parser = new Parser();
+					const feed = await parser.parseURL(
+						"https://news.ycombinator.com/rss",
+					);
+
+					return c.json({
+						dashboard: name,
+						data: {
+							items: feed.items.map((item) => ({
+								title: item.title || "No Title",
+								subtitle: item.creator || "Hacker News",
+								linkURL: item.link || "https://news.ycombinator.com",
+							})),
+						},
+						error: null,
+						timestamp: Date.now(),
+					});
+				} catch (error: unknown) {
+					const errorMessage =
+						error instanceof Error ? error.message : "Unknown error";
+					return c.json(
+						{
+							error: `Failed to fetch Hacker News feed: ${errorMessage}`,
+						},
+						500,
+					);
+				}
 			default:
 				return c.json({ error: `Dashboard '${name}' not found` }, 404);
 		}
