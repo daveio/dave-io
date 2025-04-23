@@ -13,9 +13,9 @@ loadFeed()
 		console.error(error);
 	});
 
-// Load the latest headlines from npr.org Books section
+// Load the demo dashboard
 async function loadFeed() {
-	const response = await fetch("https://api.dave.io/dashboard");
+	const response = await fetch("https://api.dave.io/dashboard/demo");
 	const json = await response.json();
 	return json.items.map((item) => {
 		return {

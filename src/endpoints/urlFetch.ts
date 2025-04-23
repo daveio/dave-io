@@ -1,4 +1,5 @@
 import { OpenAPIRoute, Str } from "chanfana";
+import type { Context } from "hono";
 import { z } from "zod";
 import { Redirect } from "../types";
 
@@ -30,7 +31,7 @@ export class UrlFetch extends OpenAPIRoute {
 		},
 	};
 
-	async handle(c) {
+	async handle(c: Context) {
 		const data = await this.getValidatedData<typeof this.schema>();
 		const { slug } = data.params;
 		c.env.ANALYTICS.writeDataPoint({

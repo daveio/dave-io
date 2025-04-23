@@ -48,30 +48,26 @@ export class Dashboard extends OpenAPIRoute {
 
 		// Execute different code paths based on dashboard name
 		switch (name) {
-			case "status":
-				return c.json({
-					dashboard: name,
-					data: { status: "operational", uptime: "99.9%" },
-					timestamp: Date.now(),
-				});
-			case "metrics":
+			case "demo":
 				return c.json({
 					dashboard: name,
 					data: {
-						requests: 1250,
-						errors: 12,
-						latency: "120ms",
+						items: [
+							{
+								title: "Item 1",
+								subtitle: "Subtitle 1",
+								linkURL: "https://example.com",
+								imageURL: "https://example.com/image.png",
+							},
+							{
+								title: "Item 2",
+								subtitle: "Subtitle 2",
+								linkURL: "https://example.com",
+								imageURL: "https://example.com/image.png",
+							},
+						],
 					},
-					timestamp: Date.now(),
-				});
-			case "summary":
-				return c.json({
-					dashboard: name,
-					data: {
-						service: "api",
-						version: "1.0.0",
-						environment: "production",
-					},
+					error: null,
 					timestamp: Date.now(),
 				});
 			default:
