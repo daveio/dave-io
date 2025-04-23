@@ -8,10 +8,10 @@
 	"author": "Dave Williams <dave@dave.io>",
 	"type": "module",
 	"scripts": {
-		"cf-typegen": "wrangler types",
-		"deploy": "wrangler deploy",
-		"dev": "wrangler dev",
-		"start": "wrangler dev"
+		"cf-typegen": "pnpm wrangler types",
+		"deploy": "pnpm wrangler deploy",
+		"dev": "pnpm wrangler dev",
+		"start": "pnpm wrangler dev"
 	},
 	"dependencies": {
 		"chanfana": "2.8.0",
