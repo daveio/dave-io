@@ -52,22 +52,20 @@ export class Dashboard extends OpenAPIRoute {
 			case "demo":
 				return c.json({
 					dashboard: name,
-					data: {
-						items: [
-							{
-								title: "Item 1",
-								subtitle: "Subtitle 1",
-								linkURL: "https://example.com",
-								imageURL: "https://example.com/image.png",
-							},
-							{
-								title: "Item 2",
-								subtitle: "Subtitle 2",
-								linkURL: "https://example.com",
-								imageURL: "https://example.com/image.png",
-							},
-						],
-					},
+					items: [
+						{
+							title: "Item 1",
+							subtitle: "Subtitle 1",
+							linkURL: "https://example.com",
+							imageURL: "https://example.com/image.png",
+						},
+						{
+							title: "Item 2",
+							subtitle: "Subtitle 2",
+							linkURL: "https://example.com",
+							imageURL: "https://example.com/image.png",
+						},
+					],
 					error: null,
 					timestamp: Date.now(),
 				});
@@ -80,13 +78,11 @@ export class Dashboard extends OpenAPIRoute {
 
 					return c.json({
 						dashboard: name,
-						data: {
-							items: feed.items.map((item) => ({
-								title: item.title || "No Title",
-								subtitle: item.creator || "Hacker News",
-								linkURL: item.link || "https://news.ycombinator.com",
-							})),
-						},
+						items: feed.items.map((item) => ({
+							title: item.title || "No Title",
+							subtitle: item.creator || "Hacker News",
+							linkURL: item.link || "https://news.ycombinator.com",
+						})),
 						error: null,
 						timestamp: Date.now(),
 					});
