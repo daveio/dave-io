@@ -1,6 +1,7 @@
 import { fromHono } from "chanfana";
 import { Ping } from "endpoints/ping";
 import { Hono } from "hono";
+import { Dashboard } from "./endpoints/dashboard";
 import { UrlFetch } from "./endpoints/urlFetch";
 
 type Bindings = {
@@ -23,6 +24,8 @@ openapi.get("/ping", Ping);
 openapi.get("/api/ping", Ping);
 openapi.get("/url/:slug", UrlFetch);
 openapi.get("/api/url/:slug", UrlFetch);
+openapi.get("/dashboard/:name", Dashboard);
+openapi.get("/api/dashboard/:name", Dashboard);
 
 // Export the Hono app
 export default app;
