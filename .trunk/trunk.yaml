@@ -18,11 +18,11 @@ actions:
     - trunk-fmt-pre-commit
     - trunk-upgrade-available
 lint:
-  # ignore:
-  # - linters:
-  #     - ALL
-  #   paths:
-  #     - worker-configuration.d.ts
+  ignore:
+    - linters:
+        - ALL
+      paths:
+        - worker-configuration.d.ts
   disabled:
     - renovate
     - cspell
