@@ -2,7 +2,7 @@ import { fromHono } from "chanfana";
 import { Ping } from "endpoints/ping";
 import { Hono } from "hono";
 import { Dashboard } from "./endpoints/dashboard";
-import { UrlFetch } from "./endpoints/urlFetch";
+import { Redirect } from "./endpoints/redirect";
 
 type Bindings = {
 	GDIO_REDIRECTS: KVNamespace;
@@ -22,8 +22,8 @@ const openapi = fromHono(app, {
 // Register OpenAPI endpoints
 openapi.get("/ping", Ping);
 openapi.get("/api/ping", Ping);
-openapi.get("/url/:slug", UrlFetch);
-openapi.get("/api/url/:slug", UrlFetch);
+openapi.get("/redirect/:slug", Redirect);
+openapi.get("/api/redirect/:slug", Redirect);
 openapi.get("/dashboard/:name", Dashboard);
 openapi.get("/api/dashboard/:name", Dashboard);
 

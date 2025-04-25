@@ -1,9 +1,9 @@
 import { OpenAPIRoute, Str } from "chanfana";
 import type { Context } from "hono";
 import { z } from "zod";
-import { Redirect } from "../types";
+import { RedirectType } from "../types";
 
-export class UrlFetch extends OpenAPIRoute {
+export class Redirect extends OpenAPIRoute {
 	schema = {
 		tags: ["Redirects"],
 		summary: "Get the URL for a redirect by slug",
@@ -19,7 +19,7 @@ export class UrlFetch extends OpenAPIRoute {
 					"application/json": {
 						schema: z.object({
 							redirect: z.object({
-								redirect: Redirect,
+								redirect: RedirectType,
 							}),
 						}),
 					},
@@ -35,8 +35,8 @@ export class UrlFetch extends OpenAPIRoute {
 		const data = await this.getValidatedData<typeof this.schema>();
 		const { slug } = data.params;
 		c.env.ANALYTICS.writeDataPoint({
-			blobs: ["urlFetch_request", slug],
-			indexes: ["urlFetch"],
+			blobs: ["redirect_request", slug],
+			indexes: ["redirect"],
 		});
 		const val = await c.env.GDIO_REDIRECTS.get(slug);
 		if (val === null) {
