@@ -12,8 +12,8 @@ importers:
         specifier: 2.8.0
         version: 2.8.0
       hono:
-        specifier: 4.7.7
-        version: 4.7.7
+        specifier: 4.7.8
+        version: 4.7.8
       rss-parser:
         specifier: ^3.13.0
         version: 3.13.0
@@ -630,8 +630,8 @@ packages:
     resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
     engines: {node: '>=8'}
 
-  hono@4.7.7:
-    resolution: {integrity: sha512-2PCpQRbN87Crty8/L/7akZN3UyZIAopSoRxCwRbJgUuV1+MHNFHzYFxZTg4v/03cXUm+jce/qa2VSBZpKBm3Qw==}
+  hono@4.7.8:
+    resolution: {integrity: sha512-PCibtFdxa7/Ldud9yddl1G81GjYaeMYYTq4ywSaNsYbB1Lug4mwtOMJf2WXykL0pntYwmpRJeOI3NmoDgD+Jxw==}
     engines: {node: '>=16.9.0'}
 
   hookified@1.8.2:
@@ -1477,7 +1477,7 @@ snapshots:
 
   has-flag@4.0.0: {}
 
-  hono@4.7.7: {}
+  hono@4.7.8: {}
 
   hookified@1.8.2: {}
 
