@@ -29,23 +29,32 @@ const ADJECTIVES = [
   "spicy", "splendid", "strange", "strong", "sunny", "super", "sweet", "tall", "tiny", "warm"
 ];
 
-// Function to get a random item from an array
-function getRandomItem<T>(array: T[]): T {
-  return array[Math.floor(Math.random() * array.length)];
+// Function to get a cryptographically secure random item from an array
+function getSecureRandomItem<T>(array: T[]): T {
+  // Create a Uint32Array with a single slot
+  const randomBuffer = new Uint32Array(1);
+  
+  // Fill the buffer with a cryptographically secure random value
+  crypto.getRandomValues(randomBuffer);
+  
+  // Use modulo to get an index within the array bounds
+  const index = randomBuffer[0] % array.length;
+  
+  return array[index];
 }
 
-// Function to generate a password using the XKCD method
+// Function to generate a password using the XKCD method with secure randomness
 function generateXkcdPassword(wordCount: number = 4, separator: string = "-"): string {
   const words: string[] = [];
   
   // Ensure we have at least one adjective and one noun
-  words.push(getRandomItem(ADJECTIVES));
-  words.push(getRandomItem(NOUNS));
+  words.push(getSecureRandomItem(ADJECTIVES));
+  words.push(getSecureRandomItem(NOUNS));
   
   // Add remaining words
   for (let i = 2; i < wordCount; i++) {
     // Alternate between adjectives and nouns
-    words.push(i % 2 === 0 ? getRandomItem(ADJECTIVES) : getRandomItem(NOUNS));
+    words.push(i % 2 === 0 ? getSecureRandomItem(ADJECTIVES) : getSecureRandomItem(NOUNS));
   }
   
   return words.join(separator);
@@ -101,4 +110,3 @@ export class Password extends OpenAPIRoute {
     });
   }
 }
-
