@@ -2,6 +2,7 @@ import { fromHono } from "chanfana";
 import { Ping } from "endpoints/ping";
 import { Hono } from "hono";
 import { Dashboard } from "./endpoints/dashboard";
+import { Password } from "./endpoints/password";
 import { Redirect } from "./endpoints/redirect";
 
 type Bindings = {
@@ -26,6 +27,8 @@ openapi.get("/redirect/:slug", Redirect);
 openapi.get("/api/redirect/:slug", Redirect);
 openapi.get("/dashboard/:name", Dashboard);
 openapi.get("/api/dashboard/:name", Dashboard);
+openapi.get("/password", Password);
+openapi.get("/api/password", Password);
 
 // Export the Hono app
 export default app;
