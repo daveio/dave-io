@@ -1,7 +1,7 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "api-dave-io"
 main = "src/index.ts"
-compatibility_date = "2025-04-23"
+compatibility_date = "2025-05-14"
 compatibility_flags = ["nodejs_compat"]
 
 # Docs: https://developers.cloudflare.com/workers/observability/logs/workers-logs/
