@@ -1,0 +1,6 @@
+[2025-05-15 14:01:38] Working in: /Users/dave/src/github.com/daveio/api.dave.io
+[2025-05-15 14:01:38] Running initial 'bun install'
+[2025-05-15 14:01:40] Initial bun install successful
+[2025-05-15 14:01:40] Running 'bun pm trust --all'
+[2025-05-15 14:01:40] ERROR: bun pm trust failed with exit code 1
+[2025-05-15 14:01:40] Trust output: bun pm trust v1.2.13 (64ed68c9)  error: 0 scripts ran. This means all dependencies are already trusted or none have scripts.

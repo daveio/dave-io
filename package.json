@@ -1,32 +1,33 @@
 {
-	"name": "api.dave.io",
-	"version": "0.1.0",
-	"private": true,
-	"description": "multipurpose personal API",
-	"repository": "https://github.com/daveio/api.dave.io.git",
-	"license": "MIT",
-	"author": "Dave Williams <dave@dave.io>",
-	"type": "module",
-	"scripts": {
-		"cf-typegen": "pnpm wrangler types",
-		"deploy": "pnpm wrangler deploy",
-		"dev": "pnpm wrangler dev",
-		"start": "pnpm wrangler dev"
-	},
-	"dependencies": {
-		"chanfana": "2.8.0",
-		"hono": "4.7.9",
-		"rss-parser": "^3.13.0",
-		"zod": "3.24.4"
-	},
-	"devDependencies": {
-		"@types/node": "22.15.18",
-		"@types/service-worker-mock": "^2.0.4",
-		"stylelint-config-standard": "^38.0.0",
-		"wrangler": "4.14.4"
-	},
-	"packageManager": "pnpm@10.9.0",
-	"engines": {
-		"node": "~23.11.0"
-	}
+  "name": "api.dave.io",
+  "version": "0.1.0",
+  "private": true,
+  "description": "multipurpose personal API",
+  "repository": "https://github.com/daveio/api.dave.io.git",
+  "license": "MIT",
+  "author": "Dave Williams <dave@dave.io>",
+  "type": "module",
+  "scripts": {
+    "cf-typegen": "bun run wrangler types",
+    "deploy": "bun run wrangler deploy",
+    "dev": "bun run wrangler dev",
+    "start": "bun run wrangler dev"
+  },
+  "dependencies": {
+    "chanfana": "2.8.0",
+    "hono": "4.7.9",
+    "rss-parser": "^3.13.0",
+    "zod": "3.24.4"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.18",
+    "@types/service-worker-mock": "^2.0.4",
+    "stylelint-config-standard": "^38.0.0",
+    "wrangler": "4.14.4"
+  },
+  "packageManager": "bun@1.2.13",
+  "engines": {
+    "bun": "~1.2.13",
+    "node": "~lts"
+  }
 }
