@@ -3,7 +3,7 @@
   "name": "api-dave-io",
   "main": "src/index.ts",
   "compatibility_date": "2025-05-14",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": ["nodejs_compat_populate_process_env"],
   "observability": {
     "enabled": true,
   },
