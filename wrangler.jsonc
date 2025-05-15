@@ -1,0 +1,35 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "api-dave-io",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-05-14",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+  },
+  "placement": {
+    "mode": "smart",
+  },
+  "analytics_engine_datasets": [
+    {
+      "binding": "ANALYTICS",
+      "dataset": "API_ANALYTICS",
+    },
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "GDIO_REDIRECTS",
+      "id": "44e59a36ab8148f79df8ee2d9e625179",
+    },
+  ],
+  "routes": [
+    {
+      "pattern": "api.dave.io",
+      "custom_domain": true,
+    },
+    {
+      "pattern": "dave.io/api/*",
+      "zone_id": "cce768dd1ffadb4f24ae8fce0f7e979a",
+    },
+  ],
+}
