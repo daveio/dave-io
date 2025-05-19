@@ -12,7 +12,7 @@ This project implements a multipurpose personal API that runs on Cloudflare Work
 - **Redirect**: URL redirection service using KV storage
 - **Dashboard**: Data feeds for dashboards (demo and Hacker News available)
 
-The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://github.com/honojs/chanfana) for OpenAPI documentation and schema validation.
+The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation.
 
 ## Features
 

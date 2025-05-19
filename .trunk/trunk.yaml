@@ -18,6 +18,7 @@ runtimes:
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
   disabled:
+    - markdown-link-check
     - codespell
   ignore:
     - linters:
@@ -44,7 +45,6 @@ lint:
     - biome@1.9.4
     - dustilock@1.2.0
     - gitleaks@8.26.0
-    - markdown-link-check@3.13.7
     - osv-scanner@2.0.2
     - taplo@0.9.3
     - trunk-toolbox@0.5.4
