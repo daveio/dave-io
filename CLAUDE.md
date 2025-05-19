@@ -29,6 +29,15 @@ bun run cf-typegen
 
 # Deploy to Cloudflare Workers
 bun run deploy
+
+# Run TypeScript type checking
+bun run typecheck
+
+# Lint code with Trunk
+bun run lint
+
+# Format code with Trunk
+bun run format
 ```
 
 ## Code Architecture
@@ -36,6 +45,7 @@ bun run deploy
 - **Framework**: Uses Hono.js for routing and HTTP server functionality
 - **API Documentation**: Uses Chanfana (OpenAPI) for documentation and schema validation
 - **Type Safety**: Uses TypeScript and Zod for runtime type validation
+- **Schema Organization**: Schemas are defined in `src/schemas/` directory using Zod
 
 ### Key Components
 
@@ -43,18 +53,15 @@ bun run deploy
 
    - Each endpoint is implemented as a class extending `OpenAPIRoute` from Chanfana
    - Endpoints define their schema (for OpenAPI docs) and handling logic
-
 2. **Durable Objects**: Located in `src/durable-objects/`
 
    - Used for caching data with persistence
    - PutIOCacheDO: Caches IP range data for the RouterOS put.io endpoint
-
 3. **Cloudflare Integration**:
 
    - KV Namespaces: Used for redirect storage (`GDIO_REDIRECTS`)
    - Analytics Engine: Tracks requests (`ANALYTICS`)
    - Durable Objects: Caches IP data (`PUTIO_CACHE`)
-
 4. **Main App Structure**:
 
    - `src/index.ts`: Entry point that sets up Hono app and registers routes
@@ -66,6 +73,7 @@ bun run deploy
   - `endpoints/` - API endpoint implementations
   - `durable-objects/` - Durable Object implementations
   - `lib/` - Utility libraries
+  - `schemas/` - Zod schema definitions
   - `index.ts` - Main application setup
   - `types.ts` - Type definitions
 - `dashkit/` - Contains dashboard widget example
@@ -80,5 +88,7 @@ bun run deploy
 ## Notes for Development
 
 - The API is accessible at `api.dave.io` and `dave.io/api/*` when deployed
-- Biome is used for code formatting and linting
+- Biome is used for code formatting and linting through Trunk
+- CI/CD is implemented via GitHub Actions (`.github/workflows/`)
 - For local development, the API runs on localhost with the port shown in the terminal when running `bun run dev`
+- Always run `bun run typecheck` and `bun run lint` before submitting changes

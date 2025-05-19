@@ -1,7 +1,7 @@
 import { OpenAPIRoute, Str } from "chanfana"
 import type { Context } from "hono"
 import { z } from "zod"
-import { RedirectType } from "../types"
+import { RedirectSchema } from "../schemas"
 
 export class Redirect extends OpenAPIRoute {
   schema = {
@@ -19,7 +19,7 @@ export class Redirect extends OpenAPIRoute {
           "application/json": {
             schema: z.object({
               redirect: z.object({
-                redirect: RedirectType
+                redirect: RedirectSchema
               })
             })
           }

@@ -11,7 +11,10 @@
     "cf-typegen": "bun run wrangler types",
     "deploy": "bun run wrangler deploy",
     "dev": "bun run wrangler dev",
-    "start": "bun run wrangler dev"
+    "start": "bun run wrangler dev",
+    "typecheck": "bun run tsc --noEmit",
+    "lint": "trunk check -a && biome check && bun run tsc --noEmit",
+    "format": "trunk fmt -a"
   },
   "dependencies": {
     "chanfana": "2.8.0",

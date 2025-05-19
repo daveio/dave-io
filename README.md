@@ -87,6 +87,9 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
 - `bun run dev`: Start development server
 - `bun run deploy`: Deploy to Cloudflare Workers
 - `bun run cf-typegen`: Generate type definitions for Cloudflare Workers
+- `bun run typecheck`: Run TypeScript type checking
+- `bun run lint`: Run linting with Trunk
+- `bun run format`: Format code with Trunk
 
 ## DashKit Integration
 
@@ -94,10 +97,17 @@ The project includes a simple DashKit widget in the `dashkit/` directory that de
 
 ## Deployment
 
-The API is deployed to Cloudflare Workers using Wrangler. It's accessible at:
+The API is deployed to Cloudflare Workers using Wrangler. Deployment is automated via GitHub Actions when changes are pushed to the main branch. It's accessible at:
 
 - [api.dave.io](https://api.dave.io)
 - [dave.io/api/\*](https://dave.io/api/)
+
+### CI/CD
+
+The project uses GitHub Actions for continuous integration and deployment:
+
+- **CI**: Runs linting and type checking on pull requests and pushes to main
+- **Deployment**: Automatically deploys to Cloudflare Workers when changes are pushed to main
 
 ## License
 
