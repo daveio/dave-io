@@ -13,7 +13,7 @@
     "dev": "bun run wrangler dev",
     "start": "bun run wrangler dev",
     "typecheck": "bun run tsc --noEmit",
-    "lint": "trunk check -a && biome check && bun run tsc --noEmit",
+    "lint": "bun run biome check && bun run tsc --noEmit && trunk check -a",
     "format": "trunk fmt -a"
   },
   "dependencies": {
