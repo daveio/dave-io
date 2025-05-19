@@ -1,0 +1,74 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+api.dave.io is a multipurpose personal API powered by Cloudflare Workers. It provides several endpoints:
+
+- **Ping**: Simple health check endpoint
+- **Redirect**: URL redirection service using KV storage
+- **Dashboard**: Data feeds for dashboards (demo and Hacker News available)
+
+The API is built with [Hono](https://hono.dev) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation.
+
+## Development Commands
+
+### Setup and Development
+
+```bash
+# Install dependencies
+bun install
+
+# Start development server
+bun run dev
+
+# Generate Cloudflare Workers type definitions
+bun run cf-typegen
+
+# Deploy to Cloudflare Workers
+bun run deploy
+```
+
+## Code Architecture
+
+- **Framework**: Uses Hono.js for routing and HTTP server functionality
+- **API Documentation**: Uses Chanfana (OpenAPI) for documentation and schema validation
+- **Type Safety**: Uses TypeScript and Zod for runtime type validation
+
+### Key Components
+
+1. **Endpoints**: Located in `src/endpoints/`
+
+   - Each endpoint is implemented as a class extending `OpenAPIRoute` from Chanfana
+   - Endpoints define their schema (for OpenAPI docs) and handling logic
+
+2. **Cloudflare Integration**:
+
+   - KV Namespaces: Used for redirect storage (`GDIO_REDIRECTS`)
+   - Analytics Engine: Tracks requests (`ANALYTICS`)
+
+3. **Main App Structure**:
+   - `src/index.ts`: Entry point that sets up Hono app and registers routes
+   - Uses Chanfana to generate OpenAPI documentation
+
+## File Structure
+
+- `src/` - Main source code
+  - `endpoints/` - API endpoint implementations
+  - `index.ts` - Main application setup
+  - `types.ts` - Type definitions
+- `dashkit/` - Contains dashboard widget example
+- `wrangler.jsonc` - Cloudflare Workers configuration
+
+## Environment Setup
+
+- The project uses [Bun](https://bun.sh/) (v1.2.13 or compatible) as the package manager and runtime
+- [mise](https://mise.jdx.dev/) is used for environment management (optional)
+- Environment variables are loaded from `.env` file when mise is active
+
+## Notes for Development
+
+- The API is accessible at `api.dave.io` and `dave.io/api/*` when deployed
+- Biome is used for code formatting and linting
+- For local development, the API runs on localhost with the port shown in the terminal when running `bun run dev`
