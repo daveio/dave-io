@@ -31,5 +31,5 @@
     "bun": "~1.2.13",
     "node": "~lts"
   },
-  "trustedDependencies": ["@biomejs/biome"]
+  "trustedDependencies": ["@biomejs/biome", "esbuild", "sharp", "workerd"]
 }
