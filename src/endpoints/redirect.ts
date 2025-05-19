@@ -1,53 +1,53 @@
-import { OpenAPIRoute, Str } from "chanfana";
-import type { Context } from "hono";
-import { z } from "zod";
-import { RedirectType } from "../types";
+import { OpenAPIRoute, Str } from "chanfana"
+import type { Context } from "hono"
+import { z } from "zod"
+import { RedirectType } from "../types"
 
 export class Redirect extends OpenAPIRoute {
-	schema = {
-		tags: ["Redirects"],
-		summary: "Get the URL for a redirect by slug",
-		request: {
-			params: z.object({
-				slug: Str({ description: "Redirect slug" }),
-			}),
-		},
-		responses: {
-			"200": {
-				description: "Returns the URL for a redirect",
-				content: {
-					"application/json": {
-						schema: z.object({
-							redirect: z.object({
-								redirect: RedirectType,
-							}),
-						}),
-					},
-				},
-			},
-			"404": {
-				description: "Redirect not found",
-			},
-		},
-	};
+  schema = {
+    tags: ["Redirects"],
+    summary: "Get the URL for a redirect by slug",
+    request: {
+      params: z.object({
+        slug: Str({ description: "Redirect slug" })
+      })
+    },
+    responses: {
+      "200": {
+        description: "Returns the URL for a redirect",
+        content: {
+          "application/json": {
+            schema: z.object({
+              redirect: z.object({
+                redirect: RedirectType
+              })
+            })
+          }
+        }
+      },
+      "404": {
+        description: "Redirect not found"
+      }
+    }
+  }
 
-	async handle(c: Context) {
-		const data = await this.getValidatedData<typeof this.schema>();
-		const { slug } = data.params;
-		c.env.ANALYTICS.writeDataPoint({
-			blobs: ["redirect_request", slug],
-			indexes: ["redirect"],
-		});
-		const val = await c.env.GDIO_REDIRECTS.get(slug);
-		if (val === null) {
-			return new Response(null, { status: 404 });
-		}
-		return {
-			success: true,
-			redirect: {
-				slug: slug,
-				url: val,
-			},
-		};
-	}
+  async handle(c: Context) {
+    const data = await this.getValidatedData<typeof this.schema>()
+    const { slug } = data.params
+    c.env.ANALYTICS.writeDataPoint({
+      blobs: ["redirect_request", slug],
+      indexes: ["redirect"]
+    })
+    const val = await c.env.GDIO_REDIRECTS.get(slug)
+    if (val === null) {
+      return new Response(null, { status: 404 })
+    }
+    return {
+      success: true,
+      redirect: {
+        slug: slug,
+        url: val
+      }
+    }
+  }
 }
