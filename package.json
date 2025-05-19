@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "chanfana": "2.8.0",
-    "hono": "4.7.9",
+    "hono": "4.7.10",
     "rss-parser": "^3.13.0",
     "zod": "3.24.4"
   },
