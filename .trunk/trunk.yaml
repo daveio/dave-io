@@ -18,6 +18,7 @@ runtimes:
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
   disabled:
+    - prettier
     - markdown-link-check
     - codespell
   ignore:
@@ -52,7 +53,6 @@ lint:
     - checkov@3.2.425
     - git-diff-check
     - markdownlint@0.45.0
-    - prettier@3.5.3
     - trufflehog@3.88.30
     - yamllint@1.37.1
 actions:

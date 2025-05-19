@@ -9,6 +9,7 @@ api.dave.io is a multipurpose personal API powered by Cloudflare Workers. It pro
 - **Ping**: Simple health check endpoint
 - **Redirect**: URL redirection service using KV storage
 - **Dashboard**: Data feeds for dashboards (demo and Hacker News available)
+- **RouterOS**: Generates RouterOS scripts for network configurations (put.io IP ranges)
 
 The API is built with [Hono](https://hono.dev) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation.
 
@@ -43,12 +44,19 @@ bun run deploy
    - Each endpoint is implemented as a class extending `OpenAPIRoute` from Chanfana
    - Endpoints define their schema (for OpenAPI docs) and handling logic
 
-2. **Cloudflare Integration**:
+2. **Durable Objects**: Located in `src/durable-objects/`
+
+   - Used for caching data with persistence
+   - PutIOCacheDO: Caches IP range data for the RouterOS put.io endpoint
+
+3. **Cloudflare Integration**:
 
    - KV Namespaces: Used for redirect storage (`GDIO_REDIRECTS`)
    - Analytics Engine: Tracks requests (`ANALYTICS`)
+   - Durable Objects: Caches IP data (`PUTIO_CACHE`)
 
-3. **Main App Structure**:
+4. **Main App Structure**:
+
    - `src/index.ts`: Entry point that sets up Hono app and registers routes
    - Uses Chanfana to generate OpenAPI documentation
 
@@ -56,6 +64,8 @@ bun run deploy
 
 - `src/` - Main source code
   - `endpoints/` - API endpoint implementations
+  - `durable-objects/` - Durable Object implementations
+  - `lib/` - Utility libraries
   - `index.ts` - Main application setup
   - `types.ts` - Type definitions
 - `dashkit/` - Contains dashboard widget example

@@ -11,6 +11,7 @@ This project implements a multipurpose personal API that runs on Cloudflare Work
 - **Ping**: Simple health check endpoint
 - **Redirect**: URL redirection service using KV storage
 - **Dashboard**: Data feeds for dashboards (demo and Hacker News available)
+- **RouterOS**: Generates RouterOS scripts for network configurations
 
 The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation.
 
@@ -21,6 +22,7 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
 - **Cloudflare Integration**:
   - KV Namespaces for redirect storage
   - Analytics Engine for request tracking
+  - Durable Objects for caching
   - Automatic deployment via Wrangler
 
 ## Endpoints
@@ -41,6 +43,15 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
 - Supported dashboards:
   - `demo`: Sample dashboard data
   - `hacker-news`: Latest stories from Hacker News RSS feed
+
+### RouterOS put.io
+
+- `GET /routeros/putio` or `GET /api/routeros/putio`: Generate RouterOS script for put.io IP ranges
+- Returns: RouterOS script for creating address lists for put.io IPv4 and IPv6 ranges
+- `GET /routeros/cache` or `GET /api/routeros/cache`: Get cache status for put.io IP data
+- Returns: Cache status information including age and any errors
+- `GET /routeros/reset` or `GET /api/routeros/reset`: Reset the cache for put.io IP data
+- Returns: Confirmation of cache reset
 
 ## Development
 
@@ -66,6 +77,7 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
    ```
 
 3. Start the development server:
+
    ```bash
    bun run dev
    ```

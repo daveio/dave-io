@@ -17,7 +17,7 @@
     "chanfana": "2.8.0",
     "hono": "4.7.10",
     "rss-parser": "^3.13.0",
-    "zod": "3.25.6"
+    "zod": "3.25.7"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
@@ -31,5 +31,8 @@
     "bun": "~1.2.13",
     "node": "~lts"
   },
-  "trustedDependencies": ["@biomejs/biome", "esbuild", "sharp", "workerd"]
+  "trustedDependencies": ["@biomejs/biome", "esbuild", "sharp", "workerd"],
+  "comments": {
+    "ip-address-utils": "IP address utilities are implemented internally in src/lib/ip-address-utils.ts rather than using an external package"
+  }
 }
