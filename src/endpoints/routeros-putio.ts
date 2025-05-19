@@ -32,8 +32,8 @@ export class RouterOSPutIO extends OpenAPIRoute {
   async handle(c: Context) {
     try {
       // Get the Durable Object stub
-      const id = c.env.PUTIO_CACHE.idFromName("putio-ip-ranges")
-      const stub = c.env.PUTIO_CACHE.get(id)
+      const id = c.env.ROUTEROS_CACHE.idFromName("putio-ip-ranges")
+      const stub = c.env.ROUTEROS_CACHE.get(id)
 
       // Call the Durable Object to get the RouterOS script
       const response = await stub.fetch("https://putio-cache.internal/script")
@@ -95,8 +95,8 @@ export class RouterOSCache extends OpenAPIRoute {
   async handle(c: Context) {
     try {
       // Get the Durable Object stub
-      const id = c.env.PUTIO_CACHE.idFromName("putio-ip-ranges")
-      const stub = c.env.PUTIO_CACHE.get(id)
+      const id = c.env.ROUTEROS_CACHE.idFromName("putio-ip-ranges")
+      const stub = c.env.ROUTEROS_CACHE.get(id)
 
       // Call the Durable Object to get cache status
       const response = await stub.fetch("https://putio-cache.internal/status")
@@ -154,8 +154,8 @@ export class RouterOSReset extends OpenAPIRoute {
   async handle(c: Context) {
     try {
       // Get the Durable Object stub
-      const id = c.env.PUTIO_CACHE.idFromName("putio-ip-ranges")
-      const stub = c.env.PUTIO_CACHE.get(id)
+      const id = c.env.ROUTEROS_CACHE.idFromName("putio-ip-ranges")
+      const stub = c.env.ROUTEROS_CACHE.get(id)
 
       // Call the Durable Object to reset the cache
       const response = await stub.fetch("https://putio-cache.internal/reset", {

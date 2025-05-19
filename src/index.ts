@@ -9,7 +9,7 @@ import { RouterOSCache, RouterOSPutIO, RouterOSReset } from "./endpoints/routero
 type Bindings = {
   GDIO_REDIRECTS: KVNamespace
   ANALYTICS: AnalyticsEngineDataset
-  PUTIO_CACHE: DurableObjectNamespace
+  ROUTEROS_CACHE: DurableObjectNamespace
 }
 
 // Start a Hono app

@@ -61,7 +61,7 @@ bun run format
 
    - KV Namespaces: Used for redirect storage (`GDIO_REDIRECTS`)
    - Analytics Engine: Tracks requests (`ANALYTICS`)
-   - Durable Objects: Caches IP data (`PUTIO_CACHE`)
+   - Durable Objects: Caches IP data (`ROUTEROS_CACHE`)
 4. **Main App Structure**:
 
    - `src/index.ts`: Entry point that sets up Hono app and registers routes

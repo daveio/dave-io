@@ -13,7 +13,7 @@ declare global {
   // Define the environment variables from worker-configuration.d.ts
   interface Env {
     GDIO_REDIRECTS: KVNamespace
-    PUTIO_CACHE: DurableObjectNamespace
+    ROUTEROS_CACHE: DurableObjectNamespace
     ANALYTICS: AnalyticsEngineDataset
   }
   // KV Namespace
