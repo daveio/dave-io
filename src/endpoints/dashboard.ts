@@ -34,12 +34,11 @@ export class Dashboard extends OpenAPIRoute {
   } as OpenAPIRouteSchema
 
   async handle(c: Context) {
-    const data = await this.getValidatedData<typeof this.schema>()
-    if (!data.params) {
+    // Extract name directly from context params
+    const name = c.req.param("name")
+    if (!name) {
       return c.json({ error: "No dashboard name provided" }, 404)
     }
-
-    const { name } = data.params
 
     c.env.ANALYTICS.writeDataPoint({
       blobs: ["dashboard_request", name],

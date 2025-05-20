@@ -28,12 +28,11 @@ export class Redirect extends OpenAPIRoute {
   } as OpenAPIRouteSchema
 
   async handle(c: Context) {
-    const data = await this.getValidatedData<typeof this.schema>()
-    if (!data.params) {
+    // Extract slug directly from context params
+    const slug = c.req.param("slug")
+    if (!slug) {
       return new Response(null, { status: 404 })
     }
-
-    const { slug } = data.params
 
     // Track request in analytics
     c.env.ANALYTICS.writeDataPoint({
