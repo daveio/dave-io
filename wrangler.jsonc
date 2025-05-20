@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "api-dave-io",
   "main": "src/index.ts",
-  "compatibility_date": "2025-05-14",
+  "compatibility_date": "2025-05-19",
   "compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
   "observability": {
     "enabled": true
@@ -19,7 +19,7 @@
   "kv_namespaces": [
     {
       "binding": "DATA",
-      "id": "9ec2e927dc8743fe8a7bea84b7379b2e"
+      "id": "fa48b0bd010a43289d5e111af42b8b50"
     }
   ],
   "routes": [
