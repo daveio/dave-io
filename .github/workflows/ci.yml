@@ -16,7 +16,7 @@ jobs:
       - name: install
         run: bun install
       - name: lint
-        run: bun run lint
+        run: bun run biome check
   typecheck:
     runs-on: ubuntu-latest
     steps:
