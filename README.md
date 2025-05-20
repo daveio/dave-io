@@ -4,6 +4,11 @@ A multipurpose personal API powered by Cloudflare Workers.
 
 ![License](https://img.shields.io/github/license/daveio/api.dave.io)
 
+## URGENT PLANS
+
+- Fix sexmap redirect
+- Fix toddo redirect
+
 ## Overview
 
 This project implements a multipurpose personal API that runs on Cloudflare Workers, providing several endpoints for various services:
@@ -187,7 +192,7 @@ await env.DATA.put(`metrics:redirects:${slug}`, JSON.stringify({
 
 ### Cloudflare Workers Types
 
-The project uses TypeScript types from the auto-generated `worker-configuration.d.ts` file created by Wrangler. Any changes to the Cloudflare bindings (KV namespaces, Durable Objects, etc.) require running the type generation script:
+The project uses TypeScript types from the auto-generated `worker-configuration.d.ts` file created by Wrangler. Any changes to the Cloudflare bindings (KV namespaces, etc.) require running the type generation script:
 
 ```bash
 bun run types
@@ -225,35 +230,6 @@ The API is deployed to Cloudflare Workers using Wrangler. Deployment is automate
 The project uses GitHub Actions for continuous integration and deployment:
 
 - **CI**: Runs linting and type checking on pull requests and pushes to main
-
-### Migrations
-
-This project uses Durable Objects migrations to manage changes to Durable Objects classes:
-
-- **v1 Migration**: In progress to remove the `RouterOSCache` Durable Object which has been replaced with a regular class using KV storage
-
-This migration is defined in the `wrangler.jsonc` file:
-
-```json
-"durable_objects": {
-  "bindings": [
-    {
-      "name": "ROUTEROS_CACHE",
-      "class_name": "RouterOSCache"
-    }
-  ]
-},
-"migrations": [
-  {
-    "tag": "v1",
-    "new_classes": [],
-    "deleted_classes": ["RouterOSCache"],
-    "renamed_classes": []
-  }
-]
-```
-
-The `RouterOSCache` functionality in `src/endpoints/routeros.ts` has been implemented as a standard API route handler, while a stub implementation of the Durable Object is maintained in `src/durable_objects/RouterOSCache.ts` for backward compatibility during the migration process. The Durable Object will be fully removed once the migration is complete.
 
 ## License
 

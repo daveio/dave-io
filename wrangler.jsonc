@@ -31,21 +31,5 @@
       "pattern": "dave.io/api/*",
       "zone_id": "cce768dd1ffadb4f24ae8fce0f7e979a"
     }
-  ],
-  "durable_objects": {
-    "bindings": [
-      {
-        "name": "ROUTEROS_CACHE",
-        "class_name": "RouterOSCache"
-      }
-    ]
-  },
-  "migrations": [
-    {
-      "tag": "v1",
-      "new_classes": [],
-      "deleted_classes": ["RouterOSCache"],
-      "renamed_classes": []
-    }
   ]
 }

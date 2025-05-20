@@ -15,6 +15,5 @@ declare global {
   // Define additional environment variables specific to this project
   interface Env {
     GDIO_REDIRECTS: KVNamespace
-    ROUTEROS_CACHE: DurableObjectNamespace
   }
 }

@@ -1,6 +1,5 @@
 import { OpenAPIRoute, fromHono } from "chanfana"
 import { Hono } from "hono"
-import { RouterOSCache as DurableRouterOSCache } from "./durable_objects/RouterOSCache"
 import { Dashboard } from "./endpoints/dashboard"
 import { Ping } from "./endpoints/ping"
 import { Redirect } from "./endpoints/redirect"
@@ -11,7 +10,7 @@ type Bindings = {
   DATA: KVNamespace
   GDIO_REDIRECTS: KVNamespace
   ANALYTICS: AnalyticsEngineDataset
-  ROUTEROS_CACHE: DurableObjectNamespace
+  ROUTEROS_CACHE: KVNamespace
 }
 
 // Start a Hono app
@@ -92,7 +91,3 @@ app.get("/api/routeros/reset", (c) =>
 
 // Export the Hono app
 export default app
-
-// Export RouterOSCache for backward compatibility with existing Durable Objects
-// This is needed until the migration is fully applied
-export { DurableRouterOSCache as RouterOSCache }
