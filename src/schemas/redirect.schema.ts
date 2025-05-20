@@ -15,3 +15,32 @@ export const RedirectSchema = z.object({
 })
 
 export type Redirect = z.infer<typeof RedirectSchema>
+
+/**
+ * Schema for redirect params
+ */
+export const RedirectParamsSchema = z.object({
+  slug: z.string().openapi({ description: "Redirect slug" })
+})
+
+export type RedirectParams = z.infer<typeof RedirectParamsSchema>
+
+/**
+ * Schema for click tracking data
+ */
+export const ClickDataSchema = z.object({
+  count: z.number(),
+  lastAccessed: z.string().nullable()
+})
+
+export type ClickData = z.infer<typeof ClickDataSchema>
+
+/**
+ * Schema for redirect response
+ */
+export const RedirectResponseSchema = z.object({
+  success: z.boolean(),
+  redirect: RedirectSchema
+})
+
+export type RedirectResponse = z.infer<typeof RedirectResponseSchema>

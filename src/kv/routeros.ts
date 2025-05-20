@@ -1,51 +1,17 @@
 import { ipv4, ipv6 } from "../lib/ip-address-utils"
-
-// Interfaces for API responses
-interface RipePrefix {
-  prefix: string
-}
-
-interface RipeData {
-  data: {
-    prefixes: RipePrefix[]
-  }
-}
-
-interface BGPViewPrefix {
-  prefix: string
-  ip: string
-  cidr: number
-  routed: boolean
-}
-
-interface BGPViewData {
-  data: {
-    ipv4_prefixes: BGPViewPrefix[]
-    ipv6_prefixes: BGPViewPrefix[]
-  }
-}
-
-interface CacheData {
-  ipv4Ranges: string[]
-  ipv6Ranges: string[]
-  lastUpdated: string | null
-  lastError: string | null
-  updateInProgress?: boolean
-}
-
-interface CacheMetadata {
-  lastUpdated: string | null
-  lastError: string | null
-  lastAttempt: string | null
-  updateInProgress: boolean
-}
+import type {
+  BGPViewData,
+  RouterOSCacheData as CacheData,
+  RouterOSCacheMetadata as CacheMetadata,
+  RipeData
+} from "../schemas"
 
 // KV Keys - following the pattern routeros:[provider]:[resource]
-const KV_CACHE_IPV4 = "routeros:putio:ipv4"
-const KV_CACHE_IPV6 = "routeros:putio:ipv6"
-const KV_CACHE_SCRIPT = "routeros:putio:script"
-const KV_PUTIO_METADATA = "routeros:putio:metadata" // Provider-specific metadata
-const KV_SHARED_METRICS = "metrics:routeros" // Shared metrics across all RouterOS endpoints
+export const KV_CACHE_IPV4 = "routeros:putio:ipv4"
+export const KV_CACHE_IPV6 = "routeros:putio:ipv6"
+export const KV_CACHE_SCRIPT = "routeros:putio:script"
+export const KV_PUTIO_METADATA = "routeros:putio:metadata" // Provider-specific metadata
+export const KV_SHARED_METRICS = "metrics:routeros" // Shared metrics across all RouterOS endpoints
 
 // Cache TTL in seconds (1 hour)
 const CACHE_TTL = 3600
@@ -249,9 +215,8 @@ function mergeIPRanges(ranges: string[], version: 4 | 6): string[] {
     // Use the ip-address-utils library to merge ranges
     if (version === 4) {
       return ipv4.cidrMerge(ranges)
-    } else {
-      return ipv6.cidrMerge(ranges)
     }
+    return ipv6.cidrMerge(ranges)
   } catch (error) {
     // Use separate arguments to avoid string formatting vulnerabilities
     console.error("Error merging IP ranges", { version, error })
@@ -470,7 +435,7 @@ export async function getScript(env: { DATA: KVNamespace; ANALYTICS: AnalyticsEn
     return generateScript(updatedCacheData)
   } catch (error) {
     console.error("Error getting RouterOS script:", error)
-    throw new Error("Failed to get RouterOS script: " + (error instanceof Error ? error.message : "Unknown error"))
+    throw new Error(`Failed to get RouterOS script: ${error instanceof Error ? error.message : "Unknown error"}`)
   }
 }
 
@@ -505,6 +470,6 @@ export async function resetCache(env: { DATA: KVNamespace; ANALYTICS: AnalyticsE
     console.log("Cache reset successfully")
   } catch (error) {
     console.error("Error resetting cache:", error)
-    throw new Error("Failed to reset cache: " + (error instanceof Error ? error.message : "Unknown error"))
+    throw new Error(`Failed to reset cache: ${error instanceof Error ? error.message : "Unknown error"}`)
   }
 }

@@ -1,12 +1,8 @@
-import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi"
 import { OpenAPIRoute } from "chanfana"
 import type { OpenAPIRouteSchema } from "chanfana"
 import type { Context } from "hono"
 import Parser from "rss-parser"
-import { z } from "zod"
-
-// Initialize OpenAPI extensions for Zod
-extendZodWithOpenApi(z)
+import { DashboardErrorSchema, DashboardItemSchema, DashboardParamsSchema, DashboardResponseSchema } from "../schemas"
 
 export class Dashboard extends OpenAPIRoute {
   // @ts-ignore - Schema type compatibility issues with chanfana/zod
@@ -15,20 +11,14 @@ export class Dashboard extends OpenAPIRoute {
     summary: "Get dashboard data by name",
     request: {
       // @ts-ignore - Type instantiation issue
-      params: z.object({
-        name: z.string().openapi({ description: "Dashboard name to retrieve" })
-      })
+      params: DashboardParamsSchema
     },
     responses: {
       "200": {
         description: "Dashboard data",
         content: {
           "application/json": {
-            schema: z.object({
-              dashboard: z.string(),
-              data: z.record(z.any()),
-              timestamp: z.number()
-            })
+            schema: DashboardResponseSchema
           }
         }
       },
@@ -36,9 +26,7 @@ export class Dashboard extends OpenAPIRoute {
         description: "Dashboard not found",
         content: {
           "application/json": {
-            schema: z.object({
-              error: z.string()
-            })
+            schema: DashboardErrorSchema
           }
         }
       }

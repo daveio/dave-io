@@ -1,14 +1,8 @@
-import type { Redirect } from "../schemas/redirect.schema"
+import type { ClickData, Redirect } from "../schemas"
 
 // KV Keys - following the pattern "redirects:slug"
-const KV_PREFIX = "redirects:"
-const METRICS_PREFIX = "metrics:redirects:"
-
-// Interface for click tracking data
-interface ClickData {
-  count: number
-  lastAccessed: string | null
-}
+export const KV_PREFIX = "redirects:"
+export const METRICS_PREFIX = "metrics:redirects:"
 
 /**
  * Get a redirect by slug

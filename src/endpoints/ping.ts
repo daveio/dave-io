@@ -1,6 +1,6 @@
 import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
-import { z } from "zod"
+import { PingResponseSchema } from "../schemas"
 
 export class Ping extends OpenAPIRoute {
   schema = {
@@ -11,10 +11,7 @@ export class Ping extends OpenAPIRoute {
         description: "Ping reply",
         content: {
           "application/json": {
-            schema: z.object({
-              service: z.string(),
-              response: z.string()
-            })
+            schema: PingResponseSchema
           }
         }
       }

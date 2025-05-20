@@ -1,14 +1,7 @@
 import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
-import { z } from "zod"
-import {
-  getCacheData,
-  getCacheStatus,
-  getScript,
-  getSharedMetadata,
-  refreshCache,
-  resetCache
-} from "../kv/routeros"
+import { getCacheData, getCacheStatus, getScript, getSharedMetadata, refreshCache, resetCache } from "../kv/routeros"
+import { RouterOSCacheStatusSchema, RouterOSErrorSchema, RouterOSResetResponseSchema } from "../schemas"
 
 export class RouterOSPutIO extends OpenAPIRoute {
   schema = {
@@ -19,7 +12,7 @@ export class RouterOSPutIO extends OpenAPIRoute {
         description: "RouterOS script for put.io IP ranges",
         content: {
           "text/plain": {
-            schema: z.string()
+            schema: RouterOSErrorSchema.shape.message
           }
         }
       },
@@ -27,10 +20,7 @@ export class RouterOSPutIO extends OpenAPIRoute {
         description: "Error fetching or processing IP data",
         content: {
           "application/json": {
-            schema: z.object({
-              error: z.string(),
-              message: z.string()
-            })
+            schema: RouterOSErrorSchema
           }
         }
       }
@@ -65,18 +55,7 @@ export class RouterOSCache extends OpenAPIRoute {
         description: "Cache status information",
         content: {
           "application/json": {
-            schema: z.object({
-              putio: z.object({
-                lastUpdated: z.string().nullable(),
-                lastError: z.string().nullable(),
-                lastAttempt: z.string().nullable(),
-                updateInProgress: z.boolean(),
-                ipv4Count: z.number(),
-                ipv6Count: z.number()
-              }),
-              shared: z.record(z.unknown()),
-              providers: z.array(z.string())
-            })
+            schema: RouterOSCacheStatusSchema
           }
         }
       },
@@ -84,10 +63,7 @@ export class RouterOSCache extends OpenAPIRoute {
         description: "Error retrieving cache status",
         content: {
           "application/json": {
-            schema: z.object({
-              error: z.string(),
-              message: z.string()
-            })
+            schema: RouterOSErrorSchema
           }
         }
       }
@@ -144,10 +120,7 @@ export class RouterOSReset extends OpenAPIRoute {
         description: "Cache reset confirmation",
         content: {
           "application/json": {
-            schema: z.object({
-              success: z.boolean(),
-              message: z.string()
-            })
+            schema: RouterOSResetResponseSchema
           }
         }
       },
@@ -155,10 +128,7 @@ export class RouterOSReset extends OpenAPIRoute {
         description: "Error resetting cache",
         content: {
           "application/json": {
-            schema: z.object({
-              error: z.string(),
-              message: z.string()
-            })
+            schema: RouterOSErrorSchema
           }
         }
       }

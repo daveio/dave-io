@@ -107,6 +107,32 @@ All data is stored in a single KV namespace called `DATA` with a hierarchical ke
   - `metrics:routeros`: Shared metrics for all RouterOS endpoints
   - `metrics:redirects:{slug}`: Click tracking data for redirect slugs
 
+### KV Initialization
+
+The API automatically initializes all KV stores at startup with empty or zero values for any keys that don't exist. This ensures that all code paths can safely handle empty states without errors.
+
+- Empty arrays are initialized for lists (e.g., IP ranges)
+- Default metadata objects are created with `null` values for timestamps
+- Metrics counters are initialized to zero
+- Empty strings are used for cached data
+
+Implementation details:
+
+```typescript
+// KV initialization (runs at application startup)
+app.use("*", async (c, next) => {
+  try {
+    // Initialize KV with default values
+    await initializeKV(c.env)
+  } catch (error) {
+    console.error("Error initializing KV store:", error)
+  }
+
+  // Continue with request handling
+  await next()
+})
+```
+
 Benefits of this unified KV approach:
 
 - **Organization**: Logical grouping of related data
@@ -114,6 +140,7 @@ Benefits of this unified KV approach:
 - **Flexible Expansion**: Easy to add new data types and providers
 - **Resource Efficiency**: Reduces the number of KV namespaces needed
 - **Analytics Integration**: Built-in tracking for metrics and usage patterns
+- **Robustness**: Safe handling of empty or non-existent KV values
 
 Implementation details:
 
@@ -163,7 +190,7 @@ await env.DATA.put(`metrics:redirects:${slug}`, JSON.stringify({
 The project uses TypeScript types from the auto-generated `worker-configuration.d.ts` file created by Wrangler. Any changes to the Cloudflare bindings (KV namespaces, Durable Objects, etc.) require running the type generation script:
 
 ```bash
-bun run cf-typegen
+bun run types
 ```
 
 This script:
@@ -177,7 +204,7 @@ The custom `src/schemas/cloudflare.types.ts` file extends these types with proje
 
 - `bun run dev`: Start development server
 - `bun run deploy`: Deploy to Cloudflare Workers
-- `bun run cf-typegen`: Generate type definitions for Cloudflare Workers
+- `bun run types`: Generate type definitions for Cloudflare Workers
 - `bun run typecheck`: Run TypeScript type checking
 - `bun run lint`: Run linting with Trunk
 - `bun run format`: Format code with Trunk
@@ -206,3 +233,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Author
 
 Dave Williams ([@daveio](https://github.com/daveio)) - [dave@dave.io](mailto:dave@dave.io)
+
+## Schemas
+
+The project uses Zod for schema validation and OpenAPI documentation. All schemas are defined in the `/src/schemas` directory, with each schema file having a corresponding `.schema.ts` suffix.
+
+To learn more about the available schemas and how to use them, see the [Schemas README](/src/schemas/README.md).

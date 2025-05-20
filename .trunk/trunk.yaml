@@ -50,14 +50,36 @@ lint:
     - taplo@0.9.3
     - trunk-toolbox@0.5.4
     - actionlint@1.7.7
-    - checkov@3.2.425
+    - checkov@3.2.427
     - git-diff-check
     - markdownlint@0.45.0
     - trufflehog@3.88.30
     - yamllint@1.37.1
 actions:
   enabled:
+    - biome-safe-fixes
+    - lint
+    - typecheck
     - trunk-announce
     - trunk-check-pre-push
     - trunk-fmt-pre-commit
     - trunk-upgrade-available
+  definitions:
+    - id: biome-safe-fixes
+      display_name: lint
+      run: bun run biome check --fix
+      triggers:
+        - git_hooks:
+            - pre-commit
+    - id: lint
+      display_name: lint
+      run: bun run lint
+      triggers:
+        - git_hooks:
+            - pre-commit
+    - id: typecheck
+      display_name: typecheck
+      run: bun run typecheck
+      triggers:
+        - git_hooks:
+            - pre-commit

@@ -7,6 +7,9 @@
 
 // Export all schemas
 export * from "./redirect.schema"
+export * from "./dashboard.schema"
+export * from "./ping.schema"
+export * from "./routeros.schema"
 
 // Export Cloudflare types
 export * from "./cloudflare.types"

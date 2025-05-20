@@ -4,8 +4,10 @@ import { Dashboard } from "./endpoints/dashboard"
 import { Ping } from "./endpoints/ping"
 import { Redirect } from "./endpoints/redirect"
 import { RouterOSCache, RouterOSPutIO, RouterOSReset } from "./endpoints/routeros"
+import { initializeKV } from "./kv/init"
 
 type Bindings = {
+  DATA: KVNamespace
   GDIO_REDIRECTS: KVNamespace
   ANALYTICS: AnalyticsEngineDataset
   ROUTEROS_CACHE: KVNamespace
@@ -19,6 +21,19 @@ const openapi = fromHono(app, {
   docs_url: "/api/docs",
   redoc_url: "/api/redocs",
   openapi_url: "/api/openapi.json"
+})
+
+// Initialize KV store middleware
+app.use("*", async (c, next) => {
+  try {
+    // Initialize KV with default values
+    await initializeKV(c.env)
+  } catch (error) {
+    console.error("Error initializing KV store:", error)
+  }
+
+  // Continue with request handling
+  await next()
 })
 
 // Register direct handlers to avoid type issues
