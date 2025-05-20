@@ -29,7 +29,7 @@
     "@types/service-worker-mock": "^2.0.4",
     "markdownlint-cli": "^0.45.0",
     "stylelint-config-standard": "^38.0.0",
-    "wrangler": "4.15.2"
+    "wrangler": "4.16.0"
   },
   "packageManager": "bun@1.2.13",
   "engines": {

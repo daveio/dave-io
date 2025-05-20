@@ -1,10 +1,10 @@
 import { OpenAPIRoute, fromHono } from "chanfana"
 import { Hono } from "hono"
-import { RouterOSCache } from "./durable_objects/RouterOSCache"
+import { RouterOSCache as DurableRouterOSCache } from "./durable_objects/RouterOSCache"
 import { Dashboard } from "./endpoints/dashboard"
 import { Ping } from "./endpoints/ping"
 import { Redirect } from "./endpoints/redirect"
-import { RouterOSCache as RouterOSCacheEndpoint, RouterOSPutIO, RouterOSReset } from "./endpoints/routeros"
+import { RouterOSCache, RouterOSPutIO, RouterOSReset } from "./endpoints/routeros"
 import { initializeKV } from "./kv/init"
 
 type Bindings = {
@@ -67,7 +67,7 @@ app.get("/api/routeros/putio", (c) =>
 )
 
 app.get("/routeros/cache", (c) =>
-  new RouterOSCacheEndpoint({
+  new RouterOSCache({
     router: openapi,
     raiseUnknownParameters: true,
     route: c.req.path,
@@ -75,7 +75,7 @@ app.get("/routeros/cache", (c) =>
   }).execute(c)
 )
 app.get("/api/routeros/cache", (c) =>
-  new RouterOSCacheEndpoint({
+  new RouterOSCache({
     router: openapi,
     raiseUnknownParameters: true,
     route: c.req.path,
@@ -93,5 +93,6 @@ app.get("/api/routeros/reset", (c) =>
 // Export the Hono app
 export default app
 
-// Export RouterOSCache Durable Object for migration purposes
-export { RouterOSCache }
+// Export RouterOSCache for backward compatibility with existing Durable Objects
+// This is needed until the migration is fully applied
+export { DurableRouterOSCache as RouterOSCache }
