@@ -1,0 +1,71 @@
+{
+  "dashboard:demo:items": [
+    {
+      "title": "Welcome to Dashboard",
+      "subtitle": "Your personal data feed",
+      "linkURL": "https://dave.io",
+      "imageURL": "https://dave.io/images/logo.png"
+    },
+    {
+      "title": "GitHub Activity",
+      "subtitle": "Recent commits and pull requests",
+      "linkURL": "https://github.com/daveio",
+      "imageURL": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+    },
+    {
+      "title": "Latest Blog Post",
+      "subtitle": "Tips and tutorials for developers",
+      "linkURL": "https://dave.io/blog",
+      "imageURL": "https://dave.io/images/blog.png"
+    },
+    {
+      "title": "Current Project",
+      "subtitle": "API development with Cloudflare Workers",
+      "linkURL": "https://github.com/daveio/api.dave.io",
+      "imageURL": "https://developers.cloudflare.com/favicon.ico"
+    },
+    {
+      "title": "Upcoming Events",
+      "subtitle": "Tech conferences and meetups",
+      "linkURL": "https://dave.io/events",
+      "imageURL": "https://dave.io/images/calendar.png"
+    }
+  ],
+  "redirect:blit": "https://notes.dave.io/blit",
+  "redirect:blog": "https://blog.dave.io",
+  "redirect:bluesky": "https://bsky.app/profile/dave.io",
+  "redirect:bsky": "https://bsky.app/profile/dave.io",
+  "redirect:cdc": "https://archive.org/details/20250128-cdc-datasets-zstandard",
+  "redirect:cv": "https://notes.dave.io/cv",
+  "redirect:dreamwidth": "https://daveio.dreamwidth.org",
+  "redirect:facebook": "https://facebook.com/dave.io",
+  "redirect:fetlife": "https://fetlife.com/users/22725",
+  "redirect:genderbase": "https://blog.dave.io/genderbase",
+  "redirect:genderbase-form": "https://daveio.notion.site/1c3b7795690c8065957af15479af9c78",
+  "redirect:github": "https://github.com/daveio",
+  "redirect:github-keys": "https://github.com/search?q=path%3A**%2F.env+%2F%28KEY%7CTOKEN%29%3D%5BA-Za-z0-9-_%5D%2B%2F&type=code",
+  "redirect:gnupg": "https://keys.openpgp.org/search?q=D8DC6603D9C3515382A1C63C385FD3CEF5E5C6EC",
+  "redirect:gpg": "https://keys.openpgp.org/search?q=D8DC6603D9C3515382A1C63C385FD3CEF5E5C6EC",
+  "redirect:instagram": "https://instagram.com/daveio",
+  "redirect:journal": "https://daveio.dreamwidth.org",
+  "redirect:key": "https://keys.openpgp.org/search?q=D8DC6603D9C3515382A1C63C385FD3CEF5E5C6EC",
+  "redirect:keybase": "https://keybase.io/dave",
+  "redirect:keyserver": "https://keys.openpgp.org/search?q=D8DC6603D9C3515382A1C63C385FD3CEF5E5C6EC",
+  "redirect:linkedin": "https://linkedin.com/in/dcwilliams",
+  "redirect:mastodon": "https://basilisk.gallery/@dave",
+  "redirect:nerd-fonts": "https://files.dave.io/nerd-fonts.zip",
+  "redirect:pgp": "https://keys.openpgp.org/search?q=D8DC6603D9C3515382A1C63C385FD3CEF5E5C6EC",
+  "redirect:pillowfort": "https://pillowfort.social/daveio",
+  "redirect:public-key": "https://keys.openpgp.org/search?q=D8DC6603D9C3515382A1C63C385FD3CEF5E5C6EC",
+  "redirect:radio": "https://qrz.com/db/M6LNS",
+  "redirect:reproductiverights": "https://blog.dave.io/reproductiverights",
+  "redirect:sexmap": "https://www.humansexmap.com/showmap.php?mapid=map521a7bd04ec217.96418626",
+  "redirect:skype": "https://join.skype.com/invite/hjGqpCJJazAc",
+  "redirect:soundcloud": "https://soundcloud.com/davedotio",
+  "redirect:threads": "https://threads.net/@daveio",
+  "redirect:todo": "https://daveio.notion.site/185b7795690c80399615eb0f5d5033c0",
+  "redirect:tumblr": "https://daveio.tumblr.com",
+  "redirect:twitter": "https://x.com/syn",
+  "redirect:wat": "https://www.destroyallsoftware.com/talks/wat",
+  "redirect:x": "https://x.com/syn"
+}

@@ -43,6 +43,11 @@ export async function setRedirect(env: { DATA: KVNamespace }, redirect: Redirect
 export async function deleteRedirect(env: { DATA: KVNamespace }, slug: string): Promise<boolean> {
   try {
     await env.DATA.delete(`${KV_PREFIX}${slug}`)
+    // Also delete metrics
+    await Promise.all([
+      env.DATA.delete(`${METRICS_PREFIX}${slug}:count`),
+      env.DATA.delete(`${METRICS_PREFIX}${slug}:last-accessed`)
+    ])
     return true
   } catch (error) {
     console.error("Error deleting redirect for slug", { slug, error })
@@ -94,24 +99,23 @@ export async function trackRedirectClick(
       })
     }
 
-    // Get current click data
-    const metricsKey = `${METRICS_PREFIX}${slug}`
-    let clickData: ClickData = {
-      count: 0,
-      lastAccessed: null
-    }
-
-    const existingData = await env.DATA.get<ClickData>(metricsKey, { type: "json" })
-    if (existingData) {
-      clickData = existingData
+    // Get current count
+    const countKey = `${METRICS_PREFIX}${slug}:count`
+    let count = 0
+    const existingCount = await env.DATA.get(countKey)
+    if (existingCount) {
+      count = Number.parseInt(existingCount, 10)
     }
 
     // Update click data
-    clickData.count++
-    clickData.lastAccessed = new Date().toISOString()
+    count++
+    const currentTime = new Date().toISOString()
 
     // Store updated data
-    await env.DATA.put(metricsKey, JSON.stringify(clickData))
+    await Promise.all([
+      env.DATA.put(countKey, count.toString()),
+      env.DATA.put(`${METRICS_PREFIX}${slug}:last-accessed`, currentTime)
+    ])
   } catch (error) {
     console.error("Error tracking click for slug", { slug, error })
   }
@@ -122,8 +126,19 @@ export async function trackRedirectClick(
  */
 export async function getRedirectStats(env: { DATA: KVNamespace }, slug: string): Promise<ClickData | null> {
   try {
-    const metricsKey = `${METRICS_PREFIX}${slug}`
-    return await env.DATA.get<ClickData>(metricsKey, { type: "json" })
+    const [count, lastAccessed] = await Promise.all([
+      env.DATA.get(`${METRICS_PREFIX}${slug}:count`),
+      env.DATA.get(`${METRICS_PREFIX}${slug}:last-accessed`)
+    ])
+
+    if (!count && !lastAccessed) {
+      return null
+    }
+
+    return {
+      count: count ? Number.parseInt(count, 10) : 0,
+      lastAccessed: lastAccessed || null
+    }
   } catch (error) {
     console.error("Error getting click data for slug", { slug, error })
     return null
@@ -135,15 +150,30 @@ export async function getRedirectStats(env: { DATA: KVNamespace }, slug: string)
  */
 export async function getAllRedirectStats(env: { DATA: KVNamespace }): Promise<Record<string, ClickData>> {
   try {
-    const { keys } = await env.DATA.list({ prefix: METRICS_PREFIX })
+    // Get all metrics keys that contain count information
+    const { keys } = await env.DATA.list({ prefix: `${METRICS_PREFIX}` })
 
     const stats: Record<string, ClickData> = {}
     for (const key of keys) {
-      const slug = key.name.substring(METRICS_PREFIX.length)
-      const data = await env.DATA.get<ClickData>(key.name, { type: "json" })
+      // Only process count keys
+      if (!key.name.endsWith(":count")) {
+        continue
+      }
 
-      if (data) {
-        stats[slug] = data
+      // Extract slug from key (remove prefix and :count suffix)
+      const slug = key.name.substring(METRICS_PREFIX.length, key.name.length - ":count".length)
+
+      // Get count and last accessed
+      const [count, lastAccessed] = await Promise.all([
+        env.DATA.get(`${METRICS_PREFIX}${slug}:count`),
+        env.DATA.get(`${METRICS_PREFIX}${slug}:last-accessed`)
+      ])
+
+      if (count) {
+        stats[slug] = {
+          count: Number.parseInt(count, 10),
+          lastAccessed: lastAccessed || null
+        }
       }
     }
 

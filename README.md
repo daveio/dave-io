@@ -119,7 +119,10 @@ All data is stored in a single KV namespace called `DATA` with a hierarchical ke
   - `routeros:putio:ipv4`: Cached IPv4 ranges for put.io
   - `routeros:putio:ipv6`: Cached IPv6 ranges for put.io
   - `routeros:putio:script`: Generated RouterOS script for put.io
-  - `routeros:putio:metadata`: Provider-specific metadata for put.io
+  - `routeros:putio:metadata:last-updated`: Last update timestamp for put.io cache
+  - `routeros:putio:metadata:last-error`: Last error message for put.io cache
+  - `routeros:putio:metadata:last-attempt`: Last attempt timestamp for put.io cache
+  - `routeros:putio:metadata:update-in-progress`: Flag indicating if update is in progress
 
 - **Dashboard**: Prefix `dashboard:`
   - `dashboard:demo:items`: Items for the demo dashboard
@@ -127,15 +130,23 @@ All data is stored in a single KV namespace called `DATA` with a hierarchical ke
 - **Metrics**: Prefix `metrics:`
   - `metrics:status:{code}`: Status code occurrence counter
   - `metrics:group:{group}`: Status code group counter (4xx, 5xx)
-  - `metrics:routeros`: Shared metrics for all RouterOS endpoints
-  - `metrics:redirect:{slug}`: Click tracking data for redirect slugs
+  - `metrics:routeros:cache-resets`: Count of cache resets
+  - `metrics:routeros:cache-hits`: Count of cache hits
+  - `metrics:routeros:cache-misses`: Count of cache misses
+  - `metrics:routeros:last-accessed`: Timestamp of last access
+  - `metrics:routeros:last-refresh`: Timestamp of last refresh
+  - `metrics:routeros:refresh-count`: Count of refreshes
+  - `metrics:routeros:last-reset`: Timestamp of last reset
+  - `metrics:routeros:reset-count`: Count of resets
+  - `metrics:redirect:{slug}:count`: Count of redirects for a slug
+  - `metrics:redirect:{slug}:last-accessed`: Timestamp of last access for a slug
 
 ### KV Initialization
 
 The API automatically initializes all KV stores at startup with empty or zero values for any keys that don't exist. This ensures that all code paths can safely handle empty states without errors.
 
 - Empty arrays are initialized for lists (e.g., IP ranges)
-- Default metadata objects are created with `null` values for timestamps
+- Default metadata values are created with empty strings for timestamps
 - Metrics counters are initialized to zero
 - Empty strings are used for cached data
 
@@ -164,21 +175,22 @@ Benefits of this unified KV approach:
 - **Resource Efficiency**: Reduces the number of KV namespaces needed
 - **Analytics Integration**: Built-in tracking for metrics and usage patterns
 - **Robustness**: Safe handling of empty or non-existent KV values
+- **Granularity**: Individual keys for metrics and metadata improve readability and make direct manipulation easier
 
 Implementation details:
 
 ```typescript
-// Reading from KV
-const redirect = await env.DATA.get(`redirect:${slug}`)
+// Reading from KV (individual keys)
+const count = await env.DATA.get(`metrics:redirect:${slug}:count`)
 
 // Writing to KV with hierarchical keys
 await env.DATA.put(`routeros:putio:script`, script, { expirationTtl: 7200 })
 
-// Tracking usage metrics
-await env.DATA.put(`metrics:redirect:${slug}`, JSON.stringify({
-  count: 42,
-  lastAccessed: new Date().toISOString()
-}))
+// Tracking usage metrics with individual keys
+await Promise.all([
+  env.DATA.put(`metrics:redirect:${slug}:count`, count.toString()),
+  env.DATA.put(`metrics:redirect:${slug}:last-accessed`, new Date().toISOString())
+])
 ```
 
 ## Development
@@ -235,17 +247,31 @@ The custom `src/schemas/cloudflare.types.ts` file extends these types with proje
 
 ### KV Admin Utility
 
-The project includes a command-line utility for backing up and restoring KV data:
+The project includes a command-line utility for managing KV storage:
 
 ```bash
 # Backup all KV data to _backup/kv-{timestamp}.json
-bun kv backup
+bun run bin/kv backup
 
 # Restore KV data from a backup file
-bun kv restore <filename>
+bun run bin/kv restore <filename>
+
+# Wipe all KV data (DANGEROUS!)
+bun run bin/kv wipe
 ```
 
-This utility helps ensure data safety by allowing you to create regular backups of all KV storage data.
+This utility helps ensure data safety by allowing you to create regular backups of all KV storage data, as well as restore from backups and completely wipe the KV namespace if needed. The wipe function includes multiple confirmation prompts to prevent accidental data loss.
+
+#### Value Handling
+
+The KV Admin utility intelligently handles different value types:
+
+- **String values** are stored and restored as plain strings without additional quotes
+- **JSON values** (objects, arrays, numbers, booleans, null) are properly serialized and deserialized
+- **Backup files** contain a mix of raw strings and JSON objects as appropriate
+- **Restore operations** maintain the correct type of each value
+
+This smart type handling ensures that string values like URLs and timestamps don't get double-quoted, while complex data structures like dashboard items are properly preserved.
 
 ## DashKit Integration
 

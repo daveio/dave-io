@@ -10,8 +10,22 @@ import type {
 export const KV_CACHE_IPV4 = "routeros:putio:ipv4"
 export const KV_CACHE_IPV6 = "routeros:putio:ipv6"
 export const KV_CACHE_SCRIPT = "routeros:putio:script"
-export const KV_PUTIO_METADATA = "routeros:putio:metadata" // Provider-specific metadata
-export const KV_SHARED_METRICS = "metrics:routeros" // Shared metrics across all RouterOS endpoints
+export const KV_PUTIO_METADATA_PREFIX = "routeros:putio:metadata"
+export const KV_PUTIO_METADATA_LAST_UPDATED = `${KV_PUTIO_METADATA_PREFIX}:last-updated`
+export const KV_PUTIO_METADATA_LAST_ERROR = `${KV_PUTIO_METADATA_PREFIX}:last-error`
+export const KV_PUTIO_METADATA_LAST_ATTEMPT = `${KV_PUTIO_METADATA_PREFIX}:last-attempt`
+export const KV_PUTIO_METADATA_UPDATE_IN_PROGRESS = `${KV_PUTIO_METADATA_PREFIX}:update-in-progress`
+
+// Metrics keys - individual keys instead of JSON
+export const KV_METRICS_PREFIX = "metrics:routeros"
+export const KV_METRICS_LAST_REFRESH = `${KV_METRICS_PREFIX}:last-refresh`
+export const KV_METRICS_REFRESH_COUNT = `${KV_METRICS_PREFIX}:refresh-count`
+export const KV_METRICS_CACHE_RESETS = `${KV_METRICS_PREFIX}:cache-resets`
+export const KV_METRICS_CACHE_HITS = `${KV_METRICS_PREFIX}:cache-hits`
+export const KV_METRICS_CACHE_MISSES = `${KV_METRICS_PREFIX}:cache-misses`
+export const KV_METRICS_LAST_ACCESSED = `${KV_METRICS_PREFIX}:last-accessed`
+export const KV_METRICS_LAST_RESET = `${KV_METRICS_PREFIX}:last-reset`
+export const KV_METRICS_RESET_COUNT = `${KV_METRICS_PREFIX}:reset-count`
 
 // Cache TTL in seconds (1 hour)
 const CACHE_TTL = 3600
@@ -29,11 +43,13 @@ export async function getCacheData(env: { DATA: KVNamespace }): Promise<CacheDat
   }
 
   try {
-    // Try to get provider-specific metadata first
-    const metadata = await env.DATA.get<CacheMetadata>(KV_PUTIO_METADATA, { type: "json" })
+    // Try to get metadata
+    const lastUpdated = await env.DATA.get(KV_PUTIO_METADATA_LAST_UPDATED)
+    const lastError = await env.DATA.get(KV_PUTIO_METADATA_LAST_ERROR)
+    const updateInProgress = (await env.DATA.get(KV_PUTIO_METADATA_UPDATE_IN_PROGRESS)) === "true"
 
     // If no metadata, return default
-    if (!metadata) {
+    if (!lastUpdated) {
       return defaultCache
     }
 
@@ -46,9 +62,9 @@ export async function getCacheData(env: { DATA: KVNamespace }): Promise<CacheDat
     return {
       ipv4Ranges: ipv4Ranges || [],
       ipv6Ranges: ipv6Ranges || [],
-      lastUpdated: metadata.lastUpdated,
-      lastError: metadata.lastError,
-      updateInProgress: metadata.updateInProgress
+      lastUpdated,
+      lastError,
+      updateInProgress
     }
   } catch (_error) {
     // In case of error, return default cache
@@ -100,8 +116,19 @@ export async function getCacheStatus(env: { DATA: KVNamespace }): Promise<CacheM
   }
 
   try {
-    const metadata = await env.DATA.get<CacheMetadata>(KV_PUTIO_METADATA, { type: "json" })
-    return metadata || defaultMetadata
+    const [lastUpdated, lastError, lastAttempt, updateInProgress] = await Promise.all([
+      env.DATA.get(KV_PUTIO_METADATA_LAST_UPDATED),
+      env.DATA.get(KV_PUTIO_METADATA_LAST_ERROR),
+      env.DATA.get(KV_PUTIO_METADATA_LAST_ATTEMPT),
+      env.DATA.get(KV_PUTIO_METADATA_UPDATE_IN_PROGRESS)
+    ])
+
+    return {
+      lastUpdated,
+      lastError,
+      lastAttempt,
+      updateInProgress: updateInProgress === "true"
+    }
   } catch (_error) {
     return defaultMetadata
   }
@@ -112,15 +139,36 @@ export async function getCacheStatus(env: { DATA: KVNamespace }): Promise<CacheM
  */
 export async function getSharedMetadata(env: { DATA: KVNamespace }): Promise<Record<string, unknown>> {
   try {
-    const metrics = await env.DATA.get<Record<string, unknown>>(KV_SHARED_METRICS, { type: "json" })
-    return metrics || {}
+    // Get all metrics keys individually
+    const [lastRefresh, refreshCount, cacheResets, cacheHits, cacheMisses, lastAccessed, lastReset, resetCount] =
+      await Promise.all([
+        env.DATA.get(KV_METRICS_LAST_REFRESH),
+        env.DATA.get(KV_METRICS_REFRESH_COUNT),
+        env.DATA.get(KV_METRICS_CACHE_RESETS),
+        env.DATA.get(KV_METRICS_CACHE_HITS),
+        env.DATA.get(KV_METRICS_CACHE_MISSES),
+        env.DATA.get(KV_METRICS_LAST_ACCESSED),
+        env.DATA.get(KV_METRICS_LAST_RESET),
+        env.DATA.get(KV_METRICS_RESET_COUNT)
+      ])
+
+    return {
+      lastRefresh: lastRefresh || null,
+      refreshCount: refreshCount ? Number.parseInt(refreshCount, 10) : 0,
+      cacheResets: cacheResets ? Number.parseInt(cacheResets, 10) : 0,
+      cacheHits: cacheHits ? Number.parseInt(cacheHits, 10) : 0,
+      cacheMisses: cacheMisses ? Number.parseInt(cacheMisses, 10) : 0,
+      lastAccessed: lastAccessed || null,
+      lastReset: lastReset || null,
+      resetCount: resetCount ? Number.parseInt(resetCount, 10) : 0
+    }
   } catch (_error) {
     return {}
   }
 }
 
 /**
- * Update shared metrics
+ * Update shared metrics using individual keys
  */
 export async function updateSharedMetadata(
   env: { DATA: KVNamespace },
@@ -128,7 +176,43 @@ export async function updateSharedMetadata(
   expirationTtl?: number
 ): Promise<void> {
   const ttl = expirationTtl || CACHE_TTL * 2
-  await env.DATA.put(KV_SHARED_METRICS, JSON.stringify(metrics), { expirationTtl: ttl })
+
+  // Update metrics individually
+  const operations = []
+
+  if (metrics.lastRefresh) {
+    operations.push(env.DATA.put(KV_METRICS_LAST_REFRESH, String(metrics.lastRefresh), { expirationTtl: ttl }))
+  }
+
+  if (metrics.refreshCount !== undefined) {
+    operations.push(env.DATA.put(KV_METRICS_REFRESH_COUNT, String(metrics.refreshCount), { expirationTtl: ttl }))
+  }
+
+  if (metrics.cacheResets !== undefined) {
+    operations.push(env.DATA.put(KV_METRICS_CACHE_RESETS, String(metrics.cacheResets), { expirationTtl: ttl }))
+  }
+
+  if (metrics.cacheHits !== undefined) {
+    operations.push(env.DATA.put(KV_METRICS_CACHE_HITS, String(metrics.cacheHits), { expirationTtl: ttl }))
+  }
+
+  if (metrics.cacheMisses !== undefined) {
+    operations.push(env.DATA.put(KV_METRICS_CACHE_MISSES, String(metrics.cacheMisses), { expirationTtl: ttl }))
+  }
+
+  if (metrics.lastAccessed) {
+    operations.push(env.DATA.put(KV_METRICS_LAST_ACCESSED, String(metrics.lastAccessed), { expirationTtl: ttl }))
+  }
+
+  if (metrics.lastReset) {
+    operations.push(env.DATA.put(KV_METRICS_LAST_RESET, String(metrics.lastReset), { expirationTtl: ttl }))
+  }
+
+  if (metrics.resetCount !== undefined) {
+    operations.push(env.DATA.put(KV_METRICS_RESET_COUNT, String(metrics.resetCount), { expirationTtl: ttl }))
+  }
+
+  await Promise.all(operations)
 }
 
 /**
@@ -285,14 +369,8 @@ export async function refreshCache(env: { DATA: KVNamespace; ANALYTICS?: Analyti
   }
 
   // Set update in progress flag
-  await env.DATA.put(
-    KV_PUTIO_METADATA,
-    JSON.stringify({
-      ...metadata,
-      updateInProgress: true,
-      lastAttempt: new Date().toISOString()
-    })
-  )
+  await env.DATA.put(KV_PUTIO_METADATA_UPDATE_IN_PROGRESS, "true")
+  await env.DATA.put(KV_PUTIO_METADATA_LAST_ATTEMPT, new Date().toISOString())
 
   try {
     // Fetch data from sources
@@ -316,34 +394,26 @@ export async function refreshCache(env: { DATA: KVNamespace; ANALYTICS?: Analyti
     // Store in KV
     console.log("Storing data in KV")
     const cacheTtl = CACHE_TTL * 2 // Double the TTL for the cache data
+    const currentTime = new Date().toISOString()
 
     await Promise.all([
       env.DATA.put(KV_CACHE_IPV4, JSON.stringify(ipv4Ranges), { expirationTtl: cacheTtl }),
       env.DATA.put(KV_CACHE_IPV6, JSON.stringify(ipv6Ranges), { expirationTtl: cacheTtl }),
       env.DATA.put(KV_CACHE_SCRIPT, script, { expirationTtl: cacheTtl }),
-      env.DATA.put(
-        KV_PUTIO_METADATA,
-        JSON.stringify({
-          lastUpdated: new Date().toISOString(),
-          lastError: null,
-          lastAttempt: new Date().toISOString(),
-          updateInProgress: false
-        }),
-        { expirationTtl: cacheTtl }
-      )
+      env.DATA.put(KV_PUTIO_METADATA_LAST_UPDATED, currentTime, { expirationTtl: cacheTtl }),
+      env.DATA.put(KV_PUTIO_METADATA_LAST_ERROR, "", { expirationTtl: cacheTtl }),
+      env.DATA.put(KV_PUTIO_METADATA_LAST_ATTEMPT, currentTime, { expirationTtl: cacheTtl }),
+      env.DATA.put(KV_PUTIO_METADATA_UPDATE_IN_PROGRESS, "false", { expirationTtl: cacheTtl })
     ])
 
     // Update shared metrics
     const sharedMetadata = await getSharedMetadata(env)
-    await updateSharedMetadata(
-      env,
-      {
-        ...sharedMetadata,
-        lastRefresh: new Date().toISOString(),
-        refreshCount: ((sharedMetadata.refreshCount as number) || 0) + 1
-      },
-      cacheTtl
-    )
+    const refreshCount = ((sharedMetadata.refreshCount as number) || 0) + 1
+
+    await Promise.all([
+      env.DATA.put(KV_METRICS_LAST_REFRESH, currentTime, { expirationTtl: cacheTtl }),
+      env.DATA.put(KV_METRICS_REFRESH_COUNT, String(refreshCount), { expirationTtl: cacheTtl })
+    ])
 
     // Log successful refresh to analytics
     if (env.ANALYTICS) {
@@ -358,20 +428,20 @@ export async function refreshCache(env: { DATA: KVNamespace; ANALYTICS?: Analyti
   } catch (error) {
     // Store error in metadata
     console.error("Error refreshing cache:", error)
-    await env.DATA.put(
-      KV_PUTIO_METADATA,
-      JSON.stringify({
-        ...metadata,
-        lastError: error instanceof Error ? error.message : "Unknown error",
-        lastAttempt: new Date().toISOString(),
-        updateInProgress: false
-      })
-    )
+
+    const errorMessage = error instanceof Error ? error.message : "Unknown error"
+    const currentTime = new Date().toISOString()
+
+    await Promise.all([
+      env.DATA.put(KV_PUTIO_METADATA_LAST_ERROR, errorMessage, { expirationTtl: CACHE_TTL * 2 }),
+      env.DATA.put(KV_PUTIO_METADATA_LAST_ATTEMPT, currentTime, { expirationTtl: CACHE_TTL * 2 }),
+      env.DATA.put(KV_PUTIO_METADATA_UPDATE_IN_PROGRESS, "false", { expirationTtl: CACHE_TTL * 2 })
+    ])
 
     // Log error to analytics
     if (env.ANALYTICS) {
       env.ANALYTICS.writeDataPoint({
-        blobs: ["routeros", "cache", "refresh", "error", error instanceof Error ? error.message : "Unknown error"],
+        blobs: ["routeros", "cache", "refresh", "error", errorMessage],
         doubles: [1],
         indexes: ["routeros_cache_error"]
       })
@@ -403,12 +473,24 @@ export async function getScript(env: { DATA: KVNamespace; ANALYTICS: AnalyticsEn
       })
     }
 
+    // Track access time
+    await env.DATA.put(KV_METRICS_LAST_ACCESSED, new Date().toISOString())
+
     // Try to get cached script first
     const cachedScript = await env.DATA.get(KV_CACHE_SCRIPT)
     if (cachedScript) {
       console.log("Using cached script")
+
+      // Increment cache hits
+      const hits = Number.parseInt((await env.DATA.get(KV_METRICS_CACHE_HITS)) || "0", 10) + 1
+      await env.DATA.put(KV_METRICS_CACHE_HITS, String(hits))
+
       return cachedScript
     }
+
+    // Increment cache misses
+    const misses = Number.parseInt((await env.DATA.get(KV_METRICS_CACHE_MISSES)) || "0", 10) + 1
+    await env.DATA.put(KV_METRICS_CACHE_MISSES, String(misses))
 
     // If we don't have a cached script but have IP ranges, generate it
     if (cacheData.ipv4Ranges.length > 0 || cacheData.ipv6Ranges.length > 0) {
@@ -456,16 +538,20 @@ export async function resetCache(env: { DATA: KVNamespace; ANALYTICS: AnalyticsE
       env.DATA.delete(KV_CACHE_IPV4),
       env.DATA.delete(KV_CACHE_IPV6),
       env.DATA.delete(KV_CACHE_SCRIPT),
-      env.DATA.delete(KV_PUTIO_METADATA)
+      env.DATA.delete(KV_PUTIO_METADATA_LAST_UPDATED),
+      env.DATA.delete(KV_PUTIO_METADATA_LAST_ERROR),
+      env.DATA.delete(KV_PUTIO_METADATA_LAST_ATTEMPT),
+      env.DATA.delete(KV_PUTIO_METADATA_UPDATE_IN_PROGRESS)
     ])
 
-    // Update shared metadata to track the reset
-    const sharedMetadata = await getSharedMetadata(env)
-    await updateSharedMetadata(env, {
-      ...sharedMetadata,
-      lastReset: new Date().toISOString(),
-      resetCount: ((sharedMetadata.resetCount as number) || 0) + 1
-    })
+    // Update reset metrics
+    const currentTime = new Date().toISOString()
+    const resetCount = Number.parseInt((await env.DATA.get(KV_METRICS_RESET_COUNT)) || "0", 10) + 1
+
+    await Promise.all([
+      env.DATA.put(KV_METRICS_LAST_RESET, currentTime),
+      env.DATA.put(KV_METRICS_RESET_COUNT, String(resetCount))
+    ])
 
     console.log("Cache reset successfully")
   } catch (error) {

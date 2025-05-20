@@ -263,4 +263,22 @@ Comprehensive metrics and analytics were added to track API usage and performanc
    - Implemented backup functionality to save KV data to JSON files
    - Added restore capability to recover from backups
 
-These improvements provide better monitoring, debugging capabilities, and data management tools for the API while maintaining the same clean architecture and development patterns.
+### Improved KV Storage Architecture (2025-06-20)
+
+The KV storage architecture was updated to improve data organization and management:
+
+1. **Individual Key Structure for Metrics**:
+   - Changed JSON object storage to individual keys for better organization
+   - All metrics now use separate keys: `metrics:redirect:{slug}:count`, `metrics:routeros:cache-hits`, etc.
+   - RouterOS metadata now uses a hierarchical structure: `routeros:putio:metadata:last-updated`
+
+2. **Improved KV Admin Utility**:
+   - Enhanced `bin/kv.ts` with intelligent value type handling
+   - String values are now properly stored and restored without double quotes
+   - Added wipe functionality to completely clear KV namespace with safety confirmations
+
+3. **Updated Documentation**:
+   - Revised KV namespace structure in README.md with new key patterns
+   - Added documentation for type-specific value handling in KV operations
+
+These improvements provide better data organization, more intuitive key naming, and more robust backup/restore functionality while maintaining the same clean architecture and development patterns.

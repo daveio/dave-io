@@ -56,6 +56,7 @@ lint: # https://docs.trunk.io/check/configuration
         - ALL
       paths:
         - worker-configuration.d.ts
+        - _backup/**
 plugins: # https://docs.trunk.io/plugins
   sources:
     - id: trunk

@@ -1,7 +1,19 @@
 import type { ClickData, DashboardItem, Redirect, RouterOSCacheData, RouterOSCacheMetadata } from "../schemas"
 import { KV_PREFIX as DASHBOARD_KV_PREFIX } from "./dashboard"
 import { KV_PREFIX as REDIRECT_KV_PREFIX, METRICS_PREFIX as REDIRECT_METRICS_PREFIX } from "./redirect"
-import { KV_CACHE_IPV4, KV_CACHE_IPV6, KV_CACHE_SCRIPT, KV_PUTIO_METADATA, KV_SHARED_METRICS } from "./routeros"
+import {
+  KV_CACHE_IPV4,
+  KV_CACHE_IPV6,
+  KV_CACHE_SCRIPT,
+  KV_METRICS_CACHE_HITS,
+  KV_METRICS_CACHE_MISSES,
+  KV_METRICS_CACHE_RESETS,
+  KV_METRICS_LAST_ACCESSED,
+  KV_PUTIO_METADATA_LAST_ATTEMPT,
+  KV_PUTIO_METADATA_LAST_ERROR,
+  KV_PUTIO_METADATA_LAST_UPDATED,
+  KV_PUTIO_METADATA_UPDATE_IN_PROGRESS
+} from "./routeros"
 
 /**
  * Initialize KV stores with default values if they don't exist
@@ -41,17 +53,16 @@ async function initializeDashboardKV(env: { DATA: KVNamespace }): Promise<void> 
  * Initialize RouterOS KV with default values
  */
 async function initializeRouterOSKV(env: { DATA: KVNamespace }): Promise<void> {
-  // Check if KV_PUTIO_METADATA exists, if not, create it
-  const metadata = await env.DATA.get<RouterOSCacheMetadata>(KV_PUTIO_METADATA, { type: "json" })
+  // Check if metadata exists, if not, create it
+  const lastUpdated = await env.DATA.get(KV_PUTIO_METADATA_LAST_UPDATED)
 
-  if (!metadata) {
-    const defaultMetadata: RouterOSCacheMetadata = {
-      lastUpdated: null,
-      lastError: null,
-      lastAttempt: null,
-      updateInProgress: false
-    }
-    await env.DATA.put(KV_PUTIO_METADATA, JSON.stringify(defaultMetadata))
+  if (!lastUpdated) {
+    await Promise.all([
+      env.DATA.put(KV_PUTIO_METADATA_LAST_UPDATED, ""),
+      env.DATA.put(KV_PUTIO_METADATA_LAST_ERROR, ""),
+      env.DATA.put(KV_PUTIO_METADATA_LAST_ATTEMPT, ""),
+      env.DATA.put(KV_PUTIO_METADATA_UPDATE_IN_PROGRESS, "false")
+    ])
   }
 
   // Initialize IPV4 ranges if not exist
@@ -73,17 +84,14 @@ async function initializeRouterOSKV(env: { DATA: KVNamespace }): Promise<void> {
   }
 
   // Initialize shared metrics if not exist
-  const sharedMetrics = await env.DATA.get<Record<string, unknown>>(KV_SHARED_METRICS, { type: "json" })
-  if (!sharedMetrics) {
-    await env.DATA.put(
-      KV_SHARED_METRICS,
-      JSON.stringify({
-        cacheResets: 0,
-        cacheHits: 0,
-        cacheMisses: 0,
-        lastAccessed: null
-      })
-    )
+  const hasMetrics = await env.DATA.get(KV_METRICS_CACHE_RESETS)
+  if (!hasMetrics) {
+    await Promise.all([
+      env.DATA.put(KV_METRICS_CACHE_RESETS, "0"),
+      env.DATA.put(KV_METRICS_CACHE_HITS, "0"),
+      env.DATA.put(KV_METRICS_CACHE_MISSES, "0"),
+      env.DATA.put(KV_METRICS_LAST_ACCESSED, "")
+    ])
   }
 }
 
@@ -100,18 +108,24 @@ async function initializeRedirectsKV(env: { DATA: KVNamespace }): Promise<void> 
   // For each redirect, ensure metrics exist
   for (const key of keys) {
     const slug = key.name.substring(REDIRECT_KV_PREFIX.length)
-    const metricsKey = `${REDIRECT_METRICS_PREFIX}${slug}`
+    const countKey = `${REDIRECT_METRICS_PREFIX}${slug}:count`
+    const lastAccessedKey = `${REDIRECT_METRICS_PREFIX}${slug}:last-accessed`
 
     // Check if metrics exist for this redirect
-    const metrics = await env.DATA.get<ClickData>(metricsKey, { type: "json" })
+    const [count, lastAccessed] = await Promise.all([env.DATA.get(countKey), env.DATA.get(lastAccessedKey)])
 
-    // If no metrics, initialize with defaults
-    if (!metrics) {
-      const defaultClickData: ClickData = {
-        count: 0,
-        lastAccessed: null
-      }
-      await env.DATA.put(metricsKey, JSON.stringify(defaultClickData))
+    // Initialize missing metrics if needed
+    const operations = []
+    if (count === null) {
+      operations.push(env.DATA.put(countKey, "0"))
+    }
+
+    if (lastAccessed === null) {
+      operations.push(env.DATA.put(lastAccessedKey, ""))
+    }
+
+    if (operations.length > 0) {
+      await Promise.all(operations)
     }
   }
 }
