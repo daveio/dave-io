@@ -320,7 +320,12 @@ export class RouterOSCache {
   }
 
   async fetchRipeData(): Promise<RipeData> {
-    const response = await fetch("https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS9009")
+    const response = await fetch("https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS9009", {
+      headers: {
+        "Accept": "application/json",
+        "User-Agent": "api.dave.io (https://api.dave.io)"
+      }
+    })
 
     if (!response.ok) {
       throw new Error(`Failed to fetch RIPE data: ${response.status}`)
@@ -330,7 +335,12 @@ export class RouterOSCache {
   }
 
   async fetchBGPViewData(): Promise<BGPViewData> {
-    const response = await fetch("https://api.bgpview.io/asn/9009/prefixes")
+    const response = await fetch("https://api.bgpview.io/asn/9009/prefixes", {
+      headers: {
+        "Accept": "application/json",
+        "User-Agent": "api.dave.io (https://api.dave.io)"
+      }
+    })
 
     if (!response.ok) {
       throw new Error(`Failed to fetch BGPView data: ${response.status}`)
