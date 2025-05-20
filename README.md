@@ -226,6 +226,35 @@ The project uses GitHub Actions for continuous integration and deployment:
 
 - **CI**: Runs linting and type checking on pull requests and pushes to main
 
+### Migrations
+
+This project uses Durable Objects migrations to manage changes to Durable Objects classes:
+
+- **v1 Migration**: Prepares to remove the `RouterOSCache` Durable Object which has been replaced with a regular class using KV storage
+
+This migration is defined in the `wrangler.jsonc` file. During the migration process, the `RouterOSCache` class is maintained as both a Durable Object and an API route handler:
+
+```json
+"durable_objects": {
+  "bindings": [
+    {
+      "name": "ROUTEROS_CACHE",
+      "class_name": "RouterOSCache"
+    }
+  ]
+},
+"migrations": [
+  {
+    "tag": "v1",
+    "new_classes": [],
+    "deleted_classes": ["RouterOSCache"],
+    "renamed_classes": []
+  }
+]
+```
+
+The class in `src/endpoints/routeros.ts` is designed to serve both purposes during the migration, with the `fetch` method for Durable Object compatibility and the `handle` method for API route handling.
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.

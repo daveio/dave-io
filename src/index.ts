@@ -91,3 +91,7 @@ app.get("/api/routeros/reset", (c) =>
 
 // Export the Hono app
 export default app
+
+// Export RouterOSCache for backward compatibility with existing Durable Objects
+// This is needed until the migration is fully applied
+export { RouterOSCache }

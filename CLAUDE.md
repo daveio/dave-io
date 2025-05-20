@@ -87,6 +87,7 @@ Key aspects of the type system:
      - Functions for retrieving data
      - Functions for storing data
      - Functions for metadata management
+
 3. **Cloudflare Integration**:
 
    - KV Namespace: Single unified namespace (`DATA`) for all storage needs
@@ -209,6 +210,44 @@ await trackRedirectClick(c.env, slug)
   3. Use the `DATA` KV namespace with appropriate key prefixes
 
 ## Recent Changes (2025-05-20)
+
+### Durable Objects Migration
+
+In May 2025, a migration was implemented to prepare for the removal of the `RouterOSCache` Durable Object:
+
+1. **Dual-Purpose Implementation**:
+   - The `RouterOSCache` class in `src/endpoints/routeros.ts` was updated to serve as both a Durable Object and an API route handler
+   - Added a DurableObject-compatible constructor and `fetch` method while maintaining the `handle` method for API routes
+   - Explicitly exported the class from `src/index.ts` for Durable Object compatibility
+
+2. **Migration Configuration**:
+   - Added Durable Objects configuration in `wrangler.jsonc` to properly reference the class
+   - Created a `v1` migration tag to prepare for eventual removal
+   - Defined both the binding and the migration in wrangler.jsonc:
+     ```json
+     "durable_objects": {
+       "bindings": [
+         {
+           "name": "ROUTEROS_CACHE",
+           "class_name": "RouterOSCache"
+         }
+       ]
+     },
+     "migrations": [
+       {
+         "tag": "v1",
+         "new_classes": [],
+         "deleted_classes": ["RouterOSCache"],
+         "renamed_classes": []
+       }
+     ]
+     ```
+
+3. **Next Steps**:
+   - After this migration is fully applied, a future deployment can remove the `fetch` method and Durable Object compatibility
+   - The final step will be to remove the `durable_objects` configuration from wrangler.jsonc
+
+This approach ensures backward compatibility with existing Durable Objects while transitioning to a KV-based approach for all cache operations.
 
 ### TypeScript Type Checking Fixes
 

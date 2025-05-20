@@ -1,43 +1,39 @@
-# This file controls the behavior of Trunk: https://docs.trunk.io/cli
-# To learn more about the format of this file, see https://docs.trunk.io/reference/trunk-yaml
-version: 0.1
+# https://docs.trunk.io/cli | https://docs.trunk.io/reference/trunk-yaml
+actions:
+  definitions:
+    - display_name: lint
+      id: biome-safe-fixes
+      run: bun run biome check --fix
+      triggers:
+        - git_hooks:
+            - pre-commit
+    - display_name: lint
+      id: lint
+      run: bun run lint
+      triggers:
+        - git_hooks:
+            - pre-commit
+    - display_name: typecheck
+      id: typecheck
+      run: bun run typecheck
+      triggers:
+        - git_hooks:
+            - pre-commit
+  enabled:
+    - biome-safe-fixes
+    - lint
+    - typecheck
+    - trunk-announce
+    - trunk-check-pre-push
+    - trunk-fmt-pre-commit
+    - trunk-upgrade-available
 cli:
   version: 1.22.15
-# Trunk provides extensibility via plugins. (https://docs.trunk.io/plugins)
-plugins:
-  sources:
-    - id: trunk
-      ref: v1.6.8
-      uri: https://github.com/trunk-io/plugins
-# Many linters and tools depend on runtimes - configure them here. (https://docs.trunk.io/runtimes)
-runtimes:
-  enabled:
-    - go@1.21.0
-    - node@18.20.5
-    - python@3.10.8
-# This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
-lint:
+lint: # https://docs.trunk.io/check/configuration
   disabled:
-    - prettier
-    - markdown-link-check
     - codespell
-  ignore:
-    - linters:
-        - ALL
-      paths:
-        - worker-configuration.d.ts
-    - linters:
-        - prettier
-      paths:
-        - "**/*.css"
-        - "**/*.js"
-        - "**/*.json"
-        - "**/*.jsx"
-        - "**/*.mjs"
-        - "**/*.mjsx"
-        - "**/*.mts"
-        - "**/*.ts"
-        - "**/*.tsx"
+    - markdown-link-check
+    - prettier
   enabled:
     - oxipng@9.1.5
     - sourcery@1.36.0
@@ -55,31 +51,19 @@ lint:
     - markdownlint@0.45.0
     - trufflehog@3.88.30
     - yamllint@1.37.1
-actions:
+  ignore:
+    - linters:
+        - ALL
+      paths:
+        - worker-configuration.d.ts
+plugins: # https://docs.trunk.io/plugins
+  sources:
+    - id: trunk
+      ref: v1.6.8
+      uri: https://github.com/trunk-io/plugins
+runtimes: # https://docs.trunk.io/runtimes
   enabled:
-    - biome-safe-fixes
-    - lint
-    - typecheck
-    - trunk-announce
-    - trunk-check-pre-push
-    - trunk-fmt-pre-commit
-    - trunk-upgrade-available
-  definitions:
-    - id: biome-safe-fixes
-      display_name: lint
-      run: bun run biome check --fix
-      triggers:
-        - git_hooks:
-            - pre-commit
-    - id: lint
-      display_name: lint
-      run: bun run lint
-      triggers:
-        - git_hooks:
-            - pre-commit
-    - id: typecheck
-      display_name: typecheck
-      run: bun run typecheck
-      triggers:
-        - git_hooks:
-            - pre-commit
+    - go@1.21.0
+    - node@18.20.5
+    - python@3.10.8
+version: 0.1
