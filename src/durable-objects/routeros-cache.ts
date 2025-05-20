@@ -32,9 +32,11 @@ interface CacheData {
   lastError: string | null
 }
 
-export type Env = Record<string, never>
+export type Env = {
+  ANALYTICS?: AnalyticsEngineDataset
+}
 
-export class PutIOCacheDO {
+export class RouterOSCache {
   state: DurableObjectState
   env: Env
   cacheData: CacheData
@@ -62,34 +64,62 @@ export class PutIOCacheDO {
     const url = new URL(request.url)
     const path = url.pathname
 
+    // Check if analytics is available via query param
+    const hasAnalytics =
+      url.searchParams.get("with_analytics") === "true" || request.headers.get("CF-Analytics-Available") === "true"
+
     if (path === "/script") {
-      return await this.handleScriptRequest()
+      return await this.handleScriptRequest(hasAnalytics)
     }
     if (path === "/status") {
-      return await this.handleStatusRequest()
+      return await this.handleStatusRequest(hasAnalytics)
     }
     if (path === "/reset" && request.method === "POST") {
-      return await this.handleResetRequest()
+      return await this.handleResetRequest(hasAnalytics)
     }
     return new Response("Not found", { status: 404 })
   }
 
-  async handleScriptRequest(): Promise<Response> {
+  async handleScriptRequest(hasAnalytics = false): Promise<Response> {
     try {
+      if (hasAnalytics && this.env.ANALYTICS) {
+        this.env.ANALYTICS.writeDataPoint({
+          blobs: ["routeros_cache_script_request"],
+          indexes: ["routeros_cache"]
+        })
+      }
+
       // Check if cache needs to be refreshed
       const needsRefresh = await this.checkCacheNeedsRefresh()
 
       if (needsRefresh) {
-        await this.refreshCache()
+        await this.refreshCache(hasAnalytics)
       }
 
       // Generate the RouterOS script
       const script = this.generateRouterOSScript()
+
+      if (hasAnalytics && this.env.ANALYTICS) {
+        this.env.ANALYTICS.writeDataPoint({
+          blobs: ["routeros_cache_script_generated"],
+          doubles: [this.cacheData.ipv4Ranges.length, this.cacheData.ipv6Ranges.length],
+          indexes: ["routeros_cache"]
+        })
+      }
+
       return new Response(script, {
         headers: { "Content-Type": "text/plain" }
       })
     } catch (error) {
       console.error("Error handling script request:", error)
+
+      if (hasAnalytics && this.env.ANALYTICS) {
+        this.env.ANALYTICS.writeDataPoint({
+          blobs: ["routeros_cache_script_error", error instanceof Error ? error.message : "Unknown error"],
+          indexes: ["routeros_cache"]
+        })
+      }
+
       return new Response(
         JSON.stringify({
           error: "ScriptGenerationError",
@@ -100,8 +130,15 @@ export class PutIOCacheDO {
     }
   }
 
-  async handleStatusRequest(): Promise<Response> {
+  async handleStatusRequest(hasAnalytics = false): Promise<Response> {
     try {
+      if (hasAnalytics && this.env.ANALYTICS) {
+        this.env.ANALYTICS.writeDataPoint({
+          blobs: ["routeros_cache_status_check"],
+          indexes: ["routeros_cache"]
+        })
+      }
+
       const now = new Date()
       const lastUpdated = this.cacheData.lastUpdated ? new Date(this.cacheData.lastUpdated) : null
 
@@ -128,6 +165,14 @@ export class PutIOCacheDO {
       })
     } catch (error) {
       console.error("Error handling status request:", error)
+
+      if (hasAnalytics && this.env.ANALYTICS) {
+        this.env.ANALYTICS.writeDataPoint({
+          blobs: ["routeros_cache_status_error", error instanceof Error ? error.message : "Unknown error"],
+          indexes: ["routeros_cache"]
+        })
+      }
+
       return new Response(
         JSON.stringify({
           error: "StatusError",
@@ -138,8 +183,15 @@ export class PutIOCacheDO {
     }
   }
 
-  async handleResetRequest(): Promise<Response> {
+  async handleResetRequest(hasAnalytics = false): Promise<Response> {
     try {
+      if (hasAnalytics && this.env.ANALYTICS) {
+        this.env.ANALYTICS.writeDataPoint({
+          blobs: ["routeros_cache_reset_initiated"],
+          indexes: ["routeros_cache"]
+        })
+      }
+
       // Reset the cache data
       this.cacheData = {
         ipv4Ranges: [],
@@ -152,7 +204,14 @@ export class PutIOCacheDO {
       await this.state.storage.put("cacheData", this.cacheData)
 
       // Fetch new data
-      await this.refreshCache()
+      await this.refreshCache(hasAnalytics)
+
+      if (hasAnalytics && this.env.ANALYTICS) {
+        this.env.ANALYTICS.writeDataPoint({
+          blobs: ["routeros_cache_reset_completed"],
+          indexes: ["routeros_cache"]
+        })
+      }
 
       return new Response(
         JSON.stringify({
@@ -165,6 +224,14 @@ export class PutIOCacheDO {
       )
     } catch (error) {
       console.error("Error handling reset request:", error)
+
+      if (hasAnalytics && this.env.ANALYTICS) {
+        this.env.ANALYTICS.writeDataPoint({
+          blobs: ["routeros_cache_reset_error", error instanceof Error ? error.message : "Unknown error"],
+          indexes: ["routeros_cache"]
+        })
+      }
+
       return new Response(
         JSON.stringify({
           error: "ResetError",
@@ -189,8 +256,16 @@ export class PutIOCacheDO {
     return ageInSeconds > 3600 // 1 hour in seconds
   }
 
-  async refreshCache(): Promise<void> {
+  async refreshCache(hasAnalytics = false): Promise<void> {
     try {
+      // Track cache refresh attempt
+      if (hasAnalytics && this.env.ANALYTICS) {
+        this.env.ANALYTICS.writeDataPoint({
+          blobs: ["routeros_cache_refresh_attempt"],
+          indexes: ["routeros_cache"]
+        })
+      }
+
       // Fetch data from RIPE and BGPView
       const [ripeData, bgpViewData] = await Promise.all([this.fetchRipeData(), this.fetchBGPViewData()])
 
@@ -200,24 +275,46 @@ export class PutIOCacheDO {
       // Process IPv6 addresses
       const ipv6Ranges = this.processIPRanges(ripeData, bgpViewData, 6)
 
+      // Merge and sort the ranges
+      const mergedIPv4Ranges = this.mergeIPRanges(ipv4Ranges, 4)
+      const mergedIPv6Ranges = this.mergeIPRanges(ipv6Ranges, 6)
+
       // Update cache data
       this.cacheData = {
-        ipv4Ranges,
-        ipv6Ranges,
+        ipv4Ranges: mergedIPv4Ranges,
+        ipv6Ranges: mergedIPv6Ranges,
         lastUpdated: new Date().toISOString(),
         lastError: null
       }
 
       // Save to storage
       await this.state.storage.put("cacheData", this.cacheData)
+
+      // Track successful cache refresh
+      if (hasAnalytics && this.env.ANALYTICS) {
+        this.env.ANALYTICS.writeDataPoint({
+          blobs: ["routeros_cache_refresh_success"],
+          doubles: [mergedIPv4Ranges.length, mergedIPv6Ranges.length],
+          indexes: ["routeros_cache"]
+        })
+      }
     } catch (error) {
       console.error("Error refreshing cache:", error)
 
-      // Update last error, but keep existing data
+      // Update last error in cache data
       this.cacheData.lastError = error instanceof Error ? error.message : "Unknown error"
+
+      // Save to storage
       await this.state.storage.put("cacheData", this.cacheData)
 
-      // Rethrow error
+      // Track cache refresh error
+      if (hasAnalytics && this.env.ANALYTICS) {
+        this.env.ANALYTICS.writeDataPoint({
+          blobs: ["routeros_cache_refresh_error", this.cacheData.lastError],
+          indexes: ["routeros_cache"]
+        })
+      }
+
       throw error
     }
   }

@@ -5,7 +5,7 @@
 declare namespace Cloudflare {
 	interface Env {
 		GDIO_REDIRECTS: KVNamespace;
-		ROUTEROS_CACHE: DurableObjectNamespace<import("./src/index").PutIOCacheDO>;
+		ROUTEROS_CACHE: DurableObjectNamespace<import("./src/index").RouterOSCache>;
 		ANALYTICS: AnalyticsEngineDataset;
 	}
 }

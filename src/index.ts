@@ -1,10 +1,10 @@
 import { fromHono } from "chanfana"
+import { RouterOSCache } from "durable-objects/routeros-cache"
+import { Dashboard } from "endpoints/dashboard"
 import { Ping } from "endpoints/ping"
+import { Redirect } from "endpoints/redirect"
+import { RouterOSCache as RouterOSCacheEndpoint, RouterOSPutIO, RouterOSReset } from "endpoints/routeros"
 import { Hono } from "hono"
-import { PutIOCacheDO } from "./durable-objects/putio-cache"
-import { Dashboard } from "./endpoints/dashboard"
-import { Redirect } from "./endpoints/redirect"
-import { RouterOSCache, RouterOSPutIO, RouterOSReset } from "./endpoints/routeros-putio"
 
 type Bindings = {
   GDIO_REDIRECTS: KVNamespace
@@ -33,8 +33,8 @@ openapi.get("/api/dashboard/:name", Dashboard)
 // Register RouterOS endpoints
 openapi.get("/routeros/putio", RouterOSPutIO)
 openapi.get("/api/routeros/putio", RouterOSPutIO)
-openapi.get("/routeros/cache", RouterOSCache)
-openapi.get("/api/routeros/cache", RouterOSCache)
+openapi.get("/routeros/cache", RouterOSCacheEndpoint)
+openapi.get("/api/routeros/cache", RouterOSCacheEndpoint)
 openapi.get("/routeros/reset", RouterOSReset)
 openapi.get("/api/routeros/reset", RouterOSReset)
 
@@ -42,4 +42,4 @@ openapi.get("/api/routeros/reset", RouterOSReset)
 export default app
 
 // Export Durable Objects
-export { PutIOCacheDO }
+export { RouterOSCache }

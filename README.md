@@ -11,7 +11,7 @@ This project implements a multipurpose personal API that runs on Cloudflare Work
 - **Ping**: Simple health check endpoint
 - **Redirect**: URL redirection service using KV storage
 - **Dashboard**: Data feeds for dashboards (demo and Hacker News available)
-- **RouterOS**: Generates RouterOS scripts for network configurations
+- **RouterOS**: Generates RouterOS scripts for network configurations (currently implements put.io IP ranges)
 
 The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation.
 
@@ -44,14 +44,47 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
   - `demo`: Sample dashboard data
   - `hacker-news`: Latest stories from Hacker News RSS feed
 
-### RouterOS put.io
+### RouterOS
 
 - `GET /routeros/putio` or `GET /api/routeros/putio`: Generate RouterOS script for put.io IP ranges
 - Returns: RouterOS script for creating address lists for put.io IPv4 and IPv6 ranges
-- `GET /routeros/cache` or `GET /api/routeros/cache`: Get cache status for put.io IP data
+- `GET /routeros/cache` or `GET /api/routeros/cache`: Get cache status for RouterOS data
 - Returns: Cache status information including age and any errors
-- `GET /routeros/reset` or `GET /api/routeros/reset`: Reset the cache for put.io IP data
+- `GET /routeros/reset` or `GET /api/routeros/reset`: Reset the cache for RouterOS data
 - Returns: Confirmation of cache reset
+
+## Analytics
+
+This API uses Cloudflare Analytics Engine to track requests. The following data points are collected:
+
+- Endpoint access (ping, redirect, dashboard, routeros)
+- Slug information for redirects
+- Dashboard names accessed
+- Cache resets and status checks
+
+No personal information is stored. Analytics are used for monitoring service usage and debugging.
+
+## Project Structure
+
+```bash
+api.dave.io/
+├── dashkit/              # Dashboard widget example
+│   └── feed.js           # Simple list panel implementation
+├── src/                  # Main source code
+│   ├── durable-objects/  # Durable Object implementations
+│   │   └── routeros-cache.ts # Cache for RouterOS data
+│   ├── endpoints/        # API endpoint implementations
+│   │   ├── dashboard.ts  # Dashboard data endpoints
+│   │   ├── ping.ts       # Simple health check endpoint
+│   │   ├── redirect.ts   # URL redirection service
+│   │   └── routeros.ts   # RouterOS script generators
+│   ├── lib/              # Utility libraries
+│   │   └── ip-address-utils.ts # IP address utilities
+│   ├── schemas/          # Zod schema definitions
+│   ├── index.ts          # Main application setup
+│   └── types.ts          # Type definitions
+└── wrangler.jsonc        # Cloudflare Workers configuration
+```
 
 ## Development
 
@@ -69,13 +102,11 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
    git clone https://github.com/daveio/api.dave.io.git
    cd api.dave.io
    ```
-
 2. Install dependencies:
 
    ```bash
    bun install
    ```
-
 3. Start the development server:
 
    ```bash
@@ -99,15 +130,14 @@ The project includes a simple DashKit widget in the `dashkit/` directory that de
 
 The API is deployed to Cloudflare Workers using Wrangler. Deployment is automated via GitHub Actions when changes are pushed to the main branch. It's accessible at:
 
-- [api.dave.io](https://api.dave.io)
-- [dave.io/api/\*](https://dave.io/api/)
+- `https://api.dave.io`
+- `https://dave.io/api`
 
 ### CI/CD
 
 The project uses GitHub Actions for continuous integration and deployment:
 
 - **CI**: Runs linting and type checking on pull requests and pushes to main
-- **Deployment**: Automatically deploys to Cloudflare Workers when changes are pushed to main
 
 ## License
 

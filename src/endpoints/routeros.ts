@@ -31,12 +31,27 @@ export class RouterOSPutIO extends OpenAPIRoute {
 
   async handle(c: Context) {
     try {
+      // Track analytics
+      c.env.ANALYTICS.writeDataPoint({
+        blobs: ["routeros_putio_request"],
+        indexes: ["routeros"]
+      })
+
       // Get the Durable Object stub
       const id = c.env.ROUTEROS_CACHE.idFromName("putio-ip-ranges")
       const stub = c.env.ROUTEROS_CACHE.get(id)
 
+      // Create a URL with environment data
+      const url = new URL("https://routeros-cache.internal/script")
+      // Pass the analytics binding to the Durable Object
+      url.searchParams.set("with_analytics", "true")
+
       // Call the Durable Object to get the RouterOS script
-      const response = await stub.fetch("https://putio-cache.internal/script")
+      const response = await stub.fetch(url, {
+        headers: {
+          "CF-Analytics-Available": "true"
+        }
+      })
 
       if (!response.ok) {
         const error = await response.json()
@@ -62,7 +77,7 @@ export class RouterOSPutIO extends OpenAPIRoute {
 export class RouterOSCache extends OpenAPIRoute {
   schema = {
     tags: ["RouterOS"],
-    summary: "Get cache status for put.io IP ranges",
+    summary: "Get cache status for RouterOS data",
     responses: {
       "200": {
         description: "Cache status information",
@@ -94,12 +109,27 @@ export class RouterOSCache extends OpenAPIRoute {
 
   async handle(c: Context) {
     try {
+      // Track analytics
+      c.env.ANALYTICS.writeDataPoint({
+        blobs: ["routeros_cache_status_request"],
+        indexes: ["routeros"]
+      })
+
       // Get the Durable Object stub
       const id = c.env.ROUTEROS_CACHE.idFromName("putio-ip-ranges")
       const stub = c.env.ROUTEROS_CACHE.get(id)
 
+      // Create a URL with environment data
+      const url = new URL("https://routeros-cache.internal/status")
+      // Pass the analytics binding to the Durable Object
+      url.searchParams.set("with_analytics", "true")
+
       // Call the Durable Object to get cache status
-      const response = await stub.fetch("https://putio-cache.internal/status")
+      const response = await stub.fetch(url, {
+        headers: {
+          "CF-Analytics-Available": "true"
+        }
+      })
 
       if (!response.ok) {
         const error = await response.json()
@@ -124,7 +154,7 @@ export class RouterOSCache extends OpenAPIRoute {
 export class RouterOSReset extends OpenAPIRoute {
   schema = {
     tags: ["RouterOS"],
-    summary: "Reset the cache for put.io IP ranges",
+    summary: "Reset the cache for RouterOS data",
     responses: {
       "200": {
         description: "Cache reset confirmation",
@@ -153,13 +183,27 @@ export class RouterOSReset extends OpenAPIRoute {
 
   async handle(c: Context) {
     try {
+      // Track analytics
+      c.env.ANALYTICS.writeDataPoint({
+        blobs: ["routeros_cache_reset_request"],
+        indexes: ["routeros"]
+      })
+
       // Get the Durable Object stub
       const id = c.env.ROUTEROS_CACHE.idFromName("putio-ip-ranges")
       const stub = c.env.ROUTEROS_CACHE.get(id)
 
+      // Create a URL with environment data
+      const url = new URL("https://routeros-cache.internal/reset")
+      // Pass the analytics binding to the Durable Object
+      url.searchParams.set("with_analytics", "true")
+
       // Call the Durable Object to reset the cache
-      const response = await stub.fetch("https://putio-cache.internal/reset", {
-        method: "POST"
+      const response = await stub.fetch(url, {
+        method: "POST",
+        headers: {
+          "CF-Analytics-Available": "true"
+        }
       })
 
       if (!response.ok) {
