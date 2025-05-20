@@ -213,17 +213,21 @@ await trackRedirectClick(c.env, slug)
 
 ### Durable Objects Migration
 
-In May 2025, a migration was implemented to prepare for the removal of the `RouterOSCache` Durable Object:
+In May 2025, a migration was initiated to remove the `RouterOSCache` Durable Object:
 
-1. **Dual-Purpose Implementation**:
-   - The `RouterOSCache` class in `src/endpoints/routeros.ts` was updated to serve as both a Durable Object and an API route handler
-   - Added a DurableObject-compatible constructor and `fetch` method while maintaining the `handle` method for API routes
-   - Explicitly exported the class from `src/index.ts` for Durable Object compatibility
+1. **Current Migration Strategy**:
+   - The `RouterOSCache` functionality has been migrated to a standard Hono route handler in `src/endpoints/routeros.ts`
+   - A stub implementation of the Durable Object class has been maintained in `src/durable_objects/RouterOSCache.ts`
+   - The stub is exported from `src/index.ts` to satisfy Cloudflare's requirement for backward compatibility
+   - The migration tag `v1` is defined to delete the Durable Object when the migration is complete
 
-2. **Migration Configuration**:
-   - Added Durable Objects configuration in `wrangler.jsonc` to properly reference the class
-   - Created a `v1` migration tag to prepare for eventual removal
-   - Defined both the binding and the migration in wrangler.jsonc:
+2. **Architecture Change**:
+   - All state previously stored in the Durable Object is now managed through KV storage
+   - The `get/setCacheData` utilities in `src/kv/routeros.ts` handle all caching operations
+   - The API surface remains identical, with the same endpoints and response formats
+
+3. **Current Configuration**:
+   - During the migration, both the Durable Object binding and migration tag are present:
      ```json
      "durable_objects": {
        "bindings": [
@@ -243,11 +247,14 @@ In May 2025, a migration was implemented to prepare for the removal of the `Rout
      ]
      ```
 
-3. **Next Steps**:
-   - After this migration is fully applied, a future deployment can remove the `fetch` method and Durable Object compatibility
-   - The final step will be to remove the `durable_objects` configuration from wrangler.jsonc
+4. **Next Steps**:
+   - When Cloudflare fully processes the migration and no longer requires the `RouterOSCache` export, we can:
+     1. Remove the stub Durable Object implementation
+     2. Remove the Durable Object export from index.ts
+     3. Remove the Durable Object binding from wrangler.jsonc
+     4. Simplify the binding type in index.ts from `DurableObjectNamespace` to `KVNamespace`
 
-This approach ensures backward compatibility with existing Durable Objects while transitioning to a KV-based approach for all cache operations.
+This hybrid approach ensures compatibility with existing data while transitioning to a simpler architecture.
 
 ### TypeScript Type Checking Fixes
 

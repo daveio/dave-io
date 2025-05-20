@@ -70,35 +70,6 @@ export class RouterOSCache extends OpenAPIRoute {
     }
   }
 
-  // Add Durable Object compatibility methods
-  state: DurableObjectState | null = null;
-  env: Record<string, unknown> = null as unknown as Record<string, unknown>;
-
-  // Durable Object constructor
-  constructor(
-    options?: { router: unknown; raiseUnknownParameters: boolean; route: string; urlParams: string[] } | DurableObjectState,
-    env?: Record<string, unknown>
-  ) {
-    if (options && "router" in options) {
-      // OpenAPIRoute constructor
-      super(options);
-    } else {
-      // Durable Object constructor
-      super({ router: {}, raiseUnknownParameters: false, route: "", urlParams: [] });
-      if (options && env) {
-        this.state = options as DurableObjectState;
-        this.env = env;
-      }
-    }
-  }
-
-  // Required fetch method for Durable Objects
-  async fetch(_request: Request): Promise<Response> {
-    // This is a placeholder method to satisfy the Durable Object interface
-    // It won't actually be used since we're migrating away from this class being a DO
-    return new Response("OK", { status: 200 });
-  }
-
   async handle(c: Context) {
     try {
       // Track analytics

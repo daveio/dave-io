@@ -230,9 +230,9 @@ The project uses GitHub Actions for continuous integration and deployment:
 
 This project uses Durable Objects migrations to manage changes to Durable Objects classes:
 
-- **v1 Migration**: Prepares to remove the `RouterOSCache` Durable Object which has been replaced with a regular class using KV storage
+- **v1 Migration**: In progress to remove the `RouterOSCache` Durable Object which has been replaced with a regular class using KV storage
 
-This migration is defined in the `wrangler.jsonc` file. During the migration process, the `RouterOSCache` class is maintained as both a Durable Object and an API route handler:
+This migration is defined in the `wrangler.jsonc` file:
 
 ```json
 "durable_objects": {
@@ -253,7 +253,7 @@ This migration is defined in the `wrangler.jsonc` file. During the migration pro
 ]
 ```
 
-The class in `src/endpoints/routeros.ts` is designed to serve both purposes during the migration, with the `fetch` method for Durable Object compatibility and the `handle` method for API route handling.
+The `RouterOSCache` functionality in `src/endpoints/routeros.ts` has been implemented as a standard API route handler, while a stub implementation of the Durable Object is maintained in `src/durable_objects/RouterOSCache.ts` for backward compatibility during the migration process. The Durable Object will be fully removed once the migration is complete.
 
 ## License
 
