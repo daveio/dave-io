@@ -346,8 +346,10 @@ export class RouterOSCache {
     if (ripeData?.data?.prefixes) {
       for (const prefix of ripeData.data.prefixes) {
         // Filter by IP version
-        if (version === 4 && prefix.prefix.includes(":")) continue
-        if (version === 6 && !prefix.prefix.includes(":")) continue
+        if (version === 4 && prefix.prefix.includes(":")) {
+          continue
+        }
+        if (version === 6 && !prefix.prefix.includes(":")) { continue }
 
         ranges.add(prefix.prefix)
       }
@@ -365,13 +367,11 @@ export class RouterOSCache {
     }
 
     // Merge and simplify ranges
-    const mergedRanges = this.mergeIPRanges(Array.from(ranges), version)
-
-    return mergedRanges
+    return this.mergeIPRanges(Array.from(ranges), version)
   }
 
   mergeIPRanges(ranges: string[], version: 4 | 6): string[] {
-    if (ranges.length === 0) return []
+    if (ranges.length === 0) { return [] }
 
     try {
       // Use the ip-address-utils library to merge ranges
