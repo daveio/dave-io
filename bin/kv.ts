@@ -4,7 +4,8 @@
  * KV Admin - Backup, restore, and manage utility for Cloudflare KV storage
  *
  * Usage:
- *   bun run bin/kv backup             - Backup all KV data to _backup/kv-$TIMESTAMP.json
+ *   bun run bin/kv backup             - Backup KV data matching configured patterns to _backup/kv-$TIMESTAMP.json
+ *   bun run bin/kv backup --all       - Backup all KV data to _backup/kv-$TIMESTAMP.json
  *   bun run bin/kv restore <filename> - Restore KV data from backup file
  *   bun run bin/kv wipe               - Wipe all KV data (DANGEROUS!)
  */
@@ -15,6 +16,12 @@ import { resolve } from "node:path"
 
 const BACKUP_DIR = "_backup"
 const KV_NAMESPACE = "DATA"
+
+// Configure the key patterns to include in the backup (using regular expressions)
+const BACKUP_KEY_PATTERNS = [
+  /^dashboard:demo:items$/, // Exact match for "dashboard:demo:items"
+  /^redirect:.*$/ // All keys starting with "redirect:"
+]
 
 // Ensure backup directory exists
 function ensureBackupDirExists() {
@@ -56,13 +63,22 @@ function runWranglerCommand(args: string[]) {
   }
 }
 
-// Get all KV keys with their values
-async function getAllKVData() {
-  console.log(`Fetching all keys from KV namespace ${KV_NAMESPACE}...`)
+// Check if a key matches any of the configured patterns
+function keyMatchesPatterns(key: string, patterns: RegExp[]): boolean {
+  return patterns.some((pattern) => pattern.test(key))
+}
+
+// Get all KV keys with their values, filtering by patterns if specified
+async function getAllKVData(backupAll = false) {
+  console.log(`Fetching ${backupAll ? "all" : "selected"} keys from KV namespace ${KV_NAMESPACE}...`)
 
   // List all keys
-  const keys = runWranglerCommand(["kv", "key", "list", "--remote", "--binding", KV_NAMESPACE])
-  console.log(`Found ${keys.length} keys`)
+  const allKeys = runWranglerCommand(["kv", "key", "list", "--remote", "--binding", KV_NAMESPACE])
+
+  // Filter keys if not backing up all
+  const keys = backupAll ? allKeys : allKeys.filter((keyInfo) => keyMatchesPatterns(keyInfo.name, BACKUP_KEY_PATTERNS))
+
+  console.log(`Found ${keys.length} keys ${!backupAll ? `matching patterns (out of ${allKeys.length} total)` : ""}`)
 
   const kvData: Record<string, unknown> = {}
 
@@ -112,15 +128,15 @@ async function getAllKVData() {
 }
 
 // Backup KV data to file
-async function backupKV() {
+async function backupKV(backupAll = false) {
   ensureBackupDirExists()
   const timestamp = getTimestamp()
   const filename = `kv-${timestamp}.json`
   const filepath = resolve(BACKUP_DIR, filename)
 
   try {
-    console.log("Starting KV backup...")
-    const kvData = await getAllKVData()
+    console.log(`Starting KV backup (${backupAll ? "all keys" : "selected keys"})...`)
+    const kvData = await getAllKVData(backupAll)
 
     // Write to file
     writeFileSync(filepath, JSON.stringify(kvData, null, 2))
@@ -260,7 +276,8 @@ async function main() {
 KV Admin - Backup, restore, and manage utility for Cloudflare KV storage
 
 Usage:
-  bun run bin/kv backup             - Backup all KV data to _backup/kv-$TIMESTAMP.json
+  bun run bin/kv backup             - Backup KV data matching configured patterns to _backup/kv-$TIMESTAMP.json
+  bun run bin/kv backup --all       - Backup all KV data to _backup/kv-$TIMESTAMP.json
   bun run bin/kv restore <filename> - Restore KV data from backup file
   bun run bin/kv wipe               - Wipe all KV data (DANGEROUS!)
 `)
@@ -268,9 +285,11 @@ Usage:
   }
 
   switch (command) {
-    case "backup":
-      await backupKV()
+    case "backup": {
+      const backupAll = process.argv.includes("--all") || process.argv.includes("-a")
+      await backupKV(backupAll)
       break
+    }
     case "restore": {
       const filename = process.argv[3]
       if (!filename) {

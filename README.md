@@ -250,8 +250,11 @@ The custom `src/schemas/cloudflare.types.ts` file extends these types with proje
 The project includes a command-line utility for managing KV storage:
 
 ```bash
-# Backup all KV data to _backup/kv-{timestamp}.json
+# Backup KV data matching configured patterns to _backup/kv-{timestamp}.json (default)
 bun run bin/kv backup
+
+# Backup all KV data to _backup/kv-{timestamp}.json
+bun run bin/kv backup --all
 
 # Restore KV data from a backup file
 bun run bin/kv restore <filename>
@@ -260,7 +263,25 @@ bun run bin/kv restore <filename>
 bun run bin/kv wipe
 ```
 
-This utility helps ensure data safety by allowing you to create regular backups of all KV storage data, as well as restore from backups and completely wipe the KV namespace if needed. The wipe function includes multiple confirmation prompts to prevent accidental data loss.
+This utility helps ensure data safety by allowing you to create regular backups of KV storage data, as well as restore from backups and completely wipe the KV namespace if needed. The wipe function includes multiple confirmation prompts to prevent accidental data loss.
+
+#### Backup Configuration
+
+By default, the backup command only includes keys matching specific patterns:
+- Keys that exactly match `dashboard:demo:items`
+- Keys that start with `redirect:`
+
+You can modify these patterns by editing the `BACKUP_KEY_PATTERNS` array in `bin/kv.ts`:
+
+```typescript
+// Configure the key patterns to include in the backup (using regular expressions)
+const BACKUP_KEY_PATTERNS = [
+  /^dashboard:demo:items$/, // Exact match for "dashboard:demo:items"
+  /^redirect:.*$/           // All keys starting with "redirect:"
+]
+```
+
+Use the `--all` or `-a` flag to back up all keys regardless of pattern.
 
 #### Value Handling
 

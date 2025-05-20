@@ -262,6 +262,8 @@ Comprehensive metrics and analytics were added to track API usage and performanc
    - Added `bin/kv.ts` command-line tool for KV data management
    - Implemented backup functionality to save KV data to JSON files
    - Added restore capability to recover from backups
+   - Added selective backup with regex pattern matching for keys
+   - Added `--all`/`-a` flag to backup all keys regardless of patterns
 
 ### Improved KV Storage Architecture (2025-06-20)
 
@@ -276,6 +278,9 @@ The KV storage architecture was updated to improve data organization and managem
    - Enhanced `bin/kv.ts` with intelligent value type handling
    - String values are now properly stored and restored without double quotes
    - Added wipe functionality to completely clear KV namespace with safety confirmations
+   - Added configurable pattern-based filtering for backup operations
+   - By default, only backs up keys matching configured patterns (dashboard:demo:items and redirect:*)
+   - Use `--all` or `-a` flag to back up all keys regardless of pattern
 
 3. **Updated Documentation**:
    - Revised KV namespace structure in README.md with new key patterns
