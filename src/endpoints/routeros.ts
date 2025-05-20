@@ -1,6 +1,14 @@
 import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
 import { z } from "zod"
+import {
+  getCacheData,
+  getCacheStatus,
+  getScript,
+  getSharedMetadata,
+  refreshCache,
+  resetCache
+} from "../kv/routeros"
 
 export class RouterOSPutIO extends OpenAPIRoute {
   schema = {
@@ -31,35 +39,9 @@ export class RouterOSPutIO extends OpenAPIRoute {
 
   async handle(c: Context) {
     try {
-      // Track analytics
-      c.env.ANALYTICS.writeDataPoint({
-        blobs: ["routeros_putio_request"],
-        indexes: ["routeros"]
-      })
+      // Get the script from KV
+      const script = await getScript(c.env)
 
-      // Get the Durable Object stub
-      const id = c.env.ROUTEROS_CACHE.idFromName("putio-ip-ranges")
-      const stub = c.env.ROUTEROS_CACHE.get(id)
-
-      // Create a URL with environment data
-      const url = new URL("https://routeros-cache.internal/script")
-      // Pass the analytics binding to the Durable Object
-      url.searchParams.set("with_analytics", "true")
-
-      // Call the Durable Object to get the RouterOS script
-      const response = await stub.fetch(url, {
-        headers: {
-          "CF-Analytics-Available": "true"
-        }
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        return c.json({ error: "InternalError", message: error.message }, 500)
-      }
-
-      // Return the RouterOS script as plain text
-      const script = await response.text()
       return c.text(script)
     } catch (error) {
       console.error("Error in RouterOSPutIO.handle:", error)
@@ -84,11 +66,16 @@ export class RouterOSCache extends OpenAPIRoute {
         content: {
           "application/json": {
             schema: z.object({
-              lastUpdated: z.string().optional(),
-              ageInSeconds: z.number().optional(),
-              isStale: z.boolean(),
-              lastError: z.string().nullable(),
-              status: z.string()
+              putio: z.object({
+                lastUpdated: z.string().nullable(),
+                lastError: z.string().nullable(),
+                lastAttempt: z.string().nullable(),
+                updateInProgress: z.boolean(),
+                ipv4Count: z.number(),
+                ipv6Count: z.number()
+              }),
+              shared: z.record(z.unknown()),
+              providers: z.array(z.string())
             })
           }
         }
@@ -111,32 +98,29 @@ export class RouterOSCache extends OpenAPIRoute {
     try {
       // Track analytics
       c.env.ANALYTICS.writeDataPoint({
-        blobs: ["routeros_cache_status_request"],
-        indexes: ["routeros"]
+        blobs: ["routeros", "cache", "status"],
+        doubles: [1],
+        indexes: ["routeros_status"]
       })
 
-      // Get the Durable Object stub
-      const id = c.env.ROUTEROS_CACHE.idFromName("putio-ip-ranges")
-      const stub = c.env.ROUTEROS_CACHE.get(id)
+      // Get provider-specific cache status from KV
+      const [putioStatus, cacheData, sharedMetadata] = await Promise.all([
+        getCacheStatus(c.env),
+        getCacheData(c.env),
+        getSharedMetadata(c.env)
+      ])
 
-      // Create a URL with environment data
-      const url = new URL("https://routeros-cache.internal/status")
-      // Pass the analytics binding to the Durable Object
-      url.searchParams.set("with_analytics", "true")
-
-      // Call the Durable Object to get cache status
-      const response = await stub.fetch(url, {
-        headers: {
-          "CF-Analytics-Available": "true"
-        }
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        return c.json({ error: "InternalError", message: error.message }, 500)
+      // Build the response with both provider-specific and shared data
+      const status = {
+        putio: {
+          ...putioStatus,
+          ipv4Count: cacheData.ipv4Ranges.length,
+          ipv6Count: cacheData.ipv6Ranges.length
+        },
+        shared: sharedMetadata,
+        providers: ["putio"] // Will expand as more providers are added
       }
 
-      const status = await response.json()
       return c.json(status)
     } catch (error) {
       console.error("Error in RouterOSCache.handle:", error)
@@ -183,36 +167,13 @@ export class RouterOSReset extends OpenAPIRoute {
 
   async handle(c: Context) {
     try {
-      // Track analytics
-      c.env.ANALYTICS.writeDataPoint({
-        blobs: ["routeros_cache_reset_request"],
-        indexes: ["routeros"]
+      // Reset the cache
+      await resetCache(c.env)
+
+      return c.json({
+        success: true,
+        message: "Cache reset successfully"
       })
-
-      // Get the Durable Object stub
-      const id = c.env.ROUTEROS_CACHE.idFromName("putio-ip-ranges")
-      const stub = c.env.ROUTEROS_CACHE.get(id)
-
-      // Create a URL with environment data
-      const url = new URL("https://routeros-cache.internal/reset")
-      // Pass the analytics binding to the Durable Object
-      url.searchParams.set("with_analytics", "true")
-
-      // Call the Durable Object to reset the cache
-      const response = await stub.fetch(url, {
-        method: "POST",
-        headers: {
-          "CF-Analytics-Available": "true"
-        }
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        return c.json({ error: "InternalError", message: error.message }, 500)
-      }
-
-      const result = await response.json()
-      return c.json(result)
     } catch (error) {
       console.error("Error in RouterOSReset.handle:", error)
       return c.json(

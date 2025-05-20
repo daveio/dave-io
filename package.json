@@ -8,7 +8,8 @@
   "author": "Dave Williams <dave@dave.io>",
   "type": "module",
   "scripts": {
-    "cf-typegen": "bun run wrangler types",
+    "cf-typegen": "bun run wrangler types && bun -e \"Bun.write('worker-configuration.d.ts', '//@ts-nocheck\\n' + await Bun.file('worker-configuration.d.ts').text())\"",
+    "types": "bun run cf-typegen",
     "deploy": "bun run wrangler deploy",
     "dev": "bun run wrangler dev",
     "start": "bun run wrangler dev",

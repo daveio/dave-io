@@ -18,22 +18,8 @@
   ],
   "kv_namespaces": [
     {
-      "binding": "GDIO_REDIRECTS",
+      "binding": "DATA",
       "id": "44e59a36ab8148f79df8ee2d9e625179"
-    }
-  ],
-  "durable_objects": {
-    "bindings": [
-      {
-        "name": "ROUTEROS_CACHE",
-        "class_name": "RouterOSCache"
-      }
-    ]
-  },
-  "migrations": [
-    {
-      "tag": "v1",
-      "new_classes": ["RouterOSCache"]
     }
   ],
   "routes": [

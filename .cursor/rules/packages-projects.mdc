@@ -6,7 +6,13 @@ alwaysApply: true
 # Package Managers
 
 ## JavaScript/TypeScript
+
 Use `bun` for package management. In `package.json` scripts, use `bun run` prefix.
 
+If the `package.json` script `cf-typegen` exists, add `types` as an alias to it with `bun run cf-typegen`.
+
+If this is a Cloudflare Worker or `worker-configuration.d.ts` exists, run `bun types` after any modifications to `wrangler.jsonc` or `wrangler.toml` (or any configuration change).
+
 ## Python
+
 Use `uv` for project initialization and management. Prefer manager-agnostic directives in package definitions; use `uv`-specific directives only when generic options aren't feasible.

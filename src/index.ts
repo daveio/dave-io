@@ -1,15 +1,14 @@
 import { OpenAPIRoute, fromHono } from "chanfana"
 import { Hono } from "hono"
-import { RouterOSCache } from "./durable-objects/routeros-cache"
 import { Dashboard } from "./endpoints/dashboard"
 import { Ping } from "./endpoints/ping"
 import { Redirect } from "./endpoints/redirect"
-import { RouterOSCache as RouterOSCacheEndpoint, RouterOSPutIO, RouterOSReset } from "./endpoints/routeros"
+import { RouterOSCache, RouterOSPutIO, RouterOSReset } from "./endpoints/routeros"
 
 type Bindings = {
   GDIO_REDIRECTS: KVNamespace
   ANALYTICS: AnalyticsEngineDataset
-  ROUTEROS_CACHE: DurableObjectNamespace
+  ROUTEROS_CACHE: KVNamespace
 }
 
 // Start a Hono app
@@ -52,7 +51,7 @@ app.get("/api/routeros/putio", (c) =>
 )
 
 app.get("/routeros/cache", (c) =>
-  new RouterOSCacheEndpoint({
+  new RouterOSCache({
     router: openapi,
     raiseUnknownParameters: true,
     route: c.req.path,
@@ -60,7 +59,7 @@ app.get("/routeros/cache", (c) =>
   }).execute(c)
 )
 app.get("/api/routeros/cache", (c) =>
-  new RouterOSCacheEndpoint({
+  new RouterOSCache({
     router: openapi,
     raiseUnknownParameters: true,
     route: c.req.path,
@@ -77,6 +76,3 @@ app.get("/api/routeros/reset", (c) =>
 
 // Export the Hono app
 export default app
-
-// Export Durable Objects
-export { RouterOSCache }
