@@ -33,11 +33,17 @@ bun run deploy
 # Run TypeScript type checking
 bun run typecheck
 
-# Lint code with Trunk and other linters
+# Lint code with Trunk and Biome
 bun run lint
 
 # Format code with Trunk
 bun run format
+
+# Run KV backup/restore utility
+bun kv backup           # Backup KV data matching patterns
+bun kv backup --all     # Backup all KV data
+bun kv restore <file>   # Restore KV data from backup
+bun kv wipe             # Wipe all KV data (DANGEROUS!)
 ```
 
 ## Code Architecture
@@ -47,6 +53,16 @@ bun run format
 - **Type Safety**: Uses TypeScript and Zod for runtime type validation
 - **Schema Organization**: Schemas are defined in `src/schemas/` directory using Zod
 - **KV Storage**: Uses a unified KV namespace with hierarchical keys for data organization
+- **Analytics**: Uses Cloudflare Analytics Engine for request tracking
+
+### Middleware Pipeline
+
+The application uses a series of middleware to handle requests:
+
+1. **KV Initialization**: Initializes KV with default values at startup
+2. **Analytics Tracking**: Captures detailed request info for analytics
+3. **Metrics Tracking**: Monitors non-success/non-redirect responses
+4. **Endpoint Handlers**: Individual handlers for specific routes
 
 ### TypeScript Type Management
 
@@ -117,19 +133,26 @@ Key aspects of the type system:
     - `dashboard.ts` - Dashboard data feed endpoints
     - `routeros.ts` - RouterOS script generator endpoints
   - `kv/` - KV storage operations
+    - `dashboard.ts` - KV storage operations for dashboard data
     - `redirect.ts` - KV storage operations for redirects
     - `routeros.ts` - KV storage operations for RouterOS data
     - `metrics.ts` - KV storage operations for metrics tracking
     - `init.ts` - KV initialization module
   - `lib/` - Utility libraries
+    - `analytics.ts` - Request tracking via Analytics Engine
     - `ip-address-utils.ts` - IP address utilities
   - `schemas/` - Zod schema definitions
     - `redirect.schema.ts` - Schemas for redirect functionality
+    - `dashboard.schema.ts` - Schemas for dashboard functionality
+    - `ping.schema.ts` - Schemas for ping endpoint
+    - `routeros.schema.ts` - Schemas for RouterOS functionality
     - `cloudflare.types.ts` - Type definitions for Cloudflare-specific objects
   - `index.ts` - Main application setup
   - `types.ts` - Type definitions
 - `dashkit/` - Contains dashboard widget example
   - `feed.js` - Simple list panel implementation for dashboards
+- `bin/` - Command-line utilities
+  - `kv.ts` - KV backup and restore utility
 - `wrangler.jsonc` - Cloudflare Workers configuration
 
 ## Environment Setup
@@ -153,7 +176,10 @@ The key structure follows the pattern `topic:subtopic:resource` to organize diff
    - `routeros:putio:ipv4`: Cached IPv4 ranges for put.io
    - `routeros:putio:ipv6`: Cached IPv6 ranges for put.io
    - `routeros:putio:script`: Generated RouterOS script for put.io
-   - `routeros:putio:metadata`: Provider-specific metadata for put.io
+   - `routeros:putio:metadata:last-updated`: Last update timestamp for put.io cache
+   - `routeros:putio:metadata:last-error`: Last error message for put.io cache
+   - `routeros:putio:metadata:last-attempt`: Last attempt timestamp for put.io cache
+   - `routeros:putio:metadata:update-in-progress`: Flag indicating if update is in progress
 
 3. **Dashboard**: Prefix `dashboard:`
    - `dashboard:demo:items`: Items for the demo dashboard
@@ -161,8 +187,16 @@ The key structure follows the pattern `topic:subtopic:resource` to organize diff
 4. **Metrics**: Prefix `metrics:`
    - `metrics:status:{code}`: Status code occurrence counter
    - `metrics:group:{group}`: Status code group counter (4xx, 5xx)
-   - `metrics:routeros`: Shared metrics for all RouterOS endpoints
-   - `metrics:redirect:{slug}`: Click tracking data for redirect slugs
+   - `metrics:routeros:cache-resets`: Count of cache resets
+   - `metrics:routeros:cache-hits`: Count of cache hits
+   - `metrics:routeros:cache-misses`: Count of cache misses
+   - `metrics:routeros:last-accessed`: Timestamp of last access
+   - `metrics:routeros:last-refresh`: Timestamp of last refresh
+   - `metrics:routeros:refresh-count`: Count of refreshes
+   - `metrics:routeros:last-reset`: Timestamp of last reset
+   - `metrics:routeros:reset-count`: Count of resets
+   - `metrics:redirect:{slug}:count`: Count of redirects for a slug
+   - `metrics:redirect:{slug}:last-accessed`: Timestamp of last access for a slug
 
 ### KV Utility Pattern
 
@@ -170,6 +204,7 @@ The code uses a consistent pattern for KV operations:
 
 1. **Abstraction**: All KV operations are abstracted into dedicated modules in the `kv/` directory
    - `kv/redirect.ts` handles redirect-related operations
+   - `kv/dashboard.ts` handles dashboard-related operations
    - `kv/routeros.ts` handles RouterOS-related operations
    - `kv/metrics.ts` handles metrics tracking
    - `kv/init.ts` handles KV initialization
@@ -206,6 +241,28 @@ const redirect = await getRedirect(c.env, slug)
 await trackRedirectClick(c.env, slug)
 ```
 
+## Analytics Integration
+
+The API uses Cloudflare Analytics Engine for comprehensive request tracking:
+
+1. **Middleware Integration**:
+   - Captures request and response details
+   - Measures response time
+   - Logs client information
+
+2. **Endpoint-Specific Tracking**:
+   - Each endpoint implements custom analytics tracking
+   - Uses appropriate indexes for categorization
+   - Records endpoint-specific information
+
+Example from the redirect endpoint:
+```typescript
+c.env.ANALYTICS.writeDataPoint({
+  blobs: ["redirect_request", slug],
+  indexes: ["redirect"]
+})
+```
+
 ## Notes for Development
 
 - The API is accessible at `api.dave.io` and `dave.io/api/*` when deployed
@@ -224,66 +281,35 @@ await trackRedirectClick(c.env, slug)
   3. Use the `DATA` KV namespace with appropriate key prefixes
   4. Update the `initializeKV()` function in `src/kv/init.ts` to handle new default values
 
-## Recent Changes (2025-05-20)
+## KV Admin Utility
 
-### Enhanced Dashboard with KV Storage
+The project includes a comprehensive KV admin utility in `bin/kv.ts` for managing KV data:
 
-The dashboard functionality was enhanced to use KV storage:
+1. **Backup Functionality**:
+   - Backs up KV data to JSON files in the `_backup/` directory
+   - Selective backup with regex pattern matching for keys
+   - By default, backs up only dashboard demo items and redirects
+   - Can backup all keys with the `--all` flag
 
-1. **KV-backed Dashboard Data**:
-   - Added `src/kv/dashboard.ts` module for dashboard data operations
-   - Dashboard items now stored in KV under `dashboard:demo:items`
-   - Added initialization for dashboard data in KV
+2. **Restore Capability**:
+   - Restores data from backup files
+   - Preserves value types (strings vs. JSON)
+   - Includes confirmation prompts for safety
 
-2. **Code Refactoring**:
-   - Extracted common dashboard response patterns into helper methods
-   - Improved error handling and fallback mechanisms
-   - More consistent handling of response structure
+3. **Data Wipe**:
+   - Complete KV namespace cleanup
+   - Multiple confirmation prompts to prevent accidents
+   - Detailed progress reporting
 
-3. **Documentation Updates**:
-   - Updated README.md with dashboard KV structure
-   - Added dashboard examples to CLAUDE.md
+4. **Value Type Handling**:
+   - Intelligently handles different value types
+   - String values are stored without additional quotes
+   - JSON objects, arrays, and primitives are properly serialized
 
-### Metrics and Analytics Enhancements
-
-Comprehensive metrics and analytics were added to track API usage and performance:
-
-1. **Metrics Tracking in KV**:
-   - Added `src/kv/metrics.ts` for tracking non-success/non-redirect responses
-   - Implemented counters for individual status codes (`metrics:status:{code}`)
-   - Added group counters for 4xx and 5xx status codes (`metrics:group:{group}`)
-
-2. **Enhanced Analytics Engine Integration**:
-   - Added `src/lib/analytics.ts` for detailed request tracking
-   - Implemented middleware in `src/index.ts` to capture detailed request info
-   - Tracked data includes timestamps, paths, methods, status codes, response times, client info
-
-3. **KV Admin Utility**:
-   - Added `bin/kv.ts` command-line tool for KV data management
-   - Implemented backup functionality to save KV data to JSON files
-   - Added restore capability to recover from backups
-   - Added selective backup with regex pattern matching for keys
-   - Added `--all`/`-a` flag to backup all keys regardless of patterns
-
-### Improved KV Storage Architecture
-
-The KV storage architecture was updated to improve data organization and management:
-
-1. **Individual Key Structure for Metrics**:
-   - Changed JSON object storage to individual keys for better organization
-   - All metrics now use separate keys: `metrics:redirect:{slug}:count`, `metrics:routeros:cache-hits`, etc.
-   - RouterOS metadata now uses a hierarchical structure: `routeros:putio:metadata:last-updated`
-
-2. **Improved KV Admin Utility**:
-   - Enhanced `bin/kv.ts` with intelligent value type handling
-   - String values are now properly stored and restored without double quotes
-   - Added wipe functionality to completely clear KV namespace with safety confirmations
-   - Added configurable pattern-based filtering for backup operations
-   - By default, only backs up keys matching configured patterns (dashboard:demo:items and redirect:*)
-   - Use `--all` or `-a` flag to back up all keys regardless of pattern
-
-3. **Updated Documentation**:
-   - Revised KV namespace structure in README.md with new key patterns
-   - Added documentation for type-specific value handling in KV operations
-
-These improvements provide better data organization, more intuitive key naming, and more robust backup/restore functionality while maintaining the same clean architecture and development patterns.
+Usage:
+```bash
+bun kv backup             # Backup selected data
+bun kv backup --all       # Backup all data
+bun kv restore <file>     # Restore from backup
+bun kv wipe               # Wipe all data (with confirmations)
+```

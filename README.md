@@ -4,11 +4,6 @@ A multipurpose personal API powered by Cloudflare Workers.
 
 ![License](https://img.shields.io/github/license/daveio/api.dave.io)
 
-## URGENT PLANS
-
-- Fix sexmap redirect
-- Fix toddo redirect
-
 ## Overview
 
 This project implements a multipurpose personal API that runs on Cloudflare Workers, providing several endpoints for various services:
@@ -94,9 +89,13 @@ api.dave.io/
 │   │   ├── redirect.ts   # URL redirection service
 │   │   └── routeros.ts   # RouterOS script generators
 │   ├── kv/               # KV storage operations
+│   │   ├── dashboard.ts  # Dashboard KV operations
 │   │   ├── redirect.ts   # Redirect KV operations
-│   │   └── routeros.ts   # RouterOS KV operations
+│   │   ├── routeros.ts   # RouterOS KV operations
+│   │   ├── metrics.ts    # Metrics tracking in KV
+│   │   └── init.ts       # KV initialization module
 │   ├── lib/              # Utility libraries
+│   │   ├── analytics.ts  # Request tracking via Analytics Engine
 │   │   └── ip-address-utils.ts # IP address utilities
 │   ├── schemas/          # Zod schema definitions
 │   ├── index.ts          # Main application setup
@@ -241,7 +240,7 @@ The custom `src/schemas/cloudflare.types.ts` file extends these types with proje
 - `bun run deploy`: Deploy to Cloudflare Workers
 - `bun run types`: Generate type definitions for Cloudflare Workers
 - `bun run typecheck`: Run TypeScript type checking
-- `bun run lint`: Run linting with Trunk
+- `bun run lint`: Run linting with Trunk and Biome
 - `bun run format`: Format code with Trunk
 - `bun kv`: Run KV backup/restore utility
 
