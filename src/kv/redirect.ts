@@ -123,8 +123,7 @@ export async function trackRedirectClick(
 export async function getRedirectStats(env: { DATA: KVNamespace }, slug: string): Promise<ClickData | null> {
   try {
     const metricsKey = `${METRICS_PREFIX}${slug}`
-    const clickData = await env.DATA.get<ClickData>(metricsKey, { type: "json" })
-    return clickData
+    return await env.DATA.get<ClickData>(metricsKey, { type: "json" })
   } catch (error) {
     console.error("Error getting click data for slug", { slug, error })
     return null
