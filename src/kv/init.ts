@@ -1,4 +1,5 @@
-import type { ClickData, Redirect, RouterOSCacheData, RouterOSCacheMetadata } from "../schemas"
+import type { ClickData, DashboardItem, Redirect, RouterOSCacheData, RouterOSCacheMetadata } from "../schemas"
+import { KV_PREFIX as DASHBOARD_KV_PREFIX } from "./dashboard"
 import { KV_PREFIX as REDIRECT_KV_PREFIX, METRICS_PREFIX as REDIRECT_METRICS_PREFIX } from "./redirect"
 import { KV_CACHE_IPV4, KV_CACHE_IPV6, KV_CACHE_SCRIPT, KV_PUTIO_METADATA, KV_SHARED_METRICS } from "./routeros"
 
@@ -6,7 +7,34 @@ import { KV_CACHE_IPV4, KV_CACHE_IPV6, KV_CACHE_SCRIPT, KV_PUTIO_METADATA, KV_SH
  * Initialize KV stores with default values if they don't exist
  */
 export async function initializeKV(env: { DATA: KVNamespace; ANALYTICS?: AnalyticsEngineDataset }): Promise<void> {
-  await Promise.all([initializeRouterOSKV(env), initializeRedirectsKV(env)])
+  await Promise.all([initializeRouterOSKV(env), initializeRedirectsKV(env), initializeDashboardKV(env)])
+}
+
+/**
+ * Initialize Dashboard KV with default values
+ */
+async function initializeDashboardKV(env: { DATA: KVNamespace }): Promise<void> {
+  // Check if demo dashboard items exist, if not, create them
+  const demoItemsKey = `${DASHBOARD_KV_PREFIX}demo:items`
+  const demoItems = await env.DATA.get<DashboardItem[]>(demoItemsKey, { type: "json" })
+
+  if (!demoItems) {
+    const defaultItems: DashboardItem[] = [
+      {
+        title: "Item 1",
+        subtitle: "Subtitle 1",
+        linkURL: "https://example.com",
+        imageURL: "https://example.com/image.png"
+      },
+      {
+        title: "Item 2",
+        subtitle: "Subtitle 2",
+        linkURL: "https://example.com",
+        imageURL: "https://example.com/image.png"
+      }
+    ]
+    await env.DATA.put(demoItemsKey, JSON.stringify(defaultItems))
+  }
 }
 
 /**

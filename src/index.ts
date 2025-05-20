@@ -5,6 +5,8 @@ import { Ping } from "./endpoints/ping"
 import { Redirect } from "./endpoints/redirect"
 import { RouterOSCache, RouterOSPutIO, RouterOSReset } from "./endpoints/routeros"
 import { initializeKV } from "./kv/init"
+import { incrementStatusCodeCount } from "./kv/metrics"
+import { trackRequestAnalytics } from "./lib/analytics"
 
 type Bindings = {
   DATA: KVNamespace
@@ -32,6 +34,55 @@ app.use("*", async (c, next) => {
 
   // Continue with request handling
   await next()
+})
+
+// Enhanced analytics tracking middleware
+app.use("*", async (c, next) => {
+  const requestStartTime = Date.now()
+  const path = c.req.path
+  const method = c.req.method
+  const userAgent = c.req.header("user-agent")
+  const referer = c.req.header("referer")
+  const ip = c.req.header("cf-connecting-ip") || c.req.header("x-forwarded-for") || "unknown"
+
+  // Extract URL parameters
+  const url = new URL(c.req.url)
+  const queryParams = url.search || ""
+
+  // Execute the next handler
+  await next()
+
+  // Calculate response time
+  const responseTime = Date.now() - requestStartTime
+  const status = c.res.status
+
+  // Track comprehensive analytics
+  trackRequestAnalytics(c.env, {
+    timestamp: requestStartTime,
+    path,
+    method,
+    status,
+    responseTime,
+    ip,
+    userAgent,
+    referer,
+    queryParams,
+    errorMessage: status >= 400 ? "Error response" : undefined
+  })
+})
+
+// Metrics tracking middleware
+app.use("*", async (c, next) => {
+  // Execute the next handler first to get the response
+  await next()
+
+  // Get the status code from the response
+  const status = c.res.status
+
+  // Skip successful responses (200) and redirects (301, 302)
+  if (status !== 200 && status !== 301 && status !== 302) {
+    await incrementStatusCodeCount(c.env, status)
+  }
 })
 
 // Register direct handlers to avoid type issues

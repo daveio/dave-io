@@ -26,8 +26,11 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
 - **Type-Safe Development**: Built with TypeScript and Zod for runtime type validation
 - **Cloudflare Integration**:
   - KV Namespace for unified data storage
-  - Analytics Engine for request tracking
+  - Analytics Engine for request tracking and detailed analytics
   - Automatic deployment via Wrangler
+- **Metrics Tracking**: Monitors error rates and status codes via KV storage
+- **Error Monitoring**: All non-success/non-redirect responses are tracked for debugging
+- **KV Backup/Restore**: Command-line tools for data management
 
 ## Endpoints
 
@@ -65,8 +68,18 @@ This API uses Cloudflare Analytics Engine to track requests. The following data 
 - Slug information for redirects
 - Dashboard names accessed
 - Cache resets and status checks
+- Status codes and error rates
+- Request performance metrics
+- Client information (IP, user-agent, referrer)
 
-No personal information is stored. Analytics are used for monitoring service usage and debugging.
+The API maintains a comprehensive record of non-successful responses (all status codes except 200, 301, and 302) in KV storage. These metrics are stored using hierarchical keys:
+
+- `metrics:status:{code}`: Status code occurrence counter
+- `metrics:group:{group}`: Status code group counter (4xx, 5xx)
+- `metrics:routeros`: Shared metrics for all RouterOS endpoints
+- `metrics:redirect:{slug}`: Click tracking data for redirect slugs
+
+No personally identifiable information is stored. Analytics are used for monitoring service usage and debugging.
 
 ## Project Structure
 
@@ -108,7 +121,12 @@ All data is stored in a single KV namespace called `DATA` with a hierarchical ke
   - `routeros:putio:script`: Generated RouterOS script for put.io
   - `routeros:putio:metadata`: Provider-specific metadata for put.io
 
+- **Dashboard**: Prefix `dashboard:`
+  - `dashboard:demo:items`: Items for the demo dashboard
+
 - **Metrics**: Prefix `metrics:`
+  - `metrics:status:{code}`: Status code occurrence counter
+  - `metrics:group:{group}`: Status code group counter (4xx, 5xx)
   - `metrics:routeros`: Shared metrics for all RouterOS endpoints
   - `metrics:redirect:{slug}`: Click tracking data for redirect slugs
 
@@ -213,6 +231,21 @@ The custom `src/schemas/cloudflare.types.ts` file extends these types with proje
 - `bun run typecheck`: Run TypeScript type checking
 - `bun run lint`: Run linting with Trunk
 - `bun run format`: Format code with Trunk
+- `bun kv`: Run KV backup/restore utility
+
+### KV Admin Utility
+
+The project includes a command-line utility for backing up and restoring KV data:
+
+```bash
+# Backup all KV data to _backup/kv-{timestamp}.json
+bun kv backup
+
+# Restore KV data from a backup file
+bun kv restore <filename>
+```
+
+This utility helps ensure data safety by allowing you to create regular backups of all KV storage data.
 
 ## DashKit Integration
 

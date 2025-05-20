@@ -76,29 +76,37 @@ Key aspects of the type system:
    - Each endpoint has a consistent structure:
      - `schema`: Defines the OpenAPI documentation and Zod validation schema
      - `handle(c: Context)`: Processes the request and returns a response
-2. **KV Utilities**: Located in `src/lib/`
+2. **KV Utilities**: Located in `src/kv/`
 
    - Functionality for interacting with KV storage is abstracted into utility modules:
-     - `redirect-kv.ts`: Handles redirect-related KV operations
-     - `routeros-kv.ts`: Handles RouterOS-related KV operations
+     - `dashboard.ts`: Handles dashboard-related KV operations
+     - `redirect.ts`: Handles redirect-related KV operations
+     - `routeros.ts`: Handles RouterOS-related KV operations
+     - `metrics.ts`: Handles metrics tracking in KV
+     - `init.ts`: Initializes KV storage with default values
    - Each utility module provides a consistent interface for its domain:
      - Functions for retrieving data
      - Functions for storing data
      - Functions for metadata management
-3. **Cloudflare Integration**:
+3. **Analytics & Metrics**: Located in `src/lib/` and `src/kv/`
+
+   - `analytics.ts`: Handles detailed request tracking via Analytics Engine
+   - `metrics.ts`: Manages error tracking and status code metrics in KV storage
+   - Each request is logged with detailed information:
+     - Request details (path, method, timestamp)
+     - Response details (status code, response time)
+     - Client information (IP, user-agent, referrer)
+4. **Cloudflare Integration**:
 
    - KV Namespace: Single unified namespace (`DATA`) for all storage needs
    - Analytics Engine: Tracks requests (`ANALYTICS`)
      - Each endpoint writes a data point with relevant information
      - Indexes are used for categorizing data points by endpoint type
-4. **Main App Structure**:
+5. **Command-line Utilities**: Located in `bin/`
 
-   - `src/index.ts`: Entry point that sets up Hono app and registers routes
-   - Uses Chanfana to generate OpenAPI documentation
-5. **Utility Libraries**:
-
-   - `src/lib/ip-address-utils.ts`: Custom IP address utilities for parsing and processing IP ranges
-   - Preferred over external dependencies for better control and worker compatibility
+   - `kv.ts`: Backup and restore utility for KV data
+   - Run using Bun: `bun kv backup` or `bun kv restore <filename>`
+   - Provides data management and disaster recovery capabilities
 
 ## File Structure
 
@@ -111,6 +119,8 @@ Key aspects of the type system:
   - `kv/` - KV storage operations
     - `redirect.ts` - KV storage operations for redirects
     - `routeros.ts` - KV storage operations for RouterOS data
+    - `metrics.ts` - KV storage operations for metrics tracking
+    - `init.ts` - KV initialization module
   - `lib/` - Utility libraries
     - `ip-address-utils.ts` - IP address utilities
   - `schemas/` - Zod schema definitions
@@ -145,7 +155,12 @@ The key structure follows the pattern `topic:subtopic:resource` to organize diff
    - `routeros:putio:script`: Generated RouterOS script for put.io
    - `routeros:putio:metadata`: Provider-specific metadata for put.io
 
-3. **Metrics**: Prefix `metrics:`
+3. **Dashboard**: Prefix `dashboard:`
+   - `dashboard:demo:items`: Items for the demo dashboard
+
+4. **Metrics**: Prefix `metrics:`
+   - `metrics:status:{code}`: Status code occurrence counter
+   - `metrics:group:{group}`: Status code group counter (4xx, 5xx)
    - `metrics:routeros`: Shared metrics for all RouterOS endpoints
    - `metrics:redirect:{slug}`: Click tracking data for redirect slugs
 
@@ -156,6 +171,8 @@ The code uses a consistent pattern for KV operations:
 1. **Abstraction**: All KV operations are abstracted into dedicated modules in the `kv/` directory
    - `kv/redirect.ts` handles redirect-related operations
    - `kv/routeros.ts` handles RouterOS-related operations
+   - `kv/metrics.ts` handles metrics tracking
+   - `kv/init.ts` handles KV initialization
 
 2. **Function Structure**: KV modules provide functions for:
    - Retrieving data from KV
@@ -202,95 +219,48 @@ await trackRedirectClick(c.env, slug)
   3. Register the endpoint in `src/index.ts` using both direct and `/api/` prefixed paths
   4. Include appropriate analytics tracking using `c.env.ANALYTICS.writeDataPoint()`
 - When adding new KV-backed functionality:
-  1. Create a utility module in `src/lib/` for KV operations
+  1. Create a utility module in `src/kv/` for KV operations
   2. Follow the existing patterns for key structure and error handling
   3. Use the `DATA` KV namespace with appropriate key prefixes
+  4. Update the `initializeKV()` function in `src/kv/init.ts` to handle new default values
 
-## Recent Changes (2025-05-20)
+## Recent Changes (2025-06-01)
 
-### TypeScript Type Checking Fixes
+### Enhanced Dashboard with KV Storage
 
-Several improvements were made to the TypeScript type system:
+In June 2025, the dashboard functionality was enhanced to use KV storage:
 
-1. **Type Resolution for Cloudflare Workers**:
-   - Simplified the referencing of auto-generated `worker-configuration.d.ts` file
-   - Improved type safety for KV namespace access
+1. **KV-backed Dashboard Data**:
+   - Added `src/kv/dashboard.ts` module for dashboard data operations
+   - Dashboard items now stored in KV under `dashboard:demo:items`
+   - Added initialization for dashboard data in KV
 
-2. **Type System Approach**:
-   - Simplified `src/schemas/cloudflare.types.ts` to focus on extending the auto-generated types
-   - Added proper reference paths to worker-configuration.d.ts
-   - Ensured compatibility with the `bun typecheck` command
-
-3. **Type Generation**:
-   - Verified the `bun run types` script correctly generates and updates type definitions
-   - Added documentation about the type system in README.md and CLAUDE.md
-
-These changes ensure proper type safety throughout the project, especially for Cloudflare-specific features like KV namespaces.
-
-### KV Storage Restructuring
-
-In June 2024, the KV storage operations were restructured for better organization:
-
-1. **Dedicated KV Directory**:
-   - Created a new `src/kv/` directory dedicated to KV storage operations
-   - Moved `src/lib/redirect-kv.ts` to `src/kv/redirect.ts`
-   - Moved `src/lib/routeros-kv.ts` to `src/kv/routeros.ts`
-
-2. **Import Path Updates**:
-   - Updated all import paths in `src/endpoints/` files to reference the new KV module locations
-   - Maintained the same function signatures for backward compatibility
-   - No functional changes were made to the KV operations
+2. **Code Refactoring**:
+   - Extracted common dashboard response patterns into helper methods
+   - Improved error handling and fallback mechanisms
+   - More consistent handling of response structure
 
 3. **Documentation Updates**:
-   - Updated project structure documentation in README.md and CLAUDE.md
-   - Added notes about the new organization pattern
+   - Updated README.md with dashboard KV structure
+   - Added dashboard examples to CLAUDE.md
 
-This restructuring provides better separation of concerns and makes the project structure more intuitive, with utility libraries in `lib/` and KV operations in `kv/`.
+### Metrics and Analytics Enhancements
 
-### Schema Migration
+Comprehensive metrics and analytics were added to track API usage and performance:
 
-In July 2024, all schemas were migrated to dedicated schema files in the `/src/schemas` directory:
+1. **Metrics Tracking in KV**:
+   - Added `src/kv/metrics.ts` for tracking non-success/non-redirect responses
+   - Implemented counters for individual status codes (`metrics:status:{code}`)
+   - Added group counters for 4xx and 5xx status codes (`metrics:group:{group}`)
 
-1. **Schema Organization**:
-   - Created or updated the following schema files:
-     - `redirect.schema.ts` - Schemas for URL redirection
-     - `dashboard.schema.ts` - Schemas for dashboard data
-     - `ping.schema.ts` - Schema for ping endpoint
-     - `routeros.schema.ts` - Schemas for RouterOS functionality
+2. **Enhanced Analytics Engine Integration**:
+   - Added `src/lib/analytics.ts` for detailed request tracking
+   - Implemented middleware in `src/index.ts` to capture detailed request info
+   - Tracked data includes timestamps, paths, methods, status codes, response times, client info
 
-2. **Code Updates**:
-   - Updated all endpoint files to use schemas from the schemas directory
-   - Updated KV utility files to use schema types
-   - Maintained backward compatibility with the deprecated `types.ts` file
-   - Fixed import statements to use `import type` for better performance
+3. **KV Admin Utility**:
+   - Added `bin/kv.ts` command-line tool for KV data management
+   - Implemented backup functionality to save KV data to JSON files
+   - Added restore capability to recover from backups
 
-3. **Documentation Updates**:
-   - Updated README.md with schema information
-   - Enhanced the schemas README.md file
-
-This reorganization improves code maintainability and makes it easier to reuse schemas across the codebase.
-
-### KV Initialization at Startup
-
-In August 2024, automatic KV initialization was added to ensure all KV stores have default values:
-
-1. **New KV Initialization Module**:
-   - Created a new `src/kv/init.ts` module that handles KV initialization
-   - Implemented functions to initialize both RouterOS and Redirects KV stores
-   - Uses a central `initializeKV()` function that's called on startup
-
-2. **Default Value Handling**:
-   - Added initialization of empty arrays for RouterOS IP ranges
-   - Added initialization of metadata objects with null/empty values
-   - Ensures metrics and tracking data structures exist with zero counts
-
-3. **Middleware Integration**:
-   - Added middleware in `src/index.ts` to run the initialization on each request
-   - Ensures KV stores are properly initialized before endpoint handlers run
-   - Gracefully handles any initialization errors without affecting request processing
-
-4. **Code Updates**:
-   - Updated KV utility files to export their constants for use in initialization
-   - Enhanced existing code to safely handle empty or zero values
-
-This feature improves the robustness of the API by ensuring that all necessary KV structures exist, even if empty, and that the code can gracefully handle these empty states without errors.
+These improvements provide better monitoring, debugging capabilities, and data management tools for the API while maintaining the same clean architecture and development patterns.

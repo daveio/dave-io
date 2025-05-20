@@ -2,7 +2,9 @@ import { OpenAPIRoute } from "chanfana"
 import type { OpenAPIRouteSchema } from "chanfana"
 import type { Context } from "hono"
 import Parser from "rss-parser"
+import { getDashboardItems } from "../kv/dashboard"
 import { DashboardErrorSchema, DashboardItemSchema, DashboardParamsSchema, DashboardResponseSchema } from "../schemas"
+import type { DashboardItem } from "../schemas"
 
 export class Dashboard extends OpenAPIRoute {
   // @ts-ignore - Schema type compatibility issues with chanfana/zod
@@ -33,6 +35,30 @@ export class Dashboard extends OpenAPIRoute {
     }
   } as OpenAPIRouteSchema
 
+  /**
+   * Create a standardized dashboard response
+   */
+  private createDashboardResponse(name: string, items: DashboardItem[], error: string | null = null) {
+    return {
+      dashboard: name,
+      error,
+      items,
+      timestamp: Date.now()
+    }
+  }
+
+  /**
+   * Create a standardized error item for display
+   */
+  private createErrorItem(message: string): DashboardItem {
+    return {
+      title: "Error loading data",
+      subtitle: message,
+      linkURL: undefined,
+      imageURL: undefined
+    }
+  }
+
   async handle(c: Context) {
     // Extract name directly from context params
     const name = c.req.param("name")
@@ -48,25 +74,21 @@ export class Dashboard extends OpenAPIRoute {
     // Execute different code paths based on dashboard name
     switch (name) {
       case "demo":
-        return c.json({
-          dashboard: name,
-          error: null,
-          items: [
-            {
-              title: "Item 1",
-              subtitle: "Subtitle 1",
-              linkURL: "https://example.com",
-              imageURL: "https://example.com/image.png"
-            },
-            {
-              title: "Item 2",
-              subtitle: "Subtitle 2",
-              linkURL: "https://example.com",
-              imageURL: "https://example.com/image.png"
-            }
-          ],
-          timestamp: Date.now()
-        })
+        try {
+          // Load items from KV storage
+          const items = await getDashboardItems(c.env, "demo")
+
+          if (!items) {
+            throw new Error("Failed to retrieve demo dashboard items")
+          }
+
+          return c.json(this.createDashboardResponse(name, items))
+        } catch (error: unknown) {
+          const errorMessage = error instanceof Error ? error.message : "Unknown error"
+          console.error("Error retrieving demo dashboard:", errorMessage)
+
+          return c.json(this.createDashboardResponse(name, [this.createErrorItem(errorMessage)]))
+        }
       case "hacker-news":
         try {
           const response = await fetch("https://news.ycombinator.com/rss")
@@ -78,24 +100,16 @@ export class Dashboard extends OpenAPIRoute {
           const parser = new Parser()
           const feed = await parser.parseString(feedText)
 
-          return c.json({
-            dashboard: name,
-            error: null,
-            items: feed.items.map((item) => ({
-              title: item.title || "No Title",
-              subtitle: item.creator || "Hacker News",
-              linkURL: item.link || "https://news.ycombinator.com"
-            })),
-            timestamp: Date.now()
-          })
+          const items = feed.items.map((item) => ({
+            title: item.title || "No Title",
+            subtitle: item.creator || "Hacker News",
+            linkURL: item.link || "https://news.ycombinator.com"
+          }))
+
+          return c.json(this.createDashboardResponse(name, items))
         } catch (error: unknown) {
           const errorMessage = error instanceof Error ? error.message : "Unknown error"
-          return c.json(
-            {
-              error: `Failed to fetch Hacker News feed: ${errorMessage}`
-            },
-            500
-          )
+          return c.json({ error: `Failed to fetch Hacker News feed: ${errorMessage}` }, 500)
         }
       default:
         return c.json({ error: `Dashboard '${name}' not found` }, 404)
