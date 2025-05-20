@@ -200,7 +200,7 @@ The RouterOSCache implementation benefits from being a Durable Object because:
 
 Using just KV or D1 would require separate Workers to handle the data processing, leading to more complex architecture and potentially higher latency.
 
-#### Endpoints
+#### Durable Object Endpoints
 
 The Durable Object exposes three main endpoints:
 
