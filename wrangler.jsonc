@@ -30,6 +30,12 @@
       }
     ]
   },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_classes": ["RouterOSCache"]
+    }
+  ],
   "routes": [
     {
       "pattern": "api.dave.io",

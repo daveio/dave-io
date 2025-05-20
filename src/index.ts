@@ -1,9 +1,9 @@
 import { fromHono } from "chanfana"
-import { RouterOSCache } from "durable-objects/routeros-cache"
-import { Dashboard } from "endpoints/dashboard"
-import { Ping } from "endpoints/ping"
-import { Redirect } from "endpoints/redirect"
-import { RouterOSCache as RouterOSCacheEndpoint, RouterOSPutIO, RouterOSReset } from "endpoints/routeros"
+import { RouterOSCache } from "./durable-objects/routeros-cache"
+import { Dashboard } from "./endpoints/dashboard"
+import { Ping } from "./endpoints/ping"
+import { Redirect } from "./endpoints/redirect"
+import { RouterOSCache as RouterOSCacheEndpoint, RouterOSPutIO, RouterOSReset } from "./endpoints/routeros"
 import { Hono } from "hono"
 
 type Bindings = {
