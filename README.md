@@ -99,8 +99,8 @@ This API uses a unified KV namespace for all data storage needs, with a hierarch
 
 All data is stored in a single KV namespace called `DATA` with a hierarchical key structure that follows the pattern: `topic:subtopic:resource`.
 
-- **Redirects**: Prefix `redirects:`
-  - `redirects:{slug}`: URL for the given redirect slug
+- **Redirects**: Prefix `redirect:`
+  - `redirect:{slug}`: URL for the given redirect slug
 
 - **RouterOS**: Prefix `routeros:`
   - `routeros:putio:ipv4`: Cached IPv4 ranges for put.io
@@ -110,7 +110,7 @@ All data is stored in a single KV namespace called `DATA` with a hierarchical ke
 
 - **Metrics**: Prefix `metrics:`
   - `metrics:routeros`: Shared metrics for all RouterOS endpoints
-  - `metrics:redirects:{slug}`: Click tracking data for redirect slugs
+  - `metrics:redirect:{slug}`: Click tracking data for redirect slugs
 
 ### KV Initialization
 
@@ -151,13 +151,13 @@ Implementation details:
 
 ```typescript
 // Reading from KV
-const redirect = await env.DATA.get(`redirects:${slug}`)
+const redirect = await env.DATA.get(`redirect:${slug}`)
 
 // Writing to KV with hierarchical keys
 await env.DATA.put(`routeros:putio:script`, script, { expirationTtl: 7200 })
 
 // Tracking usage metrics
-await env.DATA.put(`metrics:redirects:${slug}`, JSON.stringify({
+await env.DATA.put(`metrics:redirect:${slug}`, JSON.stringify({
   count: 42,
   lastAccessed: new Date().toISOString()
 }))

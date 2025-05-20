@@ -136,8 +136,8 @@ The API uses a unified KV namespace (`DATA`) with a hierarchical key structure f
 
 The key structure follows the pattern `topic:subtopic:resource` to organize different types of data:
 
-1. **Redirects**: Prefix `redirects:`
-   - `redirects:{slug}`: URL for the given redirect slug
+1. **Redirects**: Prefix `redirect:`
+   - `redirect:{slug}`: URL for the given redirect slug
 
 2. **RouterOS**: Prefix `routeros:`
    - `routeros:putio:ipv4`: Cached IPv4 ranges for put.io
@@ -147,7 +147,7 @@ The key structure follows the pattern `topic:subtopic:resource` to organize diff
 
 3. **Metrics**: Prefix `metrics:`
    - `metrics:routeros`: Shared metrics for all RouterOS endpoints
-   - `metrics:redirects:{slug}`: Click tracking data for redirect slugs
+   - `metrics:redirect:{slug}`: Click tracking data for redirect slugs
 
 ### KV Utility Pattern
 

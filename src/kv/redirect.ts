@@ -1,8 +1,8 @@
 import type { ClickData, Redirect } from "../schemas"
 
-// KV Keys - following the pattern "redirects:slug"
-export const KV_PREFIX = "redirects:"
-export const METRICS_PREFIX = "metrics:redirects:"
+// KV Keys - following the pattern "redirect:slug"
+export const KV_PREFIX = "redirect:"
+export const METRICS_PREFIX = "metrics:redirect:"
 
 /**
  * Get a redirect by slug
@@ -72,7 +72,7 @@ export async function listRedirects(env: { DATA: KVNamespace }): Promise<Redirec
 
     return redirects
   } catch (error) {
-    console.error("Error listing redirects:", error)
+    console.error("Error listing redirect:", error)
     return []
   }
 }

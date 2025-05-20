@@ -8,9 +8,7 @@ import { initializeKV } from "./kv/init"
 
 type Bindings = {
   DATA: KVNamespace
-  GDIO_REDIRECTS: KVNamespace
   ANALYTICS: AnalyticsEngineDataset
-  ROUTEROS_CACHE: KVNamespace
 }
 
 // Start a Hono app
