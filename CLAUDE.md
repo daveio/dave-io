@@ -224,11 +224,11 @@ await trackRedirectClick(c.env, slug)
   3. Use the `DATA` KV namespace with appropriate key prefixes
   4. Update the `initializeKV()` function in `src/kv/init.ts` to handle new default values
 
-## Recent Changes (2025-06-01)
+## Recent Changes (2025-05-20)
 
 ### Enhanced Dashboard with KV Storage
 
-In June 2025, the dashboard functionality was enhanced to use KV storage:
+The dashboard functionality was enhanced to use KV storage:
 
 1. **KV-backed Dashboard Data**:
    - Added `src/kv/dashboard.ts` module for dashboard data operations
@@ -265,7 +265,7 @@ Comprehensive metrics and analytics were added to track API usage and performanc
    - Added selective backup with regex pattern matching for keys
    - Added `--all`/`-a` flag to backup all keys regardless of patterns
 
-### Improved KV Storage Architecture (2025-06-20)
+### Improved KV Storage Architecture
 
 The KV storage architecture was updated to improve data organization and management:
 
