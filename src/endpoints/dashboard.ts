@@ -1,15 +1,22 @@
-import { OpenAPIRoute, Str } from "chanfana"
+import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi"
+import { OpenAPIRoute } from "chanfana"
+import type { OpenAPIRouteSchema } from "chanfana"
 import type { Context } from "hono"
 import Parser from "rss-parser"
 import { z } from "zod"
 
+// Initialize OpenAPI extensions for Zod
+extendZodWithOpenApi(z)
+
 export class Dashboard extends OpenAPIRoute {
+  // @ts-ignore - Schema type compatibility issues with chanfana/zod
   schema = {
     tags: ["Dashboard"],
     summary: "Get dashboard data by name",
     request: {
+      // @ts-ignore - Type instantiation issue
       params: z.object({
-        name: Str({ description: "Dashboard name to retrieve" })
+        name: z.string().openapi({ description: "Dashboard name to retrieve" })
       })
     },
     responses: {
@@ -36,10 +43,14 @@ export class Dashboard extends OpenAPIRoute {
         }
       }
     }
-  }
+  } as OpenAPIRouteSchema
 
   async handle(c: Context) {
     const data = await this.getValidatedData<typeof this.schema>()
+    if (!data.params) {
+      return c.json({ error: "No dashboard name provided" }, 404)
+    }
+
     const { name } = data.params
 
     c.env.ANALYTICS.writeDataPoint({

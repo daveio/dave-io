@@ -32,11 +32,11 @@ interface CacheData {
   lastError: string | null
 }
 
-export type Env = {
+export interface Env {
   ANALYTICS?: AnalyticsEngineDataset
 }
 
-export class RouterOSCache {
+export class RouterOSCache implements DurableObject {
   state: DurableObjectState
   env: Env
   cacheData: CacheData
@@ -322,7 +322,7 @@ export class RouterOSCache {
   async fetchRipeData(): Promise<RipeData> {
     const response = await fetch("https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS9009", {
       headers: {
-        "Accept": "application/json",
+        Accept: "application/json",
         "User-Agent": "api.dave.io (https://api.dave.io)"
       }
     })
@@ -337,7 +337,7 @@ export class RouterOSCache {
   async fetchBGPViewData(): Promise<BGPViewData> {
     const response = await fetch("https://api.bgpview.io/asn/9009/prefixes", {
       headers: {
-        "Accept": "application/json",
+        Accept: "application/json",
         "User-Agent": "api.dave.io (https://api.dave.io)"
       }
     })
