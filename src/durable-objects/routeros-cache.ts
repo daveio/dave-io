@@ -349,7 +349,9 @@ export class RouterOSCache {
         if (version === 4 && prefix.prefix.includes(":")) {
           continue
         }
-        if (version === 6 && !prefix.prefix.includes(":")) { continue }
+        if (version === 6 && !prefix.prefix.includes(":")) {
+          continue
+        }
 
         ranges.add(prefix.prefix)
       }
@@ -371,7 +373,9 @@ export class RouterOSCache {
   }
 
   mergeIPRanges(ranges: string[], version: 4 | 6): string[] {
-    if (ranges.length === 0) { return [] }
+    if (ranges.length === 0) {
+      return []
+    }
 
     try {
       // Use the ip-address-utils library to merge ranges
