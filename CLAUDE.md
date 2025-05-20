@@ -140,7 +140,7 @@ Key aspects of the type system:
 
 ## KV Storage Architecture
 
-The API uses a unified KV namespace (`DATA`) with a hierarchical key structure for all data storage needs. This approach provides a clean organization and makes it easier to manage different types of data in a single namespace.
+The API uses a unified KV namespace (`DATA`) with a hierarchical key structure for all data storage needs. This approach provides clean organization and makes it easier to manage different types of data in a single namespace.
 
 ### KV Key Structure
 
