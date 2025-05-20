@@ -10,7 +10,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
       - name: bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.2.13
       - name: install
@@ -23,7 +23,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
       - name: bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.2.13
       - name: install
