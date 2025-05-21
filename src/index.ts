@@ -1,6 +1,7 @@
 import { OpenAPIRoute, fromHono } from "chanfana"
 import { Hono } from "hono"
 import { Dashboard } from "./endpoints/dashboard"
+import { Metrics } from "./endpoints/metrics"
 import { Ping } from "./endpoints/ping"
 import { Redirect } from "./endpoints/redirect"
 import { RouterOSCache, RouterOSPutIO, RouterOSReset } from "./endpoints/routeros"
@@ -39,8 +40,7 @@ app.use("*", async (c, next) => {
 // Enhanced analytics tracking middleware
 app.use("*", async (c, next) => {
   const requestStartTime = Date.now()
-  const path = c.req.path
-  const method = c.req.method
+  const { path, method } = c.req
   const userAgent = c.req.header("user-agent")
   const referer = c.req.header("referer")
   const ip = c.req.header("cf-connecting-ip") || c.req.header("x-forwarded-for") || "unknown"
@@ -54,7 +54,7 @@ app.use("*", async (c, next) => {
 
   // Calculate response time
   const responseTime = Date.now() - requestStartTime
-  const status = c.res.status
+  const { status } = c.res
 
   // Track comprehensive analytics
   trackRequestAnalytics(c.env, {
@@ -76,8 +76,8 @@ app.use("*", async (c, next) => {
   // Execute the next handler first to get the response
   await next()
 
-  // Get the status code from the response
-  const status = c.res.status
+  // Destructure the status code from the response
+  const { status } = c.res
 
   // Skip successful responses (200) and redirects (301, 302)
   if (status !== 200 && status !== 301 && status !== 302) {
@@ -136,6 +136,35 @@ app.get("/routeros/reset", (c) =>
 )
 app.get("/api/routeros/reset", (c) =>
   new RouterOSReset({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+
+// Add metrics endpoints
+app.get("/metrics", (c) =>
+  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+app.get("/api/metrics", (c) =>
+  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+
+app.get("/metrics/json", (c) =>
+  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+app.get("/api/metrics/json", (c) =>
+  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+
+app.get("/metrics/yaml", (c) =>
+  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+app.get("/api/metrics/yaml", (c) =>
+  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+
+app.get("/metrics/prometheus", (c) =>
+  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+app.get("/api/metrics/prometheus", (c) =>
+  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
 )
 
 // Export the Hono app

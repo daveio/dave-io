@@ -334,12 +334,12 @@ export function generateScript(cacheData: CacheData): string {
 
   // IPv4 entries
   const ipv4Script = ipv4Ranges
-    .map((range) => `/ip firewall address-list add list=putio address=${range} comment="put.io"`)
+    .map((range: string) => `/ip firewall address-list add list=putio address=${range} comment="put.io"`)
     .join("\n")
 
   // IPv6 entries
   const ipv6Script = ipv6Ranges
-    .map((range) => `/ipv6 firewall address-list add list=putio address=${range} comment="put.io"`)
+    .map((range: string) => `/ipv6 firewall address-list add list=putio address=${range} comment="put.io"`)
     .join("\n")
 
   // Combine all sections

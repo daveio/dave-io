@@ -10,6 +10,7 @@ api.dave.io is a multipurpose personal API powered by Cloudflare Workers. It pro
 - **Redirect**: URL redirection service using KV storage
 - **Dashboard**: Data feeds for dashboards (demo and Hacker News available)
 - **RouterOS**: Generates RouterOS scripts for network configurations (currently implements put.io IP ranges, with more providers planned)
+- **Metrics**: View API metrics in JSON, YAML, or Prometheus format
 
 The API is built with [Hono](https://hono.dev) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation.
 
@@ -112,6 +113,10 @@ Key aspects of the type system:
      - Request details (path, method, timestamp)
      - Response details (status code, response time)
      - Client information (IP, user-agent, referrer)
+   - The `/metrics` endpoint exposes these metrics in multiple formats:
+     - JSON format at `/metrics/json`
+     - YAML format at `/metrics/yaml`
+     - Prometheus format at `/metrics/prometheus`
 4. **Cloudflare Integration**:
 
    - KV Namespace: Single unified namespace (`DATA`) for all storage needs
@@ -132,6 +137,7 @@ Key aspects of the type system:
     - `redirect.ts` - URL redirection service
     - `dashboard.ts` - Dashboard data feed endpoints
     - `routeros.ts` - RouterOS script generator endpoints
+    - `metrics.ts` - Metrics endpoint for exposing KV metrics data
   - `kv/` - KV storage operations
     - `dashboard.ts` - KV storage operations for dashboard data
     - `redirect.ts` - KV storage operations for redirects

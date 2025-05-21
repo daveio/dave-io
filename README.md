@@ -12,6 +12,7 @@ This project implements a multipurpose personal API that runs on Cloudflare Work
 - **Redirect**: URL redirection service using KV storage
 - **Dashboard**: Data feeds for dashboards (demo and Hacker News available)
 - **RouterOS**: Generates RouterOS scripts for network configurations (currently implements put.io IP ranges)
+- **Metrics**: View API metrics in JSON, YAML, or Prometheus format
 
 The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation.
 
@@ -26,6 +27,7 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
 - **Metrics Tracking**: Monitors error rates and status codes via KV storage
 - **Error Monitoring**: All non-success/non-redirect responses are tracked for debugging
 - **KV Backup/Restore**: Command-line tools for data management
+- **Multiple Output Formats**: Support for JSON, YAML, and Prometheus metrics formats
 
 ## Endpoints
 
@@ -54,6 +56,18 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
 - Returns: Cache status information including age and any errors
 - `GET /routeros/reset` or `GET /api/routeros/reset`: Reset the cache for RouterOS data
 - Returns: Confirmation of cache reset
+
+### Metrics
+
+- `GET /metrics` or `GET /api/metrics`: Default metrics endpoint (returns JSON)
+- `GET /metrics/json` or `GET /api/metrics/json`: Get metrics data in JSON format
+- `GET /metrics/yaml` or `GET /api/metrics/yaml`: Get metrics data in YAML format
+- `GET /metrics/prometheus` or `GET /api/metrics/prometheus`: Get metrics data in Prometheus format
+- Returns: Metrics tracked in KV storage, including:
+  - Status code counts (`metrics:status:xxx`)
+  - Status code group counts (`metrics:group:xxx`)
+  - RouterOS cache metrics
+  - Other application-specific metrics
 
 ## Analytics
 
@@ -85,6 +99,7 @@ api.dave.io/
 ├── src/                  # Main source code
 │   ├── endpoints/        # API endpoint implementations
 │   │   ├── dashboard.ts  # Dashboard data endpoints
+│   │   ├── metrics.ts    # Metrics data endpoints
 │   │   ├── ping.ts       # Simple health check endpoint
 │   │   ├── redirect.ts   # URL redirection service
 │   │   └── routeros.ts   # RouterOS script generators

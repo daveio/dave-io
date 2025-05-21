@@ -11,7 +11,7 @@
     "listEmittedFiles": false,
     "listFiles": false,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noFallthroughCasesInSwitch": true,
     "outDir": "",
     "pretty": true,
