@@ -49,7 +49,7 @@ lint: # https://docs.trunk.io/check/configuration
     - checkov@3.2.427
     - git-diff-check
     - markdownlint@0.45.0
-    - trufflehog@3.88.30
+    - trufflehog@3.88.31
     - yamllint@1.37.1
   ignore:
     - linters:
