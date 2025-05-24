@@ -119,7 +119,7 @@ function generateToken(payload: CreateJWTRequest, secret: string): string {
     exp: now + parseExpiration(payload.expiresIn)
   }
 
-  return jwt.sign(jwtPayload, secret, { algorithm: 'ES256' })
+  return jwt.sign(jwtPayload, secret, { algorithm: "ES256" })
 }
 
 function parseExpiration(expiresIn: string): number {
