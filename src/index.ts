@@ -34,16 +34,12 @@ const openapi = fromHono(app, {
 })
 
 // Register security scheme
-openapi.registry.registerComponent(
-  'securitySchemes',
-  'BearerAuth',
-  {
-    type: "http",
-    scheme: "bearer",
-    bearerFormat: "JWT",
-    description: "JWT token for API authentication"
-  }
-)
+openapi.registry.registerComponent("securitySchemes", "BearerAuth", {
+  type: "http",
+  scheme: "bearer",
+  bearerFormat: "JWT",
+  description: "JWT token for API authentication"
+})
 
 // Initialize KV store middleware
 app.use("*", async (c, next) => {

@@ -47,12 +47,7 @@
     "bun": "~1.2.13",
     "node": "~lts"
   },
-  "trustedDependencies": [
-    "@biomejs/biome",
-    "esbuild",
-    "sharp",
-    "workerd"
-  ],
+  "trustedDependencies": ["@biomejs/biome", "esbuild", "sharp", "workerd"],
   "comments": {
     "ip-address-utils": "IP address utilities are implemented internally in src/lib/ip-address-utils.ts rather than using an external package"
   }

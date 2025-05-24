@@ -1,8 +1,8 @@
 import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
-import { auth } from "../lib/auth"
-import { JwtPayload } from "../schemas"
 import { z } from "zod"
+import { auth } from "../lib/auth"
+import type { JwtPayload } from "../schemas"
 
 /**
  * Example of a protected endpoint that requires authentication
@@ -49,14 +49,12 @@ export class Protected extends OpenAPIRoute {
   }
 
   // Use the auth middleware with required scopes
-  middleware = [
-    auth({ scopes: ["read:protected"] })
-  ]
+  middleware = [auth({ scopes: ["read:protected"] })]
 
   async handle(c: Context) {
     // Get the JWT payload from the context
     const payload = c.get("jwtPayload") as JwtPayload
-    
+
     return c.json({
       message: "This is a protected resource",
       user: payload.sub,
@@ -110,14 +108,12 @@ export class ProtectedAdmin extends OpenAPIRoute {
   }
 
   // Use the auth middleware with required admin scopes
-  middleware = [
-    auth({ scopes: ["admin:access"] })
-  ]
+  middleware = [auth({ scopes: ["admin:access"] })]
 
   async handle(c: Context) {
     // Get the JWT payload from the context
     const payload = c.get("jwtPayload") as JwtPayload
-    
+
     return c.json({
       message: "This is a protected admin resource",
       user: payload.sub,

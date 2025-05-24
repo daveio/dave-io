@@ -8,32 +8,32 @@ export const JwtPayloadSchema = z.object({
    * Subject (user identifier)
    */
   sub: z.string(),
-  
+
   /**
    * Issued at timestamp
    */
   iat: z.number(),
-  
+
   /**
    * Expiration timestamp
    */
   exp: z.number(),
-  
+
   /**
    * JWT ID (unique identifier for this token)
    */
   jti: z.string(),
-  
+
   /**
    * Issuer
    */
   iss: z.string().default("api.dave.io"),
-  
+
   /**
    * Audience
    */
   aud: z.string().default("api.dave.io"),
-  
+
   /**
    * Scopes (permissions) granted to this token
    */
@@ -78,4 +78,3 @@ export const TokenResponseSchema = z.object({
 })
 
 export type TokenResponse = z.infer<typeof TokenResponseSchema>
-

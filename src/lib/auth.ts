@@ -1,7 +1,7 @@
-import { Context, MiddlewareHandler, Next } from "hono"
+import type { Context, MiddlewareHandler, Next } from "hono"
 import * as jwt from "jsonwebtoken"
-import { AuthBodySchema, AuthHeaderSchema, JwtPayload, JwtPayloadSchema } from "../schemas"
 import { ZodError } from "zod"
+import { AuthBodySchema, AuthHeaderSchema, type JwtPayload, JwtPayloadSchema } from "../schemas"
 
 /**
  * Interface for authentication options
@@ -11,7 +11,7 @@ export interface AuthOptions {
    * Required scopes for this endpoint
    */
   scopes?: string[]
-  
+
   /**
    * Whether to allow token in request body
    * Default: true
@@ -32,7 +32,7 @@ const defaultAuthOptions: AuthOptions = {
  */
 export class AuthError extends Error {
   status: 401 | 403 | 500
-  
+
   constructor(message: string, status: 401 | 403 | 500 = 401) {
     super(message)
     this.name = "AuthError"
@@ -50,7 +50,7 @@ export const extractToken = async (c: Context, allowBodyToken = true): Promise<s
     try {
       const match = AuthHeaderSchema.parse(authHeader)
       return match.split(" ")[1]
-    } catch (error) {
+    } catch (_error) {
       // Invalid Authorization header format
       return null
     }
@@ -65,7 +65,7 @@ export const extractToken = async (c: Context, allowBodyToken = true): Promise<s
         const { token } = AuthBodySchema.parse(body)
         return token
       }
-    } catch (error) {
+    } catch (_error) {
       // Invalid body format or no token in body
       return null
     }
@@ -81,21 +81,23 @@ export const verifyToken = async (token: string, secret: string): Promise<JwtPay
   try {
     // Verify the token
     const payload = jwt.verify(token, secret) as Record<string, unknown>
-    
+
     // Validate the payload against our schema
     return JwtPayloadSchema.parse(payload)
   } catch (error) {
     if (error instanceof jwt.JsonWebTokenError) {
       throw new AuthError(`Invalid token: ${error.message}`)
-    } else if (error instanceof jwt.TokenExpiredError) {
-      throw new AuthError("Token expired")
-    } else if (error instanceof jwt.NotBeforeError) {
-      throw new AuthError("Token not yet valid")
-    } else if (error instanceof ZodError) {
-      throw new AuthError("Invalid token payload")
-    } else {
-      throw new AuthError("Token verification failed")
     }
+    if (error instanceof jwt.TokenExpiredError) {
+      throw new AuthError("Token expired")
+    }
+    if (error instanceof jwt.NotBeforeError) {
+      throw new AuthError("Token not yet valid")
+    }
+    if (error instanceof ZodError) {
+      throw new AuthError("Invalid token payload")
+    }
+    throw new AuthError("Token verification failed")
   }
 }
 
@@ -106,11 +108,11 @@ export const hasRequiredScopes = (payload: JwtPayload, requiredScopes: string[])
   if (!requiredScopes.length) {
     return true
   }
-  
+
   const tokenScopes = payload.scopes || []
-  
+
   // Check if token has all required scopes
-  return requiredScopes.every(scope => tokenScopes.includes(scope))
+  return requiredScopes.every((scope) => tokenScopes.includes(scope))
 }
 
 /**
@@ -123,11 +125,11 @@ export const generateToken = (
 ): { token: string; expiresAt: Date } => {
   // Generate a unique JWT ID
   const jti = crypto.randomUUID()
-  
+
   // Calculate expiration time
   const iat = Math.floor(Date.now() / 1000)
   let exp: number
-  
+
   if (typeof expiresIn === "number") {
     exp = iat + expiresIn
   } else {
@@ -136,10 +138,10 @@ export const generateToken = (
     if (!match) {
       throw new Error("Invalid expiresIn format. Use format like '1d', '2h', etc.")
     }
-    
-    const value = parseInt(match[1], 10)
+
+    const value = Number.parseInt(match[1], 10)
     const unit = match[2]
-    
+
     switch (unit) {
       case "s": // seconds
         exp = iat + value
@@ -160,7 +162,7 @@ export const generateToken = (
         throw new Error("Invalid time unit. Use s, m, h, d, or w.")
     }
   }
-  
+
   // Create the complete payload
   const tokenPayload: JwtPayload = {
     ...payload,
@@ -168,13 +170,13 @@ export const generateToken = (
     exp,
     jti
   }
-  
+
   // Sign the token
   const token = jwt.sign(tokenPayload, secret)
-  
+
   // Calculate expiration date
   const expiresAt = new Date(exp * 1000)
-  
+
   return { token, expiresAt }
 }
 
@@ -184,36 +186,36 @@ export const generateToken = (
 export const auth = (options: AuthOptions = {}): MiddlewareHandler => {
   // Merge options with defaults
   const opts = { ...defaultAuthOptions, ...options }
-  
+
   return async (c: Context, next: Next) => {
     try {
       // Get JWT secret from environment
       const jwtSecret = c.env.JWT_SECRET
-      
+
       if (!jwtSecret) {
         throw new AuthError("JWT_SECRET is not configured", 500)
       }
-      
+
       // Extract token from request
       const token = await extractToken(c, opts.allowBodyToken)
-      
+
       if (!token) {
         throw new AuthError("Authentication required")
       }
-      
+
       // Verify token
       const payload = await verifyToken(token, jwtSecret)
-      
+
       // Check scopes
       if (opts.scopes && opts.scopes.length > 0) {
         if (!hasRequiredScopes(payload, opts.scopes)) {
           throw new AuthError("Insufficient permissions", 403)
         }
       }
-      
+
       // Store the payload in the context for later use
       c.set("jwtPayload", payload)
-      
+
       // Continue to the next middleware or handler
       await next()
     } catch (error) {
@@ -221,7 +223,7 @@ export const auth = (options: AuthOptions = {}): MiddlewareHandler => {
         c.status(error.status)
         return c.json({ error: error.message })
       }
-      
+
       // For any other errors, return a generic 500 error
       c.status(500)
       return c.json({ error: "Internal server error" })
