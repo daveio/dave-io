@@ -13,6 +13,7 @@ This project implements a multipurpose personal API that runs on Cloudflare Work
 - **Dashboard**: Data feeds for dashboards (demo and Hacker News available)
 - **RouterOS**: Generates RouterOS scripts for network configurations (currently implements put.io IP ranges)
 - **Metrics**: View API metrics in JSON, YAML, or Prometheus format
+- **Authentication**: JWT-based authentication system with scope-based authorization
 
 The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation.
 
@@ -28,6 +29,8 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
 - **Error Monitoring**: All non-success/non-redirect responses are tracked for debugging
 - **KV Backup/Restore**: Command-line tools for data management
 - **Multiple Output Formats**: Support for JSON, YAML, and Prometheus metrics formats
+- **JWT Authentication**: Secure token-based authentication with configurable scopes
+- **CLI Tools**: Built-in utilities for JWT token generation and KV management
 
 ## Endpoints
 
@@ -69,6 +72,13 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
   - RouterOS cache metrics
   - Other application-specific metrics
 
+### Authentication
+
+- `GET /auth/test` or `GET /api/auth/test`: Test endpoint for JWT authentication
+- Requires: Valid JWT token with `read` scope
+- Returns: Authentication success message with user info
+- Headers: `Authorization: Bearer <token>` or query parameter `?token=<token>`
+
 ## Analytics
 
 This API uses Cloudflare Analytics Engine to track requests. The following data points are collected:
@@ -90,6 +100,141 @@ The API maintains a comprehensive record of non-successful responses (all status
 
 No personally identifiable information is stored. Analytics are used for monitoring service usage and debugging.
 
+## 🔐 JWT Authentication
+
+The API includes a robust JWT authentication system with scope-based authorization for protecting sensitive endpoints.
+
+### Quick Start
+
+1. **Set JWT Secret**: Configure your JWT secret as a Cloudflare Workers secret:
+   ```bash
+   # For production
+   bun run wrangler secret put JWT_SECRET
+
+   # For local development, add to .env file
+   JWT_SECRET=your-super-secret-key-here
+   ```
+
+2. **Generate a Token**: Use the built-in CLI tool:
+   ```bash
+   # Interactive mode (recommended)
+   bun run jwt --interactive
+
+   # Command line mode
+   bun run jwt --sub "user123" --scopes "read,metrics" --expires "24h"
+   ```
+
+3. **Test Authentication**:
+   ```bash
+   # Using Bearer token
+   curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/auth/test # trunk-ignore(gitleaks/curl-auth-header)
+
+   # Using query parameter
+   curl "https://api.dave.io/auth/test?token=YOUR_JWT_TOKEN"
+   ```
+
+### Available Scopes
+
+The authentication system supports fine-grained permissions using scopes:
+
+- `read`: General read access to protected endpoints
+- `write`: General write access to protected endpoints
+- `admin`: Administrative access with elevated permissions
+- `metrics`: Access to metrics endpoints and data
+- `routeros`: Access to RouterOS script generation endpoints
+- `dashboard`: Access to dashboard data endpoints
+- `redirect`: Access to redirect management endpoints
+
+### Token Usage
+
+JWT tokens can be provided in two ways:
+
+1. **Authorization Header** (recommended):
+   ```bash
+   curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/endpoint # trunk-ignore(gitleaks/curl-auth-header)
+   ```
+
+2. **Query Parameter**:
+   ```bash
+   curl "https://api.dave.io/endpoint?token=YOUR_JWT_TOKEN"
+   ```
+
+### JWT CLI Tool
+
+The included JWT generation tool (`bun run jwt`) supports both interactive and command-line modes:
+
+**Interactive Mode:**
+```bash
+bun run jwt --interactive
+# Prompts for user ID, scopes, expiration, and secret
+```
+
+**Command Line Mode:**
+```bash
+# Basic usage
+bun run jwt --sub "user123" --scopes "read,write" --expires "1h"
+
+# With custom secret
+JWT_SECRET=mysecret bun run jwt --sub "admin" --scopes "admin,read,write"
+
+# Available options
+bun run jwt --help
+```
+
+**CLI Options:**
+- `-s, --sub <subject>`: User ID for the token
+- `--scopes <scopes>`: Comma-separated list of scopes
+- `-e, --expires <time>`: Token expiration (e.g., "1h", "7d", "30m")
+- `--secret <secret>`: JWT secret key (or use JWT_SECRET env var)
+- `-i, --interactive`: Interactive mode
+- `-h, --help`: Show help message
+
+### Authentication Responses
+
+**Success (200):**
+```json
+{
+  "message": "Authentication successful! You have access to this protected endpoint.",
+  "user": {
+    "id": "user123",
+    "scopes": ["read", "metrics"]
+  },
+  "timestamp": "2023-12-07T10:30:00.000Z"
+}
+```
+
+**Authentication Required (401):**
+```json
+{
+  "error": "Authentication required"
+}
+```
+
+**Invalid Token (401):**
+```json
+{
+  "error": "Invalid token"
+}
+```
+
+**Insufficient Permissions (403):**
+```json
+{
+  "error": "Insufficient permissions",
+  "required": ["admin"],
+  "granted": ["read", "write"]
+}
+```
+
+### Security Features
+
+- **Industry Standard**: Uses the `jsonwebtoken` library following JWT best practices
+- **Configurable Expiration**: Support for flexible token expiration times
+- **Scope Validation**: Automatic validation of required vs. granted scopes
+- **Multiple Token Sources**: Accepts tokens via header or query parameter
+- **Proper Error Handling**: Clear error messages for different failure scenarios
+- **Type Safety**: Full TypeScript support with proper type definitions
+
 ## Project Structure
 
 ```bash
@@ -98,6 +243,7 @@ api.dave.io/
 │   └── feed.js           # Simple list panel implementation
 ├── src/                  # Main source code
 │   ├── endpoints/        # API endpoint implementations
+│   │   ├── auth-test.ts  # Authentication test endpoint
 │   │   ├── dashboard.ts  # Dashboard data endpoints
 │   │   ├── metrics.ts    # Metrics data endpoints
 │   │   ├── ping.ts       # Simple health check endpoint
@@ -111,6 +257,7 @@ api.dave.io/
 │   │   └── init.ts       # KV initialization module
 │   ├── lib/              # Utility libraries
 │   │   ├── analytics.ts  # Request tracking via Analytics Engine
+│   │   ├── auth.ts       # JWT authentication middleware
 │   │   └── ip-address-utils.ts # IP address utilities
 │   ├── schemas/          # Zod schema definitions
 │   ├── index.ts          # Main application setup
@@ -257,6 +404,7 @@ The custom `src/schemas/cloudflare.types.ts` file extends these types with proje
 - `bun run typecheck`: Run TypeScript type checking
 - `bun run lint`: Run linting with Trunk and Biome
 - `bun run format`: Format code with Trunk
+- `bun run jwt`: Generate JWT tokens for authentication
 - `bun kv`: Run KV backup/restore utility
 
 ### KV Admin Utility

@@ -15,5 +15,6 @@ declare global {
   // Define additional environment variables specific to this project
   interface Env {
     DATA: KVNamespace
+    JWT_SECRET: string
   }
 }

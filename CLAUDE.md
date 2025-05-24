@@ -11,6 +11,7 @@ api.dave.io is a multipurpose personal API powered by Cloudflare Workers. It pro
 - **Dashboard**: Data feeds for dashboards (demo and Hacker News available)
 - **RouterOS**: Generates RouterOS scripts for network configurations (currently implements put.io IP ranges, with more providers planned)
 - **Metrics**: View API metrics in JSON, YAML, or Prometheus format
+- **Authentication**: JWT-based authentication system with scope-based authorization
 
 The API is built with [Hono](https://hono.dev) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation.
 
@@ -45,6 +46,11 @@ bun kv backup           # Backup KV data matching patterns
 bun kv backup --all     # Backup all KV data
 bun kv restore <file>   # Restore KV data from backup
 bun kv wipe             # Wipe all KV data (DANGEROUS!)
+
+# Generate JWT tokens for authentication
+bun run jwt --help      # Show JWT generation help
+bun run jwt --interactive  # Interactive JWT generation
+bun run jwt --sub user123 --scopes "read,metrics" --expires "24h"
 ```
 
 ## Code Architecture
@@ -83,6 +89,90 @@ Key aspects of the type system:
 3. **Type Checking**:
    - Run `bun run typecheck` to verify type correctness
    - Ensures proper usage of Cloudflare Workers types throughout the codebase
+
+## JWT Authentication System
+
+The API includes a comprehensive JWT-based authentication system with scope-based authorization:
+
+### Authentication Features
+
+- **JWT Token Support**: Secure token-based authentication using industry standards
+- **Scope-Based Authorization**: Fine-grained permissions using scopes
+- **Multiple Token Sources**: Accepts tokens via `Authorization: Bearer` header or `?token=` query parameter
+- **CLI Token Generation**: Built-in tool for generating tokens during development
+- **Middleware Integration**: Easy-to-use middleware for protecting endpoints
+
+### Available Scopes
+
+- `read`: General read access
+- `write`: General write access
+- `admin`: Administrative access
+- `metrics`: Access to metrics endpoints
+- `routeros`: Access to RouterOS endpoints
+- `dashboard`: Access to dashboard endpoints
+- `redirect`: Access to redirect endpoints
+
+### Using Authentication in Endpoints
+
+To protect an endpoint, apply the `requireAuth()` middleware with required scopes:
+
+```typescript
+import { requireAuth } from "../lib/auth"
+import { COMMON_SCOPES } from "../schemas"
+
+// In your endpoint's handle method:
+async handle(c: Context) {
+  // Require 'read' scope for this endpoint
+  const authMiddleware = requireAuth([COMMON_SCOPES.READ])
+  await authMiddleware(c, async () => {})
+
+  // Access authenticated user info
+  const authContext = c as AuthorizedContext
+  console.log("User ID:", authContext.user.id)
+  console.log("User scopes:", authContext.user.scopes)
+
+  // Your endpoint logic here...
+}
+```
+
+### Environment Setup
+
+Set the JWT secret in your Cloudflare Workers environment:
+
+```bash
+# For local development, add to .env:
+JWT_SECRET=your-super-secret-key-here
+
+# For production, set as a Cloudflare secret:
+bun run wrangler secret put JWT_SECRET
+```
+
+### JWT Token Generation
+
+Use the built-in CLI tool to generate tokens:
+
+```bash
+# Interactive mode (recommended for development)
+bun run jwt --interactive
+
+# Command line mode
+bun run jwt --sub "user123" --scopes "read,metrics" --expires "24h"
+
+# With custom secret
+JWT_SECRET=mysecret bun run jwt --sub "admin" --scopes "admin,read,write"
+```
+
+### Testing Authentication
+
+A test endpoint is available at `/auth/test` and `/api/auth/test` to verify authentication:
+
+```bash
+# Test with Bearer token
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/auth/test # trunk-ignore(gitleaks/curl-auth-header)
+
+# Test with query parameter
+curl "https://api.dave.io/auth/test?token=YOUR_JWT_TOKEN"
+```
 
 ### Key Components
 
@@ -146,12 +236,14 @@ Key aspects of the type system:
     - `init.ts` - KV initialization module
   - `lib/` - Utility libraries
     - `analytics.ts` - Request tracking via Analytics Engine
+    - `auth.ts` - JWT authentication middleware and utilities
     - `ip-address-utils.ts` - IP address utilities
   - `schemas/` - Zod schema definitions
     - `redirect.schema.ts` - Schemas for redirect functionality
     - `dashboard.schema.ts` - Schemas for dashboard functionality
     - `ping.schema.ts` - Schemas for ping endpoint
     - `routeros.schema.ts` - Schemas for RouterOS functionality
+    - `auth.schema.ts` - Schemas for authentication and JWT handling
     - `cloudflare.types.ts` - Type definitions for Cloudflare-specific objects
   - `index.ts` - Main application setup
   - `types.ts` - Type definitions
@@ -159,9 +251,10 @@ Key aspects of the type system:
   - `feed.js` - Simple list panel implementation for dashboards
 - `bin/` - Command-line utilities
   - `kv.ts` - KV backup and restore utility
+  - `jwt.ts` - JWT token generation utility
 - `wrangler.jsonc` - Cloudflare Workers configuration
 
-## Environment Setup
+## Development Environment Setup
 
 - The project uses [Bun](https://bun.sh/) (v1.2.14 or compatible) as the package manager and runtime
 - [mise](https://mise.jdx.dev/) is used for environment management (optional)
