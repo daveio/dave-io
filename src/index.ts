@@ -24,22 +24,26 @@ const openapi = fromHono(app, {
   docs_url: "/api/docs",
   redoc_url: "/api/redocs",
   openapi_url: "/api/openapi.json",
-  openapi_info: {
-    title: "Dave.io API",
-    version: "1.0.0",
-    description: "General-purpose serverless personal API"
-  },
-  openapi_components: {
-    securitySchemes: {
-      BearerAuth: {
-        type: "http",
-        scheme: "bearer",
-        bearerFormat: "JWT",
-        description: "JWT token for API authentication"
-      }
+  schema: {
+    info: {
+      title: "Dave.io API",
+      version: "1.0.0",
+      description: "General-purpose serverless personal API"
     }
   }
 })
+
+// Register security scheme
+openapi.registry.registerComponent(
+  'securitySchemes',
+  'BearerAuth',
+  {
+    type: "http",
+    scheme: "bearer",
+    bearerFormat: "JWT",
+    description: "JWT token for API authentication"
+  }
+)
 
 // Initialize KV store middleware
 app.use("*", async (c, next) => {

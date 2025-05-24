@@ -1,5 +1,5 @@
 import { Context, MiddlewareHandler, Next } from "hono"
-import jwt from "jsonwebtoken"
+import * as jwt from "jsonwebtoken"
 import { AuthBodySchema, AuthHeaderSchema, JwtPayload, JwtPayloadSchema } from "../schemas"
 import { ZodError } from "zod"
 
@@ -31,9 +31,9 @@ const defaultAuthOptions: AuthOptions = {
  * Authentication error class
  */
 export class AuthError extends Error {
-  status: number
+  status: 401 | 403 | 500
   
-  constructor(message: string, status = 401) {
+  constructor(message: string, status: 401 | 403 | 500 = 401) {
     super(message)
     this.name = "AuthError"
     this.status = status
@@ -43,7 +43,7 @@ export class AuthError extends Error {
 /**
  * Extract JWT token from request
  */
-export const extractToken = (c: Context, allowBodyToken = true): string | null => {
+export const extractToken = async (c: Context, allowBodyToken = true): Promise<string | null> => {
   // Try to get token from Authorization header
   const authHeader = c.req.header("Authorization")
   if (authHeader) {
@@ -59,7 +59,8 @@ export const extractToken = (c: Context, allowBodyToken = true): string | null =
   // Try to get token from request body if allowed
   if (allowBodyToken && c.req.method === "POST") {
     try {
-      const body = c.req.body as any
+      // Parse the request body as JSON
+      const body = await c.req.json().catch(() => null)
       if (body && typeof body === "object") {
         const { token } = AuthBodySchema.parse(body)
         return token
@@ -194,7 +195,7 @@ export const auth = (options: AuthOptions = {}): MiddlewareHandler => {
       }
       
       // Extract token from request
-      const token = extractToken(c, opts.allowBodyToken)
+      const token = await extractToken(c, opts.allowBodyToken)
       
       if (!token) {
         throw new AuthError("Authentication required")
@@ -217,18 +218,13 @@ export const auth = (options: AuthOptions = {}): MiddlewareHandler => {
       await next()
     } catch (error) {
       if (error instanceof AuthError) {
-        return c.json(
-          { error: error.message },
-          { status: error.status }
-        )
+        c.status(error.status)
+        return c.json({ error: error.message })
       }
       
       // For any other errors, return a generic 500 error
-      return c.json(
-        { error: "Internal server error" },
-        { status: 500 }
-      )
+      c.status(500)
+      return c.json({ error: "Internal server error" })
     }
   }
 }
-

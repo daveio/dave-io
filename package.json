@@ -39,6 +39,7 @@
     "@types/service-worker-mock": "^2.0.4",
     "markdownlint-cli": "^0.45.0",
     "stylelint-config-standard": "^38.0.0",
+    "typescript": "^5.8.3",
     "wrangler": "^4.16.1"
   },
   "packageManager": "bun@1.2.13",

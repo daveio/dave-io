@@ -2,6 +2,7 @@ import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
 import { auth } from "../lib/auth"
 import { JwtPayload } from "../schemas"
+import { z } from "zod"
 
 /**
  * Example of a protected endpoint that requires authentication
@@ -16,17 +17,11 @@ export class Protected extends OpenAPIRoute {
         description: "Protected resource",
         content: {
           "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                message: { type: "string" },
-                user: { type: "string" },
-                scopes: { 
-                  type: "array",
-                  items: { type: "string" }
-                }
-              }
-            }
+            schema: z.object({
+              message: z.string(),
+              user: z.string(),
+              scopes: z.array(z.string())
+            })
           }
         }
       },
@@ -34,12 +29,9 @@ export class Protected extends OpenAPIRoute {
         description: "Unauthorized",
         content: {
           "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                error: { type: "string" }
-              }
-            }
+            schema: z.object({
+              error: z.string()
+            })
           }
         }
       },
@@ -47,12 +39,9 @@ export class Protected extends OpenAPIRoute {
         description: "Forbidden",
         content: {
           "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                error: { type: "string" }
-              }
-            }
+            schema: z.object({
+              error: z.string()
+            })
           }
         }
       }
@@ -89,17 +78,11 @@ export class ProtectedAdmin extends OpenAPIRoute {
         description: "Protected admin resource",
         content: {
           "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                message: { type: "string" },
-                user: { type: "string" },
-                scopes: { 
-                  type: "array",
-                  items: { type: "string" }
-                }
-              }
-            }
+            schema: z.object({
+              message: z.string(),
+              user: z.string(),
+              scopes: z.array(z.string())
+            })
           }
         }
       },
@@ -107,12 +90,9 @@ export class ProtectedAdmin extends OpenAPIRoute {
         description: "Unauthorized",
         content: {
           "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                error: { type: "string" }
-              }
-            }
+            schema: z.object({
+              error: z.string()
+            })
           }
         }
       },
@@ -120,12 +100,9 @@ export class ProtectedAdmin extends OpenAPIRoute {
         description: "Forbidden",
         content: {
           "application/json": {
-            schema: {
-              type: "object",
-              properties: {
-                error: { type: "string" }
-              }
-            }
+            schema: z.object({
+              error: z.string()
+            })
           }
         }
       }
@@ -148,4 +125,3 @@ export class ProtectedAdmin extends OpenAPIRoute {
     })
   }
 }
-
