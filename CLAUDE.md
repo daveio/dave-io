@@ -163,7 +163,7 @@ Key aspects of the type system:
 
 ## Environment Setup
 
-- The project uses [Bun](https://bun.sh/) (v1.2.13 or compatible) as the package manager and runtime
+- The project uses [Bun](https://bun.sh/) (v1.2.14 or compatible) as the package manager and runtime
 - [mise](https://mise.jdx.dev/) is used for environment management (optional)
 - Environment variables are loaded from `.env` file when mise is active
 

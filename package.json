@@ -38,9 +38,9 @@
     "stylelint-config-standard": "^38.0.0",
     "wrangler": "^4.16.1"
   },
-  "packageManager": "bun@1.2.13",
+  "packageManager": "bun@1.2.14",
   "engines": {
-    "bun": "~1.2.13",
+    "bun": "~1.2.14",
     "node": "~lts"
   },
   "trustedDependencies": ["@biomejs/biome", "esbuild", "sharp", "workerd"],

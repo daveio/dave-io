@@ -211,7 +211,7 @@ await Promise.all([
 
 ### Prerequisites
 
-- [Bun](https://bun.sh/) (v1.2.13 or compatible)
+- [Bun](https://bun.sh/) (v1.2.14 or compatible)
 - [Node.js](https://nodejs.org/) (LTS version)
 - [mise](https://mise.jdx.dev/) for environment management (optional)
 
