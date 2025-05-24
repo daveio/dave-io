@@ -3,6 +3,7 @@ import { Hono } from "hono"
 import { Dashboard } from "./endpoints/dashboard"
 import { Metrics } from "./endpoints/metrics"
 import { Ping } from "./endpoints/ping"
+import { Protected, ProtectedAdmin } from "./endpoints/protected"
 import { Redirect } from "./endpoints/redirect"
 import { RouterOSCache, RouterOSPutIO, RouterOSReset } from "./endpoints/routeros"
 import { initializeKV } from "./kv/init"
@@ -12,6 +13,7 @@ import { trackRequestAnalytics } from "./lib/analytics"
 type Bindings = {
   DATA: KVNamespace
   ANALYTICS: AnalyticsEngineDataset
+  JWT_SECRET: string
 }
 
 // Start a Hono app
@@ -21,7 +23,22 @@ const app = new Hono<{ Bindings: Bindings }>()
 const openapi = fromHono(app, {
   docs_url: "/api/docs",
   redoc_url: "/api/redocs",
-  openapi_url: "/api/openapi.json"
+  openapi_url: "/api/openapi.json",
+  openapi_info: {
+    title: "Dave.io API",
+    version: "1.0.0",
+    description: "General-purpose serverless personal API"
+  },
+  openapi_components: {
+    securitySchemes: {
+      BearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        description: "JWT token for API authentication"
+      }
+    }
+  }
 })
 
 // Initialize KV store middleware
@@ -136,6 +153,21 @@ app.get("/routeros/reset", (c) =>
 )
 app.get("/api/routeros/reset", (c) =>
   new RouterOSReset({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+
+// Add protected endpoints
+app.get("/protected", (c) =>
+  new Protected({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+app.get("/api/protected", (c) =>
+  new Protected({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+
+app.get("/protected/admin", (c) =>
+  new ProtectedAdmin({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+app.get("/api/protected/admin", (c) =>
+  new ProtectedAdmin({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
 )
 
 // Add metrics endpoints

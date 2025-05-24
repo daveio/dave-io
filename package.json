@@ -16,13 +16,16 @@
     "typecheck": "bun run tsc --noEmit",
     "lint": "bun run biome check && trunk check -a",
     "format": "trunk fmt -a",
-    "kv": "bun bin/kv.ts"
+    "kv": "bun bin/kv.ts",
+    "jwt": "bun bin/jwt.ts"
   },
   "dependencies": {
+    "@types/jsonwebtoken": "^9.0.9",
     "chanfana": "2.8.0",
     "execa": "^9.5.3",
     "hono": "^4.7.10",
     "js-yaml": "^4.1.0",
+    "jsonwebtoken": "^9.0.2",
     "prom-client": "^15.1.3",
     "readline-sync": "^1.4.10",
     "rss-parser": "^3.13.0",
@@ -43,7 +46,12 @@
     "bun": "~1.2.13",
     "node": "~lts"
   },
-  "trustedDependencies": ["@biomejs/biome", "esbuild", "sharp", "workerd"],
+  "trustedDependencies": [
+    "@biomejs/biome",
+    "esbuild",
+    "sharp",
+    "workerd"
+  ],
   "comments": {
     "ip-address-utils": "IP address utilities are implemented internally in src/lib/ip-address-utils.ts rather than using an external package"
   }
