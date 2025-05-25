@@ -105,34 +105,22 @@ The API includes a comprehensive JWT-based authentication system with scope-base
 - **CLI Token Generation**: Built-in tool for generating tokens during development
 - **Middleware Integration**: Easy-to-use middleware for protecting endpoints
 
-### Available Scopes
-
-- `read`: General read access
-- `write`: General write access
-- `admin`: Administrative access
-- `metrics`: Access to metrics endpoints
-- `routeros`: Access to RouterOS endpoints
-- `dashboard`: Access to dashboard endpoints
-- `redirect`: Access to redirect endpoints
-
 ### Using Authentication in Endpoints
 
-To protect an endpoint, apply the `requireAuth()` middleware with required scopes:
+To protect an endpoint, apply the `requireAuth()` middleware:
 
 ```typescript
 import { requireAuth } from "../lib/auth"
-import { COMMON_SCOPES } from "../schemas"
 
 // In your endpoint's handle method:
 async handle(c: Context) {
-  // Require 'read' scope for this endpoint
-  const authMiddleware = requireAuth([COMMON_SCOPES.READ])
+  // Require authentication for this endpoint
+  const authMiddleware = requireAuth()
   await authMiddleware(c, async () => {})
 
   // Access authenticated user info
   const authContext = c as AuthorizedContext
   console.log("User ID:", authContext.user.id)
-  console.log("User scopes:", authContext.user.scopes)
 
   // Your endpoint logic here...
 }
@@ -159,10 +147,10 @@ Use the built-in CLI tool to generate tokens:
 bun run jwt --interactive
 
 # Command line mode
-bun run jwt --sub "user123" --scopes "read,metrics" --expires "24h"
+bun run jwt --sub "user123" --expires "24h"
 
 # With custom secret
-JWT_SECRET=mysecret bun run jwt --sub "admin" --scopes "admin,read,write"
+JWT_SECRET=mysecret bun run jwt --sub "admin"
 ```
 
 ### Testing Authentication

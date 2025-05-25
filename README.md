@@ -104,18 +104,19 @@ No personally identifiable information is stored. Analytics are used for monitor
 
 ## 🔐 JWT Authentication
 
-The API includes a robust JWT authentication system with scope-based authorization for protecting sensitive endpoints.
+The API includes a JWT authentication system for protecting sensitive endpoints. All authorization information is encoded in the subject field of the JWT token.
 
 ### Quick Start
 
 1. **Set JWT Secret**: Configure your JWT secret as a Cloudflare Workers secret:
 
 ```bash
-# For production
-bun run wrangler secret put JWT_SECRET
+# For production - the secret will be named API_JWT_SECRET in Cloudflare
+bun run wrangler secret put API_JWT_SECRET
 
-# For local development, add to .env file
-JWT_SECRET=your-super-secret-key-here
+# For local development, add to .dev.vars file (already created for you)
+# Edit .dev.vars and set your JWT secret:
+API_JWT_SECRET=your-super-secret-key-here
 ```
 
 2. **Generate a Token**: Use the built-in CLI tool:
@@ -125,7 +126,7 @@ JWT_SECRET=your-super-secret-key-here
 bun run jwt --interactive
 
 # Command line mode
-bun run jwt --sub "user123" --scopes "read,metrics" --expires "24h"
+bun run jwt --sub SUBJECT --expires "24h"
 ```
 
 3. **Test Authentication**:
@@ -138,17 +139,14 @@ curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/auth/test # t
 curl "https://api.dave.io/auth/test?token=YOUR_JWT_TOKEN"
 ```
 
-### Available Scopes
+### Subject-Based Authorization
 
-The authentication system supports fine-grained permissions using scopes:
+The authentication system uses the subject field to encode user information and permissions. You can structure the subject to include user IDs, roles, and permissions as needed:
 
-- `read`: General read access to protected endpoints
-- `write`: General write access to protected endpoints
-- `admin`: Administrative access with elevated permissions
-- `metrics`: Access to metrics endpoints and data
-- `routeros`: Access to RouterOS script generation endpoints
-- `dashboard`: Access to dashboard data endpoints
-- `redirect`: Access to redirect management endpoints
+- `user123`: Simple user ID
+- `admin:user123`: User with admin role
+- `user123:read:write`: User with specific permissions
+- `service:metrics`: Service account for metrics access
 
 ### Token Usage
 
@@ -174,17 +172,17 @@ The included JWT generation tool (`bun run jwt`) supports both interactive and c
 
 ```bash
 bun run jwt --interactive
-# Prompts for user ID, scopes, expiration, and secret
+# Prompts for user ID, expiration, and secret
 ```
 
 **Command Line Mode:**
 
 ```bash
 # Basic usage
-bun run jwt --sub "user123" --scopes "read,write" --expires "1h"
+bun run jwt --sub SUBJECT --expires "1h"
 
 # With custom secret
-JWT_SECRET=mysecret bun run jwt --sub "admin" --scopes "admin,read,write"
+JWT_SECRET=mysecret bun run jwt --sub "admin:full-access"
 
 # Available options
 bun run jwt --help
@@ -192,8 +190,7 @@ bun run jwt --help
 
 **CLI Options:**
 
-- `-s, --sub <subject>`: User ID for the token
-- `--scopes <scopes>`: Comma-separated list of scopes
+- `-s, --sub <subject>`: Subject for the token (can include user ID, roles, permissions)
 - `-e, --expires <time>`: Token expiration (e.g., "1h", "7d", "30m")
 - `--secret <secret>`: JWT secret key (or use JWT_SECRET env var)
 - `-i, --interactive`: Interactive mode
@@ -207,8 +204,7 @@ bun run jwt --help
 {
   "message": "Authentication successful! You have access to this protected endpoint.",
   "user": {
-    "id": "user123",
-    "scopes": ["read", "metrics"]
+    "id": "SUBJECT"
   },
   "timestamp": "2023-12-07T10:30:00.000Z"
 }
@@ -230,21 +226,11 @@ bun run jwt --help
 }
 ```
 
-**Insufficient Permissions (403):**
-
-```json
-{
-  "error": "Insufficient permissions",
-  "required": ["admin"],
-  "granted": ["read", "write"]
-}
-```
-
 ### Security Features
 
 - **Industry Standard**: Uses the `jsonwebtoken` library following JWT best practices
 - **Configurable Expiration**: Support for flexible token expiration times
-- **Scope Validation**: Automatic validation of required vs. granted scopes
+- **Subject-Based Authorization**: Encode all permissions and roles in the subject field
 - **Multiple Token Sources**: Accepts tokens via header or query parameter
 - **Proper Error Handling**: Clear error messages for different failure scenarios
 - **Type Safety**: Full TypeScript support with proper type definitions

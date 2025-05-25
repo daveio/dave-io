@@ -1,82 +1,99 @@
 #!/usr/bin/env bun
+import { Command } from "commander"
 import jwt from "jsonwebtoken"
+import ms from "ms"
 import readlineSync from "readline-sync"
-import { COMMON_SCOPES, type CreateJWTRequest } from "../src/schemas/auth.schema"
 
-interface CLIArgs {
-  sub?: string
-  scopes?: string[]
-  expiresIn?: string
-  secret?: string
-  interactive?: boolean
-  help?: boolean
+interface JWTRequest {
+  sub: string
+  expiresIn: string
 }
 
-function parseArgs(): CLIArgs {
-  const args = process.argv.slice(2)
-  const parsed: CLIArgs = {}
+const program = new Command()
 
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i]
-    switch (arg) {
-      case "--sub":
-      case "-s":
-        parsed.sub = args[++i]
-        break
-      case "--scopes":
-        parsed.scopes = args[++i]?.split(",").map((s) => s.trim()) || []
-        break
-      case "--expires":
-      case "-e":
-        parsed.expiresIn = args[++i]
-        break
-      case "--secret":
-        parsed.secret = args[++i]
-        break
-      case "--interactive":
-      case "-i":
-        parsed.interactive = true
-        break
-      case "--help":
-      case "-h":
-        parsed.help = true
-        break
+program
+  .name("jwt")
+  .description("JWT Token Generator for api.dave.io")
+  .version("1.0.0")
+  .option("-s, --sub <subject>", "Subject (user ID) for the token")
+  .option("-e, --expires <time>", "Token expiration (e.g., '1h', '7d', '1h30m', '2d12h') [default: 1h]", "1h")
+  .option("--secret <secret>", "JWT secret key (takes precedence over env var and Cloudflare secret)")
+  .option("--no-cloudflare", "Skip attempting to retrieve secret from Cloudflare")
+  .option("-i, --interactive", "Interactive mode - prompts for all values")
+  .addHelpText(
+    "after",
+    `
+Examples:
+  bun jwt --sub SUBJECT --expires "24h"
+  bun jwt --sub SUBJECT --expires "1h30m"
+  bun jwt --sub SUBJECT --expires "2d12h"
+  bun jwt --interactive
+  JWT_SECRET=mysecret bun jwt --sub SUBJECT
+
+Secret Priority (highest to lowest):
+  1. --secret option
+  2. JWT_SECRET environment variable
+  3. Cloudflare Workers secret (via wrangler)
+
+Environment Variables:
+  JWT_SECRET             JWT secret key (fallback if not passed via --secret)
+`
+  )
+
+async function getCloudflareSecret(): Promise<string | null> {
+  try {
+    console.log("🔍 Attempting to retrieve API_JWT_SECRET from Cloudflare...")
+
+    const proc = Bun.spawn(["bun", "run", "wrangler", "secret", "get", "API_JWT_SECRET"], {
+      stdout: "pipe",
+      stderr: "pipe"
+    })
+
+    const result = await proc.exited
+
+    if (result === 0) {
+      const output = await new Response(proc.stdout).text()
+      const secret = output.trim()
+      if (secret) {
+        console.log("✅ Successfully retrieved API_JWT_SECRET from Cloudflare")
+        return secret
+      }
+    }
+
+    const errorOutput = await new Response(proc.stderr).text()
+    console.warn("⚠️  Could not retrieve API_JWT_SECRET from Cloudflare:", errorOutput.trim())
+    return null
+  } catch (error) {
+    console.warn("⚠️  Error accessing Cloudflare secret:", error)
+    return null
+  }
+}
+
+async function getSecret(options: { secret?: string; cloudflare?: boolean }): Promise<string | null> {
+  // Priority 1: Explicit --secret option
+  if (options.secret) {
+    console.log("🔑 Using secret from --secret option")
+    return options.secret
+  }
+
+  // Priority 2: Environment variable
+  if (process.env.JWT_SECRET) {
+    console.log("🔑 Using secret from JWT_SECRET environment variable")
+    return process.env.JWT_SECRET
+  }
+
+  // Priority 3: Cloudflare secret (if not disabled)
+  if (options.cloudflare !== false) {
+    const cloudflareSecret = await getCloudflareSecret()
+    if (cloudflareSecret) {
+      return cloudflareSecret
     }
   }
 
-  return parsed
+  return null
 }
 
-function showHelp(): void {
-  console.log(`
-JWT Token Generator for api.dave.io
-
-Usage:
-  bun jwt [options]
-  bun run jwt [options]
-
-Options:
-  -s, --sub <subject>     Subject (user ID) for the token
-  --scopes <scopes>       Comma-separated list of scopes (e.g., "read,write,admin")
-  -e, --expires <time>    Token expiration (e.g., "1h", "7d", "30m") [default: 1h]
-  --secret <secret>       JWT secret key (or set JWT_SECRET env var)
-  -i, --interactive       Interactive mode - prompts for all values
-  -h, --help              Show this help message
-
-Available Scopes:
-  ${Object.values(COMMON_SCOPES).join(", ")}
-
-Examples:
-  bun jwt --sub user123 --scopes "read,metrics" --expires "24h"
-  bun jwt --interactive
-  JWT_SECRET=mysecret bun jwt --sub admin --scopes "admin,read,write"
-
-Environment Variables:
-  JWT_SECRET             JWT secret key (required if not passed via --secret)
-`)
-}
-
-function getInteractiveInput(): CreateJWTRequest & { secret: string } {
+async function getInteractiveInput(): Promise<JWTRequest & { secret: string }> {
   console.log("\\n🔐 Interactive JWT Token Generator\\n")
 
   const sub = readlineSync.question("Enter subject (user ID): ")
@@ -85,36 +102,32 @@ function getInteractiveInput(): CreateJWTRequest & { secret: string } {
     process.exit(1)
   }
 
-  console.log(`\\nAvailable scopes: ${Object.values(COMMON_SCOPES).join(", ")}`)
-  const scopesInput = readlineSync.question("Enter scopes (comma-separated, or press Enter for none): ")
-  const scopes = scopesInput ? scopesInput.split(",").map((s) => s.trim()) : []
+  const expiresIn = readlineSync.question("Enter expiration time (e.g., 1h, 7d, 1h30m, 2d12h) [default: 1h]: ") || "1h"
 
-  const expiresIn = readlineSync.question("Enter expiration time (e.g., 1h, 7d, 30m) [default: 1h]: ") || "1h"
+  // Try to get secret automatically first
+  console.log("\\n🔍 Checking for available secrets...")
+  let secret = await getSecret({ cloudflare: true })
 
-  const secret =
-    readlineSync.question("Enter JWT secret (or press Enter to use JWT_SECRET env var): ", {
+  if (!secret) {
+    console.log("\\n⚠️  No secrets found automatically. Please enter manually:")
+    secret = readlineSync.question("Enter JWT secret: ", {
       hideEchoBack: true
-    }) || process.env.JWT_SECRET
+    })
+  }
 
   if (!secret) {
     console.error("❌ JWT secret is required")
     process.exit(1)
   }
 
-  return { sub, scopes, expiresIn, secret }
+  return { sub, expiresIn, secret }
 }
 
-function validateScopes(scopes: string[]): boolean {
-  const validScopes = Object.values(COMMON_SCOPES)
-  return scopes.every((scope) => validScopes.includes(scope as (typeof COMMON_SCOPES)[keyof typeof COMMON_SCOPES]))
-}
-
-function generateToken(payload: CreateJWTRequest, secret: string): string {
+function generateToken(payload: JWTRequest, secret: string): string {
   const now = Math.floor(Date.now() / 1000)
 
   const jwtPayload = {
     sub: payload.sub,
-    scopes: payload.scopes,
     iat: now,
     exp: now + parseExpiration(payload.expiresIn)
   }
@@ -123,89 +136,124 @@ function generateToken(payload: CreateJWTRequest, secret: string): string {
 }
 
 function parseExpiration(expiresIn: string): number {
-  const units: Record<string, number> = {
-    s: 1,
-    m: 60,
-    h: 3600,
-    d: 86400,
-    w: 604800
-  }
-
-  const match = expiresIn.match(/^(\\d+)([smhdw])$/)
-  if (!match) {
-    console.error(`❌ Invalid expiration format: ${expiresIn}. Use format like '1h', '7d', '30m'`)
-    process.exit(1)
-  }
-
-  const [, value, unit] = match
-  return Number.parseInt(value) * units[unit]
-}
-
-function main(): void {
-  const args = parseArgs()
-
-  if (args.help) {
-    showHelp()
-    return
-  }
-
-  let payload: CreateJWTRequest & { secret: string }
-
-  if (args.interactive) {
-    payload = getInteractiveInput()
-  } else {
-    if (!args.sub) {
-      console.error("❌ Subject (--sub) is required. Use --help for usage info.")
-      process.exit(1)
-    }
-
-    const secret = args.secret || process.env.JWT_SECRET
-    if (!secret) {
-      console.error("❌ JWT secret is required. Set JWT_SECRET env var or use --secret option.")
-      process.exit(1)
-    }
-
-    payload = {
-      sub: args.sub,
-      scopes: args.scopes || [],
-      expiresIn: args.expiresIn || "1h",
-      secret
-    }
-  }
-
-  if (payload.scopes.length > 0 && !validateScopes(payload.scopes)) {
-    console.error(`❌ Invalid scopes. Available: ${Object.values(COMMON_SCOPES).join(", ")}`)
-    process.exit(1)
-  }
-
+  // Try ms library first for simple durations
+  let milliseconds: number | undefined
   try {
-    const token = generateToken(payload, payload.secret)
+    // @ts-expect-error: ms library accepts strings but types may be incorrect
+    const result = ms(expiresIn)
+    milliseconds = typeof result === "number" ? result : undefined
+  } catch {
+    milliseconds = undefined
+  }
 
-    console.log("\\n✅ JWT Token Generated Successfully\\n")
-    console.log("Token:")
-    console.log(token)
-    console.log("\\nPayload:")
-    console.log(
-      JSON.stringify(
-        {
-          sub: payload.sub,
-          scopes: payload.scopes,
-          expiresIn: payload.expiresIn
-        },
-        null,
-        2
-      )
+  // If ms fails, try compound duration parsing
+  if (typeof milliseconds !== "number" || milliseconds <= 0) {
+    milliseconds = parseCompoundDuration(expiresIn)
+  }
+
+  if (typeof milliseconds !== "number" || milliseconds <= 0) {
+    console.error(
+      `❌ Invalid expiration format: ${expiresIn}. Use format like '1h', '7d', '90m', or simple durations only`
     )
-
-    console.log("\\n💡 Usage Examples:")
-    console.log(`curl -H "Authorization: Bearer ${token}" https://api.dave.io/protected-endpoint`)
-    console.log(`curl "https://api.dave.io/protected-endpoint?token=${token}"`)
-  } catch (error) {
-    console.error("❌ Error generating token:", error)
     process.exit(1)
   }
+  return Math.floor(milliseconds / 1000) // Convert to seconds
 }
 
-if (import.meta.main) {
+function parseCompoundDuration(duration: string): number | undefined {
+  // Parse compound durations like "1h30m" by breaking them down
+  const units: Record<string, number> = {
+    w: 604800000, // week
+    d: 86400000, // day
+    h: 3600000, // hour
+    m: 60000, // minute
+    s: 1000 // second
+  }
+
+  let total = 0
+  const remaining = duration.toLowerCase()
+
+  // Match patterns like "1h", "30m", etc.
+  const regex = /(\d+)([wdhms])/g
+  let match: RegExpExecArray | null
+  let hasMatches = false
+
+  match = regex.exec(remaining)
+  while (match !== null) {
+    hasMatches = true
+    const value = Number.parseInt(match[1])
+    const unit = match[2]
+    if (units[unit]) {
+      total += value * units[unit]
+    }
+    match = regex.exec(remaining)
+  }
+
+  return hasMatches ? total : undefined
+}
+
+async function main(): Promise<void> {
+  program.action(async (options) => {
+    let payload: JWTRequest & { secret: string }
+
+    if (options.interactive) {
+      payload = await getInteractiveInput()
+    } else {
+      if (!options.sub) {
+        console.error("❌ Subject (--sub) is required. Use --help for usage info.")
+        process.exit(1)
+      }
+
+      const secret = await getSecret({
+        secret: options.secret,
+        cloudflare: options.cloudflare
+      })
+
+      if (!secret) {
+        console.error(
+          "❌ JWT secret is required. Set JWT_SECRET env var, use --secret option, or ensure API_JWT_SECRET is configured in Cloudflare."
+        )
+        process.exit(1)
+      }
+
+      payload = {
+        sub: options.sub,
+        expiresIn: options.expires,
+        secret
+      }
+    }
+
+    try {
+      const token = generateToken(payload, payload.secret)
+
+      console.log("\\n✅ JWT Token Generated Successfully\\n")
+      console.log("Token:")
+      console.log(token)
+      console.log("\\nPayload:")
+      console.log(
+        JSON.stringify(
+          {
+            sub: payload.sub,
+            expiresIn: payload.expiresIn
+          },
+          null,
+          2
+        )
+      )
+
+      console.log("\\n💡 Usage Examples:")
+      console.log(`curl -H "Authorization: Bearer ${token}" https://api.dave.io/protected-endpoint`)
+      console.log(`curl "https://api.dave.io/protected-endpoint?token=${token}"`)
+    } catch (error) {
+      console.error("❌ Error generating token:", error)
+      process.exit(1)
+    }
+  })
+
+  await program.parseAsync()
+}
+
+// Check if this file is being run directly
+if (import.meta.url === `file://${process.argv[1]}`) {
   main()
 }

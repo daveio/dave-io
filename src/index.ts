@@ -13,7 +13,7 @@ import { trackRequestAnalytics } from "./lib/analytics"
 type Bindings = {
   DATA: KVNamespace
   ANALYTICS: AnalyticsEngineDataset
-  JWT_SECRET: string
+  API_JWT_SECRET: string
 }
 
 // Start a Hono app

@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken"
 
 export interface JWTPayload {
   sub: string
-  scopes: string[]
   iat: number
   exp: number
 }
@@ -11,39 +10,40 @@ export interface JWTPayload {
 export interface AuthorizedContext extends Context {
   user: {
     id: string
-    scopes: string[]
   }
+}
+
+export function extractTokenFromRequest(c: Context): string | null {
+  // Try Authorization header first
+  const authHeader = c.req.header("Authorization")
+  if (authHeader?.startsWith("Bearer ")) {
+    return authHeader.slice(7)
+  }
+
+  // Try query parameter as fallback
+  const tokenParam = c.req.query("token")
+  if (tokenParam) {
+    return tokenParam
+  }
+
+  return null
 }
 
 export async function verifyJWT(token: string, secret: string): Promise<JWTPayload | null> {
   try {
-    const decoded = jwt.verify(token, secret, { algorithms: ["HS256"] }) as JWTPayload
-    return decoded
+    const payload = jwt.verify(token, secret) as JWTPayload
+    return payload
   } catch (error) {
     console.error("JWT verification failed:", error)
     return null
   }
 }
 
-export function extractTokenFromRequest(c: Context): string | null {
-  const authHeader = c.req.header("authorization")
-  if (authHeader?.startsWith("Bearer ")) {
-    return authHeader.slice(7)
-  }
-
-  const bodyToken = c.req.query("token")
-  if (bodyToken) {
-    return bodyToken
-  }
-
-  return null
-}
-
-export function createJWTMiddleware(requiredScopes: string[] = []) {
+export function createJWTMiddleware() {
   return async (c: Context, next: () => Promise<void>) => {
-    const jwtSecret = c.env.JWT_SECRET
+    const jwtSecret = c.env.API_JWT_SECRET
     if (!jwtSecret) {
-      console.error("JWT_SECRET environment variable not set")
+      console.error("API_JWT_SECRET environment variable not set")
       return c.json({ error: "Authentication not configured" }, 500)
     }
 
@@ -60,29 +60,14 @@ export function createJWTMiddleware(requiredScopes: string[] = []) {
     if (Date.now() / 1000 > payload.exp) {
       return c.json({ error: "Token expired" }, 401)
     }
-
-    if (requiredScopes.length > 0) {
-      const hasRequiredScope = requiredScopes.some((scope) => payload.scopes.includes(scope))
-      if (!hasRequiredScope) {
-        return c.json(
-          {
-            error: "Insufficient permissions",
-            required: requiredScopes,
-            granted: payload.scopes
-          },
-          403
-        )
-      }
-    }
     ;(c as AuthorizedContext).user = {
-      id: payload.sub,
-      scopes: payload.scopes
+      id: payload.sub
     }
 
     await next()
   }
 }
 
-export function requireAuth(scopes: string[] = []) {
-  return createJWTMiddleware(scopes)
+export function requireAuth() {
+  return createJWTMiddleware()
 }
