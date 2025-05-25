@@ -1,8 +1,8 @@
 name: ci
 permissions: read-all
-on:
-  push:
-  pull_request:
+"on":
+  push: null
+  pull_request: null
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -20,4 +20,4 @@ jobs:
       - name: biome
         run: bun run biome check
       - name: trunk
-        uses: trunk-io/trunk-action@b8812b3da2f527db878ef7541c4177f8d280cd89
+        uses: trunk-io/trunk-action@75699af9e26881e564e9d832ef7dc3af25ec031b
