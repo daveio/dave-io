@@ -70,3 +70,57 @@ export function createJWTMiddleware() {
 export function requireAuth() {
   return createJWTMiddleware()
 }
+
+/**
+ * Creates a middleware that authorizes access based on JWT subject matching
+ * the specified endpoint and optional subresource.
+ *
+ * If the JWT subject is exactly "ENDPOINT", it authorizes access to all subresources.
+ * If the JWT subject is "ENDPOINT:SUBRESOURCE", it only authorizes that specific subresource.
+ *
+ * Usage:
+ * ```
+ * app.get('/api/documents', authorizeEndpoint('documents'), (c) => { ... })
+ * app.get('/api/documents/:id', authorizeEndpoint('documents', 'read'), (c) => { ... })
+ * ```
+ *
+ * @param endpoint The main endpoint identifier
+ * @param subresource Optional subresource identifier
+ * @returns A middleware that checks JWT authorization
+ */
+export function authorizeEndpoint(endpoint: string, subresource?: string) {
+  const authMiddleware = requireAuth()
+
+  return async <T>(c: Context, handler: () => Promise<T>): Promise<Response | T> => {
+    // Store the original response status to detect if auth middleware set an error
+    const originalStatus = c.res.status
+    let result: T | undefined
+
+    // Run the standard JWT auth middleware first
+    await authMiddleware(c, async () => {
+      // If we get here, JWT is valid and user is authenticated
+      // Now check if the subject in the JWT matches our endpoint requirements
+      const authorizedC = c as AuthorizedContext
+      const subject = authorizedC.user.id
+
+      const fullResourcePattern = subresource ? `${endpoint}:${subresource}` : endpoint
+
+      // Authorize if:
+      // 1. Subject matches exactly the endpoint (grants access to all subresources)
+      // 2. Subject matches exactly the endpoint:subresource pattern
+      if (subject === endpoint || subject === fullResourcePattern) {
+        result = await handler()
+      } else {
+        c.status(403)
+        c.json({ error: "Not authorized for this resource" })
+      }
+    })
+
+    // If authMiddleware set an error status, don't override it
+    if (c.res.status !== originalStatus && c.res.status !== 200) {
+      return c.res
+    }
+
+    return result as T
+  }
+}

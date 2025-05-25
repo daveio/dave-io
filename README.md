@@ -298,6 +298,48 @@ export class MyProtectedEndpoint extends OpenAPIRoute {
 
 **Important**: The middleware returns a `Response` object when authentication fails (401 status), so you must check for this and return it directly. Don't assume the middleware throws errors - it handles HTTP responses internally.
 
+### Endpoint-Specific Authorization
+
+For more granular control, use the `authorizeEndpoint()` function to restrict access based on the JWT subject:
+
+```typescript
+import { authorizeEndpoint } from "../lib/auth"
+import type { Context } from "hono"
+
+export class DocumentsEndpoint extends OpenAPIRoute {
+  async handle(c: Context) {
+    // Authorize access to the 'documents' endpoint
+    // This will validate the JWT and check if the subject matches 'documents'
+    return authorizeEndpoint('documents')(c, async () => {
+      return c.json({ message: "Access granted to documents endpoint" })
+    })
+  }
+}
+
+export class PublishDocumentEndpoint extends OpenAPIRoute {
+  async handle(c: Context) {
+    // Authorize access to the 'documents:publish' subresource
+    // This requires a JWT with subject 'documents:publish' or just 'documents'
+    return authorizeEndpoint('documents', 'publish')(c, async () => {
+      return c.json({ message: "Document published successfully" })
+    })
+  }
+}
+```
+
+**How it works**:
+- If the JWT subject is exactly "ENDPOINT" (e.g., "documents"), it authorizes access to all subresources
+- If the JWT subject is "ENDPOINT:SUBRESOURCE" (e.g., "documents:publish"), it only authorizes that specific subresource
+- The subject in the JWT is cryptographically secured and cannot be modified without invalidating the token
+- The function automatically handles responses from the handler and passes them through if authorized
+- Authentication and authorization errors are handled with appropriate 401/403 status codes
+
+This allows you to create JWTs with precise permissions for different operations:
+- `documents` - Full access to all document operations
+- `documents:read` - Read-only access to documents
+- `documents:write` - Write access to documents
+- `documents:publish` - Publishing access only
+
 ### Security Features
 
 - **Industry Standard**: Uses the `jsonwebtoken` library following JWT best practices

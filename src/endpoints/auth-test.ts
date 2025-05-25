@@ -1,7 +1,7 @@
 import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
 import { z } from "zod"
-import { type AuthorizedContext, requireAuth } from "../lib/auth"
+import { type AuthorizedContext, authorizeEndpoint } from "../lib/auth"
 
 export class AuthTest extends OpenAPIRoute {
   schema = {
@@ -32,38 +32,31 @@ export class AuthTest extends OpenAPIRoute {
             })
           }
         }
+      },
+      403: {
+        description: "Authorization failed",
+        content: {
+          "application/json": {
+            schema: z.object({
+              error: z.string()
+            })
+          }
+        }
       }
     }
   }
 
   async handle(c: Context) {
-    const authMiddleware = requireAuth()
+    // Using the new authorizeEndpoint helper with 'auth' endpoint and 'test' subresource
+    // JWT subject must be either 'auth' or 'auth:test' to access this endpoint
+    return authorizeEndpoint("auth", "test")(c, async () => {
+      const authContext = c as AuthorizedContext
 
-    // The middleware will return a Response if authentication fails
-    // We need to capture and check the result
-    let authResult: Response | undefined
-
-    try {
-      authResult = await authMiddleware(c, async () => {
-        // This empty function will only be called if auth succeeds
+      return c.json({
+        message: "Authentication successful! You have access to this protected endpoint.",
+        user: authContext.user,
+        timestamp: new Date().toISOString()
       })
-    } catch (error) {
-      console.error("Auth middleware error:", error)
-      return c.json({ error: "Authentication failed" }, 500)
-    }
-
-    // If the middleware returned a Response, it means auth failed
-    if (authResult instanceof Response) {
-      return authResult
-    }
-
-    // If we get here, authentication succeeded
-    const authContext = c as AuthorizedContext
-
-    return c.json({
-      message: "Authentication successful! You have access to this protected endpoint.",
-      user: authContext.user,
-      timestamp: new Date().toISOString()
     })
   }
 }

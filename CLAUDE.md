@@ -261,6 +261,7 @@ The JWT authentication system consists of several key components:
    - `requireAuth()`: Convenience function that returns the middleware
    - `extractTokenFromRequest()`: Extracts JWT from Authorization header or query param
    - `verifyJWT()`: Validates and decodes JWT tokens
+   - `authorizeEndpoint()`: Creates a middleware that authorizes access based on JWT subject matching
 
 2. **Type Definitions (`src/schemas/auth.schema.ts`)**:
    - `JWTPayload`: Interface for decoded JWT payload
@@ -276,6 +277,66 @@ The JWT authentication system consists of several key components:
    - Reference implementation of protected endpoint
    - Demonstrates correct middleware usage pattern
    - Available for testing authentication flow
+
+### Endpoint-Specific Authorization
+
+The API provides a convenient way to authorize access to specific endpoints and subresources based on the JWT subject using the `authorizeEndpoint()` function:
+
+```typescript
+import { authorizeEndpoint } from "../lib/auth"
+import type { Context } from "hono"
+
+export class MyEndpoint extends OpenAPIRoute {
+  async handle(c: Context) {
+    // Require JWT with subject 'users' or 'users:read'
+    return authorizeEndpoint('users', 'read')(c, async () => {
+      // This code only executes if authorized
+      return c.json({ message: "Access granted to users endpoint" })
+    })
+  }
+}
+```
+
+#### How It Works
+
+1. The function takes two parameters:
+   - `endpoint`: The main endpoint identifier (e.g., 'users', 'documents')
+   - `subresource` (optional): A specific subresource (e.g., 'read', 'write', 'admin')
+
+2. JWT Authorization Rules:
+   - If the JWT subject matches exactly the endpoint (e.g., "users"), it grants access to all subresources
+   - If the JWT subject matches the specific pattern "endpoint:subresource" (e.g., "users:read"), it only grants access to that subresource
+
+3. This allows for fine-grained permission control through JWT subjects:
+   - Create tokens with broad access: `api` grants access to all API endpoints
+   - Create tokens with endpoint access: `users` grants access to all user operations
+   - Create tokens with specific permissions: `users:read` only grants read access
+
+4. Implementation pattern:
+```typescript
+// Protect an entire resource
+app.get('/api/documents', authorizeEndpoint('documents'), (c) => {
+  return c.json({ message: "All documents accessed" });
+});
+
+// Protect a specific subresource
+app.post('/api/documents/:id/publish', authorizeEndpoint('documents', 'publish'), (c) => {
+  return c.json({ message: "Document published" });
+});
+```
+
+5. Return Value Handling:
+   - The function handles and returns the result of your callback function
+   - Responses from your handler are passed through directly if authorization succeeds
+   - Authentication failures return a 401 status with an error message
+   - Authorization failures return a 403 status with an error message
+
+#### Security Considerations
+
+- The subject field in JWTs is cryptographically secured by the JWT signature
+- Users cannot modify the subject without invalidating the token
+- The middleware handles all authentication checks before authorization
+- Proper error responses (401/403) are returned for unauthorized access
 
 ### Best Practices Recap
 
