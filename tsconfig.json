@@ -22,7 +22,7 @@
     "strict": true,
     "target": "esnext",
     "traceResolution": false,
-    "types": ["@types/node", "@types/service-worker-mock"]
+    "types": ["@types/node"]
   },
   "exclude": ["node_modules", "dist", "tests"],
   "include": ["src", "scripts"]

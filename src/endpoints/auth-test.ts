@@ -39,12 +39,25 @@ export class AuthTest extends OpenAPIRoute {
   async handle(c: Context) {
     const authMiddleware = requireAuth()
 
+    // The middleware will return a Response if authentication fails
+    // We need to capture and check the result
+    let authResult: Response | undefined
+
     try {
-      await authMiddleware(c, async () => {})
-    } catch (_error) {
+      authResult = await authMiddleware(c, async () => {
+        // This empty function will only be called if auth succeeds
+      })
+    } catch (error) {
+      console.error("Auth middleware error:", error)
       return c.json({ error: "Authentication failed" }, 500)
     }
 
+    // If the middleware returned a Response, it means auth failed
+    if (authResult instanceof Response) {
+      return authResult
+    }
+
+    // If we get here, authentication succeeded
     const authContext = c as AuthorizedContext
 
     return c.json({

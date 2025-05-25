@@ -33,7 +33,6 @@ export class Metrics extends OpenAPIRoute {
 
   /**
    * Format metrics data as Prometheus format
-   * Uses a simpler manual format approach that doesn't rely on prom-client
    */
   private formatPrometheusMetrics(metrics: Record<string, number>): string {
     const lines: string[] = []
@@ -104,8 +103,7 @@ export class Metrics extends OpenAPIRoute {
     }
 
     if (path.endsWith("/prometheus")) {
-      // Return Prometheus format using the simple implementation
-      // that doesn't depend on prom-client
+      // Return Prometheus format
       const prometheusContent = this.formatPrometheusMetrics(metricsData)
       return new Response(prometheusContent, {
         headers: {

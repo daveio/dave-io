@@ -122,22 +122,42 @@ API_JWT_SECRET=your-super-secret-key-here
 2. **Generate a Token**: Use the built-in CLI tool:
 
 ```bash
-# Interactive mode (recommended)
+# Interactive mode (prompts for all values)
 bun run jwt --interactive
 
-# Command line mode
-bun run jwt --sub SUBJECT --expires "24h"
+# Command line mode with environment variable
+JWT_SECRET=your-local-secret bun run jwt --sub SUBJECT --expires "24h"
+
+# Command line mode with explicit secret
+bun run jwt --sub SUBJECT --secret "your-secret-here" --expires "1h"
+
+# Using the local development secret from .dev.vars
+JWT_SECRET="$(cat .dev.vars | grep API_JWT_SECRET | cut -d'=' -f2 | tr -d '\"')" bun run jwt --sub "test-user"
 ```
+
+**Note**: The CLI tool cannot retrieve secrets from Cloudflare Workers (they're write-only for security). Use local environment variables or the `--secret` option.
 
 3. **Test Authentication**:
 
 ```bash
-# Using Bearer token
+# Test the auth endpoint without a token (should return 401)
+curl https://api.dave.io/auth/test # trunk-ignore(gitleaks/curl-auth-header)
+
+# Test with invalid token (should return 401)
+curl -H "Authorization: Bearer invalid-token" https://api.dave.io/auth/test
+
+# Test with valid token (should return 200 with user info)
 curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/auth/test # trunk-ignore(gitleaks/curl-auth-header)
 
-# Using query parameter
+# Using query parameter instead of header
 curl "https://api.dave.io/auth/test?token=YOUR_JWT_TOKEN"
 ```
+
+**Expected Responses:**
+
+- **No token**: `{"error":"Authentication required"}` (401)
+- **Invalid token**: `{"error":"Invalid token"}` (401)
+- **Valid token**: Success message with user info (200)
 
 ### Subject-Based Authorization
 
@@ -192,9 +212,15 @@ bun run jwt --help
 
 - `-s, --sub <subject>`: Subject for the token (can include user ID, roles, permissions)
 - `-e, --expires <time>`: Token expiration (e.g., "1h", "7d", "30m")
-- `--secret <secret>`: JWT secret key (or use JWT_SECRET env var)
-- `-i, --interactive`: Interactive mode
+- `--secret <secret>`: JWT secret key (takes precedence over JWT_SECRET env var)
+- `-i, --interactive`: Interactive mode (prompts for all values)
 - `-h, --help`: Show help message
+
+**Secret Priority (highest to lowest):**
+1. `--secret` command line option
+2. `JWT_SECRET` environment variable
+
+Note: Cloudflare secrets are write-only and cannot be retrieved for security reasons.
 
 ### Authentication Responses
 
@@ -225,6 +251,52 @@ bun run jwt --help
   "error": "Invalid token"
 }
 ```
+
+### Implementing Authentication in Your Endpoints
+
+To protect an endpoint with JWT authentication, use the `requireAuth()` middleware. Here's the correct implementation pattern:
+
+```typescript
+import { requireAuth, type AuthorizedContext } from "../lib/auth"
+import type { Context } from "hono"
+
+export class MyProtectedEndpoint extends OpenAPIRoute {
+  async handle(c: Context) {
+    // Create the authentication middleware
+    const authMiddleware = requireAuth()
+
+    // The middleware will return a Response if authentication fails
+    let authResult: Response | void
+
+    try {
+      authResult = await authMiddleware(c, async () => {
+        // This function only executes if auth succeeds
+      })
+    } catch (error) {
+      console.error("Auth middleware error:", error)
+      return c.json({ error: "Authentication failed" }, 500)
+    }
+
+    // If the middleware returned a Response, auth failed
+    if (authResult instanceof Response) {
+      return authResult
+    }
+
+    // Authentication succeeded - access user info
+    const authContext = c as AuthorizedContext
+    const userId = authContext.user.id
+
+    // Your protected endpoint logic here...
+    return c.json({
+      message: "Success!",
+      user: authContext.user,
+      data: "sensitive data"
+    })
+  }
+}
+```
+
+**Important**: The middleware returns a `Response` object when authentication fails (401 status), so you must check for this and return it directly. Don't assume the middleware throws errors - it handles HTTP responses internally.
 
 ### Security Features
 

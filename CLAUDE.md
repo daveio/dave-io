@@ -107,23 +107,88 @@ The API includes a comprehensive JWT-based authentication system with scope-base
 
 ### Using Authentication in Endpoints
 
-To protect an endpoint, apply the `requireAuth()` middleware:
+To protect an endpoint, apply the `requireAuth()` middleware. **Important**: The middleware returns a Response object when authentication fails, so you must check for and handle this properly:
 
 ```typescript
-import { requireAuth } from "../lib/auth"
+import { requireAuth, type AuthorizedContext } from "../lib/auth"
+import type { Context } from "hono"
 
 // In your endpoint's handle method:
 async handle(c: Context) {
-  // Require authentication for this endpoint
+  // Create the authentication middleware
   const authMiddleware = requireAuth()
-  await authMiddleware(c, async () => {})
 
-  // Access authenticated user info
+  // The middleware will return a Response if authentication fails
+  // We need to capture and check the result
+  let authResult: Response | void
+
+  try {
+    authResult = await authMiddleware(c, async () => {
+      // This empty function will only be called if auth succeeds
+    })
+  } catch (error) {
+    console.error("Auth middleware error:", error)
+    return c.json({ error: "Authentication failed" }, 500)
+  }
+
+  // If the middleware returned a Response, it means auth failed
+  if (authResult instanceof Response) {
+    return authResult
+  }
+
+  // If we get here, authentication succeeded
   const authContext = c as AuthorizedContext
   console.log("User ID:", authContext.user.id)
 
   // Your endpoint logic here...
+  return c.json({
+    message: "Success!",
+    user: authContext.user,
+    timestamp: new Date().toISOString()
+  })
 }
+```
+
+#### Alternative Pattern: Using Hono Middleware
+
+For simpler authentication, you can also use the middleware directly with Hono's middleware pattern:
+
+```typescript
+import { requireAuth } from "../lib/auth"
+
+// In your main app setup (index.ts):
+app.use('/protected/*', requireAuth())
+
+// Then your endpoints under /protected/ will automatically be authenticated
+```
+
+#### Common Pitfalls to Avoid
+
+❌ **Don't do this** (the bug we just fixed):
+```typescript
+// This is WRONG - it doesn't handle auth failures properly
+try {
+  await authMiddleware(c, async () => {})
+} catch (error) {
+  return c.json({ error: "Auth failed" }, 500)
+}
+// This will execute even if auth failed!
+```
+
+✅ **Do this instead**:
+```typescript
+// This is CORRECT - it properly handles auth failures
+let authResult: Response | void
+try {
+  authResult = await authMiddleware(c, async () => {})
+} catch (error) {
+  return c.json({ error: "Authentication failed" }, 500)
+}
+
+if (authResult instanceof Response) {
+  return authResult // Return the auth failure response
+}
+// Only continue if auth succeeded
 ```
 
 ### Environment Setup
@@ -140,30 +205,87 @@ bun run wrangler secret put JWT_SECRET
 
 ### JWT Token Generation
 
-Use the built-in CLI tool to generate tokens:
+Use the built-in CLI tool to generate tokens for development and testing:
 
 ```bash
-# Interactive mode (recommended for development)
+# Interactive mode (prompts for all values)
 bun run jwt --interactive
 
-# Command line mode
-bun run jwt --sub "user123" --expires "24h"
+# Command line mode with environment variable
+JWT_SECRET=your-local-secret bun run jwt --sub "user123" --expires "24h"
 
-# With custom secret
-JWT_SECRET=mysecret bun run jwt --sub "admin"
+# Command line mode with explicit secret
+bun run jwt --sub "admin" --secret "your-secret-here" --expires "1h"
+
+# Using the local development secret
+JWT_SECRET="$(cat .dev.vars | grep API_JWT_SECRET | cut -d'=' -f2 | tr -d '\"')" bun run jwt --sub "test-user"
 ```
+
+**Important Notes:**
+- The CLI tool **cannot** retrieve secrets from Cloudflare Workers (they're write-only for security)
+- For local development, use the secret from `.dev.vars` or set `JWT_SECRET` environment variable
+- For production use, generate tokens through your secure deployment environment
+- Generated tokens are only valid with the same secret used by the API
 
 ### Testing Authentication
 
 A test endpoint is available at `/auth/test` and `/api/auth/test` to verify authentication:
 
 ```bash
-# Test with Bearer token
+# Test without authentication (should fail with 401)
+curl https://api.dave.io/auth/test # trunk-ignore(gitleaks/curl-auth-header)
+
+# Test with invalid token (should fail with 401)
+curl -H "Authorization: Bearer invalid-token" https://api.dave.io/auth/test
+
+# Test with valid Bearer token (should succeed with 200)
 curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/auth/test # trunk-ignore(gitleaks/curl-auth-header)
 
-# Test with query parameter
+# Test with query parameter (should succeed with 200)
 curl "https://api.dave.io/auth/test?token=YOUR_JWT_TOKEN"
 ```
+
+**Expected Responses:**
+- Without token: `{"error":"Authentication required"}` (401)
+- Invalid token: `{"error":"Invalid token"}` (401)
+- Valid token: Success message with user info (200)
+
+The auth test endpoint serves as both a testing tool and a reference implementation showing the correct authentication pattern. See `src/endpoints/auth-test.ts` for the complete implementation.
+
+### Authentication Architecture Summary
+
+The JWT authentication system consists of several key components:
+
+1. **Middleware (`src/lib/auth.ts`)**:
+   - `createJWTMiddleware()`: Creates the authentication middleware function
+   - `requireAuth()`: Convenience function that returns the middleware
+   - `extractTokenFromRequest()`: Extracts JWT from Authorization header or query param
+   - `verifyJWT()`: Validates and decodes JWT tokens
+
+2. **Type Definitions (`src/schemas/auth.schema.ts`)**:
+   - `JWTPayload`: Interface for decoded JWT payload
+   - `AuthorizedContext`: Extended Hono context with user info
+   - `AuthError`: Standard error response format
+
+3. **CLI Tool (`bin/jwt.ts`)**:
+   - Interactive and command-line token generation
+   - Supports custom expiration times and secrets
+   - Helpful for development and testing
+
+4. **Test Endpoint (`src/endpoints/auth-test.ts`)**:
+   - Reference implementation of protected endpoint
+   - Demonstrates correct middleware usage pattern
+   - Available for testing authentication flow
+
+### Best Practices Recap
+
+- ✅ **Always check middleware return value**: Don't assume it throws on failure
+- ✅ **Use proper TypeScript types**: Leverage `AuthorizedContext` for type safety
+- ✅ **Handle errors gracefully**: Provide clear error messages for different failure modes
+- ✅ **Test thoroughly**: Verify both success and failure scenarios
+- ✅ **Use environment variables**: Keep secrets out of code
+- ❌ **Never ignore auth failures**: Always handle middleware responses properly
+- ❌ **Don't hardcode secrets**: Use environment variables and Cloudflare secrets
 
 ### Key Components
 

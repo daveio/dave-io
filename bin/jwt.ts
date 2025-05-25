@@ -17,8 +17,7 @@ program
   .version("1.0.0")
   .option("-s, --sub <subject>", "Subject (user ID) for the token")
   .option("-e, --expires <time>", "Token expiration (e.g., '1h', '7d', '1h30m', '2d12h') [default: 1h]", "1h")
-  .option("--secret <secret>", "JWT secret key (takes precedence over env var and Cloudflare secret)")
-  .option("--no-cloudflare", "Skip attempting to retrieve secret from Cloudflare")
+  .option("--secret <secret>", "JWT secret key (takes precedence over env var)")
   .option("-i, --interactive", "Interactive mode - prompts for all values")
   .addHelpText(
     "after",
@@ -33,43 +32,15 @@ Examples:
 Secret Priority (highest to lowest):
   1. --secret option
   2. JWT_SECRET environment variable
-  3. Cloudflare Workers secret (via wrangler)
+
+Note: Cloudflare secrets are write-only for security and cannot be retrieved.
 
 Environment Variables:
   JWT_SECRET             JWT secret key (fallback if not passed via --secret)
 `
   )
 
-async function getCloudflareSecret(): Promise<string | null> {
-  try {
-    console.log("🔍 Attempting to retrieve API_JWT_SECRET from Cloudflare...")
-
-    const proc = Bun.spawn(["bun", "run", "wrangler", "secret", "get", "API_JWT_SECRET"], {
-      stdout: "pipe",
-      stderr: "pipe"
-    })
-
-    const result = await proc.exited
-
-    if (result === 0) {
-      const output = await new Response(proc.stdout).text()
-      const secret = output.trim()
-      if (secret) {
-        console.log("✅ Successfully retrieved API_JWT_SECRET from Cloudflare")
-        return secret
-      }
-    }
-
-    const errorOutput = await new Response(proc.stderr).text()
-    console.warn("⚠️  Could not retrieve API_JWT_SECRET from Cloudflare:", errorOutput.trim())
-    return null
-  } catch (error) {
-    console.warn("⚠️  Error accessing Cloudflare secret:", error)
-    return null
-  }
-}
-
-async function getSecret(options: { secret?: string; cloudflare?: boolean }): Promise<string | null> {
+async function getSecret(options: { secret?: string }): Promise<string | null> {
   // Priority 1: Explicit --secret option
   if (options.secret) {
     console.log("🔑 Using secret from --secret option")
@@ -82,13 +53,7 @@ async function getSecret(options: { secret?: string; cloudflare?: boolean }): Pr
     return process.env.JWT_SECRET
   }
 
-  // Priority 3: Cloudflare secret (if not disabled)
-  if (options.cloudflare !== false) {
-    const cloudflareSecret = await getCloudflareSecret()
-    if (cloudflareSecret) {
-      return cloudflareSecret
-    }
-  }
+  // Note: Cloudflare secrets cannot be retrieved for security reasons
 
   return null
 }
@@ -106,7 +71,7 @@ async function getInteractiveInput(): Promise<JWTRequest & { secret: string }> {
 
   // Try to get secret automatically first
   console.log("\\n🔍 Checking for available secrets...")
-  let secret = await getSecret({ cloudflare: true })
+  let secret = await getSecret({})
 
   if (!secret) {
     console.log("\\n⚠️  No secrets found automatically. Please enter manually:")
@@ -205,14 +170,12 @@ async function main(): Promise<void> {
       }
 
       const secret = await getSecret({
-        secret: options.secret,
-        cloudflare: options.cloudflare
+        secret: options.secret
       })
 
       if (!secret) {
-        console.error(
-          "❌ JWT secret is required. Set JWT_SECRET env var, use --secret option, or ensure API_JWT_SECRET is configured in Cloudflare."
-        )
+        console.error("❌ JWT secret is required. Set JWT_SECRET env var or use --secret option.")
+        console.error("💡 For production tokens, use the production API with a valid secret.")
         process.exit(1)
       }
 
