@@ -61,7 +61,9 @@ function mergeCidrs<T extends IP>(cidrs: string[], Addr: IPConstructor<T>): stri
       }
 
       const last = merged[merged.length - 1]
-      if (!last) { continue }
+      if (!last) {
+        continue
+      }
 
       // Check if current network overlaps with or is contained in the last one
       if (current.isInSubnet(last) || last.isInSubnet(current)) {
