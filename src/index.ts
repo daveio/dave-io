@@ -1,5 +1,6 @@
 import { OpenAPIRoute, fromHono } from "chanfana"
 import { Hono } from "hono"
+import { AuthTest } from "./endpoints/auth-test"
 import { Dashboard } from "./endpoints/dashboard"
 import { Metrics } from "./endpoints/metrics"
 import { Ping } from "./endpoints/ping"
@@ -12,6 +13,7 @@ import { trackRequestAnalytics } from "./lib/analytics"
 type Bindings = {
   DATA: KVNamespace
   ANALYTICS: AnalyticsEngineDataset
+  API_JWT_SECRET: string
 }
 
 // Start a Hono app
@@ -165,6 +167,14 @@ app.get("/metrics/prometheus", (c) =>
 )
 app.get("/api/metrics/prometheus", (c) =>
   new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+
+// Add auth test endpoint
+app.get("/auth/test", (c) =>
+  new AuthTest({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+app.get("/api/auth/test", (c) =>
+  new AuthTest({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
 )
 
 // Export the Hono app

@@ -1,0 +1,6 @@
+# Local development environment variables
+# This file should NOT be committed to version control
+# Add this file to .gitignore
+
+# JWT Secret for authentication (local development only)
+API_JWT_SECRET="your-local-jwt-secret-key-here"
