@@ -14,6 +14,7 @@ This project implements a multipurpose personal API that runs on Cloudflare Work
 - **RouterOS**: Generates RouterOS scripts for network configurations (currently implements put.io IP ranges)
 - **Metrics**: View API metrics in JSON, YAML, or Prometheus format
 - **Authentication**: JWT-based authentication system with scope-based authorization
+- **AI**: AI-powered services including alt text generation for images
 
 The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation.
 
@@ -77,8 +78,16 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
 ### Authentication
 
 - `GET /auth/test` or `GET /api/auth/test`: Test endpoint for JWT authentication
-- Requires: Valid JWT token with `read` scope
+- Requires: Valid JWT token with `auth` or `auth:test` subject
 - Returns: Authentication success message with user info
+- Headers: `Authorization: Bearer <token>` or query parameter `?token=<token>`
+
+### AI
+
+- `GET /ai/alt-text` or `GET /api/ai/alt-text`: Generate alt text for images using AI
+- Requires: Valid JWT token with `ai` or `ai:alt-text` subject
+- Query parameters: `image` (optional) - URL of the image to generate alt text for
+- Returns: Generated alt text for an image
 - Headers: `Authorization: Bearer <token>` or query parameter `?token=<token>`
 
 ## Analytics

@@ -300,17 +300,16 @@ export class MyEndpoint extends OpenAPIRoute {
 #### How It Works
 
 1. The function takes two parameters:
-   - `endpoint`: The main endpoint identifier (e.g., 'users', 'documents')
-   - `subresource` (optional): A specific subresource (e.g., 'read', 'write', 'admin')
+   - `endpoint`: The main endpoint identifier (e.g., 'users', 'documents', 'ai')
+   - `subresource` (optional): A specific subresource (e.g., 'read', 'write', 'alt-text')
 
 2. JWT Authorization Rules:
-   - If the JWT subject matches exactly the endpoint (e.g., "users"), it grants access to all subresources
-   - If the JWT subject matches the specific pattern "endpoint:subresource" (e.g., "users:read"), it only grants access to that subresource
+   - If the JWT subject matches exactly the endpoint (e.g., "users", "ai"), it grants access to all subresources
+   - If the JWT subject matches the specific pattern "endpoint:subresource" (e.g., "ai:alt-text"), it only grants access to that subresource
 
 3. This allows for fine-grained permission control through JWT subjects:
-   - Create tokens with broad access: `api` grants access to all API endpoints
-   - Create tokens with endpoint access: `users` grants access to all user operations
-   - Create tokens with specific permissions: `users:read` only grants read access
+   - Create tokens with endpoint access: `ai` grants access to all AI operations
+   - Create tokens with specific permissions: `ai:alt-text` only grants access to the alt-text generation endpoint
 
 4. Implementation pattern:
 ```typescript
@@ -320,8 +319,9 @@ app.get('/api/documents', authorizeEndpoint('documents'), (c) => {
 });
 
 // Protect a specific subresource
-app.post('/api/documents/:id/publish', authorizeEndpoint('documents', 'publish'), (c) => {
-  return c.json({ message: "Document published" });
+app.get('/api/ai/alt-text', authorizeEndpoint('ai', 'alt-text'), (c) => {
+  // Can now accept optional image query parameter
+  return c.json({ message: "AI alt-text generation" });
 });
 ```
 

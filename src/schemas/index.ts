@@ -11,6 +11,7 @@ export * from "./dashboard.schema"
 export * from "./ping.schema"
 export * from "./routeros.schema"
 export * from "./auth.schema"
+export * from "./ai.schema"
 
 // Export Cloudflare types
 export * from "./cloudflare.types"

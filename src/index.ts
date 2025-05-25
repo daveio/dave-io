@@ -1,5 +1,6 @@
 import { OpenAPIRoute, fromHono } from "chanfana"
 import { Hono } from "hono"
+import { AiAltText } from "./endpoints/ai"
 import { AuthTest } from "./endpoints/auth-test"
 import { Dashboard } from "./endpoints/dashboard"
 import { Metrics } from "./endpoints/metrics"
@@ -9,6 +10,7 @@ import { RouterOSCache, RouterOSPutIO, RouterOSReset } from "./endpoints/routero
 import { initializeKV } from "./kv/init"
 import { incrementStatusCodeCount } from "./kv/metrics"
 import { trackRequestAnalytics } from "./lib/analytics"
+import { registerGetRoute } from "./lib/route-helper"
 
 type Bindings = {
   DATA: KVNamespace
@@ -87,95 +89,19 @@ app.use("*", async (c, next) => {
   }
 })
 
-// Register direct handlers to avoid type issues
-app.get("/ping", (c) =>
-  new Ping({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
-app.get("/api/ping", (c) =>
-  new Ping({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
-
-app.get("/redirect/:slug", (c) =>
-  new Redirect({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: ["slug"] }).execute(c)
-)
-app.get("/api/redirect/:slug", (c) =>
-  new Redirect({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: ["slug"] }).execute(c)
-)
-
-app.get("/dashboard/:name", (c) =>
-  new Dashboard({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: ["name"] }).execute(c)
-)
-app.get("/api/dashboard/:name", (c) =>
-  new Dashboard({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: ["name"] }).execute(c)
-)
-
-app.get("/routeros/putio", (c) =>
-  new RouterOSPutIO({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
-app.get("/api/routeros/putio", (c) =>
-  new RouterOSPutIO({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
-
-app.get("/routeros/cache", (c) =>
-  new RouterOSCache({
-    router: openapi,
-    raiseUnknownParameters: true,
-    route: c.req.path,
-    urlParams: []
-  }).execute(c)
-)
-app.get("/api/routeros/cache", (c) =>
-  new RouterOSCache({
-    router: openapi,
-    raiseUnknownParameters: true,
-    route: c.req.path,
-    urlParams: []
-  }).execute(c)
-)
-
-app.get("/routeros/reset", (c) =>
-  new RouterOSReset({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
-app.get("/api/routeros/reset", (c) =>
-  new RouterOSReset({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
-
-// Add metrics endpoints
-app.get("/metrics", (c) =>
-  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
-app.get("/api/metrics", (c) =>
-  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
-
-app.get("/metrics/json", (c) =>
-  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
-app.get("/api/metrics/json", (c) =>
-  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
-
-app.get("/metrics/yaml", (c) =>
-  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
-app.get("/api/metrics/yaml", (c) =>
-  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
-
-app.get("/metrics/prometheus", (c) =>
-  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
-app.get("/api/metrics/prometheus", (c) =>
-  new Metrics({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
-
-// Add auth test endpoint
-app.get("/auth/test", (c) =>
-  new AuthTest({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
-app.get("/api/auth/test", (c) =>
-  new AuthTest({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
+// Register routes using the helper utility
+registerGetRoute(app, openapi, "/ping", Ping)
+registerGetRoute(app, openapi, "/redirect/:slug", Redirect, ["slug"])
+registerGetRoute(app, openapi, "/dashboard/:name", Dashboard, ["name"])
+registerGetRoute(app, openapi, "/routeros/putio", RouterOSPutIO)
+registerGetRoute(app, openapi, "/routeros/cache", RouterOSCache)
+registerGetRoute(app, openapi, "/routeros/reset", RouterOSReset)
+registerGetRoute(app, openapi, "/metrics", Metrics)
+registerGetRoute(app, openapi, "/metrics/json", Metrics)
+registerGetRoute(app, openapi, "/metrics/yaml", Metrics)
+registerGetRoute(app, openapi, "/metrics/prometheus", Metrics)
+registerGetRoute(app, openapi, "/auth/test", AuthTest)
+registerGetRoute(app, openapi, "/ai/alt-text", AiAltText)
 
 // Export the Hono app
 export default app
