@@ -31,8 +31,7 @@ export function extractTokenFromRequest(c: Context): string | null {
 
 export async function verifyJWT(token: string, secret: string): Promise<JWTPayload | null> {
   try {
-    const payload = jwt.verify(token, secret) as JWTPayload
-    return payload
+    return jwt.verify(token, secret) as JWTPayload
   } catch (error) {
     console.error("JWT verification failed:", error)
     return null
