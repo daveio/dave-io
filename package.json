@@ -25,6 +25,7 @@
     "commander": "^14.0.0",
     "execa": "^9.5.3",
     "hono": "^4.7.10",
+    "ip-address": "^10.0.1",
     "js-yaml": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "ms": "^2.1.3",
@@ -50,8 +51,5 @@
     "bun": "~1.2.14",
     "node": "~lts"
   },
-  "trustedDependencies": ["@biomejs/biome", "bun", "esbuild", "sharp", "workerd"],
-  "comments": {
-    "ip-address-utils": "IP address utilities are implemented internally in src/lib/ip-address-utils.ts rather than using an external package"
-  }
+  "trustedDependencies": ["@biomejs/biome", "bun", "esbuild", "sharp", "workerd"]
 }

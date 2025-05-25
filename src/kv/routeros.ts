@@ -1,4 +1,4 @@
-import { ipv4, ipv6 } from "../lib/ip-address-utils"
+import { ipv4, ipv6 } from "../lib/ip"
 import type {
   BGPViewData,
   RouterOSCacheData as CacheData,
@@ -296,7 +296,7 @@ function mergeIPRanges(ranges: string[], version: 4 | 6): string[] {
   }
 
   try {
-    // Use the ip-address-utils library to merge ranges
+    // Use the ip utilities to merge ranges
     if (version === 4) {
       return ipv4.cidrMerge(ranges)
     }
