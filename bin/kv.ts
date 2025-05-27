@@ -10,12 +10,12 @@
  *   bun run bin/kv wipe               - Wipe all KV data (DANGEROUS!)
  */
 
-import { spawnSync } from "node:child_process"
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import { resolve } from "node:path"
+import Cloudflare from "cloudflare"
 
 const BACKUP_DIR = "_backup"
-const KV_NAMESPACE = "DATA"
+const KV_NAMESPACE_ID = "fa48b0bd010a43289d5e111af42b8b50" // From wrangler.jsonc
 
 // Configure the key patterns to include in the backup (using regular expressions)
 const BACKUP_KEY_PATTERNS = [
@@ -44,23 +44,86 @@ function getTimestamp() {
   return `${year}-${month}-${day}-${hours}${minutes}${seconds}`
 }
 
-// Run a Wrangler command and return parsed JSON output
-function runWranglerCommand(args: string[]) {
-  const result = spawnSync("bun", ["run", "wrangler", ...args], {
-    encoding: "utf-8",
-    stdio: ["inherit", "pipe", "inherit"]
-  })
+// Get Cloudflare configuration
+function getCloudflareConfig() {
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
 
-  if (result.status !== 0) {
-    throw new Error(`Failed to run wrangler command: ${args.join(" ")}`)
+  if (!apiToken || !accountId) {
+    throw new Error(`Missing required environment variables:
+  - CLOUDFLARE_API_TOKEN
+  - CLOUDFLARE_ACCOUNT_ID`)
   }
+
+  return { apiToken, accountId }
+}
+
+// Create Cloudflare client
+function createCloudflareClient() {
+  const { apiToken } = getCloudflareConfig()
+  return new Cloudflare({ apiToken })
+}
+
+// List all KV keys
+async function listAllKVKeys() {
+  const { accountId } = getCloudflareConfig()
+  const cloudflare = createCloudflareClient()
+
+  const allKeys: string[] = []
+  let cursor: string | undefined
+
+  do {
+    const response = await cloudflare.kv.namespaces.keys.list(KV_NAMESPACE_ID, {
+      account_id: accountId,
+      cursor,
+      limit: 1000
+    })
+
+    allKeys.push(...response.result.map((key) => key.name))
+    cursor = response.result_info?.cursor
+  } while (cursor)
+
+  return allKeys
+}
+
+// Get KV value
+async function getKVValue(key: string): Promise<string | null> {
+  const { accountId } = getCloudflareConfig()
+  const cloudflare = createCloudflareClient()
 
   try {
-    return JSON.parse(result.stdout)
-  } catch (error) {
-    console.error("Failed to parse wrangler output as JSON:", result.stdout)
+    const response = await cloudflare.kv.namespaces.values.get(KV_NAMESPACE_ID, key, {
+      account_id: accountId
+    })
+    return response
+  } catch (error: unknown) {
+    const errorStatus = (error as { status?: number }).status
+    if (errorStatus === 404) {
+      return null
+    }
     throw error
   }
+}
+
+// Set KV value
+async function setKVValue(key: string, value: string): Promise<void> {
+  const { accountId } = getCloudflareConfig()
+  const cloudflare = createCloudflareClient()
+
+  await cloudflare.kv.namespaces.values.update(KV_NAMESPACE_ID, key, {
+    account_id: accountId,
+    value
+  })
+}
+
+// Delete KV key
+async function deleteKVKey(key: string): Promise<void> {
+  const { accountId } = getCloudflareConfig()
+  const cloudflare = createCloudflareClient()
+
+  await cloudflare.kv.namespaces.values.delete(KV_NAMESPACE_ID, key, {
+    account_id: accountId
+  })
 }
 
 // Check if a key matches any of the configured patterns
@@ -70,30 +133,28 @@ function keyMatchesPatterns(key: string, patterns: RegExp[]): boolean {
 
 // Get all KV keys with their values, filtering by patterns if specified
 async function getAllKVData(backupAll = false) {
-  console.log(`Fetching ${backupAll ? "all" : "selected"} keys from KV namespace ${KV_NAMESPACE}...`)
+  console.log(`Fetching ${backupAll ? "all" : "selected"} keys from KV namespace...`)
 
   // List all keys
-  const allKeys = runWranglerCommand(["kv", "key", "list", "--remote", "--binding", KV_NAMESPACE])
+  const allKeys = await listAllKVKeys()
 
   // Filter keys if not backing up all
-  const keys = backupAll ? allKeys : allKeys.filter((keyInfo) => keyMatchesPatterns(keyInfo.name, BACKUP_KEY_PATTERNS))
+  const keys = backupAll ? allKeys : allKeys.filter((key) => keyMatchesPatterns(key, BACKUP_KEY_PATTERNS))
 
   console.log(`Found ${keys.length} keys ${!backupAll ? `matching patterns (out of ${allKeys.length} total)` : ""}`)
 
   const kvData: Record<string, unknown> = {}
 
   // Get values for each key
-  for (const keyInfo of keys) {
-    const key = keyInfo.name
+  for (const key of keys) {
     try {
       console.log("Fetching value for key:", key)
-      const valueRaw = spawnSync(
-        "bun",
-        ["run", "wrangler", "kv", "key", "get", "--remote", "--binding", KV_NAMESPACE, key],
-        {
-          encoding: "utf-8"
-        }
-      ).stdout.trim() // Trim to remove extra whitespace
+      const valueRaw = await getKVValue(key)
+
+      if (valueRaw === null) {
+        console.warn(`Key ${key} not found, skipping`)
+        continue
+      }
 
       // First try to parse as JSON, but be more careful about handling pure strings
       // Check if the value looks like a JSON object, array, number, boolean, or null
@@ -183,10 +244,7 @@ async function restoreKV(filename: string) {
         valueArg = JSON.stringify(value)
       }
 
-      spawnSync("bun", ["run", "wrangler", "kv", "key", "put", "--remote", "--binding", KV_NAMESPACE, key, valueArg], {
-        encoding: "utf-8",
-        stdio: "inherit"
-      })
+      await setKVValue(key, valueArg)
     }
 
     console.log("✅ Restore completed successfully!")
@@ -201,8 +259,8 @@ async function restoreKV(filename: string) {
 async function wipeKV() {
   try {
     // Get all keys first
-    console.log(`Fetching all keys from KV namespace ${KV_NAMESPACE}...`)
-    const keys = runWranglerCommand(["kv", "key", "list", "--remote", "--binding", KV_NAMESPACE])
+    console.log("Fetching all keys from KV namespace...")
+    const keys = await listAllKVKeys()
     console.log(`Found ${keys.length} keys to delete`)
 
     if (keys.length === 0) {
@@ -226,7 +284,7 @@ async function wipeKV() {
     console.log("Type the name of the KV namespace to confirm deletion:")
     const namespaceConfirmation = readlineSync.question("")
 
-    if (namespaceConfirmation !== KV_NAMESPACE) {
+    if (namespaceConfirmation !== "DATA") {
       console.log("Wipe operation cancelled. Namespace name did not match.")
       return false
     }
@@ -244,14 +302,10 @@ async function wipeKV() {
     console.log("Starting KV wipe operation...")
     let deletedCount = 0
 
-    for (const keyInfo of keys) {
-      const key = keyInfo.name
+    for (const key of keys) {
       console.log(`Deleting key: ${key}`)
 
-      spawnSync("bun", ["run", "wrangler", "kv", "key", "delete", "--remote", "--binding", KV_NAMESPACE, key], {
-        encoding: "utf-8",
-        stdio: "inherit"
-      })
+      await deleteKVKey(key)
 
       deletedCount++
       if (deletedCount % 10 === 0) {
@@ -280,6 +334,15 @@ Usage:
   bun run bin/kv backup --all       - Backup all KV data to _backup/kv-$TIMESTAMP.json
   bun run bin/kv restore <filename> - Restore KV data from backup file
   bun run bin/kv wipe               - Wipe all KV data (DANGEROUS!)
+
+Environment Variables:
+  CLOUDFLARE_API_TOKEN              - Cloudflare API token with KV permissions
+  CLOUDFLARE_ACCOUNT_ID             - Your Cloudflare account ID
+
+Setup Requirements:
+  1. Create a Cloudflare API token with KV read/write permissions
+  2. Set the required environment variables
+  3. KV namespace 'DATA' must exist in your Cloudflare account
 `)
     process.exit(1)
   }

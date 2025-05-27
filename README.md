@@ -32,8 +32,8 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
 - **Error Monitoring**: All non-success/non-redirect responses are tracked for debugging
 - **KV Backup/Restore**: Command-line tools for data management
 - **Multiple Output Formats**: Support for JSON, YAML, and Prometheus metrics formats
-- **JWT Authentication**: Secure token-based authentication with configurable scopes
-- **CLI Tools**: Built-in utilities for JWT token generation and KV management
+- **JWT Authentication**: Secure token-based authentication with configurable scopes, usage tracking, and token revocation
+- **CLI Tools**: Built-in utilities for JWT token generation with D1 metadata storage and KV management via Cloudflare SDK
 
 ## Endpoints
 
@@ -115,7 +115,7 @@ No personally identifiable information is stored. Analytics are used for monitor
 
 ## 🔐 JWT Authentication
 
-The API includes a JWT authentication system for protecting sensitive endpoints. All authorization information is encoded in the subject field of the JWT token.
+The API includes a comprehensive JWT authentication system with enterprise-grade features for protecting sensitive endpoints. Features include UUID-based token tracking, request limiting, usage monitoring, token revocation, and metadata storage in Cloudflare D1 database. All authorization information is encoded in the subject field of the JWT token.
 
 ### Quick Start
 
@@ -130,25 +130,54 @@ bun run wrangler secret put API_JWT_SECRET
 API_JWT_SECRET=your-super-secret-key-here
 ```
 
-2. **Generate a Token**: Use the built-in CLI tool:
+2. **Set Environment Variables**: Configure the required environment variables for the CLI tools:
 
 ```bash
-# Interactive mode (prompts for all values)
-bun run jwt --interactive
+# Required for JWT CLI tool
+export CLOUDFLARE_API_TOKEN=your-api-token-with-d1-permissions
+export CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
+export CLOUDFLARE_D1_DATABASE_ID=your-api-auth-metadata-database-id
+export JWT_SECRET=your-jwt-secret  # or API_JWT_SECRET
 
-# Command line mode with environment variable
-JWT_SECRET=your-local-secret bun run jwt --sub SUBJECT --expires "24h"
-
-# Command line mode with explicit secret
-bun run jwt --sub SUBJECT --secret "your-secret-here" --expires "1h"
-
-# Using the local development secret from .dev.vars
-JWT_SECRET="$(cat .dev.vars | grep API_JWT_SECRET | cut -d'=' -f2 | tr -d '\"')" bun run jwt --sub "test-user"
+# Required for KV CLI tool
+export CLOUDFLARE_API_TOKEN=your-api-token-with-kv-permissions
+export CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
 ```
 
-**Note**: The CLI tool cannot retrieve secrets from Cloudflare Workers (they're write-only for security). Use local environment variables or the `--secret` option.
+3. **Generate a Token**: Use the enhanced CLI tool with full CRUD operations:
 
-3. **Test Authentication**:
+```bash
+# Create a token (defaults to 30-day expiry for security)
+bun run jwt create --sub "ai:alt" --description "Alt text generation"
+
+# Create with custom expiry and request limits
+bun run jwt create --sub "ai" --expiry "7d" --max-requests 1000 --description "AI services"
+
+# Create without expiry (requires confirmation)
+bun run jwt create --sub "admin" --no-expiry --seriously-no-expiry
+
+# List all stored tokens
+bun run jwt list
+
+# Show detailed information about a token
+bun run jwt show <uuid>
+
+# Search tokens by criteria
+bun run jwt search --sub "ai"
+bun run jwt search --description "Dave"
+
+# Revoke a token (via KV - see instructions)
+bun run jwt revoke <uuid>
+```
+
+**Enhanced Features:**
+- **UUID Tracking**: Each token gets a unique identifier for tracking
+- **Usage Limits**: Optional `maxRequests` field for finite usage
+- **Metadata Storage**: Token details stored in Cloudflare D1 database
+- **Security Defaults**: 30-day default expiry with warnings for permanent tokens
+- **Token Management**: Full CRUD operations via CLI commands
+
+4. **Test Authentication**:
 
 ```bash
 # Test the auth endpoint without a token (should return 401)
@@ -197,41 +226,57 @@ curl "https://api.dave.io/endpoint?token=YOUR_JWT_TOKEN"
 
 ### JWT CLI Tool
 
-The included JWT generation tool (`bun run jwt`) supports both interactive and command-line modes:
+The enhanced JWT management tool (`bun run jwt`) provides comprehensive token lifecycle management:
 
-**Interactive Mode:**
-
-```bash
-bun run jwt --interactive
-# Prompts for user ID, expiration, and secret
-```
-
-**Command Line Mode:**
+**Available Commands:**
 
 ```bash
-# Basic usage
-bun run jwt --sub SUBJECT --expires "1h"
+# Create tokens
+bun run jwt create [options]
 
-# With custom secret
-JWT_SECRET=mysecret bun run jwt --sub "admin:full-access"
+# List all tokens
+bun run jwt list [--limit <number>]
 
-# Available options
+# Show token details
+bun run jwt show <uuid>
+
+# Search tokens
+bun run jwt search [--uuid <uuid>] [--sub <subject>] [--description <text>]
+
+# Revoke tokens (instructions only)
+bun run jwt revoke <uuid>
+
+# Help
 bun run jwt --help
 ```
 
-**CLI Options:**
+**Create Command Options:**
 
-- `-s, --sub <subject>`: Subject for the token (can include user ID, roles, permissions)
-- `-e, --expires <time>`: Token expiration (e.g., "1h", "7d", "30m")
-- `--secret <secret>`: JWT secret key (takes precedence over JWT_SECRET env var)
-- `-i, --interactive`: Interactive mode (prompts for all values)
-- `-h, --help`: Show help message
+- `--sub <subject>`: Subject for the token (required)
+- `--expiry <time>`: Token expiration (default: 30d, e.g., "1h", "7d", "30m")
+- `--max-requests <number>`: Maximum request limit for the token
+- `--description <text>`: Description for the token
+- `--no-expiry`: Create token without expiration (requires confirmation)
+- `--seriously-no-expiry`: Skip confirmation for no-expiry tokens
 
-**Secret Priority (highest to lowest):**
-1. `--secret` command line option
-2. `JWT_SECRET` environment variable
+**Database Integration:**
 
-Note: Cloudflare secrets are write-only and cannot be retrieved for security reasons.
+The CLI tool stores token metadata in a Cloudflare D1 database (`API_AUTH_METADATA`) including:
+- UUID for unique identification
+- Subject and description
+- Creation and expiration timestamps
+- Maximum request limits
+- Usage tracking capabilities
+
+**Environment Requirements:**
+
+```bash
+# Required environment variables
+CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
+CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
+CLOUDFLARE_D1_DATABASE_ID=your-api-auth-metadata-database-id
+JWT_SECRET=your-jwt-secret  # or API_JWT_SECRET
+```
 
 ### Authentication Responses
 
@@ -557,7 +602,7 @@ The custom `src/schemas/cloudflare.types.ts` file extends these types with proje
 
 ### KV Admin Utility
 
-The project includes a command-line utility for managing KV storage:
+The project includes a command-line utility for managing KV storage via the Cloudflare SDK:
 
 ```bash
 # Backup KV data matching configured patterns to _backup/kv-{timestamp}.json (default)
@@ -573,7 +618,15 @@ bun run bin/kv restore <filename>
 bun run bin/kv wipe
 ```
 
-This utility helps ensure data safety by allowing you to create regular backups of KV storage data, as well as restore from backups and completely wipe the KV namespace if needed. The wipe function includes multiple confirmation prompts to prevent accidental data loss.
+**Environment Requirements:**
+
+```bash
+# Required environment variables
+export CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
+export CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
+```
+
+This utility uses the Cloudflare SDK directly (no longer relies on Wrangler CLI) and helps ensure data safety by allowing you to create regular backups of KV storage data, as well as restore from backups and completely wipe the KV namespace if needed. The wipe function includes multiple confirmation prompts to prevent accidental data loss.
 
 #### Backup Configuration
 

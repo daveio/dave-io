@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import Database from "bun:sqlite"
+import Cloudflare from "cloudflare"
 import { Command } from "commander"
 import jwt from "jsonwebtoken"
 import ms from "ms"
@@ -32,27 +32,70 @@ function getJWTSecret(): string | null {
   return process.env.JWT_SECRET || process.env.API_JWT_SECRET || null
 }
 
-function getD1DatabasePath(): string | null {
-  return process.env.D1_LOCAL_PATH || process.env.AUTH_DB_PATH || null
+function getCloudflareConfig() {
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
+  const databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID
+
+  if (!apiToken || !accountId || !databaseId) {
+    throw new Error(`Missing required environment variables:
+  - CLOUDFLARE_API_TOKEN
+  - CLOUDFLARE_ACCOUNT_ID
+  - CLOUDFLARE_D1_DATABASE_ID`)
+  }
+
+  return { apiToken, accountId, databaseId }
 }
 
-// Database initialization
-function initializeDatabase(dbPath: string): Database {
-  const db = new Database(dbPath)
+// Execute D1 SQL command via Cloudflare SDK
+async function executeD1Command(sql: string, params: unknown[] = []): Promise<unknown> {
+  try {
+    const { apiToken, accountId, databaseId } = getCloudflareConfig()
+    const cloudflare = new Cloudflare({ apiToken })
 
-  // Create the tokens table if it doesn't exist
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS tokens (
+    const response = await cloudflare.d1.database.query(databaseId, {
+      account_id: accountId,
+      sql,
+      params
+    })
+
+    return response.result
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    const errorStatus = (error as { status?: number }).status
+
+    if (errorMessage?.includes("API_AUTH_METADATA") || errorStatus === 404) {
+      console.error("❌ D1 database 'API_AUTH_METADATA' not found or not accessible")
+      console.error("   Please ensure:")
+      console.error("   1. You have a valid CLOUDFLARE_API_TOKEN with D1 permissions")
+      console.error("   2. CLOUDFLARE_ACCOUNT_ID is correct")
+      console.error("   3. CLOUDFLARE_D1_DATABASE_ID points to the API_AUTH_METADATA database")
+      console.error("   4. The D1 database exists and is properly configured")
+      throw new Error("D1 database not accessible")
+    }
+    console.error(`D1 command failed: ${errorMessage}`)
+    throw error
+  }
+}
+
+// Initialize D1 database schema
+async function initializeD1Database(): Promise<void> {
+  try {
+    const sql = `CREATE TABLE IF NOT EXISTS tokens (
       uuid TEXT PRIMARY KEY,
       sub TEXT NOT NULL,
       description TEXT,
       max_requests INTEGER,
       created_at TEXT NOT NULL,
       expires_at TEXT
-    )
-  `)
+    )`
 
-  return db
+    await executeD1Command(sql)
+    console.log("✅ D1 database schema initialized")
+  } catch (error) {
+    console.warn("⚠️  Could not initialize D1 database schema")
+    throw error
+  }
 }
 
 // Token creation
@@ -94,20 +137,20 @@ async function createToken(options: JWTRequest, secret: string): Promise<{ token
 }
 
 // Store token metadata in D1
-function storeTokenMetadata(db: Database, metadata: TokenMetadata): void {
-  const query = db.prepare(`
-    INSERT INTO tokens (uuid, sub, description, max_requests, created_at, expires_at)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `)
+async function storeTokenMetadata(metadata: TokenMetadata): Promise<void> {
+  const sql =
+    "INSERT INTO tokens (uuid, sub, description, max_requests, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?)"
 
-  query.run(
+  const params = [
     metadata.uuid,
     metadata.sub,
     metadata.description || null,
     metadata.maxRequests || null,
     metadata.createdAt,
     metadata.expiresAt || null
-  )
+  ]
+
+  await executeD1Command(sql, params)
 }
 
 // Parse expiration duration
@@ -161,15 +204,15 @@ function parseCompoundDuration(duration: string): number | undefined {
 }
 
 // Create command
-const createCommand = program
+const _createCommand = program
   .command("create")
   .description("Create a new JWT token")
   .option("-s, --sub <subject>", "Subject (user ID) for the token")
-  .option("-e, --expires <time>", "Token expiration (e.g., '1h', '7d', '30d') [default: 30d]")
+  .option("-e, --expiry <time>", "Token expiration (e.g., '1h', '7d', '30d') [default: 30d]")
   .option("-m, --max-requests <number>", "Maximum number of requests allowed", (value) => Number.parseInt(value))
   .option("-d, --description <text>", "Description of the token purpose")
   .option("--no-expiry", "Create a token that never expires (requires confirmation)")
-  .option("--no-seriously-no-expiry", "Skip confirmation for no-expiry tokens (use with caution)")
+  .option("--seriously-no-expiry", "Skip confirmation for no-expiry tokens (use with caution)")
   .option("--secret <secret>", "JWT secret key")
   .option("-i, --interactive", "Interactive mode")
   .action(async (options) => {
@@ -214,12 +257,12 @@ const createCommand = program
       let noExpiry = false
       if (options.expiry === false) {
         // --no-expiry was explicitly specified
-        if (options.seriouslyNoExpiry !== false) {
-          // --no-seriously-no-expiry was NOT specified
+        if (!options.seriouslyNoExpiry) {
+          // --seriously-no-expiry was NOT specified
           console.log("⚠️  WARNING: You are creating a token without expiration!")
           console.log("   This is NOT RECOMMENDED for security reasons.")
           console.log("   Tokens without expiration remain valid indefinitely unless explicitly revoked.")
-          console.log("   Consider using a long expiration period instead (e.g., --expires '1y').")
+          console.log("   Consider using a long expiration period instead (e.g., --expiry '1y').")
           console.log("")
           const confirmed = readlineSync.keyInYN("Are you sure you want to create a token without expiration?")
           if (!confirmed) {
@@ -239,7 +282,7 @@ const createCommand = program
       tokenRequest = {
         sub: options.sub,
         description: options.description,
-        expiresIn: options.expires,
+        expiresIn: options.expiry,
         maxRequests: options.maxRequests,
         noExpiry
       }
@@ -248,19 +291,14 @@ const createCommand = program
     try {
       const { token, metadata } = await createToken(tokenRequest, secret)
 
-      // Store in D1 if database path is available
-      const dbPath = getD1DatabasePath()
-      if (dbPath) {
-        try {
-          const db = initializeDatabase(dbPath)
-          storeTokenMetadata(db, metadata)
-          db.close()
-          console.log("✅ Token metadata stored in database")
-        } catch (error) {
-          console.warn("⚠️  Could not store in database:", error)
-        }
-      } else {
-        console.warn("⚠️  No D1 database path configured. Set D1_LOCAL_PATH or AUTH_DB_PATH env var")
+      // Store in D1 production database
+      try {
+        await initializeD1Database()
+        await storeTokenMetadata(metadata)
+        console.log("✅ Token metadata stored in D1 production database")
+      } catch (error) {
+        console.warn("⚠️  Could not store in D1 database:", error)
+        console.log("   Token was still created successfully and can be used")
       }
 
       console.log("\\n✅ JWT Token Created Successfully\\n")
@@ -284,17 +322,9 @@ program
   .description("List all stored tokens")
   .option("--limit <number>", "Limit number of results", (value) => Number.parseInt(value), 50)
   .action(async (options) => {
-    const dbPath = getD1DatabasePath()
-    if (!dbPath) {
-      console.error("❌ D1 database path not configured. Set D1_LOCAL_PATH or AUTH_DB_PATH env var")
-      process.exit(1)
-    }
-
     try {
-      const db = initializeDatabase(dbPath)
-      const query = db.prepare("SELECT * FROM tokens ORDER BY created_at DESC LIMIT ?")
-      const tokens = query.all(options.limit) as TokenMetadata[]
-      db.close()
+      const result = await executeD1Command("SELECT * FROM tokens ORDER BY created_at DESC LIMIT ?", [options.limit])
+      const tokens = Array.isArray(result) ? result : []
 
       if (tokens.length === 0) {
         console.log("📭 No tokens found")
@@ -329,17 +359,10 @@ program
   .command("show <uuid>")
   .description("Show detailed information about a specific token")
   .action(async (uuid) => {
-    const dbPath = getD1DatabasePath()
-    if (!dbPath) {
-      console.error("❌ D1 database path not configured. Set D1_LOCAL_PATH or AUTH_DB_PATH env var")
-      process.exit(1)
-    }
-
     try {
-      const db = initializeDatabase(dbPath)
-      const query = db.prepare("SELECT * FROM tokens WHERE uuid = ?")
-      const token = query.get(uuid) as TokenMetadata | null
-      db.close()
+      const result = await executeD1Command("SELECT * FROM tokens WHERE uuid = ?", [uuid])
+      const tokens = Array.isArray(result) ? result : []
+      const token = tokens.length > 0 ? tokens[0] : null
 
       if (!token) {
         console.error(`❌ Token with UUID ${uuid} not found`)
@@ -391,35 +414,30 @@ program
   .option("--sub <subject>", "Search by subject")
   .option("--description <text>", "Search by description")
   .action(async (options) => {
-    const dbPath = getD1DatabasePath()
-    if (!dbPath) {
-      console.error("❌ D1 database path not configured. Set D1_LOCAL_PATH or AUTH_DB_PATH env var")
-      process.exit(1)
-    }
-
     if (!options.uuid && !options.sub && !options.description) {
       console.error("❌ At least one search criteria is required")
       process.exit(1)
     }
 
     try {
-      const db = initializeDatabase(dbPath)
-      let query: any
-      let params: any[]
+      let sql: string
+      let params: unknown[]
 
       if (options.uuid) {
-        query = db.prepare("SELECT * FROM tokens WHERE uuid = ?")
+        sql = "SELECT * FROM tokens WHERE uuid = ?"
         params = [options.uuid]
       } else if (options.sub) {
-        query = db.prepare("SELECT * FROM tokens WHERE sub LIKE ?")
+        sql = "SELECT * FROM tokens WHERE sub LIKE ?"
         params = [`%${options.sub}%`]
       } else if (options.description) {
-        query = db.prepare("SELECT * FROM tokens WHERE description LIKE ?")
+        sql = "SELECT * FROM tokens WHERE description LIKE ?"
         params = [`%${options.description}%`]
+      } else {
+        throw new Error("No search criteria provided")
       }
 
-      const tokens = query.all(...params) as TokenMetadata[]
-      db.close()
+      const result = await executeD1Command(sql, params)
+      const tokens = Array.isArray(result) ? result : []
 
       if (tokens.length === 0) {
         console.log("📭 No matching tokens found")
@@ -460,13 +478,23 @@ Commands:
 
 Environment Variables:
   JWT_SECRET or API_JWT_SECRET    JWT secret key
-  D1_LOCAL_PATH or AUTH_DB_PATH   Path to local D1 database
+  CLOUDFLARE_API_TOKEN           Cloudflare API token with D1 permissions
+  CLOUDFLARE_ACCOUNT_ID          Your Cloudflare account ID
+  CLOUDFLARE_D1_DATABASE_ID      D1 database ID for API_AUTH_METADATA
+
+Database:
+  Uses production Cloudflare D1 database via Cloudflare SDK
+
+Setup Requirements:
+  1. Create a Cloudflare API token with D1 read/write permissions
+  2. Set the required environment variables
+  3. D1 database 'API_AUTH_METADATA' must exist in your Cloudflare account
 
 Examples:
   bun jwt create --sub "ai:alt" --description "Alt text generation"  # 30d default expiry
-  bun jwt create --sub "ai" --max-requests 1000 --expires "7d"
-  bun jwt create --sub "admin" --no-expiry --no-seriously-no-expiry  # No expiry (dangerous)
-  bun jwt create --sub "metrics" --description "Metrics access" --expires "1y"
+  bun jwt create --sub "ai" --max-requests 1000 --expiry "7d"
+  bun jwt create --sub "admin" --no-expiry --seriously-no-expiry  # No expiry (dangerous)
+  bun jwt create --sub "metrics" --description "Metrics access" --expiry "1y"
   bun jwt list
   bun jwt show <uuid>
   bun jwt search --sub "ai"
@@ -475,7 +503,7 @@ Examples:
 Security Notes:
   - Tokens default to 30-day expiration for security
   - Use --no-expiry only for special cases (requires confirmation)
-  - Use --no-seriously-no-expiry to skip confirmation (use with extreme caution)
+  - Use --seriously-no-expiry to skip confirmation (use with extreme caution)
 `
 )
 

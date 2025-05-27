@@ -25,13 +25,6 @@
       "id": "fa48b0bd010a43289d5e111af42b8b50"
     }
   ],
-  "d1_databases": [
-    {
-      "binding": "AUTH_DB",
-      "database_name": "auth_tokens",
-      "database_id": "YOUR_D1_DATABASE_ID"
-    }
-  ],
   "routes": [
     {
       "pattern": "api.dave.io",

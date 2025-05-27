@@ -52,7 +52,7 @@ bun kv wipe             # Wipe all KV data (DANGEROUS!)
 # Generate JWT tokens for authentication
 bun run jwt --help                    # Show JWT generation help
 bun run jwt create --interactive      # Interactive JWT generation
-bun run jwt create --sub "ai:alt" --description "Alt text access" --expires "30d"
+bun run jwt create --sub "ai:alt" --description "Alt text access" --expiry "30d"
 bun run jwt list                      # List all tokens
 bun run jwt show <uuid>               # Show token details
 ```
@@ -109,7 +109,7 @@ The API includes a comprehensive JWT-based authentication system with advanced f
 - **Scope-Based Authorization**: Fine-grained permissions using hierarchical subjects
 - **Multiple Token Sources**: Accepts tokens via `Authorization: Bearer` header or `?token=` query parameter
 - **Comprehensive CLI Management**: Full token lifecycle management with security warnings
-- **D1 Database Integration**: Persistent token metadata storage
+- **D1 Database Integration**: Production Cloudflare D1 database for persistent token metadata storage
 - **KV Usage Tracking**: Real-time usage counting and metrics
 
 ### JWT Token Structure
@@ -183,7 +183,7 @@ return authorizeEndpoint("ai", "alt")(c, async () => {
 New API endpoints for token administration:
 
 #### Get Token Usage Information
-```
+```http
 GET /tokens/:uuid/usage
 Authorization: Bearer <admin-token-with-tokens:read>
 ```
@@ -199,7 +199,7 @@ Response:
 ```
 
 #### Revoke/Unrevoke Token
-```
+```http
 POST /tokens/:uuid/revoke
 Authorization: Bearer <admin-token-with-tokens:write>
 Content-Type: application/json
@@ -328,7 +328,7 @@ The enhanced CLI tool provides comprehensive token lifecycle management with ent
 bun jwt create --sub "ai:alt" --description "Alt text generation for Dave"
 
 # Token with custom expiration
-bun jwt create --sub "ai" --expires "7d" --max-requests 1000 --description "AI endpoints access"
+bun jwt create --sub "ai" --expiry "7d" --max-requests 1000 --description "AI endpoints access"
 
 # Token with request limits but no expiration
 bun jwt create --sub "metrics" --max-requests 500 --description "Limited metrics access"
@@ -340,7 +340,7 @@ bun jwt create --sub "metrics" --max-requests 500 --description "Limited metrics
 bun jwt create --sub "admin" --no-expiry --description "Emergency admin access"
 
 # Skip confirmation for no-expiry (use with extreme caution)
-bun jwt create --sub "system" --no-expiry --no-seriously-no-expiry --description "System service token"
+bun jwt create --sub "system" --no-expiry --seriously-no-expiry --description "System service token"
 ```
 
 **Interactive Mode:**
@@ -400,12 +400,29 @@ bun jwt revoke de346b19-9fac-4309-9a9a-ca49b8cc82a6
 export JWT_SECRET="your-secret-key"
 # or
 export API_JWT_SECRET="your-secret-key"
-
-# D1 database path for metadata storage (optional)
-export D1_LOCAL_PATH="/path/to/local.db"
-# or
-export AUTH_DB_PATH="/path/to/local.db"
 ```
+
+**Database Requirements:**
+The CLI uses the production Cloudflare D1 database (`API_AUTH_METADATA`) via the Cloudflare SDK:
+
+```bash
+# Required environment variables:
+export CLOUDFLARE_API_TOKEN=your-cloudflare-api-token-with-d1-permissions
+export CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
+export CLOUDFLARE_D1_DATABASE_ID=your-api-auth-metadata-database-id
+export JWT_SECRET=your-jwt-secret
+
+# The CLI will automatically initialize the database schema on first use
+# All token metadata is stored in production D1, not locally
+```
+
+**Important Notes:**
+- **Always uses production D1** - no local database simulation or Wrangler CLI dependency
+- **Uses Cloudflare SDK directly** - leverages the official TypeScript SDK for D1 operations
+- **Automatic schema initialization** - creates tables if they don't exist
+- **Requires API token with D1 permissions** - must have read/write access to D1 database
+- **Persistent across environments** - token metadata survives local changes
+- **Database name changed** - now uses `API_AUTH_METADATA` instead of `auth_tokens`
 
 **CLI Security Examples:**
 ```bash
@@ -413,26 +430,26 @@ export AUTH_DB_PATH="/path/to/local.db"
 bun jwt create --sub "api:read" --description "Standard API access"
 
 # Caution: Long-lived but expiring token
-bun jwt create --sub "ci:deploy" --expires "1y" --description "CI deployment token"
+bun jwt create --sub "ci:deploy" --expiry "1y" --description "CI deployment token"
 
 # Dangerous: No expiry requires explicit confirmation
 bun jwt create --sub "emergency" --no-expiry --description "Emergency access"
 ⚠️  WARNING: You are creating a token without expiration!
    This is NOT RECOMMENDED for security reasons.
    Tokens without expiration remain valid indefinitely unless explicitly revoked.
-   Consider using a long expiration period instead (e.g., --expires '1y').
+   Consider using a long expiration period instead (e.g., --expiry '1y').
 
 Are you sure you want to create a token without expiration? [y/n]: n
 ❌ Token creation cancelled
 
 # Override confirmation (use with extreme caution)
-bun jwt create --sub "system" --no-expiry --no-seriously-no-expiry
+bun jwt create --sub "system" --no-expiry --seriously-no-expiry
 ```
 
 **Important Security Notes:**
 - **Tokens default to 30-day expiration** for enhanced security
 - **No-expiry tokens require explicit confirmation** to prevent accidental creation
-- **Use `--no-seriously-no-expiry` sparingly** - only for automated systems
+- **Use `--seriously-no-expiry` sparingly** - only for automated systems
 - **Store JWT secrets securely** - never commit them to version control
 - **The CLI cannot retrieve Cloudflare secrets** (they're write-only for security)
 - **Generated tokens are only valid with the same secret** used by the API
@@ -912,10 +929,10 @@ Create a JWT token with the required subject:
 
 ```bash
 # Generate a token with access to all AI endpoints
-bun jwt --sub "ai" --expires "24h"
+bun jwt --sub "ai" --expiry "24h"
 
 # Generate a token with access only to alt text generation
-bun jwt --sub "ai:alt" --expires "24h"
+bun jwt --sub "ai:alt" --expiry "24h"
 
 # Interactive token generation with custom options
 bun jwt --interactive
@@ -957,24 +974,35 @@ The AI endpoints return specific error codes for different failure scenarios:
 
 ## KV Admin Utility
 
-The project includes a comprehensive KV admin utility in `bin/kv.ts` for managing KV data:
+The project includes a comprehensive KV admin utility in `bin/kv.ts` for managing KV data via the Cloudflare SDK:
+
+### Environment Requirements
+
+```bash
+# Required environment variables
+export CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
+export CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
+```
+
+### KV Utility Features
 
 1. **Backup Functionality**:
 
 - Backs up KV data to JSON files in the `_backup/` directory
+- Uses Cloudflare SDK directly (no Wrangler CLI dependency)
 - Selective backup with regex pattern matching for keys
 - By default, backs up only dashboard demo items and redirects
 - Can backup all keys with the `--all` flag
 
 2. **Restore Capability**:
 
-- Restores data from backup files
+- Restores data from backup files using SDK
 - Preserves value types (strings vs. JSON)
 - Includes confirmation prompts for safety
 
 3. **Data Wipe**:
 
-- Complete KV namespace cleanup
+- Complete KV namespace cleanup via SDK
 - Multiple confirmation prompts to prevent accidents
 - Detailed progress reporting
 
@@ -984,7 +1012,7 @@ The project includes a comprehensive KV admin utility in `bin/kv.ts` for managin
 - String values are stored without additional quotes
 - JSON objects, arrays, and primitives are properly serialized
 
-Usage:
+### Usage
 
 ```bash
 bun kv backup             # Backup selected data
@@ -992,3 +1020,11 @@ bun kv backup --all       # Backup all data
 bun kv restore <file>     # Restore from backup
 bun kv wipe               # Wipe all data (with confirmations)
 ```
+
+### SDK Integration
+
+The utility uses the official Cloudflare TypeScript SDK for all operations:
+- `cloudflare.kv.namespaces.keys.list()` for key enumeration
+- `cloudflare.kv.namespaces.values.get()` for value retrieval
+- `cloudflare.kv.namespaces.values.update()` for value storage
+- `cloudflare.kv.namespaces.values.delete()` for key deletion

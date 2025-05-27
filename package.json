@@ -25,6 +25,7 @@
     "@cloudflare/d1": "^1.4.1",
     "bun": "^1.2.14",
     "chanfana": "2.8.0",
+    "cloudflare": "^4.3.0",
     "commander": "^14.0.0",
     "hono": "^4.7.10",
     "ip-address": "^10.0.1",

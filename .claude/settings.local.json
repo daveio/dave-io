@@ -1,6 +1,17 @@
 {
   "permissions": {
-    "allow": ["Bash(bun add @cloudflare/d1 uuid)"],
+    "allow": [
+      "Bash(bun add @cloudflare/d1 uuid)",
+      "mcp__cloudflareDocumentation__search_cloudflare_documentation",
+      "Bash(bun run lint)",
+      "Bash(bun run biome check --write --unsafe)",
+      "Bash(bun run trunk fmt)",
+      "Bash(bun run biome check)",
+      "Bash(bun run biome format --write .)",
+      "Bash(bun run typecheck)",
+      "Bash(bun run trunk fmt --fix)",
+      "Bash(grep -n \"### Features\" CLAUDE.md)"
+    ],
     "deny": []
   }
 }
