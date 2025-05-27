@@ -4,7 +4,9 @@ import jwt from "jsonwebtoken"
 export interface JWTPayload {
   sub: string
   iat: number
-  exp: number
+  exp?: number
+  jti: string
+  maxRequests?: number
 }
 
 export interface AuthorizedContext extends Context {
@@ -31,7 +33,15 @@ export function extractTokenFromRequest(c: Context): string | null {
 
 export async function verifyJWT(token: string, secret: string): Promise<JWTPayload | null> {
   try {
-    return jwt.verify(token, secret) as JWTPayload
+    const payload = jwt.verify(token, secret) as JWTPayload
+
+    // Validate that the payload has a UUID (jti)
+    if (!payload.jti) {
+      console.error("JWT missing required jti (UUID) field")
+      return null
+    }
+
+    return payload
   } catch (error) {
     console.error("JWT verification failed:", error)
     return null
@@ -56,14 +66,52 @@ export function createJWTMiddleware() {
       return c.json({ error: "Invalid token" }, 401)
     }
 
-    if (Date.now() / 1000 > payload.exp) {
+    // Check expiration (if exp is provided)
+    if (payload.exp && Date.now() / 1000 > payload.exp) {
       return c.json({ error: "Token expired" }, 401)
     }
-    ;(c as AuthorizedContext).user = {
-      id: payload.sub
-    }
 
-    await next()
+    try {
+      // Import KV functions dynamically to avoid circular dependencies
+      const { getTokenUsageCount, incrementTokenUsage, isTokenRevoked, trackTokenMetrics } = await import("../kv/auth")
+
+      // Check if token is revoked
+      const revoked = await isTokenRevoked(c.env, payload.jti)
+      if (revoked) {
+        await trackTokenMetrics(c.env, payload.jti, "revoked_access_attempt")
+        return c.json({ error: "Token has been revoked" }, 401)
+      }
+
+      // Check request limits (if maxRequests is set)
+      if (payload.maxRequests) {
+        const currentUsage = await getTokenUsageCount(c.env, payload.jti)
+        if (currentUsage >= payload.maxRequests) {
+          await trackTokenMetrics(c.env, payload.jti, "limit_exceeded")
+          return c.json(
+            {
+              error: "Request limit exceeded",
+              limit: payload.maxRequests,
+              used: currentUsage
+            },
+            429
+          )
+        }
+      }
+
+      // Increment usage count
+      await incrementTokenUsage(c.env, payload.jti)
+      await trackTokenMetrics(c.env, payload.jti, "successful_auth")
+
+      // Set user context
+      ;(c as AuthorizedContext).user = {
+        id: payload.sub
+      }
+
+      await next()
+    } catch (error) {
+      console.error("Error in JWT middleware KV operations:", error)
+      return c.json({ error: "Authentication processing failed" }, 500)
+    }
   }
 }
 

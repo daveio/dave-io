@@ -19,8 +19,8 @@ export class Auth extends OpenAPIRoute {
                 subject: z.string(),
                 subjectParts: z.array(z.string()),
                 issuedAt: z.number(),
-                expiresAt: z.number(),
-                timeToExpiry: z.number(),
+                expiresAt: z.number().nullable(),
+                timeToExpiry: z.number().nullable(),
                 isExpired: z.boolean()
               }),
               user: z.object({
@@ -62,8 +62,8 @@ export class Auth extends OpenAPIRoute {
     }
 
     const currentTime = Math.floor(Date.now() / 1000)
-    const timeToExpiry = payload.exp - currentTime
-    const isExpired = timeToExpiry <= 0
+    const timeToExpiry = payload.exp ? payload.exp - currentTime : null
+    const isExpired = timeToExpiry !== null && timeToExpiry <= 0
 
     if (isExpired) {
       return c.json({ error: "Token expired" }, 401)

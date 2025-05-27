@@ -1,0 +1,6 @@
+{
+  "permissions": {
+    "allow": ["Bash(bun add @cloudflare/d1 uuid)"],
+    "deny": []
+  }
+}

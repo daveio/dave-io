@@ -15,6 +15,7 @@ declare global {
   // Define additional environment variables specific to this project
   interface Env {
     DATA: KVNamespace
+    AUTH_DB: D1Database
     API_JWT_SECRET: string
   }
 }
