@@ -11,7 +11,8 @@ api.dave.io is a multipurpose personal API powered by Cloudflare Workers. It pro
 - **Dashboard**: Data feeds for dashboards (demo and Hacker News available)
 - **RouterOS**: Generates RouterOS scripts for network configurations (currently implements put.io IP ranges, with more providers planned)
 - **Metrics**: View API metrics in JSON, YAML, or Prometheus format
-- **Authentication**: JWT-based authentication system with scope-based authorization
+- **Authentication**: Enterprise-grade JWT authentication system with usage tracking, request limits, and token revocation
+- **Token Management**: Comprehensive token lifecycle management with CLI tools and API endpoints
 - **AI**: AI-powered services including image alt text generation
 
 The API is built with [Hono](https://hono.dev) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation.
@@ -49,9 +50,11 @@ bun kv restore <file>   # Restore KV data from backup
 bun kv wipe             # Wipe all KV data (DANGEROUS!)
 
 # Generate JWT tokens for authentication
-bun run jwt --help      # Show JWT generation help
-bun run jwt --interactive  # Interactive JWT generation
-bun run jwt --sub user123 --scopes "read,metrics" --expires "24h"
+bun run jwt --help                    # Show JWT generation help
+bun run jwt create --interactive      # Interactive JWT generation
+bun run jwt create --sub "ai:alt" --description "Alt text access" --expiry "30d"
+bun run jwt list                      # List all tokens
+bun run jwt show <uuid>               # Show token details
 ```
 
 ## Code Architecture
@@ -96,15 +99,124 @@ Key aspects of the type system:
 
 ## JWT Authentication System
 
-The API includes a comprehensive JWT-based authentication system with scope-based authorization:
+The API includes a comprehensive JWT-based authentication system with advanced features for enterprise-grade security and token management:
 
-### Authentication Features
+### Core Features
 
-- **JWT Token Support**: Secure token-based authentication using industry standards
-- **Scope-Based Authorization**: Fine-grained permissions using scopes
+- **Enhanced JWT Token Structure**: Industry-standard tokens with UUID tracking, optional expiration, and request limits
+- **Usage Tracking & Limits**: Track token usage in real-time with configurable request limits
+- **Token Revocation**: Instantly revoke tokens for security incidents
+- **Scope-Based Authorization**: Fine-grained permissions using hierarchical subjects
 - **Multiple Token Sources**: Accepts tokens via `Authorization: Bearer` header or `?token=` query parameter
-- **CLI Token Generation**: Built-in tool for generating tokens during development
-- **Middleware Integration**: Easy-to-use middleware for protecting endpoints
+- **Comprehensive CLI Management**: Full token lifecycle management with security warnings
+- **D1 Database Integration**: Production Cloudflare D1 database for persistent token metadata storage
+- **KV Usage Tracking**: Real-time usage counting and metrics
+
+### JWT Token Structure
+
+Enhanced JWT tokens now include:
+
+- **`jti` (JWT ID)**: Random UUID for unique identification and tracking
+- **`sub` (Subject)**: Hierarchical permission identifier (e.g., `ai:alt`, `tokens:read`)
+- **`exp` (Expiration)**: Optional expiration timestamp (defaults to 30 days)
+- **`maxRequests`**: Optional request limit for finite-use tokens
+- **`iat` (Issued At)**: Token creation timestamp
+
+Example JWT payload:
+```json
+{
+  "sub": "ai:alt",
+  "iat": 1748375490,
+  "jti": "de346b19-9fac-4309-9a9a-ca49b8cc82a6",
+  "exp": 1750967490,
+  "maxRequests": 1000
+}
+```
+
+### Token Security & Lifecycle
+
+**Default Security Settings:**
+- **30-day expiration by default** for enhanced security
+- UUID-based tracking prevents token confusion
+- Cryptographically signed and tamper-proof
+- Request counting prevents abuse
+
+**Revocation System:**
+- Instant token revocation via KV storage (`auth:revocation:${UUID}`)
+- Graceful degradation - revoked tokens receive 401 responses
+- Revocation status checked on every request
+
+**Usage Tracking:**
+- Request counting stored in KV (`auth:count:${UUID}`)
+- Automatic increment on successful authentication
+- Detailed metrics by UUID for monitoring
+
+### Authentication Middleware
+
+The enhanced authentication middleware now performs comprehensive validation:
+
+```typescript
+// The middleware now handles:
+// 1. JWT signature verification
+// 2. Expiration checking (if present)
+// 3. UUID validation
+// 4. Revocation status check
+// 5. Request limit enforcement
+// 6. Usage counting
+// 7. Metrics tracking
+
+import { requireAuth, authorizeEndpoint } from "../lib/auth"
+
+// Basic authentication
+const authResult = await requireAuth()(c, async () => {
+  // Authenticated code here
+})
+
+// Endpoint-specific authorization
+return authorizeEndpoint("ai", "alt")(c, async () => {
+  // Code for AI alt text generation
+})
+```
+
+### Token Management API
+
+New API endpoints for token administration:
+
+#### Get Token Usage Information
+```http
+GET /tokens/:uuid/usage
+Authorization: Bearer <admin-token-with-tokens:read>
+```
+
+Response:
+```json
+{
+  "uuid": "de346b19-9fac-4309-9a9a-ca49b8cc82a6",
+  "requestCount": 42,
+  "lastUsed": "2024-01-01T12:00:00.000Z",
+  "isRevoked": false
+}
+```
+
+#### Revoke/Unrevoke Token
+```http
+POST /tokens/:uuid/revoke
+Authorization: Bearer <admin-token-with-tokens:write>
+Content-Type: application/json
+
+{
+  "revoked": true
+}
+```
+
+Response:
+```json
+{
+  "uuid": "de346b19-9fac-4309-9a9a-ca49b8cc82a6",
+  "revoked": true,
+  "message": "Token revoked successfully"
+}
+```
 
 ### Using Authentication in Endpoints
 
@@ -204,29 +316,143 @@ JWT_SECRET=your-super-secret-key-here
 bun run wrangler secret put JWT_SECRET
 ```
 
-### JWT Token Generation
+### JWT Token Management CLI
 
-Use the built-in CLI tool to generate tokens for development and testing:
+The enhanced CLI tool provides comprehensive token lifecycle management with enterprise-grade security features:
+
+#### Creating Tokens
+
+**Basic Token Creation (30-day default expiry):**
+```bash
+# Standard token with 30-day expiration (default)
+bun jwt create --sub "ai:alt" --description "Alt text generation for Dave"
+
+# Token with custom expiration
+bun jwt create --sub "ai" --expiry "7d" --max-requests 1000 --description "AI endpoints access"
+
+# Token with request limits but no expiration
+bun jwt create --sub "metrics" --max-requests 500 --description "Limited metrics access"
+```
+
+**No-Expiry Tokens (Advanced):**
+```bash
+# Token without expiration (requires confirmation - NOT RECOMMENDED)
+bun jwt create --sub "admin" --no-expiry --description "Emergency admin access"
+
+# Skip confirmation for no-expiry (use with extreme caution)
+bun jwt create --sub "system" --no-expiry --seriously-no-expiry --description "System service token"
+```
+
+**Interactive Mode:**
+```bash
+# Guided token creation with prompts
+bun jwt create --interactive
+
+# Interactive mode with secret
+bun jwt create --interactive --secret "your-secret-here"
+```
+
+#### Managing Existing Tokens
+
+**List All Tokens:**
+```bash
+# List all stored tokens with status
+bun jwt list
+
+# Limit results
+bun jwt list --limit 10
+```
+
+**Search Tokens:**
+```bash
+# Search by subject
+bun jwt search --sub "ai"
+
+# Search by description
+bun jwt search --description "Dave"
+
+# Find specific token
+bun jwt search --uuid "de346b19-9fac-4309-9a9a-ca49b8cc82a6"
+```
+
+**Token Details:**
+```bash
+# Show detailed information about a token
+bun jwt show de346b19-9fac-4309-9a9a-ca49b8cc82a6
+```
+
+**Token Revocation:**
+```bash
+# Get revocation instructions (requires KV/API access)
+bun jwt revoke de346b19-9fac-4309-9a9a-ca49b8cc82a6
+```
+
+#### Security Features
+
+**Default Security Settings:**
+- **30-day expiration by default** - tokens automatically expire for security
+- **Confirmation required for no-expiry** - prevents accidental permanent tokens
+- **Warning messages** - clear security guidance for dangerous operations
+
+**Environment Variables:**
+```bash
+# JWT secret (required)
+export JWT_SECRET="your-secret-key"
+# or
+export API_JWT_SECRET="your-secret-key"
+```
+
+**Database Requirements:**
+The CLI uses the production Cloudflare D1 database (`API_AUTH_METADATA`) via the Cloudflare SDK:
 
 ```bash
-# Interactive mode (prompts for all values)
-bun run jwt --interactive
+# Required environment variables:
+export CLOUDFLARE_API_TOKEN=your-cloudflare-api-token-with-d1-permissions
+export CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
+export CLOUDFLARE_D1_DATABASE_ID=your-api-auth-metadata-database-id
+export JWT_SECRET=your-jwt-secret
 
-# Command line mode with environment variable
-JWT_SECRET=your-local-secret bun run jwt --sub "user123" --expires "24h"
-
-# Command line mode with explicit secret
-bun run jwt --sub "admin" --secret "your-secret-here" --expires "1h"
-
-# Using the local development secret
-JWT_SECRET="$(cat .dev.vars | grep API_JWT_SECRET | cut -d'=' -f2 | tr -d '\"')" bun run jwt --sub "test-user"
+# The CLI will automatically initialize the database schema on first use
+# All token metadata is stored in production D1, not locally
 ```
 
 **Important Notes:**
-- The CLI tool **cannot** retrieve secrets from Cloudflare Workers (they're write-only for security)
-- For local development, use the secret from `.dev.vars` or set `JWT_SECRET` environment variable
-- For production use, generate tokens through your secure deployment environment
-- Generated tokens are only valid with the same secret used by the API
+- **Always uses production D1** - no local database simulation or Wrangler CLI dependency
+- **Uses Cloudflare SDK directly** - leverages the official TypeScript SDK for D1 operations
+- **Automatic schema initialization** - creates tables if they don't exist
+- **Requires API token with D1 permissions** - must have read/write access to D1 database
+- **Persistent across environments** - token metadata survives local changes
+- **Database name changed** - now uses `API_AUTH_METADATA` instead of `auth_tokens`
+
+**CLI Security Examples:**
+```bash
+# Safe: Standard token with default 30-day expiry
+bun jwt create --sub "api:read" --description "Standard API access"
+
+# Caution: Long-lived but expiring token
+bun jwt create --sub "ci:deploy" --expiry "1y" --description "CI deployment token"
+
+# Dangerous: No expiry requires explicit confirmation
+bun jwt create --sub "emergency" --no-expiry --description "Emergency access"
+⚠️  WARNING: You are creating a token without expiration!
+   This is NOT RECOMMENDED for security reasons.
+   Tokens without expiration remain valid indefinitely unless explicitly revoked.
+   Consider using a long expiration period instead (e.g., --expiry '1y').
+
+Are you sure you want to create a token without expiration? [y/n]: n
+❌ Token creation cancelled
+
+# Override confirmation (use with extreme caution)
+bun jwt create --sub "system" --no-expiry --seriously-no-expiry
+```
+
+**Important Security Notes:**
+- **Tokens default to 30-day expiration** for enhanced security
+- **No-expiry tokens require explicit confirmation** to prevent accidental creation
+- **Use `--seriously-no-expiry` sparingly** - only for automated systems
+- **Store JWT secrets securely** - never commit them to version control
+- **The CLI cannot retrieve Cloudflare secrets** (they're write-only for security)
+- **Generated tokens are only valid with the same secret** used by the API
 
 ### Testing Authentication
 
@@ -504,6 +730,12 @@ The key structure follows the pattern `topic:subtopic:resource` to organize diff
 - `metrics:routeros:reset-count`: Count of resets
 - `metrics:redirect:{slug}:count`: Count of redirects for a slug
 - `metrics:redirect:{slug}:last-accessed`: Timestamp of last access for a slug
+- `metrics:auth:{uuid}:{event}`: JWT token event tracking (successful_auth, limit_exceeded, revoked_access_attempt)
+
+5. **Authentication**: Prefix `auth:`
+
+- `auth:count:{uuid}`: Token usage tracking with request count and last used timestamp
+- `auth:revocation:{uuid}`: Token revocation status (true/false)
 
 ### KV Utility Pattern
 
@@ -515,6 +747,7 @@ The code uses a consistent pattern for KV operations:
 - `kv/dashboard.ts` handles dashboard-related operations
 - `kv/routeros.ts` handles RouterOS-related operations
 - `kv/metrics.ts` handles metrics tracking
+- `kv/auth.ts` handles JWT authentication tracking and revocation
 - `kv/init.ts` handles KV initialization
 
 2. **Function Structure**: KV modules provide functions for:
@@ -696,10 +929,10 @@ Create a JWT token with the required subject:
 
 ```bash
 # Generate a token with access to all AI endpoints
-bun jwt --sub "ai" --expires "24h"
+bun jwt --sub "ai" --expiry "24h"
 
 # Generate a token with access only to alt text generation
-bun jwt --sub "ai:alt" --expires "24h"
+bun jwt --sub "ai:alt" --expiry "24h"
 
 # Interactive token generation with custom options
 bun jwt --interactive
@@ -741,24 +974,35 @@ The AI endpoints return specific error codes for different failure scenarios:
 
 ## KV Admin Utility
 
-The project includes a comprehensive KV admin utility in `bin/kv.ts` for managing KV data:
+The project includes a comprehensive KV admin utility in `bin/kv.ts` for managing KV data via the Cloudflare SDK:
+
+### Environment Requirements
+
+```bash
+# Required environment variables
+export CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
+export CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
+```
+
+### KV Utility Features
 
 1. **Backup Functionality**:
 
 - Backs up KV data to JSON files in the `_backup/` directory
+- Uses Cloudflare SDK directly (no Wrangler CLI dependency)
 - Selective backup with regex pattern matching for keys
 - By default, backs up only dashboard demo items and redirects
 - Can backup all keys with the `--all` flag
 
 2. **Restore Capability**:
 
-- Restores data from backup files
+- Restores data from backup files using SDK
 - Preserves value types (strings vs. JSON)
 - Includes confirmation prompts for safety
 
 3. **Data Wipe**:
 
-- Complete KV namespace cleanup
+- Complete KV namespace cleanup via SDK
 - Multiple confirmation prompts to prevent accidents
 - Detailed progress reporting
 
@@ -768,7 +1012,7 @@ The project includes a comprehensive KV admin utility in `bin/kv.ts` for managin
 - String values are stored without additional quotes
 - JSON objects, arrays, and primitives are properly serialized
 
-Usage:
+### Usage
 
 ```bash
 bun kv backup             # Backup selected data
@@ -776,3 +1020,11 @@ bun kv backup --all       # Backup all data
 bun kv restore <file>     # Restore from backup
 bun kv wipe               # Wipe all data (with confirmations)
 ```
+
+### SDK Integration
+
+The utility uses the official Cloudflare TypeScript SDK for all operations:
+- `cloudflare.kv.namespaces.keys.list()` for key enumeration
+- `cloudflare.kv.namespaces.values.get()` for value retrieval
+- `cloudflare.kv.namespaces.values.update()` for value storage
+- `cloudflare.kv.namespaces.values.delete()` for key deletion

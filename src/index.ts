@@ -7,6 +7,7 @@ import { Metrics } from "./endpoints/metrics"
 import { Ping } from "./endpoints/ping"
 import { Redirect } from "./endpoints/redirect"
 import { RouterOSCache, RouterOSPutIO, RouterOSReset } from "./endpoints/routeros"
+import { TokenRevokeEndpoint, TokenUsageEndpoint } from "./endpoints/tokens"
 import { initializeKV } from "./kv/init"
 import { incrementStatusCodeCount } from "./kv/metrics"
 import { trackRequestAnalytics } from "./lib/analytics"
@@ -101,6 +102,9 @@ registerGetRoute(app, openapi, "/metrics/json", Metrics)
 registerGetRoute(app, openapi, "/metrics/yaml", Metrics)
 registerGetRoute(app, openapi, "/metrics/prometheus", Metrics)
 registerGetRoute(app, openapi, "/auth", Auth)
+// Token management endpoints
+registerGetRoute(app, openapi, "/tokens/:uuid/usage", TokenUsageEndpoint, ["uuid"])
+registerPostRoute(app, openapi, "/tokens/:uuid/revoke", TokenRevokeEndpoint, ["uuid"])
 // AI endpoints with GET and POST support
 registerGetRoute(app, openapi, "/ai/alt", AiAlt)
 registerPostRoute(app, openapi, "/ai/alt", AiAltPost)
