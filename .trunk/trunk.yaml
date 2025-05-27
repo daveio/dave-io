@@ -56,7 +56,6 @@ lint: # https://docs.trunk.io/check/configuration
     - linters:
         - ALL
       paths:
-        - .claude/settings.local.json
         - _backup/**
         - worker-configuration.d.ts
 plugins: # https://docs.trunk.io/plugins
