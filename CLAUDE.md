@@ -230,7 +230,7 @@ JWT_SECRET="$(cat .dev.vars | grep API_JWT_SECRET | cut -d'=' -f2 | tr -d '\"')"
 
 ### Testing Authentication
 
-A test endpoint is available at `/auth/test` and `/api/auth/test` to verify authentication:
+A test endpoint is available at `/auth/test` and `/api/auth/test` to verify authentication and get detailed JWT information:
 
 ```bash
 # Test without authentication (should fail with 401)
@@ -249,9 +249,28 @@ curl "https://api.dave.io/auth/test?token=YOUR_JWT_TOKEN"
 **Expected Responses:**
 - Without token: `{"error":"Authentication required"}` (401)
 - Invalid token: `{"error":"Invalid token"}` (401)
-- Valid token: Success message with user info (200)
+- Valid token: Success message with detailed JWT information (200)
 
-The auth test endpoint serves as both a testing tool and a reference implementation showing the correct authentication pattern. See `src/endpoints/auth-test.ts` for the complete implementation.
+**Success Response Example:**
+```json
+{
+  "message": "Authentication successful! JWT details retrieved.",
+  "jwt": {
+    "subject": "ai:alt",
+    "subjectParts": ["ai", "alt"],
+    "issuedAt": 1640995200,
+    "expiresAt": 1641081600,
+    "timeToExpiry": 86400,
+    "isExpired": false
+  },
+  "user": {
+    "id": "ai:alt"
+  },
+  "timestamp": "2024-01-01T12:00:00.000Z"
+}
+```
+
+The auth endpoint now accepts any valid JWT subject and returns comprehensive information about the token, including the subject split by colons (showing the hierarchical structure we use for permissions). See `src/endpoints/auth.ts` for the complete implementation.
 
 ### Authentication Architecture Summary
 
@@ -274,7 +293,7 @@ The JWT authentication system consists of several key components:
    - Supports custom expiration times and secrets
    - Helpful for development and testing
 
-4. **Test Endpoint (`src/endpoints/auth-test.ts`)**:
+4. **Test Endpoint (`src/endpoints/auth.ts`)**:
    - Reference implementation of protected endpoint
    - Demonstrates correct middleware usage pattern
    - Available for testing authentication flow
