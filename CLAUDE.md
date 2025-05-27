@@ -12,6 +12,7 @@ api.dave.io is a multipurpose personal API powered by Cloudflare Workers. It pro
 - **RouterOS**: Generates RouterOS scripts for network configurations (currently implements put.io IP ranges, with more providers planned)
 - **Metrics**: View API metrics in JSON, YAML, or Prometheus format
 - **Authentication**: JWT-based authentication system with scope-based authorization
+- **AI**: AI-powered services including image alt text generation
 
 The API is built with [Hono](https://hono.dev) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation.
 
@@ -301,15 +302,15 @@ export class MyEndpoint extends OpenAPIRoute {
 
 1. The function takes two parameters:
    - `endpoint`: The main endpoint identifier (e.g., 'users', 'documents', 'ai')
-   - `subresource` (optional): A specific subresource (e.g., 'read', 'write', 'alt-text')
+   - `subresource` (optional): A specific subresource (e.g., 'read', 'write', 'alt')
 
 2. JWT Authorization Rules:
    - If the JWT subject matches exactly the endpoint (e.g., "users", "ai"), it grants access to all subresources
-   - If the JWT subject matches the specific pattern "endpoint:subresource" (e.g., "ai:alt-text"), it only grants access to that subresource
+   - If the JWT subject matches the specific pattern "endpoint:subresource" (e.g., "ai:alt"), it only grants access to that subresource
 
 3. This allows for fine-grained permission control through JWT subjects:
    - Create tokens with endpoint access: `ai` grants access to all AI operations
-   - Create tokens with specific permissions: `ai:alt-text` only grants access to the alt-text generation endpoint
+   - Create tokens with specific permissions: `ai:alt` only grants access to the alt text generation endpoint
 
 4. Implementation pattern:
 ```typescript
@@ -319,9 +320,15 @@ app.get('/api/documents', authorizeEndpoint('documents'), (c) => {
 });
 
 // Protect a specific subresource
-app.get('/api/ai/alt-text', authorizeEndpoint('ai', 'alt-text'), (c) => {
-  // Can now accept optional image query parameter
-  return c.json({ message: "AI alt-text generation" });
+app.get('/api/ai/alt', authorizeEndpoint('ai', 'alt'), (c) => {
+  // Process image URL for alt text generation
+  return c.json({ message: "AI alt text generation via URL" });
+});
+
+// Protect POST endpoint with same authorization pattern
+app.post('/api/ai/alt', authorizeEndpoint('ai', 'alt'), (c) => {
+  // Process uploaded base64 image data for alt text generation
+  return c.json({ message: "AI alt text generation for uploaded image" });
 });
 ```
 
@@ -551,6 +558,51 @@ c.env.ANALYTICS.writeDataPoint({
   blobs: ["redirect_request", slug],
   indexes: ["redirect"],
 });
+```
+
+## AI Endpoints
+
+### AI Alt Text Generation
+
+The API provides endpoints for generating descriptive alt text for images using Cloudflare AI:
+
+- `GET /ai/alt` or `GET /api/ai/alt`: Generate alt text from an image URL
+  - Requires: Valid JWT token with `ai` or `ai:alt` subject
+  - Query parameters: `image` - URL of the image to generate alt text for
+  - Returns: Generated alt text with rate limit information
+  - Example: `curl -H "Authorization: Bearer <TOKEN>" "https://api.dave.io/ai/alt?image=https://example.com/image.jpg"`
+
+- `POST /ai/alt` or `POST /api/ai/alt`: Generate alt text from uploaded image data
+  - Requires: Valid JWT token with `ai` or `ai:alt` subject
+  - Request body: JSON with `image` property containing base64-encoded image data
+  - Returns: Generated alt text with rate limit information
+  - Example:
+    ```bash
+    curl -X POST \
+      -H "Authorization: Bearer <TOKEN>" \
+      -H "Content-Type: application/json" \
+      -d '{"image":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEA..."}' \
+      https://api.dave.io/ai/alt
+    ```
+
+#### Features
+
+- Uses Cloudflare's LLaVA model (`@cf/llava-hf/llava-1.5-7b-hf`) for image understanding
+- Supports both URL-based and direct image uploads
+- Includes rate limiting (100 requests per hour)
+- Validates image formats and sizes
+- Returns detailed error messages with appropriate status codes
+
+#### Authentication
+
+Create a JWT token with the required subject:
+
+```bash
+# Generate a token with access to AI endpoints
+bun jwt --sub "ai" --expires "24h"
+
+# Generate a token with access only to alt text generation
+bun jwt --sub "ai:alt" --expires "24h"
 ```
 
 ## Notes for Development

@@ -5,7 +5,7 @@ import { z } from "zod"
 extendZodWithOpenApi(z)
 
 /**
- * Schema for AI alt-text query parameters (GET method)
+ * Schema for AI alt text query parameters (GET method)
  */
 export const AiAltTextQuerySchema = z.object({
   image: z.string().url().optional().openapi({
@@ -17,7 +17,7 @@ export const AiAltTextQuerySchema = z.object({
 export type AiAltTextQuery = z.infer<typeof AiAltTextQuerySchema>
 
 /**
- * Schema for AI alt-text POST request body
+ * Schema for AI alt text POST request body
  */
 export const AiAltPostBodySchema = z.object({
   image: z.string().openapi({
@@ -29,7 +29,7 @@ export const AiAltPostBodySchema = z.object({
 export type AiAltPostBody = z.infer<typeof AiAltPostBodySchema>
 
 /**
- * Schema for AI alt-text response
+ * Schema for AI alt text response
  */
 export const AiAltTextResponseSchema = z.object({
   altText: z.string().openapi({
