@@ -1,13 +1,6 @@
 import type { Context } from "hono"
 import jwt from "jsonwebtoken"
-
-export interface JWTPayload {
-  sub: string
-  iat: number
-  exp?: number
-  jti: string
-  maxRequests?: number
-}
+import { type JWTPayload, JWTPayloadSchema } from "../schemas/auth.schema"
 
 export interface AuthorizedContext extends Context {
   user: {
@@ -37,15 +30,16 @@ export function extractTokenFromRequest(c: Context): string | null {
 
 export async function verifyJWT(token: string, secret: string): Promise<JWTPayload | null> {
   try {
-    const payload = jwt.verify(token, secret) as JWTPayload
+    const rawPayload = jwt.verify(token, secret)
 
-    // Validate that the payload has a UUID (jti)
-    if (!payload.jti) {
-      console.error("JWT missing required jti (UUID) field")
+    // Validate the payload against our Zod schema for type safety
+    const validationResult = JWTPayloadSchema.safeParse(rawPayload)
+    if (!validationResult.success) {
+      console.error("JWT payload validation failed:", validationResult.error.issues)
       return null
     }
 
-    return payload
+    return validationResult.data
   } catch (error) {
     console.error("JWT verification failed:", error)
     return null
