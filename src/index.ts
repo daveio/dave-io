@@ -103,7 +103,7 @@ const openapi = fromHono(app, {
     servers: [
       { url: "https://api.dave.io", description: "Production server" },
       { url: "https://dave.io/api", description: "Production server (alternative path)" }
-    ],
+    ]
   }
 })
 

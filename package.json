@@ -15,9 +15,10 @@
     "start": "bun run wrangler dev",
     "typecheck": "bun run tsc --noEmit",
     "lint": "bun run biome check; bun run trunk check -a",
-    "fmt": "biome format; bun run trunk fmt -a",
-    "kv": "bun bin/kv.ts",
-    "jwt": "bun bin/jwt.ts"
+    "fmt": "bun run biome format; bun run trunk fmt -a",
+    "format": "bun run fmt",
+    "kv": "bun run bin/kv.ts",
+    "jwt": "bun run bin/jwt.ts"
   },
   "dependencies": {
     "@cloudflare/ai": "^1.2.2",
@@ -42,7 +43,7 @@
     "@types/bun": "^1.2.14",
     "@types/js-yaml": "^4.0.9",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^22.15.21",
+    "@types/node": "^22.15.23",
     "@types/readline-sync": "^1.4.8",
     "@types/uuid": "^10.0.0",
     "markdownlint-cli": "^0.45.0",
