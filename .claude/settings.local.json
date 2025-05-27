@@ -1,6 +1,0 @@
-{
-  "permissions": {
-    "allow": ["Bash(bun)", "Bash(grep)", "mcp__cloudflareDocumentation__search_cloudflare_documentation"],
-    "deny": []
-  }
-}

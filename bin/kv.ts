@@ -12,10 +12,9 @@
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import { resolve } from "node:path"
-import Cloudflare from "cloudflare"
+import { createCloudflareClient } from "./cloudflare-config"
 
 const BACKUP_DIR = "_backup"
-const KV_NAMESPACE_ID = "fa48b0bd010a43289d5e111af42b8b50" // From wrangler.jsonc
 
 // Configure the key patterns to include in the backup (using regular expressions)
 const BACKUP_KEY_PATTERNS = [
@@ -44,37 +43,22 @@ function getTimestamp() {
   return `${year}-${month}-${day}-${hours}${minutes}${seconds}`
 }
 
-// Get Cloudflare configuration
-function getCloudflareConfig() {
-  const apiToken = process.env.CLOUDFLARE_API_TOKEN
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
-
-  if (!apiToken || !accountId) {
-    throw new Error(`Missing required environment variables:
-  - CLOUDFLARE_API_TOKEN
-  - CLOUDFLARE_ACCOUNT_ID`)
-  }
-
-  return { apiToken, accountId }
-}
-
-// Create Cloudflare client
-function createCloudflareClient() {
-  const { apiToken } = getCloudflareConfig()
-  return new Cloudflare({ apiToken })
+// Get KV namespace ID from environment or use default
+function getKVNamespaceId(): string {
+  return process.env.CLOUDFLARE_KV_NAMESPACE_ID || "fa48b0bd010a43289d5e111af42b8b50"
 }
 
 // List all KV keys
 async function listAllKVKeys() {
-  const { accountId } = getCloudflareConfig()
-  const cloudflare = createCloudflareClient()
+  const { client, config } = createCloudflareClient(false, true)
+  const kvNamespaceId = getKVNamespaceId()
 
   const allKeys: string[] = []
   let cursor: string | undefined
 
   do {
-    const response = await cloudflare.kv.namespaces.keys.list(KV_NAMESPACE_ID, {
-      account_id: accountId,
+    const response = await client.kv.namespaces.keys.list(kvNamespaceId, {
+      account_id: config.accountId,
       cursor,
       limit: 1000
     })
@@ -88,12 +72,12 @@ async function listAllKVKeys() {
 
 // Get KV value
 async function getKVValue(key: string): Promise<string | null> {
-  const { accountId } = getCloudflareConfig()
-  const cloudflare = createCloudflareClient()
+  const { client, config } = createCloudflareClient(false, true)
+  const kvNamespaceId = getKVNamespaceId()
 
   try {
-    const response = await cloudflare.kv.namespaces.values.get(KV_NAMESPACE_ID, key, {
-      account_id: accountId
+    const response = await client.kv.namespaces.values.get(kvNamespaceId, key, {
+      account_id: config.accountId
     })
     return response
   } catch (error: unknown) {
@@ -107,22 +91,22 @@ async function getKVValue(key: string): Promise<string | null> {
 
 // Set KV value
 async function setKVValue(key: string, value: string): Promise<void> {
-  const { accountId } = getCloudflareConfig()
-  const cloudflare = createCloudflareClient()
+  const { client, config } = createCloudflareClient(false, true)
+  const kvNamespaceId = getKVNamespaceId()
 
-  await cloudflare.kv.namespaces.values.update(KV_NAMESPACE_ID, key, {
-    account_id: accountId,
+  await client.kv.namespaces.values.update(kvNamespaceId, key, {
+    account_id: config.accountId,
     value
   })
 }
 
 // Delete KV key
 async function deleteKVKey(key: string): Promise<void> {
-  const { accountId } = getCloudflareConfig()
-  const cloudflare = createCloudflareClient()
+  const { client, config } = createCloudflareClient(false, true)
+  const kvNamespaceId = getKVNamespaceId()
 
-  await cloudflare.kv.namespaces.values.delete(KV_NAMESPACE_ID, key, {
-    account_id: accountId
+  await client.kv.namespaces.values.delete(kvNamespaceId, key, {
+    account_id: config.accountId
   })
 }
 

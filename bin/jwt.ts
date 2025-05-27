@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
-import Cloudflare from "cloudflare"
 import { Command } from "commander"
 import jwt from "jsonwebtoken"
 import ms from "ms"
 import readlineSync from "readline-sync"
 import { v4 as uuidv4 } from "uuid"
+import { createCloudflareClient, executeD1Query, initializeD1Schema } from "./cloudflare-config"
 
 interface JWTRequest {
   sub: string
@@ -32,33 +32,27 @@ function getJWTSecret(): string | null {
   return process.env.JWT_SECRET || process.env.API_JWT_SECRET || null
 }
 
-function getCloudflareConfig() {
-  const apiToken = process.env.CLOUDFLARE_API_TOKEN
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
-  const databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID
-
-  if (!apiToken || !accountId || !databaseId) {
-    throw new Error(`Missing required environment variables:
-  - CLOUDFLARE_API_TOKEN
-  - CLOUDFLARE_ACCOUNT_ID
-  - CLOUDFLARE_D1_DATABASE_ID`)
+// Map D1 result from snake_case to camelCase
+function mapD1Token(dbToken: unknown): TokenMetadata {
+  const token = dbToken as Record<string, unknown>
+  return {
+    uuid: token.uuid as string,
+    sub: token.sub as string,
+    description: token.description as string | undefined,
+    maxRequests: token.max_requests as number | undefined,
+    createdAt: token.created_at as string,
+    expiresAt: token.expires_at as string | undefined
   }
-
-  return { apiToken, accountId, databaseId }
 }
 
-// Execute D1 SQL command via Cloudflare SDK
+// Execute D1 SQL command wrapper
 async function executeD1Command(sql: string, params: unknown[] = []): Promise<unknown> {
   try {
-    const { apiToken, accountId, databaseId } = getCloudflareConfig()
-    const cloudflare = new Cloudflare({ apiToken })
-
-    const response = await cloudflare.d1.database.query(databaseId, {
-      account_id: accountId,
-      sql,
-      params
-    })
-
+    const { client, config } = createCloudflareClient(true)
+    if (!config.databaseId) {
+      throw new Error("Database ID not configured")
+    }
+    const response = await executeD1Query(client, config.accountId, config.databaseId, sql, params)
     return response.result
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error)
@@ -74,26 +68,6 @@ async function executeD1Command(sql: string, params: unknown[] = []): Promise<un
       throw new Error("D1 database not accessible")
     }
     console.error(`D1 command failed: ${errorMessage}`)
-    throw error
-  }
-}
-
-// Initialize D1 database schema
-async function initializeD1Database(): Promise<void> {
-  try {
-    const sql = `CREATE TABLE IF NOT EXISTS tokens (
-      uuid TEXT PRIMARY KEY,
-      sub TEXT NOT NULL,
-      description TEXT,
-      max_requests INTEGER,
-      created_at TEXT NOT NULL,
-      expires_at TEXT
-    )`
-
-    await executeD1Command(sql)
-    console.log("✅ D1 database schema initialized")
-  } catch (error) {
-    console.warn("⚠️  Could not initialize D1 database schema")
     throw error
   }
 }
@@ -139,7 +113,7 @@ async function createToken(options: JWTRequest, secret: string): Promise<{ token
 // Store token metadata in D1
 async function storeTokenMetadata(metadata: TokenMetadata): Promise<void> {
   const sql =
-    "INSERT INTO tokens (uuid, sub, description, max_requests, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?)"
+    "INSERT INTO jwt_tokens (uuid, sub, description, max_requests, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?)"
 
   const params = [
     metadata.uuid,
@@ -203,6 +177,27 @@ function parseCompoundDuration(duration: string): number | undefined {
   return hasMatches ? total : undefined
 }
 
+// Init command
+program
+  .command("init")
+  .description("Initialize D1 database schema for JWT tokens")
+  .action(async () => {
+    try {
+      console.log("🔧 Initializing D1 database schema...")
+      const { client, config } = createCloudflareClient(true)
+      if (!config.databaseId) {
+        throw new Error("Database ID not configured")
+      }
+      await initializeD1Schema(client, config.accountId, config.databaseId)
+      console.log("✅ D1 database schema initialized successfully")
+      console.log("   Tables created: jwt_tokens")
+      console.log("   Indexes created: idx_jwt_tokens_sub")
+    } catch (error) {
+      console.error("❌ Failed to initialize D1 database schema:", error)
+      process.exit(1)
+    }
+  })
+
 // Create command
 const _createCommand = program
   .command("create")
@@ -255,7 +250,7 @@ const _createCommand = program
 
       // Handle no-expiry warnings in command-line mode
       let noExpiry = false
-      if (options.expiry === false) {
+      if (options.noExpiry) {
         // --no-expiry was explicitly specified
         if (!options.seriouslyNoExpiry) {
           // --seriously-no-expiry was NOT specified
@@ -293,12 +288,12 @@ const _createCommand = program
 
       // Store in D1 production database
       try {
-        await initializeD1Database()
         await storeTokenMetadata(metadata)
         console.log("✅ Token metadata stored in D1 production database")
       } catch (error) {
         console.warn("⚠️  Could not store in D1 database:", error)
         console.log("   Token was still created successfully and can be used")
+        console.log("   Tip: Run 'bun jwt init' to initialize the database schema if needed")
       }
 
       console.log("\\n✅ JWT Token Created Successfully\\n")
@@ -323,14 +318,17 @@ program
   .option("--limit <number>", "Limit number of results", (value) => Number.parseInt(value), 50)
   .action(async (options) => {
     try {
-      const result = await executeD1Command("SELECT * FROM tokens ORDER BY created_at DESC LIMIT ?", [options.limit])
-      const tokens = Array.isArray(result) ? result : []
+      const result = await executeD1Command("SELECT * FROM jwt_tokens ORDER BY created_at DESC LIMIT ?", [
+        options.limit
+      ])
+      const rawTokens = Array.isArray(result) ? result : []
 
-      if (tokens.length === 0) {
+      if (rawTokens.length === 0) {
         console.log("📭 No tokens found")
         return
       }
 
+      const tokens = rawTokens.map(mapD1Token)
       console.log(`\\n📋 Found ${tokens.length} tokens:\\n`)
 
       for (const token of tokens) {
@@ -360,15 +358,16 @@ program
   .description("Show detailed information about a specific token")
   .action(async (uuid) => {
     try {
-      const result = await executeD1Command("SELECT * FROM tokens WHERE uuid = ?", [uuid])
-      const tokens = Array.isArray(result) ? result : []
-      const token = tokens.length > 0 ? tokens[0] : null
+      const result = await executeD1Command("SELECT * FROM jwt_tokens WHERE uuid = ?", [uuid])
+      const rawTokens = Array.isArray(result) ? result : []
+      const rawToken = rawTokens.length > 0 ? rawTokens[0] : null
 
-      if (!token) {
+      if (!rawToken) {
         console.error(`❌ Token with UUID ${uuid} not found`)
         process.exit(1)
       }
 
+      const token = mapD1Token(rawToken)
       console.log("\\n🔍 Token Details:\\n")
       console.log(`UUID: ${token.uuid}`)
       console.log(`Subject: ${token.sub}`)
@@ -393,17 +392,57 @@ program
 program
   .command("revoke <uuid>")
   .description("Revoke a token by UUID")
-  .action(async (uuid) => {
-    console.log(`\\n🚫 Revoking token ${uuid}...\\n`)
+  .option("--confirm", "Skip confirmation prompt")
+  .action(async (uuid, options) => {
+    try {
+      // First check if the token exists
+      const result = await executeD1Command("SELECT * FROM jwt_tokens WHERE uuid = ?", [uuid])
+      const rawTokens = Array.isArray(result) ? result : []
+      const rawToken = rawTokens.length > 0 ? rawTokens[0] : null
 
-    // Note: This would require KV access which is not available in the CLI
-    // For now, we'll just show how to revoke via the API or manual KV update
-    console.log("Token revocation requires KV access.")
-    console.log("To revoke this token:")
-    console.log(`1. Set KV key "auth:revocation:${uuid}" to "true"`)
-    console.log("2. Or use the API endpoint (when implemented)")
-    console.log("3. Or use Wrangler CLI:")
-    console.log(`   bun run wrangler kv:key put "auth:revocation:${uuid}" "true" --binding DATA`)
+      if (!rawToken) {
+        console.error(`❌ Token with UUID ${uuid} not found`)
+        process.exit(1)
+      }
+
+      const token = mapD1Token(rawToken)
+      console.log("\\n🔍 Token to revoke:")
+      console.log(`   UUID: ${token.uuid}`)
+      console.log(`   Subject: ${token.sub}`)
+      console.log(`   Description: ${token.description || "No description"}`)
+
+      if (!options.confirm) {
+        console.log("\\n⚠️  WARNING: This will immediately revoke the token.")
+        console.log("   The token will no longer be accepted by the API.")
+        console.log("   This action cannot be undone.")
+
+        const confirmed = readlineSync.keyInYN("\\nAre you sure you want to revoke this token?")
+        if (!confirmed) {
+          console.log("❌ Token revocation cancelled")
+          process.exit(1)
+        }
+      }
+
+      console.log(`\\n🚫 Revoking token ${uuid}...`)
+
+      // Set revocation flag in KV
+      const { client, config } = createCloudflareClient(false, true)
+      if (!config.kvNamespaceId) {
+        throw new Error("KV namespace ID not configured")
+      }
+      const kvNamespaceId = config.kvNamespaceId
+
+      await client.kv.namespaces.values.update(kvNamespaceId, `auth:revocation:${uuid}`, {
+        account_id: config.accountId,
+        value: "true"
+      })
+
+      console.log("✅ Token revoked successfully")
+      console.log("   The token is now immediately invalid and cannot be used")
+    } catch (error) {
+      console.error("❌ Failed to revoke token:", error)
+      process.exit(1)
+    }
   })
 
 // Search command
@@ -424,26 +463,27 @@ program
       let params: unknown[]
 
       if (options.uuid) {
-        sql = "SELECT * FROM tokens WHERE uuid = ?"
+        sql = "SELECT * FROM jwt_tokens WHERE uuid = ?"
         params = [options.uuid]
       } else if (options.sub) {
-        sql = "SELECT * FROM tokens WHERE sub LIKE ?"
+        sql = "SELECT * FROM jwt_tokens WHERE sub LIKE ?"
         params = [`%${options.sub}%`]
       } else if (options.description) {
-        sql = "SELECT * FROM tokens WHERE description LIKE ?"
+        sql = "SELECT * FROM jwt_tokens WHERE description LIKE ?"
         params = [`%${options.description}%`]
       } else {
         throw new Error("No search criteria provided")
       }
 
       const result = await executeD1Command(sql, params)
-      const tokens = Array.isArray(result) ? result : []
+      const rawTokens = Array.isArray(result) ? result : []
 
-      if (tokens.length === 0) {
+      if (rawTokens.length === 0) {
         console.log("📭 No matching tokens found")
         return
       }
 
+      const tokens = rawTokens.map(mapD1Token)
       console.log(`\\n🔍 Found ${tokens.length} matching tokens:\\n`)
 
       for (const token of tokens) {

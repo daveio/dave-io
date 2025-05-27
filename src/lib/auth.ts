@@ -13,6 +13,10 @@ export interface AuthorizedContext extends Context {
   user: {
     id: string
   }
+  jwt: {
+    uuid: string
+    sub: string
+  }
 }
 
 export function extractTokenFromRequest(c: Context): string | null {
@@ -73,7 +77,7 @@ export function createJWTMiddleware() {
 
     try {
       // Import KV functions dynamically to avoid circular dependencies
-      const { getTokenUsageCount, incrementTokenUsage, isTokenRevoked, trackTokenMetrics } = await import("../kv/auth")
+      const { getTokenUsageCount, isTokenRevoked, trackTokenMetrics } = await import("../kv/auth")
 
       // Check if token is revoked
       const revoked = await isTokenRevoked(c.env, payload.jti)
@@ -97,14 +101,13 @@ export function createJWTMiddleware() {
           )
         }
       }
-
-      // Increment usage count
-      await incrementTokenUsage(c.env, payload.jti)
-      await trackTokenMetrics(c.env, payload.jti, "successful_auth")
-
-      // Set user context
+      // Set user context with JWT info for later usage tracking
       ;(c as AuthorizedContext).user = {
         id: payload.sub
+      }
+      ;(c as AuthorizedContext).jwt = {
+        uuid: payload.jti,
+        sub: payload.sub
       }
 
       await next()
@@ -117,6 +120,21 @@ export function createJWTMiddleware() {
 
 export function requireAuth() {
   return createJWTMiddleware()
+}
+
+/**
+ * Track successful token usage after request completion
+ * Should be called only after the request has been successfully processed
+ */
+export async function trackSuccessfulUsage(c: AuthorizedContext): Promise<void> {
+  try {
+    const { incrementTokenUsage, trackTokenMetrics } = await import("../kv/auth")
+    await incrementTokenUsage(c.env, c.jwt.uuid)
+    await trackTokenMetrics(c.env, c.jwt.uuid, "successful_auth")
+  } catch (error) {
+    console.error("Failed to track token usage:", error)
+    // Don't throw - this shouldn't fail the request
+  }
 }
 
 /**
@@ -158,6 +176,8 @@ export function authorizeEndpoint(endpoint: string, subresource?: string) {
       // 2. Subject matches exactly the endpoint:subresource pattern
       if (subject === endpoint || subject === fullResourcePattern) {
         result = await handler()
+        // Track usage only after successful completion
+        await trackSuccessfulUsage(authorizedC)
       } else {
         c.status(403)
         c.json({ error: "Not authorized for this resource" })
