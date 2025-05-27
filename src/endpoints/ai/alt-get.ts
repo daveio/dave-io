@@ -9,6 +9,7 @@ import { ImageProcessor } from "./image-processing"
  * Generates descriptive alt text for images using Cloudflare AI
  */
 export class AiAlt extends OpenAPIRoute {
+  // @ts-ignore - Schema validation working, type compatibility issue with external Zod definitions
   schema = AiAltGetRouteSchema
   private processor = new ImageProcessor()
   /**

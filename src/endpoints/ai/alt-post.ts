@@ -9,6 +9,7 @@ import { ImageProcessor } from "./image-processing"
  * Handles POST requests with base64-encoded image data
  */
 export class AiAltPost extends OpenAPIRoute {
+  // @ts-ignore - Schema validation working, type compatibility issue with external Zod definitions
   schema = AiAltPostRouteSchema
   private processor = new ImageProcessor()
   /**

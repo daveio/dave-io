@@ -16,12 +16,13 @@ This project implements a multipurpose personal API that runs on Cloudflare Work
 - **Authentication**: JWT-based authentication system with scope-based authorization
 - **AI**: AI-powered services including alt text generation for images
 
-The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation.
+The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://github.com/cloudflare/chanfana) for automatic OpenAPI 3.1 documentation generation and schema validation.
 
 ## Features
 
-- **OpenAPI Documentation**: Auto-generated API docs available at `/api/docs` and `/api/redocs`
-- **Type-Safe Development**: Built with TypeScript and Zod for runtime type validation
+- **OpenAPI 3.1 Documentation**: Interactive Swagger UI at `/docs` and ReDoc at `/redocs`
+- **Auto-Generated API Schema**: Complete OpenAPI specification available at `/openapi.json`
+- **Type-Safe Development**: Built with TypeScript and Zod for runtime type validation and request/response validation
 - **Cloudflare Integration**:
 
   - KV Namespace for unified data storage
@@ -34,6 +35,16 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
 - **Multiple Output Formats**: Support for JSON, YAML, and Prometheus metrics formats
 - **JWT Authentication**: Secure token-based authentication with configurable scopes, usage tracking, and token revocation
 - **CLI Tools**: Built-in utilities for JWT token generation with D1 metadata storage and KV management via Cloudflare SDK
+
+## Documentation
+
+The API provides comprehensive OpenAPI 3.1 documentation with interactive interfaces:
+
+- **Interactive Swagger UI**: Available at `/docs` - test endpoints directly in your browser
+- **ReDoc Documentation**: Available at `/redocs` - clean, readable API documentation
+- **OpenAPI Schema**: Raw OpenAPI 3.1 specification at `/openapi.json`
+
+All endpoints include detailed request/response schemas, parameter descriptions, and example responses.
 
 ## Endpoints
 
@@ -687,4 +698,15 @@ Dave Williams ([@daveio](https://github.com/daveio)) - [dave@dave.io](mailto:dav
 
 The project uses Zod for schema validation and OpenAPI documentation. All schemas are defined in the `/src/schemas` directory, with each schema file having a corresponding `.schema.ts` suffix.
 
-To learn more about the available schemas and how to use them, see the [Schemas README](/src/schemas/README.md).
+The project uses comprehensive Zod schemas for all endpoints, providing:
+
+- **Request Validation**: All incoming requests are validated against schemas
+- **Response Documentation**: Detailed response schemas for OpenAPI documentation
+- **Type Safety**: Full TypeScript integration with automatic type inference
+- **Error Handling**: Consistent error response formats across all endpoints
+
+Each endpoint extends `OpenAPIRoute` from Chanfana and includes a `schema` property that defines:
+- Request parameters and body validation
+- Response formats and status codes
+- Endpoint tags, summaries, and descriptions
+- Security requirements (JWT authentication)

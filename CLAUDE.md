@@ -60,9 +60,10 @@ bun run jwt show <uuid>               # Show token details
 ## Code Architecture
 
 - **Framework**: Uses Hono.js for routing and HTTP server functionality
-- **API Documentation**: Uses Chanfana (OpenAPI) for documentation and schema validation
-- **Type Safety**: Uses TypeScript and Zod for runtime type validation
-- **Schema Organization**: Schemas are defined in `src/schemas/` directory using Zod
+- **API Documentation**: Uses Chanfana (OpenAPI) for automatic documentation generation and schema validation
+- **Type Safety**: Uses TypeScript and Zod for compile-time and runtime type validation
+- **Schema Organization**: Comprehensive Zod schemas defined in `src/schemas/` directory for all endpoints
+- **OpenAPI Integration**: Full OpenAPI 3.1 specification with interactive Swagger UI at `/docs`
 - **KV Storage**: Uses a unified KV namespace with hierarchical keys for data organization
 - **Analytics**: Uses Cloudflare Analytics Engine for request tracking
 
