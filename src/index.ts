@@ -1,7 +1,7 @@
 import { OpenAPIRoute, fromHono } from "chanfana"
 import { Hono } from "hono"
 import { AiAlt, AiAltPost } from "./endpoints/ai"
-import { AuthTest } from "./endpoints/auth-test"
+import { AuthTest } from "./endpoints/auth"
 import { Dashboard } from "./endpoints/dashboard"
 import { Metrics } from "./endpoints/metrics"
 import { Ping } from "./endpoints/ping"
