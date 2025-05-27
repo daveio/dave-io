@@ -1,5 +1,4 @@
-import { OpenAPIRoute, fromHono } from "chanfana"
-import { Hono } from "hono"
+import { type Context, Hono } from "hono"
 import { AiAlt, AiAltPost } from "./endpoints/ai"
 import { Auth } from "./endpoints/auth"
 import { Dashboard } from "./endpoints/dashboard"
@@ -11,7 +10,6 @@ import { TokenRevokeEndpoint, TokenUsageEndpoint } from "./endpoints/tokens"
 import { initializeKV } from "./kv/init"
 import { incrementStatusCodeCount } from "./kv/metrics"
 import { trackRequestAnalytics } from "./lib/analytics"
-import { registerGetRoute, registerPostRoute } from "./lib/route-helper"
 
 type Bindings = {
   DATA: KVNamespace
@@ -21,13 +19,6 @@ type Bindings = {
 
 // Start a Hono app
 const app = new Hono<{ Bindings: Bindings }>()
-
-// Setup OpenAPI registry
-const openapi = fromHono(app, {
-  docs_url: "/api/docs",
-  redoc_url: "/api/redocs",
-  openapi_url: "/api/openapi.json"
-})
 
 // Initialize KV store middleware
 app.use("*", async (c, next) => {
@@ -90,24 +81,55 @@ app.use("*", async (c, next) => {
   }
 })
 
-// Register routes using the helper utility
-registerGetRoute(app, openapi, "/ping", Ping)
-registerGetRoute(app, openapi, "/redirect/:slug", Redirect, ["slug"])
-registerGetRoute(app, openapi, "/dashboard/:name", Dashboard, ["name"])
-registerGetRoute(app, openapi, "/routeros/putio", RouterOSPutIO)
-registerGetRoute(app, openapi, "/routeros/cache", RouterOSCache)
-registerGetRoute(app, openapi, "/routeros/reset", RouterOSReset)
-registerGetRoute(app, openapi, "/metrics", Metrics)
-registerGetRoute(app, openapi, "/metrics/json", Metrics)
-registerGetRoute(app, openapi, "/metrics/yaml", Metrics)
-registerGetRoute(app, openapi, "/metrics/prometheus", Metrics)
-registerGetRoute(app, openapi, "/auth", Auth)
+// Helper function to create endpoint instances and handle requests
+// biome-ignore lint/suspicious/noExplicitAny: Endpoint classes have varying types
+const createHandler = (EndpointClass: any) => async (c: Context) => {
+  const endpoint = new EndpointClass()
+  return endpoint.handle(c)
+}
+
+// Register routes directly with Hono
+app.get("/ping", createHandler(Ping))
+app.get("/api/ping", createHandler(Ping))
+
+app.get("/redirect/:slug", createHandler(Redirect))
+app.get("/api/redirect/:slug", createHandler(Redirect))
+
+app.get("/dashboard/:name", createHandler(Dashboard))
+app.get("/api/dashboard/:name", createHandler(Dashboard))
+
+app.get("/routeros/putio", createHandler(RouterOSPutIO))
+app.get("/api/routeros/putio", createHandler(RouterOSPutIO))
+
+app.get("/routeros/cache", createHandler(RouterOSCache))
+app.get("/api/routeros/cache", createHandler(RouterOSCache))
+
+app.get("/routeros/reset", createHandler(RouterOSReset))
+app.get("/api/routeros/reset", createHandler(RouterOSReset))
+
+app.get("/metrics", createHandler(Metrics))
+app.get("/api/metrics", createHandler(Metrics))
+app.get("/metrics/json", createHandler(Metrics))
+app.get("/api/metrics/json", createHandler(Metrics))
+app.get("/metrics/yaml", createHandler(Metrics))
+app.get("/api/metrics/yaml", createHandler(Metrics))
+app.get("/metrics/prometheus", createHandler(Metrics))
+app.get("/api/metrics/prometheus", createHandler(Metrics))
+
+app.get("/auth", createHandler(Auth))
+app.get("/api/auth", createHandler(Auth))
+
 // Token management endpoints
-registerGetRoute(app, openapi, "/tokens/:uuid/usage", TokenUsageEndpoint, ["uuid"])
-registerPostRoute(app, openapi, "/tokens/:uuid/revoke", TokenRevokeEndpoint, ["uuid"])
+app.get("/tokens/:uuid/usage", createHandler(TokenUsageEndpoint))
+app.get("/api/tokens/:uuid/usage", createHandler(TokenUsageEndpoint))
+app.post("/tokens/:uuid/revoke", createHandler(TokenRevokeEndpoint))
+app.post("/api/tokens/:uuid/revoke", createHandler(TokenRevokeEndpoint))
+
 // AI endpoints with GET and POST support
-registerGetRoute(app, openapi, "/ai/alt", AiAlt)
-registerPostRoute(app, openapi, "/ai/alt", AiAltPost)
+app.get("/ai/alt", createHandler(AiAlt))
+app.get("/api/ai/alt", createHandler(AiAlt))
+app.post("/ai/alt", createHandler(AiAltPost))
+app.post("/api/ai/alt", createHandler(AiAltPost))
 
 // Export the Hono app
 export default app

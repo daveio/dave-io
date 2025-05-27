@@ -1,32 +1,7 @@
-import { OpenAPIRoute } from "chanfana"
-import type { OpenAPIRouteSchema } from "chanfana"
 import type { Context } from "hono"
 import { getRedirect, trackRedirectClick } from "../kv/redirect"
-import { RedirectParamsSchema, RedirectSchema } from "../schemas"
 
-export class Redirect extends OpenAPIRoute {
-  // @ts-ignore - Schema type compatibility issues with chanfana/zod
-  schema = {
-    tags: ["Redirects"],
-    summary: "Get the URL for a redirect by slug",
-    request: {
-      params: RedirectParamsSchema
-    },
-    responses: {
-      "200": {
-        description: "Returns the URL for a redirect",
-        content: {
-          "application/json": {
-            schema: RedirectSchema
-          }
-        }
-      },
-      "404": {
-        description: "Redirect not found"
-      }
-    }
-  } as OpenAPIRouteSchema
-
+export class Redirect {
   async handle(c: Context) {
     // Extract slug directly from context params
     const slug = c.req.param("slug")
@@ -50,12 +25,12 @@ export class Redirect extends OpenAPIRoute {
     // Track the redirect click
     await trackRedirectClick(c.env, slug)
 
-    return {
+    return c.json({
       success: true,
       redirect: {
         slug: slug,
         url: redirect.url
       }
-    }
+    })
   }
 }

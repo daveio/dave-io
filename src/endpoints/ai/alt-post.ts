@@ -1,7 +1,5 @@
-import type { OpenAPIRouteSchema } from "chanfana"
 import type { Context } from "hono"
 import { type AuthorizedContext, authorizeEndpoint } from "../../lib/auth"
-import { AiAltPostBodySchema, AiAltTextResponseSchema, AiErrorSchema } from "../../schemas/ai.schema"
 import { ImageProcessor } from "./image-processing"
 
 /**
@@ -9,65 +7,6 @@ import { ImageProcessor } from "./image-processing"
  * Handles POST requests with base64-encoded image data
  */
 export class AiAltPost extends ImageProcessor {
-  // @ts-ignore - Schema type compatibility issues with chanfana/zod
-  schema = {
-    tags: ["AI"],
-    summary: "Generate alt text for uploaded images using AI",
-    description:
-      "A protected endpoint that requires authentication to generate alt text for directly uploaded images. Provide base64-encoded image data in the request body.",
-    request: {
-      body: {
-        content: {
-          "application/json": {
-            schema: AiAltPostBodySchema
-          }
-        }
-      }
-    },
-    responses: {
-      200: {
-        description: "Alt text generated successfully",
-        content: {
-          "application/json": {
-            schema: AiAltTextResponseSchema
-          }
-        }
-      },
-      400: {
-        description: "Bad request - invalid image data",
-        content: {
-          "application/json": {
-            schema: AiErrorSchema
-          }
-        }
-      },
-      401: {
-        description: "Authentication required",
-        content: {
-          "application/json": {
-            schema: AiErrorSchema
-          }
-        }
-      },
-      403: {
-        description: "Authorization failed",
-        content: {
-          "application/json": {
-            schema: AiErrorSchema
-          }
-        }
-      },
-      429: {
-        description: "Rate limit exceeded",
-        content: {
-          "application/json": {
-            schema: AiErrorSchema
-          }
-        }
-      }
-    }
-  } as OpenAPIRouteSchema
-
   /**
    * Handles POST requests with base64 image data
    */

@@ -1,40 +1,16 @@
-import { OpenAPIRoute } from "chanfana"
-import type { OpenAPIRouteSchema } from "chanfana"
 import type { Context } from "hono"
 import Parser from "rss-parser"
 import { getDashboardItems } from "../kv/dashboard"
-import { DashboardErrorSchema, DashboardItemSchema, DashboardParamsSchema, DashboardResponseSchema } from "../schemas"
-import type { DashboardItem } from "../schemas"
 
-export class Dashboard extends OpenAPIRoute {
-  // @ts-ignore - Schema type compatibility issues with chanfana/zod
-  schema = {
-    tags: ["Dashboard"],
-    summary: "Get dashboard data by name",
-    request: {
-      // @ts-ignore - Type instantiation issue
-      params: DashboardParamsSchema
-    },
-    responses: {
-      "200": {
-        description: "Dashboard data",
-        content: {
-          "application/json": {
-            schema: DashboardResponseSchema
-          }
-        }
-      },
-      "404": {
-        description: "Dashboard not found",
-        content: {
-          "application/json": {
-            schema: DashboardErrorSchema
-          }
-        }
-      }
-    }
-  } as OpenAPIRouteSchema
+// Local type definition - removed schema validation
+export interface DashboardItem {
+  title: string
+  subtitle: string
+  linkURL?: string
+  imageURL?: string
+}
 
+export class Dashboard {
   /**
    * Create a standardized dashboard response
    */

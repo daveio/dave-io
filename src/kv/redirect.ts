@@ -1,4 +1,13 @@
-import type { ClickData, Redirect } from "../schemas"
+// Local type definitions - removed schema validation
+export interface Redirect {
+  slug: string
+  url: string
+}
+
+export interface ClickData {
+  count: number
+  lastAccessed: string | null
+}
 
 // KV Keys - following the pattern "redirect:slug"
 export const KV_PREFIX = "redirect:"

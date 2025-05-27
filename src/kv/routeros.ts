@@ -1,10 +1,44 @@
 import { ipv4, ipv6 } from "../lib/ip"
-import type {
-  BGPViewData,
-  RouterOSCacheData as CacheData,
-  RouterOSCacheMetadata as CacheMetadata,
-  RipeData
-} from "../schemas"
+
+// Local type definitions - removed schema validation
+export interface RouterOSCacheData {
+  ipv4Ranges: string[]
+  ipv6Ranges: string[]
+  lastUpdated: string | null
+  lastError: string | null
+  updateInProgress?: boolean
+}
+
+export interface RouterOSCacheMetadata {
+  lastUpdated: string | null
+  lastError: string | null
+  lastAttempt: string | null
+  updateInProgress: boolean
+}
+
+export interface RipePrefix {
+  prefix: string
+}
+
+export interface RipeData {
+  data: {
+    prefixes: RipePrefix[]
+  }
+}
+
+export interface BGPViewPrefix {
+  prefix: string
+  ip: string
+  cidr: number
+  routed: boolean
+}
+
+export interface BGPViewData {
+  data: {
+    ipv4_prefixes: BGPViewPrefix[]
+    ipv6_prefixes: BGPViewPrefix[]
+  }
+}
 
 // KV Keys - following the pattern routeros:[provider]:[resource]
 export const KV_CACHE_IPV4 = "routeros:putio:ipv4"
@@ -33,9 +67,9 @@ const CACHE_TTL = 3600
 /**
  * Get cache data from KV
  */
-export async function getCacheData(env: { DATA: KVNamespace }): Promise<CacheData> {
+export async function getCacheData(env: { DATA: KVNamespace }): Promise<RouterOSCacheData> {
   // Default empty cache
-  const defaultCache: CacheData = {
+  const defaultCache: RouterOSCacheData = {
     ipv4Ranges: [],
     ipv6Ranges: [],
     lastUpdated: null,
@@ -75,7 +109,7 @@ export async function getCacheData(env: { DATA: KVNamespace }): Promise<CacheDat
 /**
  * Check if cache needs to be refreshed
  */
-export function shouldRefreshCache(cacheData: CacheData): boolean {
+export function shouldRefreshCache(cacheData: RouterOSCacheData): boolean {
   // If there's no cached data, we definitely need to refresh
   if (!cacheData.lastUpdated) {
     return true
@@ -92,7 +126,7 @@ export function shouldRefreshCache(cacheData: CacheData): boolean {
 /**
  * Check if cache is stale (> TTL)
  */
-export function isCacheStale(cacheData: CacheData): boolean {
+export function isCacheStale(cacheData: RouterOSCacheData): boolean {
   if (!cacheData.lastUpdated) {
     return true
   }
@@ -107,8 +141,8 @@ export function isCacheStale(cacheData: CacheData): boolean {
 /**
  * Get provider-specific cache status information
  */
-export async function getCacheStatus(env: { DATA: KVNamespace }): Promise<CacheMetadata> {
-  const defaultMetadata: CacheMetadata = {
+export async function getCacheStatus(env: { DATA: KVNamespace }): Promise<RouterOSCacheMetadata> {
+  const defaultMetadata: RouterOSCacheMetadata = {
     lastUpdated: null,
     lastError: null,
     lastAttempt: null,
@@ -311,7 +345,7 @@ function mergeIPRanges(ranges: string[], version: 4 | 6): string[] {
 /**
  * Generate RouterOS script from cached data
  */
-export function generateScript(cacheData: CacheData): string {
+export function generateScript(cacheData: RouterOSCacheData): string {
   const { ipv4Ranges, ipv6Ranges } = cacheData
 
   // Script header

@@ -1,7 +1,5 @@
-import type { OpenAPIRouteSchema } from "chanfana"
 import type { Context } from "hono"
 import { type AuthorizedContext, authorizeEndpoint } from "../../lib/auth"
-import { AiAltTextQuerySchema, AiAltTextResponseSchema, AiErrorSchema } from "../../schemas/ai.schema"
 import { ImageProcessor } from "./image-processing"
 
 /**
@@ -9,59 +7,6 @@ import { ImageProcessor } from "./image-processing"
  * Generates descriptive alt text for images using Cloudflare AI
  */
 export class AiAlt extends ImageProcessor {
-  // @ts-ignore - Schema type compatibility issues with chanfana/zod
-  schema = {
-    tags: ["AI"],
-    summary: "Generate alt text for images using AI",
-    description:
-      "A protected endpoint that requires authentication to generate alt text for images. Provide an image URL via the 'image' query parameter.",
-    request: {
-      query: AiAltTextQuerySchema
-    },
-    responses: {
-      200: {
-        description: "Alt text generated successfully",
-        content: {
-          "application/json": {
-            schema: AiAltTextResponseSchema
-          }
-        }
-      },
-      400: {
-        description: "Bad request - invalid image URL or data",
-        content: {
-          "application/json": {
-            schema: AiErrorSchema
-          }
-        }
-      },
-      401: {
-        description: "Authentication required",
-        content: {
-          "application/json": {
-            schema: AiErrorSchema
-          }
-        }
-      },
-      403: {
-        description: "Authorization failed",
-        content: {
-          "application/json": {
-            schema: AiErrorSchema
-          }
-        }
-      },
-      429: {
-        description: "Rate limit exceeded",
-        content: {
-          "application/json": {
-            schema: AiErrorSchema
-          }
-        }
-      }
-    }
-  } as OpenAPIRouteSchema
-
   /**
    * Handles GET requests with image URL parameter
    */

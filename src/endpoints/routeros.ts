@@ -1,32 +1,7 @@
-import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
 import { getCacheData, getCacheStatus, getScript, getSharedMetadata, refreshCache, resetCache } from "../kv/routeros"
-import { RouterOSCacheStatusSchema, RouterOSErrorSchema, RouterOSResetResponseSchema } from "../schemas"
 
-export class RouterOSPutIO extends OpenAPIRoute {
-  schema = {
-    tags: ["RouterOS"],
-    summary: "Generate RouterOS script for put.io IP ranges",
-    responses: {
-      "200": {
-        description: "RouterOS script for put.io IP ranges",
-        content: {
-          "text/plain": {
-            schema: RouterOSErrorSchema.shape.message
-          }
-        }
-      },
-      "500": {
-        description: "Error fetching or processing IP data",
-        content: {
-          "application/json": {
-            schema: RouterOSErrorSchema
-          }
-        }
-      }
-    }
-  }
-
+export class RouterOSPutIO {
   async handle(c: Context) {
     try {
       // Get the script from KV
@@ -46,30 +21,7 @@ export class RouterOSPutIO extends OpenAPIRoute {
   }
 }
 
-export class RouterOSCache extends OpenAPIRoute {
-  schema = {
-    tags: ["RouterOS"],
-    summary: "Get cache status for RouterOS data",
-    responses: {
-      "200": {
-        description: "Cache status information",
-        content: {
-          "application/json": {
-            schema: RouterOSCacheStatusSchema
-          }
-        }
-      },
-      "500": {
-        description: "Error retrieving cache status",
-        content: {
-          "application/json": {
-            schema: RouterOSErrorSchema
-          }
-        }
-      }
-    }
-  }
-
+export class RouterOSCache {
   async handle(c: Context) {
     try {
       // Track analytics
@@ -111,30 +63,7 @@ export class RouterOSCache extends OpenAPIRoute {
   }
 }
 
-export class RouterOSReset extends OpenAPIRoute {
-  schema = {
-    tags: ["RouterOS"],
-    summary: "Reset the cache for RouterOS data",
-    responses: {
-      "200": {
-        description: "Cache reset confirmation",
-        content: {
-          "application/json": {
-            schema: RouterOSResetResponseSchema
-          }
-        }
-      },
-      "500": {
-        description: "Error resetting cache",
-        content: {
-          "application/json": {
-            schema: RouterOSErrorSchema
-          }
-        }
-      }
-    }
-  }
-
+export class RouterOSReset {
   async handle(c: Context) {
     try {
       // Reset the cache

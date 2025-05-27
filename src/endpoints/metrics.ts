@@ -1,31 +1,8 @@
-import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
 import { dump as yamlDump } from "js-yaml"
-import { z } from "zod"
 import { GROUP_PREFIX, METRICS_PREFIX, STATUS_PREFIX } from "../kv/metrics"
 
-export class Metrics extends OpenAPIRoute {
-  schema = {
-    tags: ["Metrics"],
-    summary: "Get API metrics",
-    description: "Returns API metrics in JSON, YAML, or Prometheus format based on the path",
-    responses: {
-      "200": {
-        description: "Metrics data",
-        content: {
-          "application/json": {
-            schema: z.record(z.number())
-          },
-          "text/yaml": {
-            schema: z.string()
-          },
-          "text/plain": {
-            schema: z.string()
-          }
-        }
-      }
-    }
-  }
+export class Metrics {
   /**
    * Get all metrics data from KV
    */

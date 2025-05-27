@@ -1,49 +1,7 @@
-import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
-import { z } from "zod"
 import { type AuthorizedContext, extractTokenFromRequest, verifyJWT } from "../lib/auth"
 
-export class Auth extends OpenAPIRoute {
-  schema = {
-    tags: ["Authentication"],
-    summary: "JWT authentication info endpoint",
-    description: "Returns detailed information about the provided JWT token, accepts any valid JWT subject",
-    responses: {
-      200: {
-        description: "Successful authentication with JWT details",
-        content: {
-          "application/json": {
-            schema: z.object({
-              message: z.string(),
-              jwt: z.object({
-                subject: z.string(),
-                subjectParts: z.array(z.string()),
-                issuedAt: z.number(),
-                expiresAt: z.number().nullable(),
-                timeToExpiry: z.number().nullable(),
-                isExpired: z.boolean()
-              }),
-              user: z.object({
-                id: z.string()
-              }),
-              timestamp: z.string()
-            })
-          }
-        }
-      },
-      401: {
-        description: "Authentication required or invalid token",
-        content: {
-          "application/json": {
-            schema: z.object({
-              error: z.string()
-            })
-          }
-        }
-      }
-    }
-  }
-
+export class Auth {
   async handle(c: Context) {
     const jwtSecret = c.env.API_JWT_SECRET
     if (!jwtSecret) {

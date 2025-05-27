@@ -1,61 +1,8 @@
-import { OpenAPIRoute } from "chanfana"
-import type { OpenAPIRouteSchema } from "chanfana"
 import type { Context } from "hono"
 import { getTokenUsage, revokeToken, unrevokeToken } from "../kv/auth"
 import { authorizeEndpoint } from "../lib/auth"
-import {
-  TokenErrorSchema,
-  TokenParamsSchema,
-  TokenRevocationRequestSchema,
-  TokenRevocationResponseSchema,
-  TokenUsageSchema
-} from "../schemas/tokens.schema"
 
-export class TokenUsageEndpoint extends OpenAPIRoute {
-  // @ts-ignore - Schema type compatibility issues with chanfana/zod
-  schema = {
-    tags: ["Authentication"],
-    summary: "Get token usage information",
-    description: "Get detailed usage information for a specific token by UUID",
-    request: {
-      params: TokenParamsSchema
-    },
-    responses: {
-      200: {
-        description: "Token usage information",
-        content: {
-          "application/json": {
-            schema: TokenUsageSchema
-          }
-        }
-      },
-      401: {
-        description: "Unauthorized",
-        content: {
-          "application/json": {
-            schema: TokenErrorSchema
-          }
-        }
-      },
-      403: {
-        description: "Forbidden",
-        content: {
-          "application/json": {
-            schema: TokenErrorSchema
-          }
-        }
-      },
-      404: {
-        description: "Token not found",
-        content: {
-          "application/json": {
-            schema: TokenErrorSchema
-          }
-        }
-      }
-    }
-  } as OpenAPIRouteSchema
-
+export class TokenUsageEndpoint {
   async handle(c: Context) {
     return authorizeEndpoint("tokens", "read")(c, async () => {
       const { uuid } = c.req.param()
@@ -75,50 +22,7 @@ export class TokenUsageEndpoint extends OpenAPIRoute {
   }
 }
 
-export class TokenRevokeEndpoint extends OpenAPIRoute {
-  // @ts-ignore - Schema type compatibility issues with chanfana/zod
-  schema = {
-    tags: ["Authentication"],
-    summary: "Revoke a token",
-    description: "Revoke a token by UUID, preventing further use",
-    request: {
-      params: TokenParamsSchema,
-      body: {
-        content: {
-          "application/json": {
-            schema: TokenRevocationRequestSchema
-          }
-        }
-      }
-    },
-    responses: {
-      200: {
-        description: "Token revocation status updated",
-        content: {
-          "application/json": {
-            schema: TokenRevocationResponseSchema
-          }
-        }
-      },
-      401: {
-        description: "Unauthorized",
-        content: {
-          "application/json": {
-            schema: TokenErrorSchema
-          }
-        }
-      },
-      403: {
-        description: "Forbidden",
-        content: {
-          "application/json": {
-            schema: TokenErrorSchema
-          }
-        }
-      }
-    }
-  } as OpenAPIRouteSchema
-
+export class TokenRevokeEndpoint {
   async handle(c: Context) {
     return authorizeEndpoint("tokens", "write")(c, async () => {
       const { uuid } = c.req.param()

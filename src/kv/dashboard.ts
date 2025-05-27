@@ -1,4 +1,10 @@
-import type { DashboardItem } from "../schemas"
+// Local type definition - removed schema validation
+export interface DashboardItem {
+  title: string
+  subtitle: string
+  linkURL?: string
+  imageURL?: string
+}
 
 // KV key prefixes
 export const KV_PREFIX = "dashboard:"

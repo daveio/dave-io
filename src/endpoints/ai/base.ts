@@ -1,4 +1,3 @@
-import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
 import { trackRequestAnalytics } from "../../lib/analytics"
 import { type AuthorizedContext, authorizeEndpoint } from "../../lib/auth"
@@ -13,7 +12,7 @@ export const IMAGE_AI_MODEL = "@cf/llava-hf/llava-1.5-7b-hf"
 /**
  * Base class for AI Alt Text endpoints with shared functionality
  */
-export abstract class AiAltBase extends OpenAPIRoute {
+export abstract class AiAltBase {
   /**
    * Generate alt text from image using Cloudflare AI
    */

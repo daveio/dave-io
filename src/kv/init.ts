@@ -1,4 +1,10 @@
-import type { ClickData, DashboardItem, Redirect, RouterOSCacheData, RouterOSCacheMetadata } from "../schemas"
+// Local type definitions - removed schema validation
+interface DashboardItem {
+  title: string
+  subtitle: string
+  linkURL?: string
+  imageURL?: string
+}
 import { KV_PREFIX as DASHBOARD_KV_PREFIX } from "./dashboard"
 import { KV_PREFIX as REDIRECT_KV_PREFIX, METRICS_PREFIX as REDIRECT_METRICS_PREFIX } from "./redirect"
 import {
