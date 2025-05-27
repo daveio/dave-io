@@ -1,6 +1,6 @@
 import { OpenAPIRoute, fromHono } from "chanfana"
 import { Hono } from "hono"
-import { AiAltText } from "./endpoints/ai"
+import { AiAlt, AiAltPost, AiAltText } from "./endpoints/ai"
 import { AuthTest } from "./endpoints/auth-test"
 import { Dashboard } from "./endpoints/dashboard"
 import { Metrics } from "./endpoints/metrics"
@@ -10,7 +10,7 @@ import { RouterOSCache, RouterOSPutIO, RouterOSReset } from "./endpoints/routero
 import { initializeKV } from "./kv/init"
 import { incrementStatusCodeCount } from "./kv/metrics"
 import { trackRequestAnalytics } from "./lib/analytics"
-import { registerGetRoute } from "./lib/route-helper"
+import { registerGetRoute, registerPostRoute } from "./lib/route-helper"
 
 type Bindings = {
   DATA: KVNamespace
@@ -101,7 +101,11 @@ registerGetRoute(app, openapi, "/metrics/json", Metrics)
 registerGetRoute(app, openapi, "/metrics/yaml", Metrics)
 registerGetRoute(app, openapi, "/metrics/prometheus", Metrics)
 registerGetRoute(app, openapi, "/auth/test", AuthTest)
+// Legacy alt-text endpoint (for backward compatibility)
 registerGetRoute(app, openapi, "/ai/alt-text", AiAltText)
+// New alt text endpoints with both GET and POST support
+registerGetRoute(app, openapi, "/ai/alt", AiAlt)
+registerPostRoute(app, openapi, "/ai/alt", AiAltPost)
 
 // Export the Hono app
 export default app

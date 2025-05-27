@@ -20,6 +20,7 @@
     "jwt": "bun bin/jwt.ts"
   },
   "dependencies": {
+    "@cloudflare/ai": "^1.2.2",
     "bun": "^1.2.14",
     "chanfana": "2.8.0",
     "commander": "^14.0.0",

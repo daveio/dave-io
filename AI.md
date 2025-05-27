@@ -4,32 +4,51 @@ This document provides details about the AI endpoint in the api.dave.io codebase
 
 ## Overview
 
-The API currently has a single AI endpoint:
+The API provides AI endpoints for generating alt text for images:
 
-- `GET /ai/alt-text` or `GET /api/ai/alt-text`: Generate alt text for images using AI
-  - Requires: Valid JWT token with `ai` or `ai:alt-text` subject
-  - Query parameters: `image` (optional) - URL of the image to generate alt text for
-  - Returns: Generated alt text for an image
+- `GET /ai/alt` or `GET /api/ai/alt`: Generate alt text for images using AI via URL
+  - Requires: Valid JWT token with `ai` or `ai:alt` subject
+  - Query parameters: `image` - URL of the image to generate alt text for
+  - Returns: Generated alt text for an image with rate limit information
+  - Headers: `Authorization: Bearer <token>` or query parameter `?token=<token>`
+
+- `POST /ai/alt` or `POST /api/ai/alt`: Generate alt text for directly uploaded images
+  - Requires: Valid JWT token with `ai` or `ai:alt` subject
+  - Request body: JSON object with `image` property containing base64-encoded image data
+  - Returns: Generated alt text for an image with rate limit information
   - Headers: `Authorization: Bearer <token>` or query parameter `?token=<token>`
 
 ## Key Files
 
 ### 1. src/endpoints/ai.ts
 
-The main implementation of the AI endpoint:
+The main implementation of the AI endpoints:
 
 ```typescript
 import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
 import { z } from "zod"
 import { type AuthorizedContext, authorizeEndpoint } from "../lib/auth"
-import { AiAltTextQuerySchema, AiAltTextResponseSchema, AiErrorSchema } from "../schemas/ai.schema"
+import { AiAltTextQuerySchema, AiAltTextResponseSchema, AiErrorSchema, AiAltPostBodySchema } from "../schemas/ai.schema"
+import { trackRequestAnalytics } from "../lib/analytics"
 
-export class AiAltText extends OpenAPIRoute {
+// Constants for rate limits and validations
+const MAX_REQUESTS_PER_HOUR = 100
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000 // 1 hour in milliseconds
+const MAX_IMAGE_SIZE_MB = 4
+const VALID_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg"]
+const IMAGE_AI_MODEL = "@cf/llava-hf/llava-1.5-7b-hf"
+
+/**
+ * AI Alt Text Generation Endpoint
+ * Generates descriptive alt text for images using Cloudflare AI
+ */
+export class AiAlt extends OpenAPIRoute {
   schema = {
     tags: ["AI"],
     summary: "Generate alt text for images using AI",
-    description: "A protected endpoint that requires authentication to generate alt text for images. Optionally provide an image URL via the 'image' query parameter.",
+    description:
+      "A protected endpoint that requires authentication to generate alt text for images. Provide an image URL via the 'image' query parameter.",
     request: {
       query: AiAltTextQuerySchema
     },
@@ -43,7 +62,7 @@ export class AiAltText extends OpenAPIRoute {
         }
       },
       400: {
-        description: "Bad request - invalid image URL",
+        description: "Bad request - invalid image URL or data",
         content: {
           "application/json": {
             schema: AiErrorSchema
@@ -70,9 +89,9 @@ export class AiAltText extends OpenAPIRoute {
   }
 
   async handle(c: Context) {
-    // Using the authorizeEndpoint helper with 'ai' endpoint and 'alt-text' subresource
-    // JWT subject must be either 'ai' or 'ai:alt-text' to access this endpoint
-    return authorizeEndpoint("ai", "alt-text")(c, async () => {
+    // Using the authorizeEndpoint helper with 'ai' endpoint and 'alt' subresource
+    // JWT subject must be either 'ai' or 'ai:alt' to access this endpoint
+    return authorizeEndpoint("ai", "alt")(c, async () => {
       const _authContext = c as AuthorizedContext
 
       // Get validated query parameters
@@ -125,26 +144,35 @@ export class AiAltText extends OpenAPIRoute {
 }
 ```
 
-**Current Status**: The implementation is a placeholder that returns mock alt text. It now accepts an optional image URL parameter and validates the URL format and file extension, but doesn't actually process images or use AI yet.
+**Current Status**: The implementation is fully functional and uses Cloudflare AI to process images and generate descriptive alt text. It supports both GET requests with image URLs and POST requests with base64-encoded image data. Rate limiting is implemented to control usage.
 
 ### 2. src/index.ts
 
 Relevant sections that register the AI endpoint routes:
 
 ```typescript
-// Import the AiAltText class
-import { AiAltText } from "./endpoints/ai"
+// Import the AI endpoint classes
+import { AiAlt, AiAltPost } from "./endpoints/ai"
 
 // Register the endpoints
-app.get("/ai/alt-text", (c) =>
-  new AiAltText({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+// GET method for URL-based image processing
+app.get("/ai/alt", (c) =>
+  new AiAlt({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
 )
-app.get("/api/ai/alt-text", (c) =>
-  new AiAltText({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+app.get("/api/ai/alt", (c) =>
+  new AiAlt({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+
+// POST method for directly uploaded images
+app.post("/ai/alt", (c) =>
+  new AiAltPost({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
+)
+app.post("/api/ai/alt", (c) =>
+  new AiAltPost({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
 )
 ```
 
-The endpoint is available at both `/ai/alt-text` and `/api/ai/alt-text` paths.
+The endpoints are available at both `/ai/alt` and `/api/ai/alt` paths with both GET and POST methods.
 
 ### 3. src/lib/auth.ts
 
@@ -189,7 +217,7 @@ export function authorizeEndpoint(endpoint: string, subresource?: string) {
 }
 ```
 
-The AI endpoint uses this helper to ensure that the JWT token has either `ai` or `ai:alt-text` as its subject.
+The AI endpoints use this helper to ensure that the JWT token has either `ai` or `ai:alt` as its subject.
 
 ### 4. src/schemas/ai.schema.ts
 
@@ -203,7 +231,7 @@ import { z } from "zod"
 extendZodWithOpenApi(z)
 
 /**
- * Schema for AI alt-text query parameters
+ * Schema for AI alt text query parameters (GET method)
  */
 export const AiAltTextQuerySchema = z.object({
   image: z
@@ -219,7 +247,19 @@ export const AiAltTextQuerySchema = z.object({
 export type AiAltTextQuery = z.infer<typeof AiAltTextQuerySchema>
 
 /**
- * Schema for AI alt-text response
+ * Schema for AI alt text POST request body
+ */
+export const AiAltPostBodySchema = z.object({
+  image: z.string().openapi({
+    description: "Base64 encoded image data (must start with data:image/...)",
+    example: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEA..."
+  })
+})
+
+export type AiAltPostBody = z.infer<typeof AiAltPostBodySchema>
+
+/**
+ * Schema for AI alt text response
  */
 export const AiAltTextResponseSchema = z.object({
   altText: z.string().openapi({
@@ -269,10 +309,10 @@ Command-line utility to generate JWT tokens for testing the AI endpoint:
 #!/usr/bin/env bun
 // JWT generation utility
 // Usage example for the AI endpoint:
-// bun jwt --sub "ai:alt-text" --expires "24h"
+// bun jwt --sub "ai:alt" --expires "24h"
 ```
 
-This script can be used to generate a token with the required subject (`ai` or `ai:alt-text`) for testing the AI endpoint.
+This script can be used to generate a token with the required subject (`ai` or `ai:alt`) for testing the AI endpoints.
 
 ### 6. wrangler.jsonc
 
@@ -318,37 +358,47 @@ export function trackRequestAnalytics(env: { ANALYTICS: AnalyticsEngineDataset }
 }
 ```
 
-## Missing Components for a Complete Implementation
+## Implemented AI Functionality
 
-The current AI endpoint is a placeholder. To implement actual AI functionality, you would need to:
+The AI alt text generation endpoints include the following features:
 
-1. **Add Cloudflare AI Integration**: The Worker would need an AI binding in wrangler.jsonc to access Cloudflare's AI models.
+1. **Cloudflare AI Integration**: Using the AI binding in wrangler.jsonc to access Cloudflare's AI models.
 
-2. **Image Processing Logic**: Code to extract images from requests, either via URLs or direct uploads.
+2. **Multiple Input Methods**:
+   - GET endpoint that accepts image URLs
+   - POST endpoint that accepts direct base64-encoded image uploads
 
-3. **AI Model Selection**: Choose and integrate an appropriate image recognition model.
+3. **AI Model Selection**: Uses the LLaVA model (`@cf/llava-hf/llava-1.5-7b-hf`) for high-quality image captioning.
 
-4. **Error Handling**: Add robust error handling for AI model failures.
+4. **Rate Limiting**: Implements a rate limit of 100 requests per hour per user.
 
-5. **Response Formatting**: Format the AI-generated descriptions properly.
+5. **Error Handling**: Comprehensive error handling for various edge cases:
+   - Invalid URLs or file types
+   - Network failures when fetching images
+   - Base64 decoding errors
+   - File size limitations (4MB max)
+   - AI model inference failures
 
-## Next Steps for Implementation
+6. **JWT Authentication**: Authorization with scope checking (`ai` or `ai:alt`)
 
-1. Add an AI binding to wrangler.jsonc
-2. Modify the AI endpoint to accept image URLs or direct uploads
-3. Integrate with a Cloudflare AI model for image description
-4. Add proper error handling and validation
-5. Update the endpoint documentation
-6. Add tests for the AI endpoint
+7. **Analytics Tracking**: Detailed request tracking with custom metadata
 
-## Expanding to Multiple AI Subresources
+## Future Enhancement Opportunities
 
-The current implementation with a single `alt-text` endpoint can be expanded to support multiple AI capabilities. Here's a comprehensive plan for scaling the AI endpoints:
+1. Add caching for commonly requested images
+2. Implement additional image processing options (resizing, compression)
+3. Allow customization of alt text style (brief, detailed, technical)
+4. Add support for batch processing multiple images
+5. Implement fallback models for improved reliability
+6. Create monitoring dashboard for usage metrics
 
-### Proposed AI Subresources
+## Expanding to Additional AI Subresources
+
+The current implementation with the `/ai/alt` endpoints can be expanded to support additional AI capabilities. Here's a comprehensive plan for scaling the AI endpoints:
+
+### Proposed Additional AI Subresources
 
 ```text
-/ai/alt-text      - Generate alt text for images
 /ai/transcribe    - Audio/video transcription
 /ai/translate     - Text translation between languages
 /ai/summarize     - Text summarization
@@ -366,8 +416,9 @@ The current implementation with a single `alt-text` endpoint can be expanded to 
 Extend the current pattern with individual classes for each subresource:
 
 ```typescript
-// src/endpoints/ai/alt-text.ts
-export class AiAltText extends OpenAPIRoute { /* ... */ }
+// src/endpoints/ai/alt.ts
+export class AiAlt extends OpenAPIRoute { /* ... */ }
+export class AiAltPost extends OpenAPIRoute { /* ... */ }
 
 // src/endpoints/ai/transcribe.ts
 export class AiTranscribe extends OpenAPIRoute { /* ... */ }
@@ -401,7 +452,7 @@ export class AiRouter extends OpenAPIRoute {
     const subresource = c.req.param('subresource')
 
     switch (subresource) {
-      case 'alt-text':
+      case 'alt':
         return this.handleAltText(c)
       case 'transcribe':
         return this.handleTranscribe(c)
@@ -447,10 +498,10 @@ export abstract class BaseAiEndpoint extends OpenAPIRoute {
   }
 }
 
-// src/endpoints/ai/alt-text.ts
-export class AiAltText extends BaseAiEndpoint {
+// src/endpoints/ai/alt.ts
+export class AiAlt extends BaseAiEndpoint {
   async handle(c: Context) {
-    return this.authorizeAI(c, "alt-text")
+    return this.authorizeAI(c, "alt")
   }
 
   protected async handleAiRequest(c: Context): Promise<Response> {
@@ -475,12 +526,12 @@ The existing authorization pattern scales well to multiple subresources:
 
 ```typescript
 // Granular permissions
-bun jwt --sub "ai:alt-text"     // Only alt-text access
+bun jwt --sub "ai:alt"          // Only alt text generation access
 bun jwt --sub "ai:transcribe"   // Only transcription access
 bun jwt --sub "ai:translate"    // Only translation access
 
 // Grouped permissions
-bun jwt --sub "ai:vision"       // Alt-text, classification, etc.
+bun jwt --sub "ai:vision"       // Alt text generation, classification, etc.
 bun jwt --sub "ai:text"         // Summarize, translate, moderate
 bun jwt --sub "ai:audio"        // Transcribe, generate speech
 
@@ -495,7 +546,7 @@ export function authorizeAiEndpoint(subresource: string, requiredCapabilities?: 
   return authorizeEndpoint("ai", subresource, {
     allowGroupAccess: true,
     groupMappings: {
-      "vision": ["alt-text", "classify", "extract"],
+      "vision": ["alt", "classify", "extract"],
       "text": ["summarize", "translate", "moderate", "chat"],
       "audio": ["transcribe", "generate-speech"]
     }
@@ -514,7 +565,7 @@ Update wrangler.jsonc to support multiple AI models:
   },
   "vars": {
     "AI_MODELS": {
-      "alt-text": "@cf/unum/uform-gen2-qwen-500m",
+      "alt": "@cf/llava-hf/llava-1.5-7b-hf",
       "transcribe": "@cf/openai/whisper",
       "translate": "@cf/meta/m2m100-1.2b",
       "summarize": "@cf/facebook/bart-large-cnn",
@@ -531,7 +582,7 @@ Define Zod schemas for each AI subresource:
 
 ```typescript
 // src/schemas/ai.ts
-export const AiAltTextSchema = z.object({
+export const AiAltSchema = z.object({
   image: z.string().url().optional(),
   imageData: z.string().optional(), // base64 encoded
   maxLength: z.number().min(10).max(500).default(100)
@@ -609,7 +660,7 @@ Implement different rate limits per AI operation:
 ```typescript
 // src/lib/ai-rate-limiting.ts
 const RATE_LIMITS = {
-  'alt-text': { requests: 100, window: '1h', cost: 1 },
+  'alt': { requests: 100, window: '1h', cost: 1 },
   'transcribe': { requests: 20, window: '1h', cost: 5 },
   'translate': { requests: 200, window: '1h', cost: 1 },
   'summarize': { requests: 50, window: '1h', cost: 2 },
@@ -636,7 +687,7 @@ src/
 │   └── ai/
 │       ├── index.ts           # Main AI router or exports
 │       ├── base.ts            # Base AI endpoint class
-│       ├── alt-text.ts        # Image alt-text generation
+│       ├── alt.ts             # Image alt text generation
 │       ├── transcribe.ts      # Audio transcription
 │       ├── translate.ts       # Text translation
 │       ├── summarize.ts       # Text summarization
@@ -696,8 +747,8 @@ export function trackAiRequest(
 Comprehensive testing approach for multiple AI endpoints:
 
 ```typescript
-// tests/ai/alt-text.test.ts
-describe('AI Alt-Text Endpoint', () => {
+// tests/ai/alt.test.ts
+describe('AI Alt Text Endpoint', () => {
   test('should generate alt text for valid image URL', async () => {
     // Test implementation
   })
@@ -746,46 +797,56 @@ To migrate from the current single endpoint to multiple subresources:
    - Implement request queuing for heavy workloads
    - Add usage dashboards and billing integration
 
-## Testing the Current Endpoint
+## Testing the AI Endpoints
 
-To test the existing endpoint:
+You can test the AI endpoints as follows:
 
 1. Generate a JWT token:
+
    ```bash
-   bun jwt --sub "ai:alt-text" --expires "24h"
+   bun jwt --sub "ai:alt" --expires "24h"
    ```
 
-2. Make a request without an image URL:
+2. Test the GET endpoint with an image URL:
+
    ```bash
-   curl -H "Authorization: Bearer <YOUR_TOKEN>" https://api.dave.io/ai/alt-text
-   ```
-   or
-   ```bash
-   curl "https://api.dave.io/ai/alt-text?token=<YOUR_TOKEN>"
+   curl -H "Authorization: Bearer <YOUR_TOKEN>" "https://api.dave.io/ai/alt?image=https://example.com/image.jpg"
    ```
 
-3. Make a request with an image URL:
+   or using token as a query parameter:
+
    ```bash
-   curl -H "Authorization: Bearer <YOUR_TOKEN>" "https://api.dave.io/ai/alt-text?image=https://example.com/image.jpg"
-   ```
-   or
-   ```bash
-   curl "https://api.dave.io/ai/alt-text?token=<YOUR_TOKEN>&image=https://example.com/image.jpg"
+   curl "https://api.dave.io/ai/alt?token=<YOUR_TOKEN>&image=https://example.com/image.jpg"
    ```
 
-4. Test error handling with an invalid URL:
+3. Test the POST endpoint with base64-encoded image data:
+
    ```bash
-   curl -H "Authorization: Bearer <YOUR_TOKEN>" "https://api.dave.io/ai/alt-text?image=invalid-url"
+   curl -X POST \
+     -H "Authorization: Bearer <YOUR_TOKEN>" \
+     -H "Content-Type: application/json" \
+     -d '{"image":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEA..."}' \
+     https://api.dave.io/ai/alt
    ```
 
-5. Test error handling with a non-image URL:
+4. Test error handling with an invalid URL (GET):
+
    ```bash
-   curl -H "Authorization: Bearer <YOUR_TOKEN>" "https://api.dave.io/ai/alt-text?image=https://example.com/document.pdf"
+   curl -H "Authorization: Bearer <YOUR_TOKEN>" "https://api.dave.io/ai/alt?image=invalid-url"
+   ```
+
+5. Test error handling with a non-image URL (GET):
+
+   ```bash
+   curl -H "Authorization: Bearer <YOUR_TOKEN>" "https://api.dave.io/ai/alt?image=https://example.com/document.pdf"
    ```
 
 **Expected Responses:**
 
-- Without `image`: Returns placeholder alt text
-- With valid `image`: Returns mock alt text mentioning the image URL
-- With invalid `image`: Returns 400 error with appropriate error message and code
-- With non-image URL: Returns 400 error indicating invalid image file type
+- With valid `image` URL (GET): Returns AI-generated alt text with rate limit information
+- With valid base64 image data (POST): Returns AI-generated alt text with rate limit information
+- Without an image: Returns 400 error with `NO_IMAGE_PROVIDED` code
+- With invalid URL: Returns 400 error with `INVALID_URL_FORMAT` code
+- With non-image URL: Returns 400 error with `INVALID_IMAGE_URL` code
+- With invalid base64 data: Returns 400 error with `INVALID_IMAGE_DATA` code
+- Rate limit exceeded: Returns 429 error with `RATE_LIMIT_EXCEEDED` code and reset information

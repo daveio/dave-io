@@ -84,10 +84,12 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
 
 ### AI
 
-- `GET /ai/alt-text` or `GET /api/ai/alt-text`: Generate alt text for images using AI
-- Requires: Valid JWT token with `ai` or `ai:alt-text` subject
-- Query parameters: `image` (optional) - URL of the image to generate alt text for
-- Returns: Generated alt text for an image
+- `GET /ai/alt` or `GET /api/ai/alt`: Generate alt text for images using AI
+- `POST /ai/alt` or `POST /api/ai/alt`: Generate alt text for uploaded images
+- Requires: Valid JWT token with `ai` or `ai:alt` subject
+- GET method: URL parameter `image` - URL of the image to generate alt text for
+- POST method: Request body with base64-encoded image data
+- Returns: Generated alt text for an image along with rate limit information
 - Headers: `Authorization: Bearer <token>` or query parameter `?token=<token>`
 
 ## Analytics
