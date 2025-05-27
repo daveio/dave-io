@@ -54,7 +54,7 @@ export async function isTokenRevoked(env: Env, uuid: string): Promise<boolean> {
     return revoked === "true"
   } catch (error) {
     console.error("Error checking token revocation:", { uuid, error })
-    return false // Default to not revoked on error
+    return true // Fail closed in case of error
   }
 }
 
