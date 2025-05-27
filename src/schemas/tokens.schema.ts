@@ -1,5 +1,4 @@
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi"
-import { Str } from "chanfana"
 import { z } from "zod"
 
 // Initialize OpenAPI extensions for Zod
