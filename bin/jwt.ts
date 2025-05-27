@@ -25,7 +25,7 @@ interface TokenMetadata {
 
 const program = new Command()
 
-program.name("jwt").description("JWT Token Management for api.dave.io").version("2.0.0")
+program.name("jwt").description("JWT Token Management for dave.io").version("2.0.0")
 
 // Environment variable helpers
 function getJWTSecret(): string | null {
@@ -303,8 +303,8 @@ const _createCommand = program
       console.log(JSON.stringify(metadata, null, 2))
 
       console.log("\\n💡 Usage Examples:")
-      console.log(`curl -H "Authorization: Bearer ${token}" https://api.dave.io/auth`)
-      console.log(`curl "https://api.dave.io/auth?token=${token}"`)
+      console.log(`curl -H "Authorization: Bearer ${token}" https://dave.io/api/auth`)
+      console.log(`curl "https://dave.io/api/auth?token=${token}"`)
     } catch (error) {
       console.error("❌ Error creating token:", error)
       process.exit(1)

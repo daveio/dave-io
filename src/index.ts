@@ -81,11 +81,11 @@ app.use("*", async (c, next) => {
 
 // Initialize Chanfana OpenAPI with Hono
 const openapi = fromHono(app, {
-  docs_url: "/docs",
-  openapi_url: "/openapi.json",
+  docs_url: "/api/docs",
+  openapi_url: "/api/openapi.json",
   schema: {
     info: {
-      title: "api.dave.io",
+      title: "dave.io",
       version: "1.0.0",
       description:
         "A multipurpose personal API powered by Cloudflare Workers. Provides endpoints for health checks, URL redirection, dashboard feeds, RouterOS script generation, metrics, JWT authentication, token management, and AI-powered services."
@@ -101,86 +101,55 @@ const openapi = fromHono(app, {
       { name: "AI Services", description: "AI-powered services including image alt text generation" }
     ],
     servers: [
-      { url: "https://api.dave.io", description: "Production server" },
-      { url: "https://dave.io/api", description: "Production server (alternative path)" }
+      { url: "https://dave.io/api", description: "Production server" }
     ]
   }
 })
 
-// Register endpoints with both direct and /api/ prefixed paths
+// Register endpoints with /api/ prefixed paths only
 // Health check endpoints
 // @ts-ignore - Route registration working, type compatibility issue with OpenAPIRoute classes
-openapi.get("/ping", Ping)
-// @ts-ignore
 openapi.get("/api/ping", Ping)
 
 // URL redirection endpoints
-// @ts-ignore
-openapi.get("/redirect/:slug", Redirect)
 // @ts-ignore
 openapi.get("/api/redirect/:slug", Redirect)
 
 // Dashboard endpoints
 // @ts-ignore
-openapi.get("/dashboard/:name", Dashboard)
-// @ts-ignore
 openapi.get("/api/dashboard/:name", Dashboard)
 
 // RouterOS endpoints
 // @ts-ignore
-openapi.get("/routeros/putio", RouterOSPutIO)
-// @ts-ignore
 openapi.get("/api/routeros/putio", RouterOSPutIO)
 // @ts-ignore
-openapi.get("/routeros/cache", RouterOSCache)
-// @ts-ignore
 openapi.get("/api/routeros/cache", RouterOSCache)
-// @ts-ignore
-openapi.get("/routeros/reset", RouterOSReset)
 // @ts-ignore
 openapi.get("/api/routeros/reset", RouterOSReset)
 
 // Metrics endpoints (multiple formats)
 // @ts-ignore
-openapi.get("/metrics", Metrics)
-// @ts-ignore
 openapi.get("/api/metrics", Metrics)
-// @ts-ignore
-openapi.get("/metrics/json", Metrics)
 // @ts-ignore
 openapi.get("/api/metrics/json", Metrics)
 // @ts-ignore
-openapi.get("/metrics/yaml", Metrics)
-// @ts-ignore
 openapi.get("/api/metrics/yaml", Metrics)
-// @ts-ignore
-openapi.get("/metrics/prometheus", Metrics)
 // @ts-ignore
 openapi.get("/api/metrics/prometheus", Metrics)
 
 // Authentication endpoints
 // @ts-ignore
-openapi.get("/auth", Auth)
-// @ts-ignore
 openapi.get("/api/auth", Auth)
 
 // Token management endpoints
 // @ts-ignore
-openapi.get("/tokens/:uuid/usage", TokenUsageEndpoint)
-// @ts-ignore
 openapi.get("/api/tokens/:uuid/usage", TokenUsageEndpoint)
-// @ts-ignore
-openapi.post("/tokens/:uuid/revoke", TokenRevokeEndpoint)
 // @ts-ignore
 openapi.post("/api/tokens/:uuid/revoke", TokenRevokeEndpoint)
 
 // AI endpoints with GET and POST support
 // @ts-ignore
-openapi.get("/ai/alt", AiAlt)
-// @ts-ignore
 openapi.get("/api/ai/alt", AiAlt)
-// @ts-ignore
-openapi.post("/ai/alt", AiAltPost)
 // @ts-ignore
 openapi.post("/api/ai/alt", AiAltPost)
 

@@ -258,7 +258,7 @@ async function fetchRipeData(): Promise<RipeData> {
   const response = await fetch("https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS9009", {
     headers: {
       Accept: "application/json",
-      "User-Agent": "api.dave.io (https://api.dave.io)"
+      "User-Agent": "dave.io (https://dave.io)"
     }
   })
 
@@ -276,7 +276,7 @@ async function fetchBGPViewData(): Promise<BGPViewData> {
   const response = await fetch("https://api.bgpview.io/asn/9009/prefixes", {
     headers: {
       Accept: "application/json",
-      "User-Agent": "api.dave.io (https://api.dave.io)"
+      "User-Agent": "dave.io (https://dave.io)"
     }
   })
 

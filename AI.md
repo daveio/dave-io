@@ -1,18 +1,18 @@
 # AI Endpoint Documentation
 
-This document provides details about the AI endpoint in the api.dave.io codebase, including all contributing files and components.
+This document provides details about the AI endpoint in the dave.io codebase, including all contributing files and components.
 
 ## Overview
 
 The API provides AI endpoints for generating alt text for images:
 
-- `GET /ai/alt` or `GET /api/ai/alt`: Generate alt text for images using AI via URL
+- `GET /api/ai/alt`: Generate alt text for images using AI via URL
   - Requires: Valid JWT token with `ai` or `ai:alt` subject
   - Query parameters: `image` - URL of the image to generate alt text for
   - Returns: Generated alt text for an image with rate limit information
   - Headers: `Authorization: Bearer <token>` or query parameter `?token=<token>`
 
-- `POST /ai/alt` or `POST /api/ai/alt`: Generate alt text for directly uploaded images
+- `POST /api/ai/alt`: Generate alt text for directly uploaded images
   - Requires: Valid JWT token with `ai` or `ai:alt` subject
   - Request body: JSON object with `image` property containing base64-encoded image data
   - Returns: Generated alt text for an image with rate limit information
@@ -156,23 +156,17 @@ import { AiAlt, AiAltPost } from "./endpoints/ai"
 
 // Register the endpoints
 // GET method for URL-based image processing
-app.get("/ai/alt", (c) =>
-  new AiAlt({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
 app.get("/api/ai/alt", (c) =>
   new AiAlt({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
 )
 
 // POST method for directly uploaded images
-app.post("/ai/alt", (c) =>
-  new AiAltPost({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
-)
 app.post("/api/ai/alt", (c) =>
   new AiAltPost({ router: openapi, raiseUnknownParameters: true, route: c.req.path, urlParams: [] }).execute(c)
 )
 ```
 
-The endpoints are available at both `/ai/alt` and `/api/ai/alt` paths with both GET and POST methods.
+The endpoints are available at `/api/ai/alt` path with both GET and POST methods.
 
 ### 3. src/lib/auth.ts
 
@@ -810,13 +804,13 @@ You can test the AI endpoints as follows:
 2. Test the GET endpoint with an image URL:
 
    ```bash
-   curl -H "Authorization: Bearer <YOUR_TOKEN>" "https://api.dave.io/ai/alt?image=https://example.com/image.jpg"
+   curl -H "Authorization: Bearer <YOUR_TOKEN>" "https://dave.io/api/ai/alt?image=https://example.com/image.jpg"
    ```
 
    or using token as a query parameter:
 
    ```bash
-   curl "https://api.dave.io/ai/alt?token=<YOUR_TOKEN>&image=https://example.com/image.jpg"
+   curl "https://dave.io/api/ai/alt?token=<YOUR_TOKEN>&image=https://example.com/image.jpg"
    ```
 
 3. Test the POST endpoint with base64-encoded image data:
@@ -826,19 +820,19 @@ You can test the AI endpoints as follows:
      -H "Authorization: Bearer <YOUR_TOKEN>" \
      -H "Content-Type: application/json" \
      -d '{"image":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEA..."}' \
-     https://api.dave.io/ai/alt
+     https://dave.io/api/ai/alt
    ```
 
 4. Test error handling with an invalid URL (GET):
 
    ```bash
-   curl -H "Authorization: Bearer <YOUR_TOKEN>" "https://api.dave.io/ai/alt?image=invalid-url"
+   curl -H "Authorization: Bearer <YOUR_TOKEN>" "https://dave.io/api/ai/alt?image=invalid-url"
    ```
 
 5. Test error handling with a non-image URL (GET):
 
    ```bash
-   curl -H "Authorization: Bearer <YOUR_TOKEN>" "https://api.dave.io/ai/alt?image=https://example.com/document.pdf"
+   curl -H "Authorization: Bearer <YOUR_TOKEN>" "https://dave.io/api/ai/alt?image=https://example.com/document.pdf"
    ```
 
 **Expected Responses:**
