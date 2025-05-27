@@ -22,9 +22,6 @@ export class AiAlt extends OpenAPIRoute {
     summary: "Generate alt text for images using AI",
     description:
       "A protected endpoint that requires authentication to generate alt text for images. Provide an image URL via the 'image' query parameter or upload an image directly.",
-    request: {
-      query: AiAltTextQuerySchema
-    },
     responses: {
       200: {
         description: "Alt text generated successfully",
@@ -98,11 +95,10 @@ export class AiAlt extends OpenAPIRoute {
       }
 
       // Get validated query parameters
-      const data = await this.getValidatedData<typeof this.schema>()
-      const { image } = data.query
+      const query = c.req.query()
+      const { image } = query
 
       let imageData: Uint8Array | null = null
-      const imageSource = "url"
 
       // Validate image URL if provided
       if (image) {
@@ -191,15 +187,10 @@ export class AiAlt extends OpenAPIRoute {
           status: 200,
           responseTime: 0,
           userAgent: c.req.header("user-agent"),
-          queryParams: `image=${image ? "provided" : "none"}`,
-          customData: {
-            userId,
-            aiOperation: "alt",
-            imageSource
-          }
+          queryParams: `image=${image ? "provided" : "none"}`
         }
 
-        trackRequestAnalytics(c.env, analyticsData as any)
+        trackRequestAnalytics(c.env, analyticsData)
 
         // Return successful response with rate limit info
         return c.json({
@@ -320,15 +311,6 @@ export class AiAltPost extends OpenAPIRoute {
     summary: "Generate alt text for uploaded images using AI",
     description:
       "A protected endpoint that requires authentication to generate alt text for directly uploaded images. Provide base64-encoded image data in the request body.",
-    request: {
-      body: {
-        content: {
-          "application/json": {
-            schema: AiAltPostBodySchema
-          }
-        }
-      }
-    },
     responses: {
       200: {
         description: "Alt text generated successfully",
@@ -411,11 +393,10 @@ export class AiAltPost extends OpenAPIRoute {
       }
 
       // Get validated body parameters
-      const data = await this.getValidatedData<typeof this.schema>()
-      const { image } = data.body
+      const body = await c.req.json()
+      const { image } = body
 
       let imageData: Uint8Array | null = null
-      const imageSource = "upload"
 
       // Validate and extract base64 image data
       if (image) {
@@ -488,15 +469,10 @@ export class AiAltPost extends OpenAPIRoute {
           status: 200,
           responseTime: 0,
           userAgent: c.req.header("user-agent"),
-          queryParams: "",
-          customData: {
-            userId,
-            aiOperation: "alt",
-            imageSource
-          }
+          queryParams: ""
         }
 
-        trackRequestAnalytics(c.env, analyticsData as any)
+        trackRequestAnalytics(c.env, analyticsData)
 
         // Return successful response with rate limit info
         return c.json({
