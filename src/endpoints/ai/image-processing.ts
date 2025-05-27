@@ -44,7 +44,9 @@ export class ImageProcessor extends AiAltBase {
 
       // Check file size
       const sizeError = this.validateImageSize(c, imageData)
-      if (sizeError) { return sizeError }
+      if (sizeError) {
+        return sizeError
+      }
 
       return imageData
     } catch (_error) {
@@ -77,7 +79,9 @@ export class ImageProcessor extends AiAltBase {
 
       // Check file size
       const sizeError = this.validateImageSize(c, imageData)
-      if (sizeError) { return sizeError }
+      if (sizeError) {
+        return sizeError
+      }
 
       return imageData
     } catch (_error) {
