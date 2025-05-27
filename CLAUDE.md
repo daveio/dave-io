@@ -230,28 +230,47 @@ JWT_SECRET="$(cat .dev.vars | grep API_JWT_SECRET | cut -d'=' -f2 | tr -d '\"')"
 
 ### Testing Authentication
 
-A test endpoint is available at `/auth/test` and `/api/auth/test` to verify authentication:
+A test endpoint is available at `/auth` and `/api/auth` to verify authentication and get detailed JWT information:
 
 ```bash
 # Test without authentication (should fail with 401)
-curl https://api.dave.io/auth/test # trunk-ignore(gitleaks/curl-auth-header)
+curl https://api.dave.io/auth # trunk-ignore(gitleaks/curl-auth-header)
 
 # Test with invalid token (should fail with 401)
-curl -H "Authorization: Bearer invalid-token" https://api.dave.io/auth/test
+curl -H "Authorization: Bearer invalid-token" https://api.dave.io/auth
 
 # Test with valid Bearer token (should succeed with 200)
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/auth/test # trunk-ignore(gitleaks/curl-auth-header)
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/auth # trunk-ignore(gitleaks/curl-auth-header)
 
 # Test with query parameter (should succeed with 200)
-curl "https://api.dave.io/auth/test?token=YOUR_JWT_TOKEN"
+curl "https://api.dave.io/auth?token=YOUR_JWT_TOKEN"
 ```
 
 **Expected Responses:**
 - Without token: `{"error":"Authentication required"}` (401)
 - Invalid token: `{"error":"Invalid token"}` (401)
-- Valid token: Success message with user info (200)
+- Valid token: Success message with detailed JWT information (200)
 
-The auth test endpoint serves as both a testing tool and a reference implementation showing the correct authentication pattern. See `src/endpoints/auth-test.ts` for the complete implementation.
+**Success Response Example:**
+```json
+{
+  "message": "Authentication successful! JWT details retrieved.",
+  "jwt": {
+    "subject": "ai:alt",
+    "subjectParts": ["ai", "alt"],
+    "issuedAt": 1640995200,
+    "expiresAt": 1641081600,
+    "timeToExpiry": 86400,
+    "isExpired": false
+  },
+  "user": {
+    "id": "ai:alt"
+  },
+  "timestamp": "2024-01-01T12:00:00.000Z"
+}
+```
+
+The auth endpoint now accepts any valid JWT subject and returns comprehensive information about the token, including the subject split by colons (showing the hierarchical structure we use for permissions). See `src/endpoints/auth.ts` for the complete implementation.
 
 ### Authentication Architecture Summary
 
@@ -274,7 +293,7 @@ The JWT authentication system consists of several key components:
    - Supports custom expiration times and secrets
    - Helpful for development and testing
 
-4. **Test Endpoint (`src/endpoints/auth-test.ts`)**:
+4. **Test Endpoint (`src/endpoints/auth.ts`)**:
    - Reference implementation of protected endpoint
    - Demonstrates correct middleware usage pattern
    - Available for testing authentication flow
@@ -564,46 +583,143 @@ c.env.ANALYTICS.writeDataPoint({
 
 ### AI Alt Text Generation
 
-The API provides endpoints for generating descriptive alt text for images using Cloudflare AI:
+The API provides endpoints for generating descriptive alt text for images using Cloudflare AI. These endpoints use the LLaVA model (`@cf/llava-hf/llava-1.5-7b-hf`) for high-quality image understanding and description generation.
 
-- `GET /ai/alt` or `GET /api/ai/alt`: Generate alt text from an image URL
-  - Requires: Valid JWT token with `ai` or `ai:alt` subject
-  - Query parameters: `image` - URL of the image to generate alt text for
-  - Returns: Generated alt text with rate limit information
-  - Example: `curl -H "Authorization: Bearer <TOKEN>" "https://api.dave.io/ai/alt?image=https://example.com/image.jpg"`
+#### Endpoint Paths
 
-- `POST /ai/alt` or `POST /api/ai/alt`: Generate alt text from uploaded image data
-  - Requires: Valid JWT token with `ai` or `ai:alt` subject
-  - Request body: JSON with `image` property containing base64-encoded image data
-  - Returns: Generated alt text with rate limit information
-  - Example:
-    ```bash
-    curl -X POST \
-      -H "Authorization: Bearer <TOKEN>" \
-      -H "Content-Type: application/json" \
-      -d '{"image":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEA..."}' \
-      https://api.dave.io/ai/alt
-    ```
+- **GET** `/ai/alt` or `/api/ai/alt`: Generate alt text from an image URL
+- **POST** `/ai/alt` or `/api/ai/alt`: Generate alt text from uploaded image data
+
+#### Authentication Requirements
+
+- **Required**: Valid JWT token with `ai` or `ai:alt` subject
+- **Token Sources**:
+  - Header: `Authorization: Bearer <token>`
+  - Query parameter: `?token=<token>`
+
+#### GET Method (Image URL)
+
+**Parameters:**
+- `image` (query parameter): URL of the image to generate alt text for
+
+**Supported Image Formats:** JPG, JPEG, PNG, GIF, WebP, BMP, SVG
+**Maximum Image Size:** 4MB
+
+**Example Request:**
+```bash
+curl -H "Authorization: Bearer <TOKEN>" \
+  "https://api.dave.io/ai/alt?image=https://example.com/image.jpg"
+```
+
+#### POST Method (Direct Upload)
+
+**Request Body:**
+```json
+{
+  "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEA..."
+}
+```
+
+**Example Request:**
+```bash
+curl -X POST \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"image":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEA..."}' \
+  https://api.dave.io/ai/alt
+```
 
 #### Features
 
-- Uses Cloudflare's LLaVA model (`@cf/llava-hf/llava-1.5-7b-hf`) for image understanding
-- Supports both URL-based and direct image uploads
-- Includes rate limiting (100 requests per hour)
-- Validates image formats and sizes
-- Returns detailed error messages with appropriate status codes
+- Uses Cloudflare's LLaVA model (`@cf/llava-hf/llava-1.5-7b-hf`) for high-quality image understanding
+- Supports both URL-based image processing and direct base64 image uploads
+- Comprehensive rate limiting (100 requests per hour per user)
+- Input validation for image formats (JPG, JPEG, PNG, GIF, WebP, BMP, SVG)
+- File size limits (4MB maximum)
+- Detailed error responses with specific error codes for troubleshooting
+- Real-time rate limit information in all responses
+
+#### Request/Response Format
+
+**GET Request:**
+```bash
+curl -H "Authorization: Bearer <TOKEN>" \
+  "https://api.dave.io/ai/alt?image=https://example.com/photo.jpg"
+```
+
+**POST Request:**
+```bash
+curl -X POST \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"image":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEA..."}' \
+  https://api.dave.io/ai/alt
+```
+
+**Success Response (200):**
+```json
+{
+  "altText": "A beautiful sunset over the ocean with orange and pink clouds",
+  "image": "https://example.com/photo.jpg",
+  "timestamp": "2024-01-01T12:00:00.000Z",
+  "rateLimit": {
+    "remaining": 99,
+    "reset": "2024-01-01T13:00:00.000Z",
+    "limit": 100
+  }
+}
+```
+
+**Error Response Examples:**
+```json
+// Invalid image URL (400)
+{
+  "error": "Invalid image URL - URL must point to a valid image file",
+  "code": "INVALID_IMAGE_URL"
+}
+
+// Rate limit exceeded (429)
+{
+  "error": "Rate limit exceeded",
+  "code": "RATE_LIMIT_EXCEEDED",
+  "rateLimit": {
+    "remaining": 0,
+    "reset": "2024-01-01T13:00:00.000Z",
+    "limit": 100
+  }
+}
+```
 
 #### Authentication
 
 Create a JWT token with the required subject:
 
 ```bash
-# Generate a token with access to AI endpoints
+# Generate a token with access to all AI endpoints
 bun jwt --sub "ai" --expires "24h"
 
 # Generate a token with access only to alt text generation
 bun jwt --sub "ai:alt" --expires "24h"
+
+# Interactive token generation with custom options
+bun jwt --interactive
 ```
+
+#### Error Codes
+
+The AI endpoints return specific error codes for different failure scenarios:
+
+- `INVALID_IMAGE_URL`: The provided URL doesn't point to a valid image file
+- `INVALID_URL_FORMAT`: The image URL format is malformed
+- `FETCH_ERROR`: Failed to fetch the image from the provided URL
+- `INVALID_CONTENT_TYPE`: The URL doesn't point to an image resource
+- `IMAGE_TOO_LARGE`: The image exceeds the 4MB size limit
+- `NO_IMAGE_PROVIDED`: No image URL or data was provided in the request
+- `INVALID_IMAGE_DATA`: Invalid base64 image data format (POST requests)
+- `INVALID_IMAGE_FORMAT`: Malformed image data structure
+- `INVALID_BASE64`: Invalid base64 encoding
+- `AI_PROCESSING_ERROR`: The AI model failed to process the image
+- `RATE_LIMIT_EXCEEDED`: The user has exceeded their hourly request limit
 
 ## Notes for Development
 

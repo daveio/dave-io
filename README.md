@@ -77,9 +77,9 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
 
 ### Authentication
 
-- `GET /auth/test` or `GET /api/auth/test`: Test endpoint for JWT authentication
-- Requires: Valid JWT token with `auth` or `auth:test` subject
-- Returns: Authentication success message with user info
+- `GET /auth` or `GET /api/auth`: JWT authentication info endpoint
+- Requires: Any valid JWT token (accepts any subject)
+- Returns: Detailed information about the provided JWT token, including subject breakdown
 - Headers: `Authorization: Bearer <token>` or query parameter `?token=<token>`
 
 ### AI
@@ -152,23 +152,23 @@ JWT_SECRET="$(cat .dev.vars | grep API_JWT_SECRET | cut -d'=' -f2 | tr -d '\"')"
 
 ```bash
 # Test the auth endpoint without a token (should return 401)
-curl https://api.dave.io/auth/test # trunk-ignore(gitleaks/curl-auth-header)
+curl https://api.dave.io/auth # trunk-ignore(gitleaks/curl-auth-header)
 
 # Test with invalid token (should return 401)
-curl -H "Authorization: Bearer invalid-token" https://api.dave.io/auth/test
+curl -H "Authorization: Bearer invalid-token" https://api.dave.io/auth
 
-# Test with valid token (should return 200 with user info)
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/auth/test # trunk-ignore(gitleaks/curl-auth-header)
+# Test with valid token (should return 200 with JWT details)
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/auth # trunk-ignore(gitleaks/curl-auth-header)
 
 # Using query parameter instead of header
-curl "https://api.dave.io/auth/test?token=YOUR_JWT_TOKEN"
+curl "https://api.dave.io/auth?token=YOUR_JWT_TOKEN"
 ```
 
 **Expected Responses:**
 
 - **No token**: `{"error":"Authentication required"}` (401)
 - **Invalid token**: `{"error":"Invalid token"}` (401)
-- **Valid token**: Success message with user info (200)
+- **Valid token**: Success message with detailed JWT information (200)
 
 ### Subject-Based Authorization
 
@@ -239,11 +239,19 @@ Note: Cloudflare secrets are write-only and cannot be retrieved for security rea
 
 ```json
 {
-  "message": "Authentication successful! You have access to this protected endpoint.",
-  "user": {
-    "id": "SUBJECT"
+  "message": "Authentication successful! JWT details retrieved.",
+  "jwt": {
+    "subject": "ai:alt",
+    "subjectParts": ["ai", "alt"],
+    "issuedAt": 1640995200,
+    "expiresAt": 1641081600,
+    "timeToExpiry": 86400,
+    "isExpired": false
   },
-  "timestamp": "2023-12-07T10:30:00.000Z"
+  "user": {
+    "id": "ai:alt"
+  },
+  "timestamp": "2024-01-01T12:00:00.000Z"
 }
 ```
 
@@ -368,7 +376,13 @@ api.dave.io/
 │   └── feed.js           # Simple list panel implementation
 ├── src/                  # Main source code
 │   ├── endpoints/        # API endpoint implementations
-│   │   ├── auth-test.ts  # Authentication test endpoint
+│   │   ├── ai/           # AI-related endpoints
+│   │   │   ├── index.ts  # AI endpoints export
+│   │   │   ├── base.ts   # Shared AI functionality
+│   │   │   ├── alt-get.ts # AI alt text (GET)
+│   │   │   ├── alt-post.ts # AI alt text (POST)
+│   │   │   └── image-processing.ts # Image utilities
+│   │   ├── auth.ts       # Authentication info endpoint
 │   │   ├── dashboard.ts  # Dashboard data endpoints
 │   │   ├── metrics.ts    # Metrics data endpoints
 │   │   ├── ping.ts       # Simple health check endpoint
