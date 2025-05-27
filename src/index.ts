@@ -1,3 +1,5 @@
+import { fromHono } from "chanfana"
+/// <reference path="../worker-configuration.d.ts" />
 import { type Context, Hono } from "hono"
 import { AiAlt, AiAltPost } from "./endpoints/ai"
 import { Auth } from "./endpoints/auth"
@@ -11,11 +13,7 @@ import { initializeKV } from "./kv/init"
 import { incrementStatusCodeCount } from "./kv/metrics"
 import { trackRequestAnalytics } from "./lib/analytics"
 
-type Bindings = {
-  DATA: KVNamespace
-  ANALYTICS: AnalyticsEngineDataset
-  API_JWT_SECRET: string
-}
+type Bindings = Env
 
 // Start a Hono app
 const app = new Hono<{ Bindings: Bindings }>()
@@ -81,55 +79,89 @@ app.use("*", async (c, next) => {
   }
 })
 
-// Helper function to create endpoint instances and handle requests
-// biome-ignore lint/suspicious/noExplicitAny: Endpoint classes have varying types
-const createHandler = (EndpointClass: any) => async (c: Context) => {
-  const endpoint = new EndpointClass()
-  return endpoint.handle(c)
-}
+// Initialize Chanfana OpenAPI with Hono
+const openapi = fromHono(app, {
+  docs_url: "/docs",
+  openapi_url: "/openapi.json",
+  schema: {
+    info: {
+      title: "api.dave.io",
+      version: "1.0.0",
+      description:
+        "A multipurpose personal API powered by Cloudflare Workers. Provides endpoints for health checks, URL redirection, dashboard feeds, RouterOS script generation, metrics, JWT authentication, token management, and AI-powered services."
+    },
+    tags: [
+      { name: "Health Check", description: "Service health monitoring" },
+      { name: "URL Redirection", description: "URL shortening and redirection" },
+      { name: "Dashboard", description: "Data feeds for dashboards" },
+      { name: "RouterOS", description: "Network configuration script generation" },
+      { name: "Metrics", description: "API usage and performance metrics" },
+      { name: "Authentication", description: "JWT authentication testing" },
+      { name: "Token Management", description: "JWT token lifecycle management" },
+      { name: "AI Services", description: "AI-powered services including image alt text generation" }
+    ],
+    servers: [
+      { url: "https://api.dave.io", description: "Production server" },
+      { url: "https://dave.io/api", description: "Production server (alternative path)" }
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT"
+        }
+      }
+    }
+  }
+})
 
-// Register routes directly with Hono
-app.get("/ping", createHandler(Ping))
-app.get("/api/ping", createHandler(Ping))
+// Register endpoints with both direct and /api/ prefixed paths
+// Health check endpoints
+openapi.get("/ping", Ping)
+openapi.get("/api/ping", Ping)
 
-app.get("/redirect/:slug", createHandler(Redirect))
-app.get("/api/redirect/:slug", createHandler(Redirect))
+// URL redirection endpoints
+openapi.get("/redirect/:slug", Redirect)
+openapi.get("/api/redirect/:slug", Redirect)
 
-app.get("/dashboard/:name", createHandler(Dashboard))
-app.get("/api/dashboard/:name", createHandler(Dashboard))
+// Dashboard endpoints
+openapi.get("/dashboard/:name", Dashboard)
+openapi.get("/api/dashboard/:name", Dashboard)
 
-app.get("/routeros/putio", createHandler(RouterOSPutIO))
-app.get("/api/routeros/putio", createHandler(RouterOSPutIO))
+// RouterOS endpoints
+openapi.get("/routeros/putio", RouterOSPutIO)
+openapi.get("/api/routeros/putio", RouterOSPutIO)
+openapi.get("/routeros/cache", RouterOSCache)
+openapi.get("/api/routeros/cache", RouterOSCache)
+openapi.get("/routeros/reset", RouterOSReset)
+openapi.get("/api/routeros/reset", RouterOSReset)
 
-app.get("/routeros/cache", createHandler(RouterOSCache))
-app.get("/api/routeros/cache", createHandler(RouterOSCache))
+// Metrics endpoints (multiple formats)
+openapi.get("/metrics", Metrics)
+openapi.get("/api/metrics", Metrics)
+openapi.get("/metrics/json", Metrics)
+openapi.get("/api/metrics/json", Metrics)
+openapi.get("/metrics/yaml", Metrics)
+openapi.get("/api/metrics/yaml", Metrics)
+openapi.get("/metrics/prometheus", Metrics)
+openapi.get("/api/metrics/prometheus", Metrics)
 
-app.get("/routeros/reset", createHandler(RouterOSReset))
-app.get("/api/routeros/reset", createHandler(RouterOSReset))
-
-app.get("/metrics", createHandler(Metrics))
-app.get("/api/metrics", createHandler(Metrics))
-app.get("/metrics/json", createHandler(Metrics))
-app.get("/api/metrics/json", createHandler(Metrics))
-app.get("/metrics/yaml", createHandler(Metrics))
-app.get("/api/metrics/yaml", createHandler(Metrics))
-app.get("/metrics/prometheus", createHandler(Metrics))
-app.get("/api/metrics/prometheus", createHandler(Metrics))
-
-app.get("/auth", createHandler(Auth))
-app.get("/api/auth", createHandler(Auth))
+// Authentication endpoints
+openapi.get("/auth", Auth)
+openapi.get("/api/auth", Auth)
 
 // Token management endpoints
-app.get("/tokens/:uuid/usage", createHandler(TokenUsageEndpoint))
-app.get("/api/tokens/:uuid/usage", createHandler(TokenUsageEndpoint))
-app.post("/tokens/:uuid/revoke", createHandler(TokenRevokeEndpoint))
-app.post("/api/tokens/:uuid/revoke", createHandler(TokenRevokeEndpoint))
+openapi.get("/tokens/:uuid/usage", TokenUsageEndpoint)
+openapi.get("/api/tokens/:uuid/usage", TokenUsageEndpoint)
+openapi.post("/tokens/:uuid/revoke", TokenRevokeEndpoint)
+openapi.post("/api/tokens/:uuid/revoke", TokenRevokeEndpoint)
 
 // AI endpoints with GET and POST support
-app.get("/ai/alt", createHandler(AiAlt))
-app.get("/api/ai/alt", createHandler(AiAlt))
-app.post("/ai/alt", createHandler(AiAltPost))
-app.post("/api/ai/alt", createHandler(AiAltPost))
+openapi.get("/ai/alt", AiAlt)
+openapi.get("/api/ai/alt", AiAlt)
+openapi.post("/ai/alt", AiAltPost)
+openapi.post("/api/ai/alt", AiAltPost)
 
 // Export the Hono app
 export default app

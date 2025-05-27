@@ -1,3 +1,5 @@
+/// <reference path="../../worker-configuration.d.ts" />
+
 /**
  * Module for handling metrics tracking in KV storage
  */

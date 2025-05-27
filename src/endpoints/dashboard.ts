@@ -1,6 +1,8 @@
+import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
 import Parser from "rss-parser"
 import { getDashboardItems } from "../kv/dashboard"
+import { DashboardRouteSchema } from "../schemas/dashboard"
 
 // Local type definition - removed schema validation
 export interface DashboardItem {
@@ -10,7 +12,8 @@ export interface DashboardItem {
   imageURL?: string
 }
 
-export class Dashboard {
+export class Dashboard extends OpenAPIRoute {
+  schema = DashboardRouteSchema
   /**
    * Create a standardized dashboard response
    */

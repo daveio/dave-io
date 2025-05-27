@@ -1,3 +1,5 @@
+/// <reference path="../../worker-configuration.d.ts" />
+
 // Local type definitions - removed schema validation
 export interface Redirect {
   slug: string

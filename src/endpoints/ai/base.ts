@@ -1,3 +1,4 @@
+/// <reference path="../../../worker-configuration.d.ts" />
 import type { Context } from "hono"
 import { trackRequestAnalytics } from "../../lib/analytics"
 import { type AuthorizedContext, authorizeEndpoint } from "../../lib/auth"

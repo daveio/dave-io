@@ -1,10 +1,7 @@
+/// <reference path="../../worker-configuration.d.ts" />
 /**
  * KV operations for JWT authentication, usage tracking, and revocation
  */
-
-interface Env {
-  DATA: KVNamespace
-}
 
 export interface TokenUsageData {
   requestCount: number

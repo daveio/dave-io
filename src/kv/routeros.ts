@@ -1,3 +1,5 @@
+/// <reference path="../../worker-configuration.d.ts" />
+
 import { ipv4, ipv6 } from "../lib/ip"
 
 // Local type definitions - removed schema validation
