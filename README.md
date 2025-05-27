@@ -77,7 +77,7 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
 
 ### Authentication
 
-- `GET /auth/test` or `GET /api/auth/test`: JWT authentication info endpoint
+- `GET /auth` or `GET /api/auth`: JWT authentication info endpoint
 - Requires: Any valid JWT token (accepts any subject)
 - Returns: Detailed information about the provided JWT token, including subject breakdown
 - Headers: `Authorization: Bearer <token>` or query parameter `?token=<token>`
@@ -152,16 +152,16 @@ JWT_SECRET="$(cat .dev.vars | grep API_JWT_SECRET | cut -d'=' -f2 | tr -d '\"')"
 
 ```bash
 # Test the auth endpoint without a token (should return 401)
-curl https://api.dave.io/auth/test # trunk-ignore(gitleaks/curl-auth-header)
+curl https://api.dave.io/auth # trunk-ignore(gitleaks/curl-auth-header)
 
 # Test with invalid token (should return 401)
-curl -H "Authorization: Bearer invalid-token" https://api.dave.io/auth/test
+curl -H "Authorization: Bearer invalid-token" https://api.dave.io/auth
 
 # Test with valid token (should return 200 with JWT details)
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/auth/test # trunk-ignore(gitleaks/curl-auth-header)
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/auth # trunk-ignore(gitleaks/curl-auth-header)
 
 # Using query parameter instead of header
-curl "https://api.dave.io/auth/test?token=YOUR_JWT_TOKEN"
+curl "https://api.dave.io/auth?token=YOUR_JWT_TOKEN"
 ```
 
 **Expected Responses:**

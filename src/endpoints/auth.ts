@@ -3,7 +3,7 @@ import type { Context } from "hono"
 import { z } from "zod"
 import { type AuthorizedContext, extractTokenFromRequest, verifyJWT } from "../lib/auth"
 
-export class AuthTest extends OpenAPIRoute {
+export class Auth extends OpenAPIRoute {
   schema = {
     tags: ["Authentication"],
     summary: "JWT authentication info endpoint",

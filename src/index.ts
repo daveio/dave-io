@@ -1,7 +1,7 @@
 import { OpenAPIRoute, fromHono } from "chanfana"
 import { Hono } from "hono"
 import { AiAlt, AiAltPost } from "./endpoints/ai"
-import { AuthTest } from "./endpoints/auth"
+import { Auth } from "./endpoints/auth"
 import { Dashboard } from "./endpoints/dashboard"
 import { Metrics } from "./endpoints/metrics"
 import { Ping } from "./endpoints/ping"
@@ -100,7 +100,7 @@ registerGetRoute(app, openapi, "/metrics", Metrics)
 registerGetRoute(app, openapi, "/metrics/json", Metrics)
 registerGetRoute(app, openapi, "/metrics/yaml", Metrics)
 registerGetRoute(app, openapi, "/metrics/prometheus", Metrics)
-registerGetRoute(app, openapi, "/auth/test", AuthTest)
+registerGetRoute(app, openapi, "/auth", Auth)
 // AI endpoints with GET and POST support
 registerGetRoute(app, openapi, "/ai/alt", AiAlt)
 registerPostRoute(app, openapi, "/ai/alt", AiAltPost)

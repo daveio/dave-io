@@ -230,20 +230,20 @@ JWT_SECRET="$(cat .dev.vars | grep API_JWT_SECRET | cut -d'=' -f2 | tr -d '\"')"
 
 ### Testing Authentication
 
-A test endpoint is available at `/auth/test` and `/api/auth/test` to verify authentication and get detailed JWT information:
+A test endpoint is available at `/auth` and `/api/auth` to verify authentication and get detailed JWT information:
 
 ```bash
 # Test without authentication (should fail with 401)
-curl https://api.dave.io/auth/test # trunk-ignore(gitleaks/curl-auth-header)
+curl https://api.dave.io/auth # trunk-ignore(gitleaks/curl-auth-header)
 
 # Test with invalid token (should fail with 401)
-curl -H "Authorization: Bearer invalid-token" https://api.dave.io/auth/test
+curl -H "Authorization: Bearer invalid-token" https://api.dave.io/auth
 
 # Test with valid Bearer token (should succeed with 200)
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/auth/test # trunk-ignore(gitleaks/curl-auth-header)
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/auth # trunk-ignore(gitleaks/curl-auth-header)
 
 # Test with query parameter (should succeed with 200)
-curl "https://api.dave.io/auth/test?token=YOUR_JWT_TOKEN"
+curl "https://api.dave.io/auth?token=YOUR_JWT_TOKEN"
 ```
 
 **Expected Responses:**
