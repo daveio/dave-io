@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-api.dave.io is a multipurpose personal API powered by Cloudflare Workers. It provides several endpoints:
+dave.io is a multipurpose personal API powered by Cloudflare Workers. It provides several endpoints:
 
 - **Ping**: Simple health check endpoint
 - **Redirect**: URL redirection service using KV storage
@@ -60,9 +60,10 @@ bun run jwt show <uuid>               # Show token details
 ## Code Architecture
 
 - **Framework**: Uses Hono.js for routing and HTTP server functionality
-- **API Documentation**: Uses Chanfana (OpenAPI) for documentation and schema validation
-- **Type Safety**: Uses TypeScript and Zod for runtime type validation
-- **Schema Organization**: Schemas are defined in `src/schemas/` directory using Zod
+- **API Documentation**: Uses Chanfana (OpenAPI) for automatic documentation generation and schema validation
+- **Type Safety**: Uses TypeScript and Zod for compile-time and runtime type validation
+- **Schema Organization**: Comprehensive Zod schemas defined in `src/schemas/` directory for all endpoints
+- **OpenAPI Integration**: Full OpenAPI 3.1 specification with interactive Swagger UI at `/api/docs`
 - **KV Storage**: Uses a unified KV namespace with hierarchical keys for data organization
 - **Analytics**: Uses Cloudflare Analytics Engine for request tracking
 
@@ -184,7 +185,7 @@ New API endpoints for token administration:
 
 #### Get Token Usage Information
 ```http
-GET /tokens/:uuid/usage
+GET /api/tokens/:uuid/usage
 Authorization: Bearer <admin-token-with-tokens:read>
 ```
 
@@ -200,7 +201,7 @@ Response:
 
 #### Revoke/Unrevoke Token
 ```http
-POST /tokens/:uuid/revoke
+POST /api/tokens/:uuid/revoke
 Authorization: Bearer <admin-token-with-tokens:write>
 Content-Type: application/json
 
@@ -454,20 +455,20 @@ bun jwt create --sub "system" --no-expiry --seriously-no-expiry
 
 ### Testing Authentication
 
-A test endpoint is available at `/auth` and `/api/auth` to verify authentication and get detailed JWT information:
+A test endpoint is available at `/api/auth` to verify authentication and get detailed JWT information:
 
 ```bash
 # Test without authentication (should fail with 401)
-curl https://api.dave.io/auth # trunk-ignore(gitleaks/curl-auth-header)
+curl https://dave.io/api/auth # trunk-ignore(gitleaks/curl-auth-header)
 
 # Test with invalid token (should fail with 401)
-curl -H "Authorization: Bearer invalid-token" https://api.dave.io/auth
+curl -H "Authorization: Bearer invalid-token" https://dave.io/api/auth
 
 # Test with valid Bearer token (should succeed with 200)
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/auth # trunk-ignore(gitleaks/curl-auth-header)
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://dave.io/api/auth # trunk-ignore(gitleaks/curl-auth-header)
 
 # Test with query parameter (should succeed with 200)
-curl "https://api.dave.io/auth?token=YOUR_JWT_TOKEN"
+curl "https://dave.io/api/auth?token=YOUR_JWT_TOKEN"
 ```
 
 **Expected Responses:**
@@ -629,10 +630,10 @@ app.post('/api/ai/alt', authorizeEndpoint('ai', 'alt'), (c) => {
   - Request details (path, method, timestamp)
   - Response details (status code, response time)
   - Client information (IP, user-agent, referrer)
-- The `/metrics` endpoint exposes these metrics in multiple formats:
-  - JSON format at `/metrics/json`
-  - YAML format at `/metrics/yaml`
-  - Prometheus format at `/metrics/prometheus`
+- The `/api/metrics` endpoint exposes these metrics in multiple formats:
+  - JSON format at `/api/metrics/json`
+  - YAML format at `/api/metrics/yaml`
+  - Prometheus format at `/api/metrics/prometheus`
 
 4. **Cloudflare Integration**:
 
@@ -819,8 +820,8 @@ The API provides endpoints for generating descriptive alt text for images using 
 
 #### Endpoint Paths
 
-- **GET** `/ai/alt` or `/api/ai/alt`: Generate alt text from an image URL
-- **POST** `/ai/alt` or `/api/ai/alt`: Generate alt text from uploaded image data
+- **GET** `/api/ai/alt`: Generate alt text from an image URL
+- **POST** `/api/ai/alt`: Generate alt text from uploaded image data
 
 #### Authentication Requirements
 
@@ -840,7 +841,7 @@ The API provides endpoints for generating descriptive alt text for images using 
 **Example Request:**
 ```bash
 curl -H "Authorization: Bearer <TOKEN>" \
-  "https://api.dave.io/ai/alt?image=https://example.com/image.jpg"
+  "https://dave.io/api/ai/alt?image=https://example.com/image.jpg"
 ```
 
 #### POST Method (Direct Upload)
@@ -858,7 +859,7 @@ curl -X POST \
   -H "Authorization: Bearer <TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{"image":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEA..."}' \
-  https://api.dave.io/ai/alt
+  https://dave.io/api/ai/alt
 ```
 
 #### Features
@@ -876,7 +877,7 @@ curl -X POST \
 **GET Request:**
 ```bash
 curl -H "Authorization: Bearer <TOKEN>" \
-  "https://api.dave.io/ai/alt?image=https://example.com/photo.jpg"
+  "https://dave.io/api/ai/alt?image=https://example.com/photo.jpg"
 ```
 
 **POST Request:**
@@ -885,7 +886,7 @@ curl -X POST \
   -H "Authorization: Bearer <TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{"image":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEA..."}' \
-  https://api.dave.io/ai/alt
+  https://dave.io/api/ai/alt
 ```
 
 **Success Response (200):**
@@ -955,7 +956,7 @@ The AI endpoints return specific error codes for different failure scenarios:
 
 ## Notes for Development
 
-- The API is accessible at `api.dave.io` and `dave.io/api/*` when deployed
+- The API is accessible at `dave.io` and `dave.io/api/*` when deployed
 - Biome is used for code formatting and linting through Trunk
 - CI/CD is implemented via GitHub Actions (`.github/workflows/`)
 - For local development, the API runs on localhost with the port shown in the terminal when running `bun run dev`
@@ -963,7 +964,7 @@ The AI endpoints return specific error codes for different failure scenarios:
 - When adding new endpoints:
   1. Create a new file in `src/endpoints/`
   2. Implement a class extending `OpenAPIRoute` with schema and handle method
-  3. Register the endpoint in `src/index.ts` using both direct and `/api/` prefixed paths
+  3. Register the endpoint in `src/index.ts` using `/api/` prefixed paths
   4. Include appropriate analytics tracking using `c.env.ANALYTICS.writeDataPoint()`
 - When adding new KV-backed functionality:
   1. Create a utility module in `src/kv/` for KV operations

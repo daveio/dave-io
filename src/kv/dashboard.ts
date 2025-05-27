@@ -1,3 +1,5 @@
+/// <reference path="../../worker-configuration.d.ts" />
+
 // Local type definition - removed schema validation
 export interface DashboardItem {
   title: string

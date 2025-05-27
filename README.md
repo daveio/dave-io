@@ -1,8 +1,8 @@
-# api.dave.io
+# dave.io
 
 A multipurpose personal API powered by Cloudflare Workers.
 
-![License](https://img.shields.io/github/license/daveio/api.dave.io)
+![License](https://img.shields.io/github/license/daveio/dave.io)
 
 ## Overview
 
@@ -16,12 +16,13 @@ This project implements a multipurpose personal API that runs on Cloudflare Work
 - **Authentication**: JWT-based authentication system with scope-based authorization
 - **AI**: AI-powered services including alt text generation for images
 
-The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation.
+The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://github.com/cloudflare/chanfana) for automatic OpenAPI 3.1 documentation generation and schema validation.
 
 ## Features
 
-- **OpenAPI Documentation**: Auto-generated API docs available at `/api/docs` and `/api/redocs`
-- **Type-Safe Development**: Built with TypeScript and Zod for runtime type validation
+- **OpenAPI 3.1 Documentation**: Interactive Swagger UI at `/api/docs` and ReDoc at `/api/redocs`
+- **Auto-Generated API Schema**: Complete OpenAPI specification available at `/api/openapi.json`
+- **Type-Safe Development**: Built with TypeScript and Zod for runtime type validation and request/response validation
 - **Cloudflare Integration**:
 
   - KV Namespace for unified data storage
@@ -35,40 +36,50 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
 - **JWT Authentication**: Secure token-based authentication with configurable scopes, usage tracking, and token revocation
 - **CLI Tools**: Built-in utilities for JWT token generation with D1 metadata storage and KV management via Cloudflare SDK
 
+## Documentation
+
+The API provides comprehensive OpenAPI 3.1 documentation with interactive interfaces:
+
+- **Interactive Swagger UI**: Available at `/api/docs` - test endpoints directly in your browser
+- **ReDoc Documentation**: Available at `/api/redocs` - clean, readable API documentation
+- **OpenAPI Schema**: Raw OpenAPI 3.1 specification at `/api/openapi.json`
+
+All endpoints include detailed request/response schemas, parameter descriptions, and example responses.
+
 ## Endpoints
 
 ### Ping
 
-- `GET /ping` or `GET /api/ping`: Simple health check endpoint
+- `GET /api/ping`: Simple health check endpoint
 - Returns: `{ "service": "api", "response": "pong" }`
 
 ### Redirect
 
-- `GET /redirect/:slug` or `GET /api/redirect/:slug`: Get URL for a redirect by slug
+- `GET /api/redirect/:slug`: Get URL for a redirect by slug
 - Returns: Redirect information or 404 if not found
 
 ### Dashboard
 
-- `GET /dashboard/:name` or `GET /api/dashboard/:name`: Get dashboard data by name
+- `GET /api/dashboard/:name`: Get dashboard data by name
 - Supported dashboards:
   - `demo`: Sample dashboard data
   - `hacker-news`: Latest stories from Hacker News RSS feed
 
 ### RouterOS
 
-- `GET /routeros/putio` or `GET /api/routeros/putio`: Generate RouterOS script for put.io IP ranges
+- `GET /api/routeros/putio`: Generate RouterOS script for put.io IP ranges
 - Returns: RouterOS script for creating address lists for put.io IPv4 and IPv6 ranges
-- `GET /routeros/cache` or `GET /api/routeros/cache`: Get cache status for RouterOS data
+- `GET /api/routeros/cache`: Get cache status for RouterOS data
 - Returns: Cache status information including age and any errors
-- `GET /routeros/reset` or `GET /api/routeros/reset`: Reset the cache for RouterOS data
+- `GET /api/routeros/reset`: Reset the cache for RouterOS data
 - Returns: Confirmation of cache reset
 
 ### Metrics
 
-- `GET /metrics` or `GET /api/metrics`: Default metrics endpoint (returns JSON)
-- `GET /metrics/json` or `GET /api/metrics/json`: Get metrics data in JSON format
-- `GET /metrics/yaml` or `GET /api/metrics/yaml`: Get metrics data in YAML format
-- `GET /metrics/prometheus` or `GET /api/metrics/prometheus`: Get metrics data in Prometheus format
+- `GET /api/metrics`: Default metrics endpoint (returns JSON)
+- `GET /api/metrics/json`: Get metrics data in JSON format
+- `GET /api/metrics/yaml`: Get metrics data in YAML format
+- `GET /api/metrics/prometheus`: Get metrics data in Prometheus format
 - Returns: Metrics tracked in KV storage, including:
   - Status code counts (`metrics:status:xxx`)
   - Status code group counts (`metrics:group:xxx`)
@@ -77,15 +88,15 @@ The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://gith
 
 ### Authentication
 
-- `GET /auth` or `GET /api/auth`: JWT authentication info endpoint
+- `GET /api/auth`: JWT authentication info endpoint
 - Requires: Any valid JWT token (accepts any subject)
 - Returns: Detailed information about the provided JWT token, including subject breakdown
 - Headers: `Authorization: Bearer <token>` or query parameter `?token=<token>`
 
 ### AI
 
-- `GET /ai/alt` or `GET /api/ai/alt`: Generate alt text for images using AI
-- `POST /ai/alt` or `POST /api/ai/alt`: Generate alt text for uploaded images
+- `GET /api/ai/alt`: Generate alt text for images using AI
+- `POST /api/ai/alt`: Generate alt text for uploaded images
 - Requires: Valid JWT token with `ai` or `ai:alt` subject
 - GET method: URL parameter `image` - URL of the image to generate alt text for
 - POST method: Request body with base64-encoded image data
@@ -181,16 +192,16 @@ bun run jwt revoke <uuid>
 
 ```bash
 # Test the auth endpoint without a token (should return 401)
-curl https://api.dave.io/auth # trunk-ignore(gitleaks/curl-auth-header)
+curl https://dave.io/api/auth # trunk-ignore(gitleaks/curl-auth-header)
 
 # Test with invalid token (should return 401)
-curl -H "Authorization: Bearer invalid-token" https://api.dave.io/auth
+curl -H "Authorization: Bearer invalid-token" https://dave.io/api/auth
 
 # Test with valid token (should return 200 with JWT details)
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/auth # trunk-ignore(gitleaks/curl-auth-header)
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://dave.io/api/auth # trunk-ignore(gitleaks/curl-auth-header)
 
 # Using query parameter instead of header
-curl "https://api.dave.io/auth?token=YOUR_JWT_TOKEN"
+curl "https://dave.io/api/auth?token=YOUR_JWT_TOKEN"
 ```
 
 **Expected Responses:**
@@ -215,13 +226,13 @@ JWT tokens can be provided in two ways:
 1. **Authorization Header** (recommended):
 
 ```bash
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://api.dave.io/endpoint # trunk-ignore(gitleaks/curl-auth-header)
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://dave.io/endpoint # trunk-ignore(gitleaks/curl-auth-header)
 ```
 
 2. **Query Parameter**:
 
 ```bash
-curl "https://api.dave.io/endpoint?token=YOUR_JWT_TOKEN"
+curl "https://dave.io/endpoint?token=YOUR_JWT_TOKEN"
 ```
 
 ### JWT CLI Tool
@@ -416,7 +427,7 @@ This allows you to create JWTs with precise permissions for different operations
 ## Project Structure
 
 ```bash
-api.dave.io/
+dave.io/
 ├── dashkit/              # Dashboard widget example
 │   └── feed.js           # Simple list panel implementation
 ├── src/                  # Main source code
@@ -557,8 +568,8 @@ await Promise.all([
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/daveio/api.dave.io.git
-cd api.dave.io
+git clone https://github.com/daveio/dave.io.git
+cd dave.io
 ```
 
 2. Install dependencies:
@@ -666,7 +677,7 @@ The project includes a simple DashKit widget in the `dashkit/` directory that de
 
 The API is deployed to Cloudflare Workers using Wrangler. Deployment is automated via GitHub Actions when changes are pushed to the main branch. It's accessible at:
 
-- `https://api.dave.io`
+- `https://dave.io`
 - `https://dave.io/api`
 
 ### CI/CD
@@ -687,4 +698,15 @@ Dave Williams ([@daveio](https://github.com/daveio)) - [dave@dave.io](mailto:dav
 
 The project uses Zod for schema validation and OpenAPI documentation. All schemas are defined in the `/src/schemas` directory, with each schema file having a corresponding `.schema.ts` suffix.
 
-To learn more about the available schemas and how to use them, see the [Schemas README](/src/schemas/README.md).
+The project uses comprehensive Zod schemas for all endpoints, providing:
+
+- **Request Validation**: All incoming requests are validated against schemas
+- **Response Documentation**: Detailed response schemas for OpenAPI documentation
+- **Type Safety**: Full TypeScript integration with automatic type inference
+- **Error Handling**: Consistent error response formats across all endpoints
+
+Each endpoint extends `OpenAPIRoute` from Chanfana and includes a `schema` property that defines:
+- Request parameters and body validation
+- Response formats and status codes
+- Endpoint tags, summaries, and descriptions
+- Security requirements (JWT authentication)

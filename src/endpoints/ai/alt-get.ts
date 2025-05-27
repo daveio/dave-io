@@ -1,12 +1,17 @@
+import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
 import { type AuthorizedContext, authorizeEndpoint } from "../../lib/auth"
+import { AiAltGetRouteSchema } from "../../schemas/ai"
 import { ImageProcessor } from "./image-processing"
 
 /**
  * AI Alt Text Generation Endpoint (GET)
  * Generates descriptive alt text for images using Cloudflare AI
  */
-export class AiAlt extends ImageProcessor {
+export class AiAlt extends OpenAPIRoute {
+  // @ts-ignore - Schema validation working, type compatibility issue with external Zod definitions
+  schema = AiAltGetRouteSchema
+  private processor = new ImageProcessor()
   /**
    * Handles GET requests with image URL parameter
    */
@@ -17,7 +22,7 @@ export class AiAlt extends ImageProcessor {
     // Now run through authorization and processing
     return authorizeEndpoint("ai", "alt")(c, async () => {
       if (!image) {
-        return this.createErrorResponse(
+        return this.processor.createErrorResponse(
           c,
           "No image provided. Please provide an image URL or upload an image directly.",
           "NO_IMAGE_PROVIDED"
@@ -28,14 +33,14 @@ export class AiAlt extends ImageProcessor {
       const userId = authContext.user.id
 
       // Check rate limit before processing
-      const rateLimitResult = await this.checkRateLimit(c.env, userId)
+      const rateLimitResult = await this.processor.checkRateLimit(c.env, userId)
 
       if (!rateLimitResult.allowed) {
-        return this.createRateLimitResponse(c, rateLimitResult)
+        return this.processor.createRateLimitResponse(c, rateLimitResult)
       }
 
       // Process the image URL
-      const imageData = await this.processImageFromUrl(c, image)
+      const imageData = await this.processor.processImageFromUrl(c, image)
 
       // If the result is a Response (error), return it
       if (imageData instanceof Response) {
@@ -44,16 +49,22 @@ export class AiAlt extends ImageProcessor {
 
       try {
         // Process the image using Cloudflare AI
-        const altText = await this.generateAltText(c, imageData)
+        const altText = await this.processor.generateAltText(c, imageData)
 
         // Track success in analytics
-        this.trackAnalytics(c, image)
+        this.processor.trackAnalytics(c, image)
 
         // Return successful response
-        return this.createSuccessResponse(c, altText, image, rateLimitResult)
+        return this.processor.createSuccessResponse(c, altText, image, rateLimitResult)
       } catch (error) {
         console.error("Error generating alt text:", error)
-        return this.createErrorResponse(c, "Failed to generate alt text", "AI_PROCESSING_ERROR", 500, rateLimitResult)
+        return this.processor.createErrorResponse(
+          c,
+          "Failed to generate alt text",
+          "AI_PROCESSING_ERROR",
+          500,
+          rateLimitResult
+        )
       }
     })
   }

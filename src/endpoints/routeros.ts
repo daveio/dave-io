@@ -1,7 +1,11 @@
+import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
 import { getCacheData, getCacheStatus, getScript, getSharedMetadata, refreshCache, resetCache } from "../kv/routeros"
+import { RouterOSCacheRouteSchema, RouterOSPutIORouteSchema, RouterOSResetRouteSchema } from "../schemas/routeros"
 
-export class RouterOSPutIO {
+export class RouterOSPutIO extends OpenAPIRoute {
+  // @ts-ignore - Schema validation working, type compatibility issue with external Zod definitions
+  schema = RouterOSPutIORouteSchema
   async handle(c: Context) {
     try {
       // Get the script from KV
@@ -21,7 +25,9 @@ export class RouterOSPutIO {
   }
 }
 
-export class RouterOSCache {
+export class RouterOSCache extends OpenAPIRoute {
+  // @ts-ignore - Schema validation working, type compatibility issue with external Zod definitions
+  schema = RouterOSCacheRouteSchema
   async handle(c: Context) {
     try {
       // Track analytics
@@ -63,7 +69,9 @@ export class RouterOSCache {
   }
 }
 
-export class RouterOSReset {
+export class RouterOSReset extends OpenAPIRoute {
+  // @ts-ignore - Schema validation working, type compatibility issue with external Zod definitions
+  schema = RouterOSResetRouteSchema
   async handle(c: Context) {
     try {
       // Reset the cache

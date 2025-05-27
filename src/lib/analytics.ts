@@ -1,3 +1,4 @@
+/// <reference path="../../worker-configuration.d.ts" />
 /**
  * Module for handling analytics tracking with Analytics Engine
  */

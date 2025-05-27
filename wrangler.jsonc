@@ -27,10 +27,6 @@
   ],
   "routes": [
     {
-      "pattern": "api.dave.io",
-      "custom_domain": true
-    },
-    {
       "pattern": "dave.io/api/*",
       "zone_id": "cce768dd1ffadb4f24ae8fce0f7e979a"
     }

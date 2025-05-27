@@ -15,7 +15,7 @@ loadFeed()
 
 // Load the demo dashboard
 async function loadFeed() {
-  const response = await fetch("https://api.dave.io/dashboard/demo")
+  const response = await fetch("https://dave.io/api/dashboard/demo")
   const json = await response.json()
   return json.data.items
 }

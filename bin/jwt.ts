@@ -25,7 +25,7 @@ interface TokenMetadata {
 
 const program = new Command()
 
-program.name("jwt").description("JWT Token Management for api.dave.io").version("2.0.0")
+program.name("jwt").description("JWT Token Management for dave.io").version("2.0.0")
 
 // Environment variable helpers
 function getJWTSecret(): string | null {
@@ -53,7 +53,7 @@ async function executeD1Command(sql: string, params: unknown[] = []): Promise<un
       throw new Error("Database ID not configured")
     }
     const response = await executeD1Query(client, config.accountId, config.databaseId, sql, params)
-    return response.result
+    return (response as { result: unknown }).result
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     const errorStatus = (error as { status?: number }).status
@@ -132,6 +132,9 @@ function parseExpiration(expiresIn: string): number {
   let milliseconds: number | undefined
   try {
     const result = ms(expiresIn)
+    if (typeof result === "string") {
+      throw new Error(`Invalid duration format: ${expiresIn}`)
+    }
     milliseconds = typeof result === "number" ? result : undefined
   } catch {
     milliseconds = undefined
@@ -303,8 +306,8 @@ const _createCommand = program
       console.log(JSON.stringify(metadata, null, 2))
 
       console.log("\\n💡 Usage Examples:")
-      console.log(`curl -H "Authorization: Bearer ${token}" https://api.dave.io/auth`)
-      console.log(`curl "https://api.dave.io/auth?token=${token}"`)
+      console.log(`curl -H "Authorization: Bearer ${token}" https://dave.io/api/auth`)
+      console.log(`curl "https://dave.io/api/auth?token=${token}"`)
     } catch (error) {
       console.error("❌ Error creating token:", error)
       process.exit(1)
@@ -434,7 +437,8 @@ program
 
       await client.kv.namespaces.values.update(kvNamespaceId, `auth:revocation:${uuid}`, {
         account_id: config.accountId,
-        value: "true"
+        value: "true",
+        metadata: {}
       })
 
       console.log("✅ Token revoked successfully")

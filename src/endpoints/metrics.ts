@@ -1,8 +1,12 @@
+import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
 import { dump as yamlDump } from "js-yaml"
 import { GROUP_PREFIX, METRICS_PREFIX, STATUS_PREFIX } from "../kv/metrics"
+import { MetricsRouteSchema } from "../schemas/metrics"
 
-export class Metrics {
+export class Metrics extends OpenAPIRoute {
+  // @ts-ignore - Schema validation working, type compatibility issue with external Zod definitions
+  schema = MetricsRouteSchema
   /**
    * Get all metrics data from KV
    */

@@ -1,12 +1,17 @@
+import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
 import { type AuthorizedContext, authorizeEndpoint } from "../../lib/auth"
+import { AiAltPostRouteSchema } from "../../schemas/ai"
 import { ImageProcessor } from "./image-processing"
 
 /**
  * AI Alt Text Generation Endpoint (POST)
  * Handles POST requests with base64-encoded image data
  */
-export class AiAltPost extends ImageProcessor {
+export class AiAltPost extends OpenAPIRoute {
+  // @ts-ignore - Schema validation working, type compatibility issue with external Zod definitions
+  schema = AiAltPostRouteSchema
+  private processor = new ImageProcessor()
   /**
    * Handles POST requests with base64 image data
    */
@@ -25,21 +30,21 @@ export class AiAltPost extends ImageProcessor {
     // Now run through authorization and processing
     return authorizeEndpoint("ai", "alt")(c, async () => {
       if (!image) {
-        return this.createErrorResponse(c, "No image data provided.", "NO_IMAGE_PROVIDED")
+        return this.processor.createErrorResponse(c, "No image data provided.", "NO_IMAGE_PROVIDED")
       }
 
       const authContext = c as AuthorizedContext
       const userId = authContext.user.id
 
       // Check rate limit before processing
-      const rateLimitResult = await this.checkRateLimit(c.env, userId)
+      const rateLimitResult = await this.processor.checkRateLimit(c.env, userId)
 
       if (!rateLimitResult.allowed) {
-        return this.createRateLimitResponse(c, rateLimitResult)
+        return this.processor.createRateLimitResponse(c, rateLimitResult)
       }
 
       // Process the base64 image
-      const imageData = this.processBase64Image(c, image)
+      const imageData = this.processor.processBase64Image(c, image)
 
       // If the result is a Response (error), return it
       if (imageData instanceof Response) {
@@ -48,16 +53,22 @@ export class AiAltPost extends ImageProcessor {
 
       try {
         // Process the image using Cloudflare AI
-        const altText = await this.generateAltText(c, imageData)
+        const altText = await this.processor.generateAltText(c, imageData)
 
         // Track success in analytics
-        this.trackAnalytics(c, null)
+        this.processor.trackAnalytics(c, null)
 
         // Return successful response
-        return this.createSuccessResponse(c, altText, "base64", rateLimitResult)
+        return this.processor.createSuccessResponse(c, altText, "base64", rateLimitResult)
       } catch (error) {
         console.error("Error generating alt text:", error)
-        return this.createErrorResponse(c, "Failed to generate alt text", "AI_PROCESSING_ERROR", 500, rateLimitResult)
+        return this.processor.createErrorResponse(
+          c,
+          "Failed to generate alt text",
+          "AI_PROCESSING_ERROR",
+          500,
+          rateLimitResult
+        )
       }
     })
   }

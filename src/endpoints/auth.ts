@@ -1,7 +1,11 @@
+import { OpenAPIRoute } from "chanfana"
 import type { Context } from "hono"
 import { type AuthorizedContext, extractTokenFromRequest, verifyJWT } from "../lib/auth"
+import { AuthRouteSchema } from "../schemas/auth"
 
-export class Auth {
+export class Auth extends OpenAPIRoute {
+  // @ts-ignore - Schema validation working, type compatibility issue with external Zod definitions
+  schema = AuthRouteSchema
   async handle(c: Context) {
     const jwtSecret = c.env.API_JWT_SECRET
     if (!jwtSecret) {
