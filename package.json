@@ -15,7 +15,7 @@
     "start": "bun run wrangler dev",
     "typecheck": "bun run tsc --noEmit",
     "lint": "bun run biome check; bun run trunk check -a",
-    "fmt": "bun run biome format; bun run trunk fmt -a",
+    "fmt": "bun run biome format --write; bun run trunk fmt -a",
     "format": "bun run fmt",
     "kv": "bun run bin/kv.ts",
     "jwt": "bun run bin/jwt.ts"

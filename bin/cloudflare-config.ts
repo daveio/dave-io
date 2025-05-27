@@ -23,15 +23,24 @@ export function getCloudflareConfig(includeDatabase = false, includeKV = false):
 
   const missingVars: string[] = []
 
-  if (!apiToken) missingVars.push("CLOUDFLARE_API_TOKEN")
-  if (!accountId) missingVars.push("CLOUDFLARE_ACCOUNT_ID")
-  if (includeDatabase && !databaseId) missingVars.push("CLOUDFLARE_D1_DATABASE_ID")
+  if (!apiToken) {
+    missingVars.push("CLOUDFLARE_API_TOKEN")
+  }
+  if (!accountId) {
+    missingVars.push("CLOUDFLARE_ACCOUNT_ID")
+  }
+  if (includeDatabase && !databaseId) {
+    missingVars.push("CLOUDFLARE_D1_DATABASE_ID")
+  }
 
   if (missingVars.length > 0) {
     throw new Error(`Missing required environment variables:\n${missingVars.map((v) => `  - ${v}`).join("\n")}`)
   }
 
-  const config: CloudflareConfig = { apiToken, accountId }
+  const config: CloudflareConfig = {
+    apiToken: apiToken as string,
+    accountId: accountId as string
+  }
 
   if (includeDatabase && databaseId) {
     config.databaseId = databaseId
@@ -68,7 +77,7 @@ export async function executeD1Query(
     const response = await client.d1.database.query(databaseId, {
       account_id: accountId,
       sql,
-      params
+      params: params as string[]
     })
     return response
   } catch (error) {

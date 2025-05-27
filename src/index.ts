@@ -100,9 +100,7 @@ const openapi = fromHono(app, {
       { name: "Token Management", description: "JWT token lifecycle management" },
       { name: "AI Services", description: "AI-powered services including image alt text generation" }
     ],
-    servers: [
-      { url: "https://dave.io/api", description: "Production server" }
-    ]
+    servers: [{ url: "https://dave.io/api", description: "Production server" }]
   }
 })
 

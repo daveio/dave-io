@@ -53,7 +53,7 @@ async function executeD1Command(sql: string, params: unknown[] = []): Promise<un
       throw new Error("Database ID not configured")
     }
     const response = await executeD1Query(client, config.accountId, config.databaseId, sql, params)
-    return response.result
+    return (response as { result: unknown }).result
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     const errorStatus = (error as { status?: number }).status
@@ -132,6 +132,9 @@ function parseExpiration(expiresIn: string): number {
   let milliseconds: number | undefined
   try {
     const result = ms(expiresIn)
+    if (typeof result === "string") {
+      throw new Error(`Invalid duration format: ${expiresIn}`)
+    }
     milliseconds = typeof result === "number" ? result : undefined
   } catch {
     milliseconds = undefined
@@ -434,7 +437,8 @@ program
 
       await client.kv.namespaces.values.update(kvNamespaceId, `auth:revocation:${uuid}`, {
         account_id: config.accountId,
-        value: "true"
+        value: "true",
+        metadata: {}
       })
 
       console.log("✅ Token revoked successfully")
