@@ -37,7 +37,7 @@ lint: # https://docs.trunk.io/check/configuration
     - prettier
   enabled:
     - oxipng@9.1.5
-    - sourcery@1.36.0
+    - sourcery@1.37.0
     - semgrep@1.116.0
     - vale@3.11.2
     - biome@1.9.4
@@ -47,10 +47,10 @@ lint: # https://docs.trunk.io/check/configuration
     - taplo@0.9.3
     - trunk-toolbox@0.5.4
     - actionlint@1.7.7
-    - checkov@3.2.427
+    - checkov@3.2.435
     - git-diff-check
     - markdownlint@0.45.0
-    - trufflehog@3.88.31
+    - trufflehog@3.88.34
     - yamllint@1.37.1
   ignore:
     - linters:

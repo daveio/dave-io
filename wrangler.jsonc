@@ -10,6 +10,9 @@
   "placement": {
     "mode": "smart"
   },
+  "ai": {
+    "binding": "AI"
+  },
   "analytics_engine_datasets": [
     {
       "binding": "ANALYTICS",
