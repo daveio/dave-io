@@ -76,10 +76,9 @@ async function getKVValue(key: string): Promise<string | null> {
   const kvNamespaceId = getKVNamespaceId()
 
   try {
-    const response = await client.kv.namespaces.values.get(kvNamespaceId, key, {
+    return await client.kv.namespaces.values.get(kvNamespaceId, key, {
       account_id: config.accountId
     })
-    return response
   } catch (error: unknown) {
     const errorStatus = (error as { status?: number }).status
     if (errorStatus === 404) {
