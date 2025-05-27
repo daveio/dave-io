@@ -140,49 +140,64 @@ export async function trackSuccessfulUsage(c: AuthorizedContext): Promise<void> 
  *
  * Usage:
  * ```
- * app.get('/api/documents', authorizeEndpoint('documents'), (c) => { ... })
- * app.get('/api/documents/:id', authorizeEndpoint('documents', 'read'), (c) => { ... })
+ * // In your endpoint handle method:
+ * async handle(c: Context) {
+ *   const authResult = await authorizeEndpoint('ai', 'alt')(c, async () => {
+ *     // Your endpoint logic here
+ *     return c.json({ success: true })
+ *   })
+ *   return authResult
+ * }
  * ```
  *
  * @param endpoint The main endpoint identifier
  * @param subresource Optional subresource identifier
- * @returns A middleware that checks JWT authorization
+ * @returns A function that checks JWT authorization and runs the handler
  */
 export function authorizeEndpoint(endpoint: string, subresource?: string) {
-  const authMiddleware = requireAuth()
-
   return async <T>(c: Context, handler: () => Promise<T>): Promise<Response | T> => {
-    // Store the original response status to detect if auth middleware set an error
-    const originalStatus = c.res.status
+    const authMiddleware = requireAuth()
+    let authError: Response | null = null
     let result: T | undefined
 
-    // Run the standard JWT auth middleware first
-    await authMiddleware(c, async () => {
-      // If we get here, JWT is valid and user is authenticated
-      // Now check if the subject in the JWT matches our endpoint requirements
-      const authorizedC = c as AuthorizedContext
-      const subject = authorizedC.user.id
+    try {
+      // Run the standard JWT auth middleware first
+      const authResult = await authMiddleware(c, async () => {
+        // If we get here, JWT is valid and user is authenticated
+        // Now check if the subject in the JWT matches our endpoint requirements
+        const authorizedC = c as AuthorizedContext
+        const subject = authorizedC.user.id
 
-      const fullResourcePattern = subresource ? `${endpoint}:${subresource}` : endpoint
+        const fullResourcePattern = subresource ? `${endpoint}:${subresource}` : endpoint
 
-      // Authorize if:
-      // 1. Subject matches exactly the endpoint (grants access to all subresources)
-      // 2. Subject matches exactly the endpoint:subresource pattern
-      if (subject === endpoint || subject === fullResourcePattern) {
-        result = await handler()
-        // Track usage only after successful completion
-        await trackSuccessfulUsage(authorizedC)
-      } else {
-        c.status(403)
-        c.json({ error: "Not authorized for this resource" })
+        // Authorize if:
+        // 1. Subject matches exactly the endpoint (grants access to all subresources)
+        // 2. Subject matches exactly the endpoint:subresource pattern
+        if (subject === endpoint || subject === fullResourcePattern) {
+          result = await handler()
+          // Track usage only after successful completion
+          await trackSuccessfulUsage(authorizedC)
+        } else {
+          // Set authorization failure error
+          authError = c.json({ error: "Not authorized for this resource" }, 403)
+        }
+      })
+
+      // If the auth middleware returned a Response (auth failure), return it
+      if (authResult instanceof Response) {
+        return authResult
       }
-    })
 
-    // If authMiddleware set an error status, don't override it
-    if (c.res.status !== originalStatus && c.res.status !== 200) {
-      return c.res
+      // If we have an authorization error, return it
+      if (authError) {
+        return authError
+      }
+
+      // Return the successful result
+      return result as T
+    } catch (error) {
+      console.error("Authorization error:", error)
+      return c.json({ error: "Authorization processing failed" }, 500)
     }
-
-    return result as T
   }
 }

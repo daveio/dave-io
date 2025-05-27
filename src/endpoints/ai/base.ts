@@ -191,44 +191,4 @@ export abstract class AiAltBase extends OpenAPIRoute {
     }
     return null
   }
-
-  /**
-   * Shared authorization and processing logic
-   */
-  async processImage(c: Context, getData: () => Promise<{ imageData: Uint8Array | Response; imageSource: string }>) {
-    return authorizeEndpoint("ai", "alt")(c, async () => {
-      const authContext = c as AuthorizedContext
-      const userId = authContext.user.id
-
-      // Check rate limit before processing
-      const rateLimitResult = await this.checkRateLimit(c.env, userId)
-
-      if (!rateLimitResult.allowed) {
-        return this.createRateLimitResponse(c, rateLimitResult)
-      }
-
-      // Get image data from the derived class
-      const { imageData, imageSource } = await getData()
-
-      // If the result is a Response (error), return it
-      if (imageData instanceof Response) {
-        return imageData
-      }
-
-      try {
-        // Process the image using Cloudflare AI
-        const altText = await this.generateAltText(c, imageData)
-
-        // Track success in analytics
-        this.trackAnalytics(c, imageSource !== "base64" ? imageSource : null)
-
-        // Return successful response
-        return this.createSuccessResponse(c, altText, imageSource, rateLimitResult)
-      } catch (error) {
-        console.error("Error generating alt text:", error)
-
-        return this.createErrorResponse(c, "Failed to generate alt text", "AI_PROCESSING_ERROR", 500, rateLimitResult)
-      }
-    })
-  }
 }

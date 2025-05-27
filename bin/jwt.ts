@@ -29,7 +29,7 @@ program.name("jwt").description("JWT Token Management for api.dave.io").version(
 
 // Environment variable helpers
 function getJWTSecret(): string | null {
-  return process.env.JWT_SECRET || process.env.API_JWT_SECRET || null
+  return process.env.API_JWT_SECRET || null
 }
 
 // Map D1 result from snake_case to camelCase
@@ -270,7 +270,7 @@ const _createCommand = program
 
       secret = options.secret || getJWTSecret()
       if (!secret) {
-        console.error("❌ JWT secret is required. Set JWT_SECRET env var or use --secret option")
+        console.error("❌ JWT secret is required. Set API_JWT_SECRET env var or use --secret option")
         process.exit(1)
       }
 
@@ -517,7 +517,7 @@ Commands:
   revoke <uuid>       Revoke a token by UUID
 
 Environment Variables:
-  JWT_SECRET or API_JWT_SECRET    JWT secret key
+  API_JWT_SECRET                  JWT secret key
   CLOUDFLARE_API_TOKEN           Cloudflare API token with D1 permissions
   CLOUDFLARE_ACCOUNT_ID          Your Cloudflare account ID
   CLOUDFLARE_D1_DATABASE_ID      D1 database ID for API_AUTH_METADATA

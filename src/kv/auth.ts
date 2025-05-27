@@ -16,8 +16,8 @@ export interface TokenUsageData {
  */
 export async function getTokenUsageCount(env: Env, uuid: string): Promise<number> {
   try {
-    const data = await env.DATA.get<TokenUsageData>(`auth:count:${uuid}`, { type: "json" })
-    return data?.requestCount ?? 0
+    const count = await env.DATA.get(`auth:count:${uuid}:requests`)
+    return count ? Number.parseInt(count) : 0
   } catch (error) {
     console.error("Error getting token usage count:", { uuid, error })
     return 0
@@ -31,12 +31,13 @@ export async function incrementTokenUsage(env: Env, uuid: string): Promise<numbe
   try {
     const current = await getTokenUsageCount(env, uuid)
     const newCount = current + 1
-    const usageData: TokenUsageData = {
-      requestCount: newCount,
-      lastUsed: new Date().toISOString()
-    }
+    const timestamp = new Date().toISOString()
 
-    await env.DATA.put(`auth:count:${uuid}`, JSON.stringify(usageData))
+    await Promise.all([
+      env.DATA.put(`auth:count:${uuid}:requests`, newCount.toString()),
+      env.DATA.put(`auth:count:${uuid}:last-used`, timestamp)
+    ])
+
     return newCount
   } catch (error) {
     console.error("Error incrementing token usage:", { uuid, error })
@@ -96,14 +97,15 @@ export async function getTokenUsage(
   isRevoked: boolean
 }> {
   try {
-    const [usageData, revoked] = await Promise.all([
-      env.DATA.get<TokenUsageData>(`auth:count:${uuid}`, { type: "json" }),
+    const [requestCount, lastUsed, revoked] = await Promise.all([
+      env.DATA.get(`auth:count:${uuid}:requests`),
+      env.DATA.get(`auth:count:${uuid}:last-used`),
       isTokenRevoked(env, uuid)
     ])
 
     return {
-      requestCount: usageData?.requestCount ?? 0,
-      lastUsed: usageData?.lastUsed ?? null,
+      requestCount: requestCount ? Number.parseInt(requestCount) : 0,
+      lastUsed: lastUsed ?? null,
       isRevoked: revoked
     }
   } catch (error) {

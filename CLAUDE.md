@@ -310,10 +310,10 @@ Set the JWT secret in your Cloudflare Workers environment:
 
 ```bash
 # For local development, add to .env:
-JWT_SECRET=your-super-secret-key-here
+API_JWT_SECRET=your-super-secret-key-here
 
 # For production, set as a Cloudflare secret:
-bun run wrangler secret put JWT_SECRET
+bun run wrangler secret put API_JWT_SECRET
 ```
 
 ### JWT Token Management CLI
@@ -397,8 +397,6 @@ bun jwt revoke de346b19-9fac-4309-9a9a-ca49b8cc82a6
 **Environment Variables:**
 ```bash
 # JWT secret (required)
-export JWT_SECRET="your-secret-key"
-# or
 export API_JWT_SECRET="your-secret-key"
 ```
 
@@ -410,7 +408,7 @@ The CLI uses the production Cloudflare D1 database (`API_AUTH_METADATA`) via the
 export CLOUDFLARE_API_TOKEN=your-cloudflare-api-token-with-d1-permissions
 export CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
 export CLOUDFLARE_D1_DATABASE_ID=your-api-auth-metadata-database-id
-export JWT_SECRET=your-jwt-secret
+export API_JWT_SECRET=your-jwt-secret
 
 # The CLI will automatically initialize the database schema on first use
 # All token metadata is stored in production D1, not locally
@@ -734,7 +732,8 @@ The key structure follows the pattern `topic:subtopic:resource` to organize diff
 
 5. **Authentication**: Prefix `auth:`
 
-- `auth:count:{uuid}`: Token usage tracking with request count and last used timestamp
+- `auth:count:{uuid}:requests`: Token request count (integer)
+- `auth:count:{uuid}:last-used`: Token last used timestamp (ISO string)
 - `auth:revocation:{uuid}`: Token revocation status (true/false)
 
 ### KV Utility Pattern
