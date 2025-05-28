@@ -833,7 +833,7 @@ The API provides a simple URL redirection service accessible at `/go/:slug`. Thi
 #### Usage
 
 **Direct Browser Access:**
-```
+```plaintext
 https://dave.io/go/your-slug
 ```
 
@@ -916,7 +916,7 @@ curl -X POST \
   https://dave.io/api/ai/alt
 ```
 
-#### Features
+#### Alt Text Generation Features
 
 - Uses Cloudflare's LLaVA model (`@cf/llava-hf/llava-1.5-7b-hf`) for high-quality image understanding
 - Supports both URL-based image processing and direct base64 image uploads
@@ -1066,7 +1066,7 @@ export CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
 - String values are stored without additional quotes
 - JSON objects, arrays, and primitives are properly serialized
 
-### Usage
+### KV Admin Utility Usage
 
 ```bash
 bun kv backup             # Backup selected data
