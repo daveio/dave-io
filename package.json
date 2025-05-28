@@ -1,9 +1,9 @@
 {
-  "name": "api.dave.io",
+  "name": "dave-io-api",
   "version": "0.1.0",
   "private": true,
   "description": "multipurpose personal API",
-  "repository": "https://github.com/daveio/api.dave.io.git",
+  "repository": "https://github.com/daveio/dave-io-api.git",
   "license": "MIT",
   "author": "Dave Williams <dave@dave.io>",
   "type": "module",
