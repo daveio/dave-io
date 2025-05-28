@@ -25,7 +25,7 @@
       "id": "fa48b0bd010a43289d5e111af42b8b50"
     }
   ],
-  "routes": [
+  "routes": [ // we will need to handle curl and wget to the root eventually
     {
       "pattern": "dave.io/api/*",
       "zone_id": "cce768dd1ffadb4f24ae8fce0f7e979a"

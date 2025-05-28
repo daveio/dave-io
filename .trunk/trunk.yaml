@@ -22,7 +22,8 @@ actions:
     - trunk-upgrade-available
 cli:
   version: 1.22.15
-lint: # https://docs.trunk.io/check/configuration
+lint:
+  # https://docs.trunk.io/check/configuration
   disabled:
     - vale
     - stylelint
@@ -54,12 +55,18 @@ lint: # https://docs.trunk.io/check/configuration
         - ALL
       paths:
         - worker-configuration.d.ts
-plugins: # https://docs.trunk.io/plugins
+    - linters:
+        - trunk-toolbox
+      paths:
+        - data/hello.sh
+plugins:
+  # https://docs.trunk.io/plugins
   sources:
     - id: trunk
       ref: v1.7.0
       uri: https://github.com/trunk-io/plugins
-runtimes: # https://docs.trunk.io/runtimes
+runtimes:
+  # https://docs.trunk.io/runtimes
   enabled:
     - go@1.21.0
     - node@22.16.0

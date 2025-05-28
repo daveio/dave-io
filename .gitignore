@@ -174,3 +174,7 @@ dist
 
 **/.DS_Store
 _go-worker/
+
+
+#Ignore vscode AI rules
+.github/copilot-instructions.md

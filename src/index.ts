@@ -12,11 +12,46 @@ import { TokenRevokeEndpoint, TokenUsageEndpoint } from "./endpoints/tokens"
 import { initializeKV } from "./kv/init"
 import { incrementStatusCodeCount } from "./kv/metrics"
 import { trackRequestAnalytics } from "./lib/analytics"
+import { helloScript } from "./scripts/hello"
 
 type Bindings = Env
 
 // Start a Hono app
 const app = new Hono<{ Bindings: Bindings }>()
+
+// Middleware to detect curl/wget requests and serve shell script for root path
+app.use("*", async (c, next) => {
+  const userAgent = c.req.header("user-agent") || ""
+  const url = new URL(c.req.url)
+
+  // Check if this is a curl or wget request
+  const isCurlOrWget = userAgent.toLowerCase().includes("curl") || userAgent.toLowerCase().includes("wget")
+
+  // Only serve shell script for the root path (not /api/ or /go/ paths)
+  if (isCurlOrWget && (url.pathname === "/" || url.pathname === "")) {
+    try {
+      // Try to load the script content
+      const scriptContent = helloScript
+      return new Response(scriptContent, {
+        headers: {
+          "Content-Type": "text/x-shellscript",
+          "Cache-Control": "no-cache"
+        }
+      })
+    } catch (_error) {
+      // Return 404 if script can't be loaded
+      return new Response("Script not found", {
+        status: 404,
+        headers: {
+          "Content-Type": "text/plain"
+        }
+      })
+    }
+  }
+
+  // For browser requests or non-root paths, continue with normal processing
+  await next()
+})
 
 // Initialize KV store middleware
 app.use("*", async (c, next) => {
