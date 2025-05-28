@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 dave.io is a multipurpose personal API powered by Cloudflare Workers. It provides several endpoints:
 
 - **Ping**: Simple health check endpoint
-- **Redirect**: URL redirection service using KV storage
+- **Go**: URL redirection service using KV storage (accessible at `/go/:slug`)
 - **Dashboard**: Data feeds for dashboards (demo and Hacker News available)
 - **RouterOS**: Generates RouterOS scripts for network configurations (currently implements put.io IP ranges, with more providers planned)
 - **Metrics**: View API metrics in JSON, YAML, or Prometheus format
@@ -653,13 +653,13 @@ app.post('/api/ai/alt', authorizeEndpoint('ai', 'alt'), (c) => {
 - `src/` - Main source code
   - `endpoints/` - API endpoint implementations
   - `ping.ts` - Simple health check endpoint
-  - `redirect.ts` - URL redirection service
+  - `go.ts` - URL redirection service
   - `dashboard.ts` - Dashboard data feed endpoints
   - `routeros.ts` - RouterOS script generator endpoints
   - `metrics.ts` - Metrics endpoint for exposing KV metrics data
   - `kv/` - KV storage operations
   - `dashboard.ts` - KV storage operations for dashboard data
-  - `redirect.ts` - KV storage operations for redirects
+  - `redirect.ts` - KV storage operations for redirects (used by go endpoint)
   - `routeros.ts` - KV storage operations for RouterOS data
   - `metrics.ts` - KV storage operations for metrics tracking
   - `init.ts` - KV initialization module
@@ -668,7 +668,7 @@ app.post('/api/ai/alt', authorizeEndpoint('ai', 'alt'), (c) => {
   - `auth.ts` - JWT authentication middleware and utilities
   - `ip-address-utils.ts` - IP address utilities
   - `schemas/` - Zod schema definitions
-  - `redirect.schema.ts` - Schemas for redirect functionality
+  - `redirect.schema.ts` - Schemas for redirect functionality (used by go endpoint)
   - `dashboard.schema.ts` - Schemas for dashboard functionality
   - `ping.schema.ts` - Schemas for ping endpoint
   - `routeros.schema.ts` - Schemas for RouterOS functionality
@@ -811,6 +811,60 @@ c.env.ANALYTICS.writeDataPoint({
   indexes: ["redirect"],
 });
 ```
+
+## Go Endpoint
+
+### URL Redirection Service
+
+The API provides a simple URL redirection service accessible at `/go/:slug`. This endpoint performs direct HTTP 302 redirects and is designed for use as a URL shortener.
+
+#### Endpoint Path
+
+- **GET** `/go/:slug`: Redirect to a URL by slug
+
+#### Features
+
+- **Direct HTTP Redirects**: Performs actual 302 redirects instead of returning JSON responses
+- **KV Storage Backend**: Uses the same redirect KV storage as the deprecated `/api/redirect/:slug` endpoint
+- **Analytics Tracking**: Tracks redirects with "go_redirect_request" analytics labels
+- **Usage Metrics**: Maintains click counts and last access timestamps for each slug
+- **Route Configuration**: Accessible at `dave.io/go/*` via Cloudflare Workers routing
+
+#### Usage
+
+**Direct Browser Access:**
+```
+https://dave.io/go/your-slug
+```
+
+**Programmatic Testing:**
+```bash
+# Test a redirect (should return 302 with Location header)
+curl -I https://dave.io/go/your-slug
+
+# Follow redirects automatically
+curl -L https://dave.io/go/your-slug
+```
+
+#### Response Behavior
+
+- **Success (302)**: HTTP redirect to the target URL with `Location` header
+- **Not Found (404)**: Returns empty response body when slug doesn't exist
+
+#### KV Storage Integration
+
+The Go endpoint uses the existing redirect KV storage structure:
+
+- **Redirect URLs**: Stored as `redirect:{slug}` in KV
+- **Click Tracking**: Updates `metrics:redirect:{slug}:count` and `metrics:redirect:{slug}:last-accessed`
+- **Analytics**: Writes data points to Analytics Engine for monitoring
+
+#### Implementation Notes
+
+- No authentication required - designed for public URL shortening
+- Uses the same KV utility functions as the deprecated redirect API endpoint
+- Maintains backward compatibility with existing redirect data
+- Accessible outside the `/api/*` prefix for clean, short URLs
 
 ## AI Endpoints
 

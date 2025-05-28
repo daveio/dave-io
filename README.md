@@ -9,7 +9,7 @@ A multipurpose personal API powered by Cloudflare Workers.
 This project implements a multipurpose personal API that runs on Cloudflare Workers, providing several endpoints for various services:
 
 - **Ping**: Simple health check endpoint
-- **Redirect**: URL redirection service using KV storage
+- **Go**: URL redirection service using KV storage (accessible at `/go/:slug`)
 - **Dashboard**: Data feeds for dashboards (demo and Hacker News available)
 - **RouterOS**: Generates RouterOS scripts for network configurations (currently implements put.io IP ranges)
 - **Metrics**: View API metrics in JSON, YAML, or Prometheus format
@@ -53,10 +53,11 @@ All endpoints include detailed request/response schemas, parameter descriptions,
 - `GET /api/ping`: Simple health check endpoint
 - Returns: `{ "service": "api", "response": "pong" }`
 
-### Redirect
+### Go
 
-- `GET /api/redirect/:slug`: Get URL for a redirect by slug
-- Returns: Redirect information or 404 if not found
+- `GET /go/:slug`: Redirect to a URL by slug
+- Returns: HTTP 302 redirect to the target URL or 404 if not found
+- Usage: Direct browser access at `https://dave.io/go/your-slug`
 
 ### Dashboard
 
@@ -442,11 +443,11 @@ dave.io/
 │   │   ├── dashboard.ts  # Dashboard data endpoints
 │   │   ├── metrics.ts    # Metrics data endpoints
 │   │   ├── ping.ts       # Simple health check endpoint
-│   │   ├── redirect.ts   # URL redirection service
+│   │   ├── go.ts         # URL redirection service
 │   │   └── routeros.ts   # RouterOS script generators
 │   ├── kv/               # KV storage operations
 │   │   ├── dashboard.ts  # Dashboard KV operations
-│   │   ├── redirect.ts   # Redirect KV operations
+│   │   ├── redirect.ts   # Redirect KV operations (used by go endpoint)
 │   │   ├── routeros.ts   # RouterOS KV operations
 │   │   ├── metrics.ts    # Metrics tracking in KV
 │   │   └── init.ts       # KV initialization module
@@ -677,7 +678,8 @@ The project includes a simple DashKit widget in the `dashkit/` directory that de
 
 The API is deployed to Cloudflare Workers using Wrangler. Deployment is automated via GitHub Actions when changes are pushed to the main branch. It's accessible at:
 
-- `https://dave.io/api`
+- `https://dave.io/api/*` - Main API endpoints
+- `https://dave.io/go/*` - URL redirection service
 
 ### CI/CD
 

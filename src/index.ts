@@ -4,9 +4,9 @@ import { type Context, Hono } from "hono"
 import { AiAlt, AiAltPost } from "./endpoints/ai"
 import { Auth } from "./endpoints/auth"
 import { Dashboard } from "./endpoints/dashboard"
+import { Go } from "./endpoints/go"
 import { Metrics } from "./endpoints/metrics"
 import { Ping } from "./endpoints/ping"
-import { Redirect } from "./endpoints/redirect"
 import { RouterOSCache, RouterOSPutIO, RouterOSReset } from "./endpoints/routeros"
 import { TokenRevokeEndpoint, TokenUsageEndpoint } from "./endpoints/tokens"
 import { initializeKV } from "./kv/init"
@@ -92,7 +92,7 @@ const openapi = fromHono(app, {
     },
     tags: [
       { name: "Health Check", description: "Service health monitoring" },
-      { name: "URL Redirection", description: "URL shortening and redirection" },
+      { name: "Go", description: "URL shortening and redirection service" },
       { name: "Dashboard", description: "Data feeds for dashboards" },
       { name: "RouterOS", description: "Network configuration script generation" },
       { name: "Metrics", description: "API usage and performance metrics" },
@@ -109,9 +109,9 @@ const openapi = fromHono(app, {
 // @ts-ignore - Route registration working, type compatibility issue with OpenAPIRoute classes
 openapi.get("/api/ping", Ping)
 
-// URL redirection endpoints
+// Go redirect endpoints (outside /api/ prefix)
 // @ts-ignore
-openapi.get("/api/redirect/:slug", Redirect)
+openapi.get("/go/:slug", Go)
 
 // Dashboard endpoints
 // @ts-ignore
