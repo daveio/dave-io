@@ -58,7 +58,7 @@ lint:
     - linters:
         - trunk-toolbox
       paths:
-        - data/hello.sh
+        - src/scripts/hello.ts
 plugins:
   # https://docs.trunk.io/plugins
   sources:
