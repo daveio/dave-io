@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "dave-io-api",
+  "name": "api-dave-io",
   "main": "src/index.ts",
   "compatibility_date": "2025-05-19",
   "compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
