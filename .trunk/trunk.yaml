@@ -2,14 +2,8 @@
 actions:
   definitions:
     - display_name: lint
-      id: biome-safe-fixes
-      run: bun run biome check --fix
-      triggers:
-        - git_hooks:
-            - pre-commit
-    - display_name: lint
       id: lint
-      run: bun run lint
+      run: bun run biome check
       triggers:
         - git_hooks:
             - pre-commit
@@ -20,7 +14,6 @@ actions:
         - git_hooks:
             - pre-commit
   enabled:
-    - biome-safe-fixes
     - lint
     - typecheck
     - trunk-announce
@@ -31,15 +24,19 @@ cli:
   version: 1.22.15
 lint: # https://docs.trunk.io/check/configuration
   disabled:
+    - vale
     - stylelint
     - codespell
     - markdown-link-check
     - prettier
   enabled:
+    - hadolint@2.12.1-beta
+    - shellcheck@0.10.0
+    - shfmt@3.6.0
+    - svgo@3.3.2
     - oxipng@9.1.5
     - sourcery@1.37.0
-    - semgrep@1.116.0
-    - vale@3.11.2
+    - semgrep@1.122.0
     - biome@1.9.4
     - dustilock@1.2.0
     - gitleaks@8.26.0
@@ -56,16 +53,15 @@ lint: # https://docs.trunk.io/check/configuration
     - linters:
         - ALL
       paths:
-        - _backup/**
         - worker-configuration.d.ts
 plugins: # https://docs.trunk.io/plugins
   sources:
     - id: trunk
-      ref: v1.6.8
+      ref: v1.7.0
       uri: https://github.com/trunk-io/plugins
 runtimes: # https://docs.trunk.io/runtimes
   enabled:
     - go@1.21.0
-    - node@18.20.5
+    - node@22.16.0
     - python@3.10.8
 version: 0.1
