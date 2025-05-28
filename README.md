@@ -677,7 +677,6 @@ The project includes a simple DashKit widget in the `dashkit/` directory that de
 
 The API is deployed to Cloudflare Workers using Wrangler. Deployment is automated via GitHub Actions when changes are pushed to the main branch. It's accessible at:
 
-- `https://dave.io`
 - `https://dave.io/api`
 
 ### CI/CD
@@ -710,3 +709,18 @@ Each endpoint extends `OpenAPIRoute` from Chanfana and includes a `schema` prope
 - Response formats and status codes
 - Endpoint tags, summaries, and descriptions
 - Security requirements (JWT authentication)
+
+## Notes
+
+Testing `/ai/alt` via POST - set `$jwt` and `$img` up front:
+
+```fish
+begin
+set -l jwt JWTDATA && \
+set -l img IMAGEPATH && \
+curl -X POST "https://dave.io/api/ai/alt" \
+    -H "Authorization: Bearer $jwt" \
+    -H "Content-Type: application/json" \
+    -d "{\"image\": \"data:image/jpeg;base64,$(base64 < $img | tr -d '\n')\"}" | jq .
+end
+```
