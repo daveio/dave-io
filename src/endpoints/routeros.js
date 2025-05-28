@@ -1,0 +1,81 @@
+import { OpenAPIRoute } from "chanfana";
+import { getCacheData, getCacheStatus, getScript, getSharedMetadata, resetCache } from "../kv/routeros";
+import { RouterOSCacheRouteSchema, RouterOSPutIORouteSchema, RouterOSResetRouteSchema } from "../schemas/routeros";
+export class RouterOSPutIO extends OpenAPIRoute {
+    // @ts-ignore - Schema validation working, type compatibility issue with external Zod definitions
+    schema = RouterOSPutIORouteSchema;
+    async handle(c) {
+        try {
+            // Get the script from KV
+            const script = await getScript(c.env);
+            return c.text(script);
+        }
+        catch (error) {
+            console.error("Error in RouterOSPutIO.handle:", error);
+            return c.json({
+                error: "InternalError",
+                message: error instanceof Error ? error.message : "Unknown error"
+            }, 500);
+        }
+    }
+}
+export class RouterOSCache extends OpenAPIRoute {
+    // @ts-ignore - Schema validation working, type compatibility issue with external Zod definitions
+    schema = RouterOSCacheRouteSchema;
+    async handle(c) {
+        try {
+            // Track analytics
+            c.env.ANALYTICS.writeDataPoint({
+                blobs: ["routeros", "cache", "status"],
+                doubles: [1],
+                indexes: ["routeros_status"]
+            });
+            // Get provider-specific cache status from KV
+            const [putioStatus, cacheData, sharedMetadata] = await Promise.all([
+                getCacheStatus(c.env),
+                getCacheData(c.env),
+                getSharedMetadata(c.env)
+            ]);
+            // Build the response with both provider-specific and shared data
+            const status = {
+                putio: {
+                    ...putioStatus,
+                    ipv4Count: cacheData.ipv4Ranges.length,
+                    ipv6Count: cacheData.ipv6Ranges.length
+                },
+                shared: sharedMetadata,
+                providers: ["putio"] // Will expand as more providers are added
+            };
+            return c.json(status);
+        }
+        catch (error) {
+            console.error("Error in RouterOSCache.handle:", error);
+            return c.json({
+                error: "InternalError",
+                message: error instanceof Error ? error.message : "Unknown error"
+            }, 500);
+        }
+    }
+}
+export class RouterOSReset extends OpenAPIRoute {
+    // @ts-ignore - Schema validation working, type compatibility issue with external Zod definitions
+    schema = RouterOSResetRouteSchema;
+    async handle(c) {
+        try {
+            // Reset the cache
+            await resetCache(c.env);
+            return c.json({
+                success: true,
+                message: "Cache reset successfully"
+            });
+        }
+        catch (error) {
+            console.error("Error in RouterOSReset.handle:", error);
+            return c.json({
+                error: "InternalError",
+                message: error instanceof Error ? error.message : "Unknown error"
+            }, 500);
+        }
+    }
+}
+//# sourceMappingURL=routeros.js.map

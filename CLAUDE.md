@@ -4,8 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-dave.io is a multipurpose personal API powered by Cloudflare Workers. It provides several endpoints:
+dave.io is a unified multipurpose platform powered by Cloudflare Workers. It combines a Vue.js single-page application with a comprehensive API backend. The platform provides:
 
+**Frontend (Vue.js SPA):**
+- Personal website with modern Vue.js interface
+- Static asset serving via Cloudflare Workers Assets
+- Responsive design with Tailwind CSS
+- Single-page application with Vue Router
+
+**API Backend:**
 - **Ping**: Simple health check endpoint
 - **Go**: URL redirection service using KV storage (accessible at `/go/:slug`)
 - **Dashboard**: Data feeds for dashboards (demo and Hacker News available)
@@ -15,7 +22,7 @@ dave.io is a multipurpose personal API powered by Cloudflare Workers. It provide
 - **Token Management**: Comprehensive token lifecycle management with CLI tools and API endpoints
 - **AI**: AI-powered services including image alt text generation
 
-The API is built with [Hono](https://hono.dev) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation.
+The backend API is built with [Hono](https://hono.dev) and uses [Chanfana](https://github.com/cloudflare/chanfana) for OpenAPI documentation and schema validation. The frontend is built with Vue.js 3, Vite, and Tailwind CSS.
 
 ## Development Commands
 
@@ -25,16 +32,28 @@ The API is built with [Hono](https://hono.dev) and uses [Chanfana](https://githu
 # Install dependencies
 bun install
 
-# Start development server
+# Unified development (Vue.js + API together - RECOMMENDED)
 bun run dev
+
+# Frontend-only development (Vue.js with hot reload)
+bun run dev-frontend
+
+# Worker-only development (API with hot reload)
+bun run dev-worker
 
 # Generate Cloudflare Workers type definitions
 bun run types
 
-# Deploy to Cloudflare Workers
+# Build everything and deploy to Cloudflare Workers
 bun run deploy
 
-# Run TypeScript type checking
+# Build frontend only
+bun run build-frontend
+
+# Build everything (typecheck + frontend)
+bun run build
+
+# Run TypeScript type checking (both frontend and backend)
 bun run typecheck
 
 # Lint code with Trunk and Biome
@@ -59,6 +78,17 @@ bun run jwt show <uuid>               # Show token details
 
 ## Code Architecture
 
+### Frontend Architecture
+- **Framework**: Vue.js 3 with Composition API
+- **Build Tool**: Vite with TypeScript support
+- **Styling**: Tailwind CSS with PostCSS
+- **Routing**: Vue Router for SPA navigation
+- **State Management**: Pinia for application state
+- **Icons**: UnoCSS with preset icons
+- **Auto-imports**: Automatic imports for Vue APIs and components
+- **Development Tools**: Vue DevTools integration
+
+### Backend Architecture
 - **Framework**: Uses Hono.js for routing and HTTP server functionality
 - **API Documentation**: Uses Chanfana (OpenAPI) for automatic documentation generation and schema validation
 - **Type Safety**: Uses TypeScript and Zod for compile-time and runtime type validation
@@ -66,6 +96,7 @@ bun run jwt show <uuid>               # Show token details
 - **OpenAPI Integration**: Full OpenAPI 3.1 specification with interactive Swagger UI at `/api/docs`
 - **KV Storage**: Uses a unified KV namespace with hierarchical keys for data organization
 - **Analytics**: Uses Cloudflare Analytics Engine for request tracking
+- **Static Assets**: Cloudflare Workers Assets for serving Vue.js build output
 
 ### Middleware Pipeline
 
@@ -650,38 +681,64 @@ app.post('/api/ai/alt', authorizeEndpoint('ai', 'alt'), (c) => {
 
 ## File Structure
 
-- `src/` - Main source code
+- `frontend/` - Vue.js frontend source code
+  - `App.vue` - Main Vue application component
+  - `main.ts` - Frontend application entry point
+  - `assets/` - Static assets (images, CSS)
+    - `main.css` - Main stylesheet with Tailwind CSS
+  - `components/` - Vue components
+  - `router/` - Vue Router configuration
+  - `stores/` - Pinia state management
+  - `views/` - Vue page components
+- `src/` - Backend API source code
   - `endpoints/` - API endpoint implementations
-  - `ping.ts` - Simple health check endpoint
-  - `go.ts` - URL redirection service
-  - `dashboard.ts` - Dashboard data feed endpoints
-  - `routeros.ts` - RouterOS script generator endpoints
-  - `metrics.ts` - Metrics endpoint for exposing KV metrics data
+    - `ping.ts` - Simple health check endpoint
+    - `go.ts` - URL redirection service
+    - `dashboard.ts` - Dashboard data feed endpoints
+    - `routeros.ts` - RouterOS script generator endpoints
+    - `metrics.ts` - Metrics endpoint for exposing KV metrics data
+    - `ai/` - AI-powered endpoints
+      - `alt-get.ts` - Alt text generation via URL
+      - `alt-post.ts` - Alt text generation via upload
   - `kv/` - KV storage operations
-  - `dashboard.ts` - KV storage operations for dashboard data
-  - `redirect.ts` - KV storage operations for redirects (used by go endpoint)
-  - `routeros.ts` - KV storage operations for RouterOS data
-  - `metrics.ts` - KV storage operations for metrics tracking
-  - `init.ts` - KV initialization module
+    - `dashboard.ts` - KV storage operations for dashboard data
+    - `redirect.ts` - KV storage operations for redirects (used by go endpoint)
+    - `routeros.ts` - KV storage operations for RouterOS data
+    - `metrics.ts` - KV storage operations for metrics tracking
+    - `auth.ts` - JWT authentication tracking and revocation
+    - `init.ts` - KV initialization module
   - `lib/` - Utility libraries
-  - `analytics.ts` - Request tracking via Analytics Engine
-  - `auth.ts` - JWT authentication middleware and utilities
-  - `ip-address-utils.ts` - IP address utilities
+    - `analytics.ts` - Request tracking via Analytics Engine
+    - `auth.ts` - JWT authentication middleware and utilities
+    - `ip.ts` - IP address utilities
   - `schemas/` - Zod schema definitions
-  - `redirect.schema.ts` - Schemas for redirect functionality (used by go endpoint)
-  - `dashboard.schema.ts` - Schemas for dashboard functionality
-  - `ping.schema.ts` - Schemas for ping endpoint
-  - `routeros.schema.ts` - Schemas for RouterOS functionality
-  - `auth.schema.ts` - Schemas for authentication and JWT handling
-  - `cloudflare.types.ts` - Type definitions for Cloudflare-specific objects
-  - `index.ts` - Main application setup
-  - `types.ts` - Type definitions
+    - `redirect.ts` - Schemas for redirect functionality (used by go endpoint)
+    - `dashboard.ts` - Schemas for dashboard functionality
+    - `ping.ts` - Schemas for ping endpoint
+    - `routeros.ts` - Schemas for RouterOS functionality
+    - `auth.ts` - Schemas for authentication and JWT handling
+    - `ai.ts` - Schemas for AI endpoints
+    - `common.ts` - Common schema utilities
+  - `scripts/` - Embedded scripts
+    - `hello.ts` - Shell script for curl/wget requests
+  - `index.ts` - Main Worker application setup
+- `public/` - Static public assets
+  - `images/` - Public images
+  - `scripts/` - Public scripts
+    - `hello.sh` - Shell script served to curl/wget
+- `dist/` - Vite build output (generated)
 - `dashkit/` - Contains dashboard widget example
   - `feed.js` - Simple list panel implementation for dashboards
 - `bin/` - Command-line utilities
   - `kv.ts` - KV backup and restore utility
   - `jwt.ts` - JWT token generation utility
-- `wrangler.jsonc` - Cloudflare Workers configuration
+- Build configuration files:
+  - `vite.config.ts` - Vite frontend build configuration
+  - `tailwind.config.ts` - Tailwind CSS configuration
+  - `postcss.config.js` - PostCSS configuration
+  - `tsconfig.json` - TypeScript configuration
+  - `wrangler.jsonc` - Cloudflare Workers configuration
+  - `index.html` - HTML entry point for Vue.js SPA
 
 ## Development Environment Setup
 

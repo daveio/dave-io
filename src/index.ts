@@ -30,7 +30,24 @@ app.use("*", async (c, next) => {
   // Only serve shell script for the root path (not /api/ or /go/ paths)
   if (isCurlOrWget && (url.pathname === "/" || url.pathname === "")) {
     try {
-      // Try to load the script content
+      // Try to fetch the shell script file from static assets first
+      const scriptResponse = await c.env.ASSETS.fetch(`${url.origin}/scripts/hello.sh`)
+
+      if (scriptResponse.ok) {
+        const scriptContent = await scriptResponse.text()
+        return new Response(scriptContent, {
+          headers: {
+            "Content-Type": "text/x-shellscript",
+            "Cache-Control": "no-cache"
+          }
+        })
+      }
+    } catch (error) {
+      console.error("Error fetching script from assets:", error)
+    }
+
+    // Fallback to embedded script
+    try {
       const scriptContent = helloScript
       return new Response(scriptContent, {
         headers: {
@@ -185,6 +202,13 @@ openapi.post("/api/tokens/:uuid/revoke", TokenRevokeEndpoint)
 openapi.get("/api/ai/alt", AiAlt)
 // @ts-ignore
 openapi.post("/api/ai/alt", AiAltPost)
+
+// Fallback handler for static assets (Vue.js SPA)
+// This must be last to catch all unmatched routes
+app.all("*", async (c) => {
+  // For any route not handled by the API endpoints, serve static assets
+  return c.env.ASSETS.fetch(c.req.raw)
+})
 
 // Export the Hono app
 export default app
