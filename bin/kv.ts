@@ -45,7 +45,7 @@ function getTimestamp() {
 
 // Get KV namespace ID from environment or use default
 function getKVNamespaceId(): string {
-  return process.env.CLOUDFLARE_KV_NAMESPACE_ID || "fa48b0bd010a43289d5e111af42b8b50"
+  return process.env.CLOUDFLARE_KV_NAMESPACE_ID || "7ac00514fd4c4d4183851b8d7053eb53"
 }
 
 // List all KV keys
