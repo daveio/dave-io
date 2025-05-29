@@ -1,728 +1,366 @@
 # dave.io
 
-A multipurpose personal API powered by Cloudflare Workers.
+*Because why have one thing when you can have ALL the things?*
 
-![License](https://img.shields.io/github/license/daveio/dave.io)
+Welcome to my delightfully over-engineered corner of the internet. What started as "I should probably have a personal website" has somehow evolved into a full-blown platform that does... well, a bit of everything, really.
 
-## Overview
+![License](https://img.shields.io/github/license/daveio/dave-io-api)
 
-This project implements a multipurpose personal API that runs on Cloudflare Workers, providing several endpoints for various services:
+## What Even Is This?
 
-- **Ping**: Simple health check endpoint
-- **Go**: URL redirection service using KV storage (accessible at `/go/:slug`)
-- **Dashboard**: Data feeds for dashboards (demo and Hacker News available)
-- **RouterOS**: Generates RouterOS scripts for network configurations (currently implements put.io IP ranges)
-- **Metrics**: View API metrics in JSON, YAML, or Prometheus format
-- **Authentication**: JWT-based authentication system with scope-based authorization
-- **AI**: AI-powered services including alt text generation for images
+dave.io is what happens when you give a developer Cloudflare Workers and tell them "just make a simple website." It's both a personal website AND a comprehensive API platform, all living harmoniously in a single Workers deployment because apparently I enjoy making things complicated.
 
-The API is built with [Hono](https://hono.dev/) and uses [Chanfana](https://github.com/cloudflare/chanfana) for automatic OpenAPI 3.1 documentation generation and schema validation.
+Think of it as my digital Swiss Army knife - it's got a website, URL shortener, AI services, authentication system, dashboard feeds, network scripts, and probably a few other things I've forgotten about. It's the kind of project where "just add one more endpoint" is a dangerous phrase.
 
-## Features
+## The Good Stuff
 
-- **OpenAPI 3.1 Documentation**: Interactive Swagger UI at `/api/docs` and ReDoc at `/api/redocs`
-- **Auto-Generated API Schema**: Complete OpenAPI specification available at `/api/openapi.json`
-- **Type-Safe Development**: Built with TypeScript and Zod for runtime type validation and request/response validation
-- **Cloudflare Integration**:
+### 🌐 **Personal Website**
 
-  - KV Namespace for unified data storage
-  - Analytics Engine for request tracking and detailed analytics
-  - Automatic deployment via Wrangler
+A slick Vue.js single-page application that actually tells you about me. Revolutionary, I know.
 
-- **Metrics Tracking**: Monitors error rates and status codes via KV storage
-- **Error Monitoring**: All non-success/non-redirect responses are tracked for debugging
-- **KV Backup/Restore**: Command-line tools for data management
-- **Multiple Output Formats**: Support for JSON, YAML, and Prometheus metrics formats
-- **JWT Authentication**: Secure token-based authentication with configurable scopes, usage tracking, and token revocation
-- **CLI Tools**: Built-in utilities for JWT token generation with D1 metadata storage and KV management via Cloudflare SDK
+### 🔗 **URL Shortener**
 
-## Documentation
+`dave.io/go/something` - because long URLs are for people who don't host their own redirects.
 
-The API provides comprehensive OpenAPI 3.1 documentation with interactive interfaces:
+### 🤖 **AI Alt Text Generation**
 
-- **Interactive Swagger UI**: Available at `/api/docs` - test endpoints directly in your browser
-- **ReDoc Documentation**: Available at `/api/redocs` - clean, readable API documentation
-- **OpenAPI Schema**: Raw OpenAPI 3.1 specification at `/api/openapi.json`
+Point it at an image, get back descriptive alt text. Powered by Cloudflare's LLaVA model because accessibility matters (and because AI, used appropriately, is funky).
 
-All endpoints include detailed request/response schemas, parameter descriptions, and example responses.
+### 📊 **Dashboard Feeds**
 
-## Endpoints
+JSON/YAML feeds for dashboard widgets. Currently serves demo data and Hacker News. There's also a `dashkit` widget for Hacker News in `dashkit/`.
 
-### Ping
+### 🌐 **RouterOS Script Generator**
 
-- `GET /api/ping`: Simple health check endpoint
-- Returns: `{ "service": "api", "response": "pong" }`
+Generates MikroTik RouterOS scripts for blocking/allowing IP ranges. Currently handles put.io because... look, we all have our reasons.
 
-### Go
+### 📈 **Metrics Galore**
 
-- `GET /go/:slug`: Redirect to a URL by slug
-- Returns: HTTP 302 redirect to the target URL or 404 if not found
-- Usage: Direct browser access at `https://dave.io/go/your-slug`
+Tracks everything in multiple formats (JSON, YAML, Prometheus) because if you're not measuring it, are you even doing it right?
 
-### Dashboard
+### 🔐 **Enterprise-Grade Auth**
 
-- `GET /api/dashboard/:name`: Get dashboard data by name
-- Supported dashboards:
-  - `demo`: Sample dashboard data
-  - `hacker-news`: Latest stories from Hacker News RSS feed
+JWT authentication with hierarchical permissions, token revocation, usage tracking, and all the bells and whistles. It's probably overkill for a personal site, but hey, at least my API is secure.
 
-### RouterOS
-
-- `GET /api/routeros/putio`: Generate RouterOS script for put.io IP ranges
-- Returns: RouterOS script for creating address lists for put.io IPv4 and IPv6 ranges
-- `GET /api/routeros/cache`: Get cache status for RouterOS data
-- Returns: Cache status information including age and any errors
-- `GET /api/routeros/reset`: Reset the cache for RouterOS data
-- Returns: Confirmation of cache reset
-
-### Metrics
-
-- `GET /api/metrics`: Default metrics endpoint (returns JSON)
-- `GET /api/metrics/json`: Get metrics data in JSON format
-- `GET /api/metrics/yaml`: Get metrics data in YAML format
-- `GET /api/metrics/prometheus`: Get metrics data in Prometheus format
-- Returns: Metrics tracked in KV storage, including:
-  - Status code counts (`metrics:status:xxx`)
-  - Status code group counts (`metrics:group:xxx`)
-  - RouterOS cache metrics
-  - Other application-specific metrics
-
-### Authentication
-
-- `GET /api/auth`: JWT authentication info endpoint
-- Requires: Any valid JWT token (accepts any subject)
-- Returns: Detailed information about the provided JWT token, including subject breakdown
-- Headers: `Authorization: Bearer <token>` or query parameter `?token=<token>`
-
-### AI
-
-- `GET /api/ai/alt`: Generate alt text for images using AI
-- `POST /api/ai/alt`: Generate alt text for uploaded images
-- Requires: Valid JWT token with `ai` or `ai:alt` subject
-- GET method: URL parameter `image` - URL of the image to generate alt text for
-- POST method: Request body with base64-encoded image data
-- Returns: Generated alt text for an image along with rate limit information
-- Headers: `Authorization: Bearer <token>` or query parameter `?token=<token>`
-
-## Analytics
-
-This API uses Cloudflare Analytics Engine to track requests. The following data points are collected:
-
-- Endpoint access (ping, redirect, dashboard, routeros)
-- Slug information for redirects
-- Dashboard names accessed
-- Cache resets and status checks
-- Status codes and error rates
-- Request performance metrics
-- Client information (IP, user-agent, referrer)
-
-The API maintains a comprehensive record of non-successful responses (all status codes except 200, 301, and 302) in KV storage. These metrics are stored using hierarchical keys:
-
-- `metrics:status:{code}`: Status code occurrence counter
-- `metrics:group:{group}`: Status code group counter (4xx, 5xx)
-- `metrics:routeros`: Shared metrics for all RouterOS endpoints
-- `metrics:redirect:{slug}`: Click tracking data for redirect slugs
-
-No personally identifiable information is stored. Analytics are used for monitoring service usage and debugging.
-
-## 🔐 JWT Authentication
-
-The API includes a comprehensive JWT authentication system with enterprise-grade features for protecting sensitive endpoints. Features include UUID-based token tracking, request limiting, usage monitoring, token revocation, and metadata storage in Cloudflare D1 database. All authorization information is encoded in the subject field of the JWT token.
-
-### Quick Start
-
-1. **Set JWT Secret**: Configure your JWT secret as a Cloudflare Workers secret:
-
-```bash
-# For production - the secret will be named API_JWT_SECRET in Cloudflare
-bun run wrangler secret put API_JWT_SECRET
-
-# For local development, add to .dev.vars file (already created for you)
-# Edit .dev.vars and set your JWT secret:
-API_JWT_SECRET=your-super-secret-key-here
-```
-
-2. **Set Environment Variables**: Configure the required environment variables for the CLI tools:
-
-```bash
-# Required for JWT CLI tool
-export CLOUDFLARE_API_TOKEN=your-api-token-with-d1-permissions
-export CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
-export CLOUDFLARE_D1_DATABASE_ID=your-api-auth-metadata-database-id
-export JWT_SECRET=your-jwt-secret  # or API_JWT_SECRET
-
-# Required for KV CLI tool
-export CLOUDFLARE_API_TOKEN=your-api-token-with-kv-permissions
-export CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
-```
-
-3. **Generate a Token**: Use the enhanced CLI tool with full CRUD operations:
-
-```bash
-# Create a token (defaults to 30-day expiry for security)
-bun run jwt create --sub "ai:alt" --description "Alt text generation"
-
-# Create with custom expiry and request limits
-bun run jwt create --sub "ai" --expiry "7d" --max-requests 1000 --description "AI services"
-
-# Create without expiry (requires confirmation)
-bun run jwt create --sub "admin" --no-expiry --seriously-no-expiry
-
-# List all stored tokens
-bun run jwt list
-
-# Show detailed information about a token
-bun run jwt show <uuid>
-
-# Search tokens by criteria
-bun run jwt search --sub "ai"
-bun run jwt search --description "Dave"
-
-# Revoke a token (via KV - see instructions)
-bun run jwt revoke <uuid>
-```
-
-**Enhanced Features:**
-- **UUID Tracking**: Each token gets a unique identifier for tracking
-- **Usage Limits**: Optional `maxRequests` field for finite usage
-- **Metadata Storage**: Token details stored in Cloudflare D1 database
-- **Security Defaults**: 30-day default expiry with warnings for permanent tokens
-- **Token Management**: Full CRUD operations via CLI commands
-
-4. **Test Authentication**:
-
-```bash
-# Test the auth endpoint without a token (should return 401)
-curl https://dave.io/api/auth # trunk-ignore(gitleaks/curl-auth-header)
-
-# Test with invalid token (should return 401)
-curl -H "Authorization: Bearer invalid-token" https://dave.io/api/auth
-
-# Test with valid token (should return 200 with JWT details)
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://dave.io/api/auth # trunk-ignore(gitleaks/curl-auth-header)
-
-# Using query parameter instead of header
-curl "https://dave.io/api/auth?token=YOUR_JWT_TOKEN"
-```
-
-**Expected Responses:**
-
-- **No token**: `{"error":"Authentication required"}` (401)
-- **Invalid token**: `{"error":"Invalid token"}` (401)
-- **Valid token**: Success message with detailed JWT information (200)
-
-### Subject-Based Authorization
-
-The authentication system uses the subject field to encode user information and permissions. You can structure the subject to include user IDs, roles, and permissions as needed:
-
-- `user123`: Simple user ID
-- `admin:user123`: User with admin role
-- `user123:read:write`: User with specific permissions
-- `service:metrics`: Service account for metrics access
-
-### Token Usage
-
-JWT tokens can be provided in two ways:
-
-1. **Authorization Header** (recommended):
-
-```bash
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://dave.io/endpoint # trunk-ignore(gitleaks/curl-auth-header)
-```
-
-2. **Query Parameter**:
-
-```bash
-curl "https://dave.io/endpoint?token=YOUR_JWT_TOKEN"
-```
-
-### JWT CLI Tool
-
-The enhanced JWT management tool (`bun run jwt`) provides comprehensive token lifecycle management:
-
-**Available Commands:**
-
-```bash
-# Create tokens
-bun run jwt create [options]
-
-# List all tokens
-bun run jwt list [--limit <number>]
-
-# Show token details
-bun run jwt show <uuid>
-
-# Search tokens
-bun run jwt search [--uuid <uuid>] [--sub <subject>] [--description <text>]
-
-# Revoke tokens (instructions only)
-bun run jwt revoke <uuid>
-
-# Help
-bun run jwt --help
-```
-
-**Create Command Options:**
-
-- `--sub <subject>`: Subject for the token (required)
-- `--expiry <time>`: Token expiration (default: 30d, e.g., "1h", "7d", "30m")
-- `--max-requests <number>`: Maximum request limit for the token
-- `--description <text>`: Description for the token
-- `--no-expiry`: Create token without expiration (requires confirmation)
-- `--seriously-no-expiry`: Skip confirmation for no-expiry tokens
-
-**Database Integration:**
-
-The CLI tool stores token metadata in a Cloudflare D1 database (`API_AUTH_METADATA`) including:
-- UUID for unique identification
-- Subject and description
-- Creation and expiration timestamps
-- Maximum request limits
-- Usage tracking capabilities
-
-**Environment Requirements:**
-
-```bash
-# Required environment variables
-CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
-CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
-CLOUDFLARE_D1_DATABASE_ID=your-api-auth-metadata-database-id
-JWT_SECRET=your-jwt-secret  # or API_JWT_SECRET
-```
-
-### Authentication Responses
-
-**Success (200):**
-
-```json
-{
-  "message": "Authentication successful! JWT details retrieved.",
-  "jwt": {
-    "subject": "ai:alt",
-    "subjectParts": ["ai", "alt"],
-    "issuedAt": 1640995200,
-    "expiresAt": 1641081600,
-    "timeToExpiry": 86400,
-    "isExpired": false
-  },
-  "user": {
-    "id": "ai:alt"
-  },
-  "timestamp": "2024-01-01T12:00:00.000Z"
-}
-```
-
-**Authentication Required (401):**
-
-```json
-{
-  "error": "Authentication required"
-}
-```
-
-**Invalid Token (401):**
-
-```json
-{
-  "error": "Invalid token"
-}
-```
-
-### Implementing Authentication in Your Endpoints
-
-To protect an endpoint with JWT authentication, use the `requireAuth()` middleware. Here's the correct implementation pattern:
-
-```typescript
-import { requireAuth, type AuthorizedContext } from "../lib/auth"
-import type { Context } from "hono"
-
-export class MyProtectedEndpoint extends OpenAPIRoute {
-  async handle(c: Context) {
-    // Create the authentication middleware
-    const authMiddleware = requireAuth()
-
-    // The middleware will return a Response if authentication fails
-    let authResult: Response | void
-
-    try {
-      authResult = await authMiddleware(c, async () => {
-        // This function only executes if auth succeeds
-      })
-    } catch (error) {
-      console.error("Auth middleware error:", error)
-      return c.json({ error: "Authentication failed" }, 500)
-    }
-
-    // If the middleware returned a Response, auth failed
-    if (authResult instanceof Response) {
-      return authResult
-    }
-
-    // Authentication succeeded - access user info
-    const authContext = c as AuthorizedContext
-    const userId = authContext.user.id
-
-    // Your protected endpoint logic here...
-    return c.json({
-      message: "Success!",
-      user: authContext.user,
-      data: "sensitive data"
-    })
-  }
-}
-```
-
-**Important**: The middleware returns a `Response` object when authentication fails (401 status), so you must check for this and return it directly. Don't assume the middleware throws errors - it handles HTTP responses internally.
-
-### Endpoint-Specific Authorization
-
-For more granular control, use the `authorizeEndpoint()` function to restrict access based on the JWT subject:
-
-```typescript
-import { authorizeEndpoint } from "../lib/auth"
-import type { Context } from "hono"
-
-export class DocumentsEndpoint extends OpenAPIRoute {
-  async handle(c: Context) {
-    // Authorize access to the 'documents' endpoint
-    // This will validate the JWT and check if the subject matches 'documents'
-    return authorizeEndpoint('documents')(c, async () => {
-      return c.json({ message: "Access granted to documents endpoint" })
-    })
-  }
-}
-
-export class PublishDocumentEndpoint extends OpenAPIRoute {
-  async handle(c: Context) {
-    // Authorize access to the 'documents:publish' subresource
-    // This requires a JWT with subject 'documents:publish' or just 'documents'
-    return authorizeEndpoint('documents', 'publish')(c, async () => {
-      return c.json({ message: "Document published successfully" })
-    })
-  }
-}
-```
-
-**How it works**:
-- If the JWT subject is exactly "ENDPOINT" (e.g., "documents"), it authorizes access to all subresources
-- If the JWT subject is "ENDPOINT:SUBRESOURCE" (e.g., "documents:publish"), it only authorizes that specific subresource
-- The subject in the JWT is cryptographically secured and cannot be modified without invalidating the token
-- The function automatically handles responses from the handler and passes them through if authorized
-- Authentication and authorization errors are handled with appropriate 401/403 status codes
-
-This allows you to create JWTs with precise permissions for different operations:
-- `documents` - Full access to all document operations
-- `documents:read` - Read-only access to documents
-- `documents:write` - Write access to documents
-- `documents:publish` - Publishing access only
-
-### Security Features
-
-- **Industry Standard**: Uses the `jsonwebtoken` library following JWT best practices
-- **Configurable Expiration**: Support for flexible token expiration times
-- **Subject-Based Authorization**: Encode all permissions and roles in the subject field
-- **Multiple Token Sources**: Accepts tokens via header or query parameter
-- **Proper Error Handling**: Clear error messages for different failure scenarios
-- **Type Safety**: Full TypeScript support with proper type definitions
-
-## Project Structure
-
-```bash
-dave.io/
-├── dashkit/              # Dashboard widget example
-│   └── feed.js           # Simple list panel implementation
-├── src/                  # Main source code
-│   ├── endpoints/        # API endpoint implementations
-│   │   ├── ai/           # AI-related endpoints
-│   │   │   ├── index.ts  # AI endpoints export
-│   │   │   ├── base.ts   # Shared AI functionality
-│   │   │   ├── alt-get.ts # AI alt text (GET)
-│   │   │   ├── alt-post.ts # AI alt text (POST)
-│   │   │   └── image-processing.ts # Image utilities
-│   │   ├── auth.ts       # Authentication info endpoint
-│   │   ├── dashboard.ts  # Dashboard data endpoints
-│   │   ├── metrics.ts    # Metrics data endpoints
-│   │   ├── ping.ts       # Simple health check endpoint
-│   │   ├── go.ts         # URL redirection service
-│   │   └── routeros.ts   # RouterOS script generators
-│   ├── kv/               # KV storage operations
-│   │   ├── dashboard.ts  # Dashboard KV operations
-│   │   ├── redirect.ts   # Redirect KV operations (used by go endpoint)
-│   │   ├── routeros.ts   # RouterOS KV operations
-│   │   ├── metrics.ts    # Metrics tracking in KV
-│   │   └── init.ts       # KV initialization module
-│   ├── lib/              # Utility libraries
-│   │   ├── analytics.ts  # Request tracking via Analytics Engine
-│   │   ├── auth.ts       # JWT authentication middleware
-│   │   └── ip-address-utils.ts # IP address utilities
-│   ├── schemas/          # Zod schema definitions
-│   ├── index.ts          # Main application setup
-│   └── types.ts          # Type definitions
-└── wrangler.jsonc        # Cloudflare Workers configuration
-```
-
-## Storage Architecture
-
-This API uses a unified KV namespace for all data storage needs, with a hierarchical key structure to organize different types of data.
-
-### KV Namespace Structure
-
-All data is stored in a single KV namespace called `DATA` with a hierarchical key structure that follows the pattern: `topic:subtopic:resource`.
-
-- **Redirects**: Prefix `redirect:`
-
-  - `redirect:{slug}`: URL for the given redirect slug
-
-- **RouterOS**: Prefix `routeros:`
-
-  - `routeros:putio:ipv4`: Cached IPv4 ranges for put.io
-  - `routeros:putio:ipv6`: Cached IPv6 ranges for put.io
-  - `routeros:putio:script`: Generated RouterOS script for put.io
-  - `routeros:putio:metadata:last-updated`: Last update timestamp for put.io cache
-  - `routeros:putio:metadata:last-error`: Last error message for put.io cache
-  - `routeros:putio:metadata:last-attempt`: Last attempt timestamp for put.io cache
-  - `routeros:putio:metadata:update-in-progress`: Flag indicating if update is in progress
-
-- **Dashboard**: Prefix `dashboard:`
-
-  - `dashboard:demo:items`: Items for the demo dashboard
-
-- **Metrics**: Prefix `metrics:`
-  - `metrics:status:{code}`: Status code occurrence counter
-  - `metrics:group:{group}`: Status code group counter (4xx, 5xx)
-  - `metrics:routeros:cache-resets`: Count of cache resets
-  - `metrics:routeros:cache-hits`: Count of cache hits
-  - `metrics:routeros:cache-misses`: Count of cache misses
-  - `metrics:routeros:last-accessed`: Timestamp of last access
-  - `metrics:routeros:last-refresh`: Timestamp of last refresh
-  - `metrics:routeros:refresh-count`: Count of refreshes
-  - `metrics:routeros:last-reset`: Timestamp of last reset
-  - `metrics:routeros:reset-count`: Count of resets
-  - `metrics:redirect:{slug}:count`: Count of redirects for a slug
-  - `metrics:redirect:{slug}:last-accessed`: Timestamp of last access for a slug
-
-### KV Initialization
-
-The API automatically initializes all KV stores at startup with empty or zero values for any keys that don't exist. This ensures that all code paths can safely handle empty states without errors.
-
-- Empty arrays are initialized for lists (e.g., IP ranges)
-- Default metadata values are created with empty strings for timestamps
-- Metrics counters are initialized to zero
-- Empty strings are used for cached data
-
-Implementation details:
-
-```typescript
-// KV initialization (runs at application startup)
-app.use("*", async (c, next) => {
-  try {
-    // Initialize KV with default values
-    await initializeKV(c.env);
-  } catch (error) {
-    console.error("Error initializing KV store:", error);
-  }
-
-  // Continue with request handling
-  await next();
-});
-```
-
-Benefits of this unified KV approach:
-
-- **Organization**: Logical grouping of related data
-- **Simplified Management**: Single KV binding to manage across all endpoints
-- **Flexible Expansion**: Easy to add new data types and providers
-- **Resource Efficiency**: Reduces the number of KV namespaces needed
-- **Analytics Integration**: Built-in tracking for metrics and usage patterns
-- **Robustness**: Safe handling of empty or non-existent KV values
-- **Granularity**: Individual keys for metrics and metadata improve readability and make direct manipulation easier
-
-Implementation details:
-
-```typescript
-// Reading from KV (individual keys)
-const count = await env.DATA.get(`metrics:redirect:${slug}:count`);
-
-// Writing to KV with hierarchical keys
-await env.DATA.put(`routeros:putio:script`, script, { expirationTtl: 7200 });
-
-// Tracking usage metrics with individual keys
-await Promise.all([
-  env.DATA.put(`metrics:redirect:${slug}:count`, count.toString()),
-  env.DATA.put(
-    `metrics:redirect:${slug}:last-accessed`,
-    new Date().toISOString(),
-  ),
-]);
-```
-
-## Development
+## Quick Start (Or: How to Run This Monster)
 
 ### Prerequisites
 
-- [Bun](https://bun.sh/) (v1.2.14 or compatible)
-- [Node.js](https://nodejs.org/) (LTS version)
-- [mise](https://mise.jdx.dev/) for environment management (optional)
+- [Bun](https://bun.sh/) (because I got bored with Node)
+- A Cloudflare account (because where else would you run this?)
+- Patience (because setting up Cloudflare services takes time)
 
-### Getting Started
-
-1. Clone the repository:
+### Development Setup
 
 ```bash
-git clone https://github.com/daveio/dave.io.git
-cd dave.io
-```
+# Clone this beautiful mess
+git clone https://github.com/daveio/dave-io-api.git
+cd dave-io-api
 
-2. Install dependencies:
-
-```bash
+# Install all the dependencies (there are... many)
 bun install
-```
 
-3. Start the development server:
+# Set up your environment
+cp .env.example .env  # Create this file with your secrets
 
-```bash
+# Start the unified development server
 bun run dev
+
+# Or if you hate yourself, run things separately:
+bun run dev-frontend   # Just the Vue.js app
+bun run dev-worker     # Just the API
 ```
 
-### Cloudflare Workers Types
+### Environment Variables
 
-The project uses TypeScript types from the auto-generated `worker-configuration.d.ts` file created by Wrangler. Any changes to the Cloudflare bindings (KV namespaces, etc.) require running the type generation script:
+Create a `.env` file because hardcoding secrets is for amateurs:
 
 ```bash
-bun run types
+# JWT secret for authentication (make it good)
+API_JWT_SECRET=your-super-secret-key-that-definitely-isnt-password123
+
+# Cloudflare API access (for CLI tools)
+CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
+CLOUDFLARE_ACCOUNT_ID=your-account-id
+CLOUDFLARE_D1_DATABASE_ID=your-d1-database-id
 ```
 
-This script:
+## Available Commands
 
-1. Generates fresh type definitions based on `wrangler.jsonc` configuration
-2. Adds a `@ts-nocheck` directive to the top of the file to prevent TypeScript errors
-3. Updates references in the codebase automatically
-
-The custom `src/schemas/cloudflare.types.ts` file extends these types with project-specific additions.
-
-### Scripts
-
-- `bun run dev`: Start development server
-- `bun run deploy`: Deploy to Cloudflare Workers
-- `bun run types`: Generate type definitions for Cloudflare Workers
-- `bun run typecheck`: Run TypeScript type checking
-- `bun run lint`: Run linting with Trunk and Biome
-- `bun run format`: Format code with Trunk
-- `bun run jwt`: Generate JWT tokens for authentication
-- `bun kv`: Run KV backup/restore utility
-
-### KV Admin Utility
-
-The project includes a command-line utility for managing KV storage via the Cloudflare SDK:
+Because I like having options:
 
 ```bash
-# Backup KV data matching configured patterns to _backup/kv-{timestamp}.json (default)
-bun run bin/kv backup
+# Development
+bun run dev              # Start the dev server
 
-# Backup all KV data to _backup/kv-{timestamp}.json
-bun run bin/kv backup --all
+# Building and deploying
+bun run build           # Build everything
+bun run deploy          # Build and deploy to Cloudflare
+bun run clean           # Clean up generated files
 
-# Restore KV data from a backup file
-bun run bin/kv restore <filename>
+# Quality control
+bun run typecheck       # TypeScript validation
+bun run lint            # Code linting (Biome + Trunk)
+bun run format          # Code formatting
 
-# Wipe all KV data (DANGEROUS!)
-bun run bin/kv wipe
+# Useful utilities
+bun run jwt --help      # JWT token management CLI
+bun run kv --help       # KV data backup/restore
 ```
 
-**Environment Requirements:**
+## Documentation
+
+### Interactive API Docs
+
+- **Swagger UI**: [`/api/docs`](https://dave.io/api/docs) - Test endpoints directly in your browser
+- **ReDoc**: [`/api/redocs`](https://dave.io/api/redocs) - Clean, readable documentation
+- **OpenAPI Schema**: [`/api/openapi.json`](https://dave.io/api/openapi.json) - Raw specification
+
+Because good APIs deserve good docs, and bad APIs deserve them even more.
+
+## The API Endpoints
+
+### Core Services
+
+- `GET /api/ping` - "Am I alive?" (Spoiler: usually)
+- `GET /go/:slug` - URL redirection magic
+- `GET /api/dashboard/:name` - Dashboard data feeds (demo, hackernews)
+- `GET /api/routeros/putio` - RouterOS scripts for the networking nerds
+- `GET /api/routeros/cache` - Cache status (because caching is hard)
+- `GET /api/routeros/reset` - Nuclear option for cache
+- `GET /api/metrics[/format]` - All the metrics, all the time
+
+### Authentication & Token Stuff
+
+- `GET /api/auth` - Test your JWT tokens
+- `GET /api/tokens/:uuid/usage` - How much have you used that token?
+- `POST /api/tokens/:uuid/revoke` - Burn it all down
+
+### AI Services
+
+- `GET /api/ai/alt?image=url` - "What's in this picture?"
+- `POST /api/ai/alt` - Same thing but with base64 data
+
+All endpoints come with comprehensive OpenAPI documentation at `/api/docs` because I'm not a monster.
+
+## JWT Authentication (The Serious Bit)
+
+Because even personal projects need enterprise-grade security apparently:
+
+### Quick Setup
+
+1. **Set your JWT secret** (and make it actually secret):
 
 ```bash
-# Required environment variables
-export CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
-export CLOUDFLARE_ACCOUNT_ID=your-cloudflare-account-id
+# For production
+bun run wrangler secret put API_JWT_SECRET
+
+# For local development (create .env file)
+API_JWT_SECRET=your-super-secret-key-here
 ```
 
-This utility uses the Cloudflare SDK directly (no longer relies on Wrangler CLI) and helps ensure data safety by allowing you to create regular backups of KV storage data, as well as restore from backups and completely wipe the KV namespace if needed. The wipe function includes multiple confirmation prompts to prevent accidental data loss.
+2. **Set up CLI environment** (if you want the fancy tools):
 
-#### Backup Configuration
-
-By default, the backup command only includes keys matching specific patterns:
-
-- Keys that exactly match `dashboard:demo:items`
-- Keys that start with `redirect:`
-
-You can modify these patterns by editing the `BACKUP_KEY_PATTERNS` array in `bin/kv.ts`:
-
-```typescript
-// Configure the key patterns to include in the backup (using regular expressions)
-const BACKUP_KEY_PATTERNS = [
-  /^dashboard:demo:items$/, // Exact match for "dashboard:demo:items"
-  /^redirect:.*$/, // All keys starting with "redirect:"
-];
+```bash
+export CLOUDFLARE_API_TOKEN=your-token
+export CLOUDFLARE_ACCOUNT_ID=your-account-id
+export CLOUDFLARE_D1_DATABASE_ID=your-d1-database-id
 ```
 
-Use the `--all` or `-a` flag to back up all keys regardless of pattern.
+3. **Generate tokens** (the fun part):
 
-#### Value Handling
+```bash
+# Create a token (interactive mode is your friend)
+bun jwt create --interactive
 
-The KV Admin utility intelligently handles different value types:
+# Or if you're feeling dangerous:
+bun jwt create --sub "ai:alt" --expiry "30d" --description "Alt text access"
 
-- **String values** are stored and restored as plain strings without additional quotes
-- **JSON values** (objects, arrays, numbers, booleans, null) are properly serialized and deserialized
-- **Backup files** contain a mix of raw strings and JSON objects as appropriate
-- **Restore operations** maintain the correct type of each value
+# List your tokens (because you'll forget)
+bun jwt list
 
-This smart type handling ensures that string values like URLs and timestamps don't get double-quoted, while complex data structures like dashboard items are properly preserved.
+# Show specific token details
+bun jwt show <uuid>
 
-## DashKit Integration
+# Revoke a token (trust issues?)
+bun jwt revoke <uuid>
+```
 
-The project includes a simple DashKit widget in the `dashkit/` directory that demonstrates how to connect to the API and display data from the demo dashboard.
+### Token Features
 
-## Deployment
+- **Default 30-day expiration** (because permanent tokens are scary)
+- **Hierarchical permissions** (e.g., `ai` gives access to all AI endpoints, `ai:alt` just gives alt text access)
+- **Usage tracking** (know how much you're actually using this thing)
+- **Request limits** (prevent accidental DoS attacks on yourself)
+- **UUID tracking** (each token is special and unique, just like you)
+- **Revocation** (because sometimes trust is broken)
 
-The API is deployed to Cloudflare Workers using Wrangler. Deployment is automated via GitHub Actions when changes are pushed to the main branch. It's accessible at:
+### Using Tokens
 
-- `https://dave.io/api/*` - Main API endpoints
-- `https://dave.io/go/*` - URL redirection service
+```bash
+# Header method (recommended)
+curl -H "Authorization: Bearer YOUR_TOKEN" https://dave.io/api/auth
 
-### CI/CD
+# Query parameter method (for when headers are hard)
+curl "https://dave.io/api/auth?token=YOUR_TOKEN"
+```
 
-The project uses GitHub Actions for continuous integration and deployment:
+## Data Management (The Boring But Important Stuff)
 
-- **CI**: Runs linting and type checking on pull requests and pushes to main
+### KV Backup/Restore
 
-## License
+Because data loss is not fun:
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+```bash
+# Backup your data (smart move)
+bun kv backup
 
-## Author
+# Backup EVERYTHING (dangerous move)
+bun kv backup --all
 
-Dave Williams ([@daveio](https://github.com/daveio)) - [dave@dave.io](mailto:dave@dave.io)
+# Restore from backup (recovery move)
+bun kv restore backup-file.json
 
-## Schemas
+# Nuclear option (why would you do this?)
+bun kv wipe
+```
 
-The project uses Zod for schema validation and OpenAPI documentation. All schemas are defined in the `/src/schemas` directory, with each schema file having a corresponding `.schema.ts` suffix.
+### Storage Architecture
 
-The project uses comprehensive Zod schemas for all endpoints, providing:
+Everything lives in a single KV namespace with hierarchical keys:
 
-- **Request Validation**: All incoming requests are validated against schemas
-- **Response Documentation**: Detailed response schemas for OpenAPI documentation
-- **Type Safety**: Full TypeScript integration with automatic type inference
-- **Error Handling**: Consistent error response formats across all endpoints
+```plaintext
+dashboard:demo:items              # Demo dashboard data
+redirect:your-slug               # URL redirections
+routeros:putio:ipv4             # Cached IP ranges
+metrics:status:404              # Error tracking
+auth:count:uuid:requests        # Token usage
+```
 
-Each endpoint extends `OpenAPIRoute` from Chanfana and includes a `schema` property that defines:
-- Request parameters and body validation
-- Response formats and status codes
-- Endpoint tags, summaries, and descriptions
-- Security requirements (JWT authentication)
+It's like a filing cabinet, but digital and with more colons.
 
-## Notes
+## Architecture (The Nerdy Bits)
 
-Testing `/ai/alt` via POST - set `$jwt` and `$img` up front:
+### Frontend
+
+- **Vue 3** with Composition API
+- **Vite** for build tooling because it's fast and I'm impatient
+- **Tailwind CSS + UnoCSS** for styling without the bloat
+- **Auto-imports** because typing imports is tedious
+
+### Backend
+
+- **Hono** for the HTTP framework (it's like Express but for Workers)
+- **Chanfana** for OpenAPI docs that actually work
+- **Zod** for schema validation because runtime type checking is life
+- **TypeScript** everywhere because JavaScript without types is chaos
+
+### Storage & Services
+
+- **Cloudflare KV** for persistent data storage
+- **Analytics Engine** for tracking everything (yes, everything)
+- **Workers AI** for the LLaVA vision model
+- **D1 Database** for JWT token metadata
+- **Workers Assets** for serving the Vue.js app
+
+## Deployment (The Moment of Truth)
+
+It all deploys as a single Cloudflare Worker because why use multiple services when one will do?
+
+```bash
+# Deploy to production (fingers crossed)
+bun run deploy
+```
+
+The Worker serves both the Vue.js frontend and all API endpoints, handles redirects, serves shell scripts to curl requests, and probably makes coffee if you ask nicely.
+
+## Analytics (Big Brother Is Watching)
+
+This thing tracks everything:
+
+- Every API request (with response times, because performance matters)
+- Client information (IP, user-agent, the works)
+- Error rates and status codes
+- Cache hit/miss ratios
+- JWT token usage patterns
+
+All exported in your choice of JSON, YAML, or Prometheus format because variety is the spice of life.
+
+No personally identifiable information is stored though - I'm not that creepy.
+
+## Contributing (Welcome to the Madness)
+
+Found a bug? Want to add a feature? Great! Fork it, fix it, send a PR. Just remember:
+
+1. Run `bun run typecheck` before you commit (TypeScript errors are not optional)
+2. Use `bun run format` to keep the code pretty
+3. Write commit messages that actually explain what you did
+4. Test your changes (revolutionary concept, I know)
+
+## Project Structure (For the Curious)
+
+```bash
+dave.io/
+├── frontend/                # Vue.js SPA
+│   ├── App.vue             # Main app component
+│   ├── components/         # Reusable components
+│   ├── views/              # Page components
+│   └── assets/             # Static assets
+├── src/                    # Backend API
+│   ├── endpoints/          # API endpoints
+│   ├── kv/                 # KV storage utilities
+│   ├── lib/                # Shared libraries
+│   ├── schemas/            # Zod schemas
+│   └── index.ts            # Main application
+├── bin/                    # CLI utilities
+│   ├── jwt.ts              # JWT management
+│   └── kv.ts               # KV backup/restore
+├── dashkit/                # Dashboard widget example
+└── public/                 # Static files
+```
+
+## Testing AI Alt Text (The Fun Part)
+
+Want to test the AI endpoint? Here's a fish script because why not:
 
 ```fish
 begin
-set -l jwt JWTDATA && \
-set -l img IMAGEPATH && \
+set -l jwt YOUR_JWT_TOKEN && \
+set -l img /path/to/image.jpg && \
 curl -X POST "https://dave.io/api/ai/alt" \
     -H "Authorization: Bearer $jwt" \
     -H "Content-Type: application/json" \
     -d "{\"image\": \"data:image/jpeg;base64,$(base64 < $img | tr -d '\n')\"}" | jq .
 end
 ```
+
+Or just use the GET endpoint if you're not into base64 encoding:
+
+```bash
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "https://dave.io/api/ai/alt?image=https://example.com/image.jpg"
+```
+
+## License
+
+MIT License. Sharing is caring, and lawyers are expensive.
+
+## Final Thoughts
+
+This project is simultaneously over-engineered and exactly what I needed. It's a testament to what happens when you give a developer too much free time and access to modern serverless platforms.
+
+Is it overkill for a personal website? Absolutely.
+Do I regret it? Not even a little bit.
+Would I do it again? ...probably.
+
+The whole thing runs on a single Cloudflare Worker, serves a Vue.js SPA, provides a comprehensive API, tracks everything, and even makes decent coffee (disclaimer: coffee-making functionality not actually implemented).
+
+It's like having a datacenter in your pocket, except the datacenter is actually just someone else's computer and you're paying them to run your code. Modern technology is weird, but I'm here for it.
+
+Enjoy the code, and may your Workers deploy successfully. 🚀
+
+---
+
+*Built with an unreasonable amount of TypeScript, a healthy dose of "why not?", and way too much caffeine.*
+
+**Author**: Dave Williams ([@daveio](https://github.com/daveio)) - [dave@dave.io](mailto:dave@dave.io)

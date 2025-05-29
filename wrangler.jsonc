@@ -7,8 +7,11 @@
   "observability": {
     "enabled": true
   },
-  "placement": {
-    "mode": "smart"
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": true,
+    "binding": "ASSETS"
   },
   "ai": {
     "binding": "AI"
@@ -26,14 +29,13 @@
     }
   ],
   "routes": [
-    // we will need to handle curl and wget to the root eventually
     {
-      "pattern": "dave.io/api/*",
-      "zone_id": "cce768dd1ffadb4f24ae8fce0f7e979a"
+      "pattern": "dave.io",
+      "custom_domain": true
     },
     {
-      "pattern": "dave.io/go/*",
-      "zone_id": "cce768dd1ffadb4f24ae8fce0f7e979a"
+      "pattern": "www.dave.io",
+      "custom_domain": true
     }
   ]
 }

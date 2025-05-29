@@ -19,6 +19,42 @@ type Bindings = Env
 // Start a Hono app
 const app = new Hono<{ Bindings: Bindings }>()
 
+// Static redirects middleware (replaces _redirects file)
+app.use("*", async (c, next) => {
+  const url = new URL(c.req.url)
+  const pathname = url.pathname
+
+  // Define static redirects (from public/_redirects)
+  const redirects: Record<string, { url: string; status: number }> = {
+    "/301": { url: "https://www.youtube.com/watch?v=fEM21kmPPik", status: 301 },
+    "/302": { url: "https://www.youtube.com/watch?v=BDERfRP2GI0", status: 302 },
+    "/cv": { url: "https://cv.dave.io", status: 302 },
+    "/nerd-fonts": { url: "https://dave.io/go/nerd-fonts", status: 302 },
+    "/contact": { url: "https://dave.io/dave-williams.vcf", status: 302 },
+    "/public-key": { url: "https://dave.io/dave-williams.asc", status: 302 },
+    "/todo": { url: "https://dave.io/go/todo", status: 302 }
+  }
+
+  if (redirects[pathname]) {
+    const redirect = redirects[pathname]
+    return Response.redirect(redirect.url, redirect.status)
+  }
+
+  await next()
+})
+
+// Headers middleware (replaces _headers file)
+app.use("*", async (c, next) => {
+  await next()
+
+  const url = new URL(c.req.url)
+
+  // Add CORS headers for /.well-known/nostr.json
+  if (url.pathname === "/.well-known/nostr.json") {
+    c.res.headers.set("Access-Control-Allow-Origin", "*")
+  }
+})
+
 // Middleware to detect curl/wget requests and serve shell script for root path
 app.use("*", async (c, next) => {
   const userAgent = c.req.header("user-agent") || ""
@@ -30,7 +66,24 @@ app.use("*", async (c, next) => {
   // Only serve shell script for the root path (not /api/ or /go/ paths)
   if (isCurlOrWget && (url.pathname === "/" || url.pathname === "")) {
     try {
-      // Try to load the script content
+      // Try to fetch the shell script file from static assets first
+      const scriptResponse = await c.env.ASSETS.fetch(`${url.origin}/scripts/hello.sh`)
+
+      if (scriptResponse.ok) {
+        const scriptContent = await scriptResponse.text()
+        return new Response(scriptContent, {
+          headers: {
+            "Content-Type": "text/x-shellscript",
+            "Cache-Control": "no-cache"
+          }
+        })
+      }
+    } catch (error) {
+      console.error("Error fetching script from assets:", error)
+    }
+
+    // Fallback to embedded script
+    try {
       const scriptContent = helloScript
       return new Response(scriptContent, {
         headers: {
@@ -185,6 +238,13 @@ openapi.post("/api/tokens/:uuid/revoke", TokenRevokeEndpoint)
 openapi.get("/api/ai/alt", AiAlt)
 // @ts-ignore
 openapi.post("/api/ai/alt", AiAltPost)
+
+// Fallback handler for static assets (Vue.js SPA)
+// This must be last to catch all unmatched routes
+app.all("*", async (c) => {
+  // For any route not handled by the API endpoints, serve static assets
+  return c.env.ASSETS.fetch(c.req.raw)
+})
 
 // Export the Hono app
 export default app

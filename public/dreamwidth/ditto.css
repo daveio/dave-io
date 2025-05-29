@@ -1,0 +1,712 @@
+/*
+
+Original DITTO (based on tabula rasa) by luckyzukky
+  https://shinemagic.dreamwidth.org
+
+Modified 2025-01-13 by Dave W
+  https://daveio.dreamwidth.org
+
+tiny icons by yusuke kamiyamane
+  https://p.yusukekamiyamane.com
+
+CREDIT NOT REQUIRED BUT APPRECIATED
+
+*/
+
+html,
+body {
+  border: 0;
+  color: #33343f;
+  background: #c9dbef;
+  font: 16pt Oxygen, sans-serif;
+}
+
+/* organization */
+
+#header,
+#footer,
+#tertiary,
+#content-footer,
+.navigation.topnav,
+h2.module-header,
+.manage-link,
+.module-content ul.userlite-interaction-links.icon-links,
+.metadata-label,
+.tag-text,
+.comment-date-text,
+.comment-from-text,
+.comment-pages.bottompages,
+#invisible-separator {
+  display: none;
+}
+
+#content {
+  width: 800px;
+  margin: auto;
+}
+
+/* elements */
+
+a:hover {
+  color: #4e6f90;
+}
+
+a:link,
+a:active,
+a:visited {
+  color: #345372;
+  text-decoration: none;
+}
+
+span.cuttag ~ b > a {
+  text-transform: lowercase;
+}
+
+a:link:active,
+a:visited:active {
+  color: #345372;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #345372;
+}
+
+blockquote {
+  padding: 1em;
+  margin: 1em 0;
+  border: 2px solid #345372;
+  background: #acc8e4;
+}
+
+summary {
+  color: #345372;
+  list-style: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+summary:hover {
+  color: #4e6f90;
+}
+
+summary::before {
+  color: #33343f;
+  content: '( ';
+}
+
+summary::after {
+  color: #33343f;
+  content: ' )';
+}
+
+.entry-content ul {
+  padding-top: 1em;
+  padding-bottom: 1em;
+  padding-left: 2em;
+  margin: 0;
+}
+
+::selection {
+  color: #f7f7f7;
+  background: #345372;
+}
+
+/* secondary */
+
+#secondary {
+  font: bold 100% Oxygen, sans-serif;
+}
+
+#secondary > .inner:first-child {
+  width: 800px;
+  min-height: 100px;
+  padding: 0;
+  margin: auto;
+  background: #fcfcff;
+}
+
+.module-wrapper {
+  padding: 10px;
+}
+
+.module-content li {
+  margin: 0;
+}
+
+ul.module-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  text-transform: lowercase;
+}
+
+.module-list li {
+  display: inline-block;
+  margin: 0 0.3em 0 0;
+  font-size: 0.8rem;
+}
+
+.module-content .userpic {
+  float: right;
+  width: 75px;
+  height: 75px;
+}
+
+.ljuser img {
+  vertical-align: middle !important;
+}
+
+span.restrictions img,
+span.access-filter img {
+  width: 12px;
+  height: 12px;
+}
+
+.module-content .userpic img {
+  width: 75px;
+  height: 75px;
+}
+
+.module-customtext {
+  margin: 0.8em 0;
+  text-transform: lowercase;
+  font-size: 0.8rem;
+}
+
+/* entries */
+
+.entry {
+  padding: 10px;
+  margin-bottom: 1em;
+  background: #fcfcff;
+}
+
+.entry .contents {
+  min-height: 80px;
+}
+
+.entry-content {
+  margin-top: 0.5em;
+  text-align: justify;
+  font-size: 0.8rem;
+}
+
+.entry .entry-title,
+.entry .entry-title a {
+  padding: 0;
+  margin: 0;
+  text-transform: lowercase;
+  font-family: Oxygen, sans-serif;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.datetime {
+  text-transform: lowercase;
+  font-size: 0.7rem;
+}
+
+.entry .header {
+  line-height: 1;
+}
+
+.entry .userpic,
+.comment .userpic {
+  float: right;
+  width: 75px;
+  height: 75px;
+  padding: 0 0 0.5em 0.5em;
+}
+
+span.restrictions,
+span.access-filter {
+  line-height: 0;
+  vertical-align: bottom !important;
+}
+
+.poster {
+  font-size: 0.7rem;
+}
+
+.poster.entry-poster .ljuser {
+  font-size: 0.7rem;
+}
+
+.poster .ljuser img {
+  vertical-align: middle !important;
+}
+
+.metadata {
+  color: #345372;
+  text-transform: lowercase;
+  font: 0.7rem / 1.5 Oxygen, sans-serif;
+}
+
+.metadata li {
+  margin: 0;
+}
+
+.metadata-item-mood {
+  padding: 0 0 0 20px;
+  background: url('https://dave.io/dreamwidth/metadata-mood.png') no-repeat;
+}
+
+.metadata-item-location {
+  padding: 0 0 0 20px;
+  background: url('https://dave.io/dreamwidth/metadata-location.png') no-repeat;
+}
+
+.metadata-item-music {
+  padding: 0 0 0 20px;
+  background: url('https://dave.io/dreamwidth/metadata-music.png') no-repeat;
+}
+
+.tag ul {
+  padding: 0 0 0 20px;
+  background: url('https://dave.io/dreamwidth/tag.png') no-repeat;
+}
+
+/* .tag li {
+  vertical-align: super;
+} */
+
+.tag li::before {
+  color: #345372;
+  content: '#';
+}
+
+.tag-nav-trigger {
+  padding: 0 5px 0 0;
+  vertical-align: sub;
+}
+
+ul.entry-management-links,
+ul.comment-management-links {
+  padding: 0;
+  margin: 0;
+  text-align: right;
+}
+
+ul.comment-management-links.icon-links {
+  margin-top: 0.5em;
+}
+
+ul.entry-interaction-links,
+ul.comment-interaction-links {
+  padding: 0;
+  margin: 0;
+  text-align: right;
+}
+
+.entry .footer {
+  margin-top: 1em;
+  text-transform: lowercase;
+  font-size: 0.7rem;
+}
+
+.navigation ul {
+  padding: 0;
+  margin: 0;
+}
+
+li.page-forward,
+li.page-back {
+  padding: 0;
+  text-transform: lowercase;
+  font: bold 0.8rem Oxygen, sans-serif;
+}
+
+.noentries {
+  padding: 0;
+  text-transform: lowercase;
+  font-size: 0.8rem;
+}
+
+/* comments */
+
+.comment,
+.bottomcomment {
+  padding: 10px;
+  margin-bottom: 1em;
+  background: #fcfcff;
+}
+
+.comment-pages.toppages {
+  text-transform: lowercase;
+  font-family: Oxygen, sans-serif;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+h4.comment-title {
+  color: #345372;
+  text-transform: lowercase;
+  font-family: Oxygen, sans-serif;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+span.poster-ip {
+  font-size: 0.7rem;
+}
+
+.comment-content {
+  border: 0;
+  text-align: justify;
+  font-size: 0.8rem;
+}
+
+.comment-content::before {
+  content: none;
+}
+
+.comment .footer {
+  padding-top: 1em;
+}
+
+.comment .footer label {
+  text-transform: lowercase;
+  font: 0.8rem Oxygen, sans-serif;
+}
+
+.comment .edittime {
+  margin-top: 1em;
+  text-transform: lowercase;
+}
+
+ul.comment-interaction-links {
+  text-transform: lowercase;
+  font: 0.8rem Oxygen, sans-serif;
+}
+
+.bottomcomment {
+  text-transform: lowercase;
+  font-size: 0.8rem;
+}
+
+.bottomcomment .entry-interaction-links.text-links {
+  margin-bottom: 0.5em;
+}
+
+/* tag page */
+
+.tags-container {
+  padding: 10px;
+  background: #fcfcff;
+}
+
+.tags-container .header h2 {
+  padding: 0;
+  margin: 0;
+  color: #345372;
+  text-transform: lowercase;
+  font: bold 0.9rem Oxygen, sans-serif;
+}
+
+ul.ljtaglist {
+  padding: 0;
+  margin: 0.5em 0;
+  list-style-position: inside;
+  font: 0.8rem Oxygen, sans-serif;
+}
+
+/* archive page */
+
+#archive-year {
+  padding: 5px 10px;
+  background: #fcfcff;
+}
+
+.year {
+  font: 0.75rem 'courier new', Oxygen, sans-serif;
+}
+
+.month {
+  padding: 5px;
+  border: 0;
+  background-color: transparent;
+}
+
+.month .header {
+  margin-bottom: 1em;
+  color: #4e6f90;
+  text-align: right;
+  text-transform: lowercase;
+  font: 0.8rem Oxygen, sans-serif;
+}
+
+.month .footer {
+  margin-top: 1em;
+  text-align: right;
+  text-transform: lowercase;
+  font: 0.8rem Oxygen, sans-serif;
+}
+
+.month .footer a {
+  color: #345372;
+}
+
+td.day a:hover {
+  color: #4e6f90;
+}
+
+td.day a:link,
+td.day a:active,
+td.day a:visited {
+  color: #4e6f90;
+  font-weight: normal;
+}
+
+.month dl h3 a:hover {
+  color: #4e6f90;
+}
+
+.month dl h3 a:link,
+.month dl h3 a:active,
+.month dl h3 a:visited {
+  color: #345372;
+}
+
+.month dl dt a:link,
+.month dl dt a:active,
+.month dl dt a:visited {
+  color: #345372;
+}
+
+.month dl dt a:hover {
+  color: #4e6f90;
+}
+
+.month .footer a:hover {
+  color: #4e6f90;
+}
+
+td.day a:link:active,
+td.day a:visited:active {
+  color: #4e6f90;
+  font-weight: normal;
+}
+
+.month dl dt a:link:active,
+.month dl dt a:visited:active {
+  color: #345372;
+}
+
+.month dl h3 a:link:active,
+.month dl h3 a:visited:active {
+  color: #345372;
+}
+
+table.month {
+  color: #345372;
+  text-transform: lowercase;
+  font: 0.8rem Oxygen, sans-serif;
+}
+
+table.month caption {
+  padding-bottom: 0.5em;
+  font-weight: bold;
+}
+
+table.month th {
+  border: 1px solid #345372;
+  color: #345372;
+  text-transform: lowercase;
+  font-family: Oxygen, sans-serif;
+}
+
+table.month td {
+  height: initial;
+  border: 1px solid #345372;
+  font-family: Oxygen, sans-serif;
+}
+
+table.month td.day {
+  border: 1px solid #345372;
+  text-align: right;
+  font-family: Oxygen, sans-serif;
+}
+
+td.day span.label {
+  text-align: right;
+  font-family: Oxygen, sans-serif;
+}
+
+.day h3.day-date {
+  display: none;
+}
+
+.year ~ .navigation.bottomnav {
+  padding: 2px;
+  margin-top: 0.7em;
+  color: #345372;
+  text-align: right;
+  text-transform: lowercase;
+  font: 1em Oxygen, sans-serif;
+}
+
+.navigation li {
+  padding: 0 0.3em;
+}
+
+.page-month .month {
+  background: #fcfcff;
+}
+
+.page-month .month .entry-poster {
+  display: none;
+}
+
+.page-month .month .tag {
+  display: none;
+}
+
+.month dd {
+  margin-left: 1em;
+  font-family: Oxygen, sans-serif;
+}
+
+.month dl h3 {
+  font: bold 0.8rem Oxygen, sans-serif;
+}
+
+.month dl dt {
+  padding: 0.25em 5px 0 0;
+  margin: 0.25em 0;
+  text-align: right;
+  text-transform: lowercase;
+  font: 1rem bold Oxygen, sans-serif;
+}
+
+.month .overview-commentcount {
+  font: 0.8rem Oxygen, sans-serif;
+}
+
+#archive-month input[value='View'] {
+  padding: 0.5em;
+  border: 0;
+  color: #345372;
+  background: none;
+  text-transform: lowercase;
+  font: 0.8rem Oxygen, sans-serif;
+}
+
+li.month-forward,
+li.month-back {
+  padding: 0;
+  font: 0.8rem Oxygen, sans-serif;
+}
+
+#archive-month .navigation.bottomnav li {
+  padding-right: 0;
+}
+
+/* lj controlstrip */
+
+#lj_controlstrip {
+  color: #f7f7f7;
+  background: #345372;
+}
+
+#lj_controlstrip a {
+  color: #f7f7f7;
+  text-transform: lowercase;
+  font: bold 11px / 0 Oxygen, sans-serif;
+}
+
+#lj_controlstrip > div {
+  text-transform: lowercase;
+  font: bold 11px Oxygen, sans-serif;
+}
+
+#lj_controlstrip_statustext {
+  color: inherit;
+  font-size: inherit;
+}
+
+#lj_controlstrip .ljuser img {
+  background: inherit;
+}
+
+#lj_controlstrip_user,
+#lj_controlstrip_login,
+#lj_controlstrip_actionlinks {
+  border: 0;
+}
+
+#lj_controlstrip select,
+#lj_controlstrip input#xc_user,
+#lj_controlstrip input#xc_password,
+#lj_controlstrip input#xc_remember,
+#lj_controlstrip input#search {
+  border: 0;
+  color: #33343f;
+  text-transform: lowercase;
+  font-family: Oxygen, sans-serif;
+  font-weight: bold;
+}
+
+#lj_controlstrip input {
+  border: 0;
+  color: #33343f;
+  text-transform: lowercase;
+  font-family: Oxygen, sans-serif;
+  font-weight: bold;
+}
+
+#lj_controlstrip input#search {
+  text-transform: none;
+}
+
+/* tinyicons - fugue icon set by yusukekamiyamane */
+
+img[src*='user.png'] {
+  width: 0;
+  height: 0;
+  padding: 16px 0 0 18px !important;
+  margin: 0 auto;
+  background: transparent url('https://dave.io/dreamwidth/user.png') no-repeat !important;
+  vertical-align: middle;
+}
+
+img[src*='community.png'] {
+  width: 0;
+  height: 0;
+  padding: 16px 0 0 18px !important;
+  margin: 0 auto;
+  background: transparent url('https://dave.io/dreamwidth/community.png') no-repeat !important;
+  vertical-align: middle;
+}
+
+img[src*='collapse.svg'] {
+  width: 0;
+  height: 0;
+  padding: 16px 0 0 8px !important;
+  margin: 0 auto;
+  background: transparent url('https://dave.io/dreamwidth/collapse.png') no-repeat !important;
+  vertical-align: middle !important;
+}
+
+img[src*='expand.svg'] {
+  width: 0;
+  height: 0;
+  padding: 16px 0 0 8px !important;
+  margin: 0 auto;
+  background: transparent url('https://dave.io/dreamwidth/expand.png') no-repeat !important;
+  vertical-align: middle !important;
+}
+
+img[src*='collapse-end.svg'] {
+  width: 0;
+  height: 0;
+  padding: 16px 0 0 8px !important;
+  margin: 0 auto;
+  background: transparent url('https://dave.io/dreamwidth/collapse-end.png') no-repeat !important;
+  vertical-align: middle !important;
+}

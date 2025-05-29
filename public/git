@@ -1,0 +1,88 @@
+[alias]
+  a = add
+  aa = add -A .
+  addp = add --patch
+  b = branch
+  br = branch
+  bump-submodules = submodule update --remote --merge
+  c = commit
+  cam = commit -am
+  ci = commit
+  co = checkout
+  comp = commit --patch
+  d = diff
+  f = fetch
+  l = log --graph --pretty='%Cred%h%Creset - %C(bold blue)<%an>%Creset %s%C(yellow)%d%Creset %Cgreen(%cr)' --abbrev-commit --date=relative
+  p = push
+  pa = add --patch
+  pc = commit --patch
+  pp = !git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)
+  pr = pull --rebase
+  recent-branches = branch --sort=-committerdate
+  rf = reflog
+  s = status
+  unstage = reset HEAD --
+[color]
+  ui = true
+[color "diff"]
+  meta = 11
+  frag = magenta bold
+  func = 146 bold
+  commit = yellow bold
+  old = red bold
+  new = green bold
+  whitespace = red reverse
+[color "diff-highlight"]
+  oldNormal = red bold
+  oldHighlight = red bold 52
+  newNormal = green bold
+  newHighlight = green bold 22
+[commit]
+	gpgSign = true
+[core]
+  editor = zed --wait
+  pager = diff-so-fancy | less --tabs=4 -RF
+	excludesfile = /Users/dave/.gitignore_global
+	fsmonitor = true
+[difftool]
+  prompt = false
+  trustExitCode = true
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+[ghq]
+  root = ~/src
+[gpg]
+	program = /usr/local/bin/gpg
+	format = openpgp
+[gpg "ssh"]
+  program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+  allowedsignersfile = ~/.ssh/allowed_signers
+[init]
+  defaultBranch = main
+[interactive]
+  diffFilter = diff-so-fancy --patch
+[lfs]
+  tustransfers = true
+[mergetool]
+  prompt = false
+[pull]
+  rebase = true
+[signing]
+  signByDefault = true
+  key = D8DC6603D9C3515382A1C63C385FD3CEF5E5C6EC
+[tag]
+	forceSignAnnotated = true
+[user]
+	name = Dave Williams
+	email = dave@dave.io
+	signingKey = D8DC6603D9C3515382A1C63C385FD3CEF5E5C6EC
+  bitbucket = daveio
+  github = daveio
+  gitlab = dave
+[credential]
+  helper = /usr/local/share/gcm-core/git-credential-manager
+[credential "https://dev.azure.com"]
+  useHttpPath = true
