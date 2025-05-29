@@ -55,8 +55,6 @@ lint:
         - ALL
       paths:
         - worker-configuration.d.ts
-        - auto-imports.d.ts
-        - components.d.ts
         - dist/**
     - linters:
         - trunk-toolbox
