@@ -19,6 +19,42 @@ type Bindings = Env
 // Start a Hono app
 const app = new Hono<{ Bindings: Bindings }>()
 
+// Static redirects middleware (replaces _redirects file)
+app.use("*", async (c, next) => {
+  const url = new URL(c.req.url)
+  const pathname = url.pathname
+
+  // Define static redirects (from public/_redirects)
+  const redirects: Record<string, { url: string; status: number }> = {
+    "/301": { url: "https://www.youtube.com/watch?v=fEM21kmPPik", status: 301 },
+    "/302": { url: "https://www.youtube.com/watch?v=BDERfRP2GI0", status: 302 },
+    "/cv": { url: "https://cv.dave.io", status: 302 },
+    "/nerd-fonts": { url: "https://dave.io/go/nerd-fonts", status: 302 },
+    "/contact": { url: "https://dave.io/dave-williams.vcf", status: 302 },
+    "/public-key": { url: "https://dave.io/dave-williams.asc", status: 302 },
+    "/todo": { url: "https://dave.io/go/todo", status: 302 }
+  }
+
+  if (redirects[pathname]) {
+    const redirect = redirects[pathname]
+    return Response.redirect(redirect.url, redirect.status)
+  }
+
+  await next()
+})
+
+// Headers middleware (replaces _headers file)
+app.use("*", async (c, next) => {
+  await next()
+
+  const url = new URL(c.req.url)
+
+  // Add CORS headers for /.well-known/nostr.json
+  if (url.pathname === "/.well-known/nostr.json") {
+    c.res.headers.set("Access-Control-Allow-Origin", "*")
+  }
+})
+
 // Middleware to detect curl/wget requests and serve shell script for root path
 app.use("*", async (c, next) => {
   const userAgent = c.req.header("user-agent") || ""

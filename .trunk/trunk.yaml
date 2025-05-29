@@ -55,10 +55,23 @@ lint:
         - ALL
       paths:
         - worker-configuration.d.ts
+        - auto-imports.d.ts
+        - components.d.ts
+        - dist/**
     - linters:
         - trunk-toolbox
       paths:
         - src/scripts/hello.ts
+        - src/index.ts
+        - "**/*.jpg"
+        - "**/*.png"
+        - "**/*.ico"
+        - "**/*.sh"
+        - "**/_redirects"
+    - linters:
+        - gitleaks
+      paths:
+        - README.md
 plugins:
   # https://docs.trunk.io/plugins
   sources:
