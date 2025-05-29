@@ -1,3 +1,4 @@
 {
-  "workbench.colorCustomizations": {}
+  "workbench.colorCustomizations": {},
+  "postman.settings.dotenv-detection-notification-visibility": false
 }
