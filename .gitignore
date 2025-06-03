@@ -94,4 +94,7 @@ web_modules/
 yarn-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Cloudflare KV exports
+kv-keys.yaml
 yarn-error.log*
