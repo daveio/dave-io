@@ -1,3 +1,5 @@
+# -*- mode: go-template; tab_size: 4; hard_tabs: false -*-
+
 Host tilde
   HostName tilde.club
   User daveio
@@ -137,6 +139,8 @@ Host wlwi-secondary
 # Global settings unless overridden
 Host *
   Compression yes
-  IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+  
+    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+
   ForwardAgent yes
   Port 212

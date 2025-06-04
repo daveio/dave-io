@@ -12,6 +12,7 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHGtiVPF47PUU4Hk4cws61UaQKj1joBYBtwT/UkiNTN0
 
 # mobile devices with secure enclave
 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAe6eVk1T6ZS/0euGp15aC6zyLsvEz2NOrV3z1csptyQ2qcfVBRN+Z/pGMcHFZbnWikwJN0GVJ6knz4dL4RbRJo= dave+iphone-termius@dave.io
+ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBH0Wb8GxrjW1c1JT95Bp/cfKEof8bIWOEz0241/lux+CBnK76yiITXPMBnnH0VzPlh1/Bvn8RJu7nUr2EK11U/Y= dave+iphone-shellfish@dave.io
 
 # devices
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILM+Yem/aS6QpO1UJo7fOgHnm/dPkd9949YdealB+WRK dave+surface@dave.io

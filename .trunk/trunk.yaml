@@ -21,7 +21,7 @@ actions:
     - trunk-fmt-pre-commit
     - trunk-upgrade-available
 cli:
-  version: 1.22.15
+  version: 1.24.0
 lint:
   # https://docs.trunk.io/check/configuration
   disabled:
@@ -31,24 +31,25 @@ lint:
     - markdown-link-check
     - prettier
   enabled:
+    - djlint@1.36.4
     - hadolint@2.12.1-beta
     - shellcheck@0.10.0
     - shfmt@3.6.0
     - svgo@3.3.2
     - oxipng@9.1.5
     - sourcery@1.37.0
-    - semgrep@1.122.0
+    - semgrep@1.123.0
     - biome@1.9.4
     - dustilock@1.2.0
-    - gitleaks@8.26.0
+    - gitleaks@8.27.0
     - osv-scanner@2.0.2
     - taplo@0.9.3
     - trunk-toolbox@0.5.4
     - actionlint@1.7.7
-    - checkov@3.2.435
+    - checkov@3.2.436
     - git-diff-check
     - markdownlint@0.45.0
-    - trufflehog@3.88.34
+    - trufflehog@3.88.35
     - yamllint@1.37.1
   ignore:
     - linters:
