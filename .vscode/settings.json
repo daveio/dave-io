@@ -1,3 +1,12 @@
 {
-  "postman.settings.dotenv-detection-notification-visibility": false
+  "postman.settings.dotenv-detection-notification-visibility": false,
+  "go.goroot": "/Users/dave/.local/share/mise/installs/go/1.24.4",
+  "debug.javascript.defaultRuntimeExecutable": {
+    "pwa-node": "/Users/dave/.local/share/mise/shims/node"
+  },
+  "python.defaultInterpreterPath": "/Users/dave/.local/share/mise/installs/python/3.13.4/bin/python",
+  "go.alternateTools": {
+    "go": "/Users/dave/.local/share/mise/shims/go",
+    "gopls": "/Users/dave/.local/share/mise/shims/gopls"
+  }
 }
