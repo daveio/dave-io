@@ -1,5 +1,4 @@
 {
-  "postman.settings.dotenv-detection-notification-visibility": false,
   "go.goroot": "/Users/dave/.local/share/mise/installs/go/1.24.4",
   "debug.javascript.defaultRuntimeExecutable": {
     "pwa-node": "/Users/dave/.local/share/mise/shims/node"
@@ -8,5 +7,6 @@
   "go.alternateTools": {
     "go": "/Users/dave/.local/share/mise/shims/go",
     "gopls": "/Users/dave/.local/share/mise/shims/gopls"
-  }
+  },
+  "workbench.colorCustomizations": {}
 }
