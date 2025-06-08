@@ -96,7 +96,7 @@ bun jwt create --interactive
 
 ### 💾 KV Storage Management (The Crown Jewel)
 
-**🚨 BREAKING CHANGE**: Enhanced YAML support with anchors and structured schema!
+**🚨 BREAKING CHANGE**: Enhanced YAML support with anchors and a hierarchical layout for readability while storing values as flat KV keys.
 
 - Complete export/import system with structured YAML
 - YAML anchor/reference support for DRY configuration management
@@ -365,7 +365,7 @@ bun run kv --local wipe              # Wipe local dev storage (safe!)
 **YAML All The Things! (Now With More Structure!):**
 
 The new YAML export/import system is even better:
-- **Human-Readable**: Structured hierarchical configuration files
+- **Human-Readable**: Hierarchical YAML for readability, automatically converted to flat KV keys
 - **Git-Friendly**: Proper diff support and version control
 - **Anchor Support**: YAML anchors and references for DRY configuration
 - **Integer Handling**: Numbers exported as integers, not strings
@@ -655,7 +655,7 @@ metrics:redirect:blog:error = "2"
 
 **Trade-offs**: Simple flat keys prioritize code maintainability over query performance. Multiple KV lookups required for dashboard aggregation.
 
-> **TODO**: Add metrics to measure KV lookup timing impacts. Track time taken for each operation and all operations. Quantify the performance cost of flat key structure vs structured JSON approach.
+> **TODO**: Add metrics to measure KV lookup timing impacts. Track time taken for each operation and all operations. Quantify any performance difference between the flat key structure and the previous hierarchical JSON schema.
 
 ### Current Architecture Benefits
 

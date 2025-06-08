@@ -306,7 +306,7 @@ export async function updateReaderMetrics(
 ) {
   const kv = getKVNamespace()
   
-  // Update hierarchical metrics following existing pattern
+  // Update metrics using the flat key/value approach
   await Promise.all([
     updateResourceMetrics(kv, 'reader', statusCode),
     updateVisitorMetrics(kv, 'reader', ip),
