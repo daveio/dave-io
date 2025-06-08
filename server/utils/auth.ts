@@ -155,14 +155,22 @@ export async function authorizeEndpoint(
     // Get JWT secret from Cloudflare environment or runtime config
     let secret: string
 
-    // Try to get secret from Cloudflare Workers environment first
     const env = event.context.cloudflare?.env as { API_JWT_SECRET?: string }
+    const configSecret = useRuntimeConfig(event).apiJwtSecret
+
+    // Prefer Cloudflare Workers secret when available
     if (env?.API_JWT_SECRET) {
       secret = env.API_JWT_SECRET
+
+      // Detect mismatched secrets between environments
+      if (configSecret && configSecret !== secret) {
+        console.warn(
+          "JWT secret mismatch between Cloudflare environment and runtime config"
+        )
+      }
     } else {
       // Fallback to runtime config for non-Cloudflare environments
-      const config = useRuntimeConfig(event)
-      secret = config.apiJwtSecret
+      secret = configSecret
     }
 
     if (!secret || secret === "dev-secret-change-in-production") {

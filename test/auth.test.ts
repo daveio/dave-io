@@ -2,7 +2,13 @@ import type { IncomingMessage, ServerResponse } from "node:http"
 import type { H3Event } from "h3"
 import { SignJWT } from "jose"
 import { beforeEach, describe, expect, it } from "vitest"
-import { checkEndpointPermission, extractToken, getUserFromPayload, verifyJWT } from "~/server/utils/auth"
+import {
+  checkEndpointPermission,
+  extractToken,
+  getUserFromPayload,
+  verifyJWT,
+  authorizeEndpoint
+} from "~/server/utils/auth"
 
 // Mock H3Event for testing - this is a simplified version for unit testing
 function mockH3Event(headers: Record<string, string> = {}, query: Record<string, unknown> = {}): H3Event {
@@ -245,6 +251,35 @@ describe("Authentication System", () => {
       expect(user.issuedAt).toEqual(new Date(1609459200 * 1000))
       expect(user.expiresAt).toBeNull()
       expect(user.tokenId).toBe("test-token-id")
+    })
+  })
+
+  describe("authorizeEndpoint", () => {
+    it("should warn when secrets mismatch", async () => {
+      const envSecret = "env-secret"
+      const configSecret = "config-secret"
+      const now = Math.floor(Date.now() / 1000)
+
+      const encoder = new TextEncoder()
+      const token = await new SignJWT({ sub: "api", iat: now })
+        .setProtectedHeader({ alg: "HS256" })
+        .sign(encoder.encode(envSecret))
+
+      const event = mockH3Event({ authorization: `Bearer ${token}` })
+      event.context = { cloudflare: { env: { API_JWT_SECRET: envSecret } } }
+
+      ;(global as any).useRuntimeConfig = () => ({ apiJwtSecret: configSecret })
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {})
+
+      const authFunc = await authorizeEndpoint("api")
+      const result = await authFunc(event)
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        "JWT secret mismatch between Cloudflare environment and runtime config"
+      )
+      expect(result.success).toBe(true)
+
+      warnSpy.mockRestore()
     })
   })
 })
