@@ -1,4 +1,7 @@
+import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi"
 import { z } from "zod"
+
+extendZodWithOpenApi(z)
 
 // Common response schemas
 export const ApiSuccessResponseSchema = z.object({

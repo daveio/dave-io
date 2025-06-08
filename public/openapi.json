@@ -1,0 +1,1724 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Dave.io API",
+    "version": "1.0.0",
+    "description": "Automatically generated OpenAPI specification"
+  },
+  "components": {
+    "schemas": {
+      "AiAltTextRequestSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "image": {
+            "type": "string"
+          }
+        }
+      },
+      "AiAltTextResponseSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "alt_text": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number"
+          },
+          "processing_time_ms": {
+            "type": "number"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "alt_text",
+          "timestamp"
+        ]
+      },
+      "ApiErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "error": {
+            "type": "string"
+          },
+          "details": {},
+          "meta": {
+            "type": "object",
+            "properties": {
+              "request_id": {
+                "type": "string"
+              }
+            }
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "error",
+          "timestamp"
+        ]
+      },
+      "ApiSuccessResponseSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "data": {},
+          "message": {
+            "type": "string"
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "total": {
+                "type": "number"
+              },
+              "page": {
+                "type": "number"
+              },
+              "per_page": {
+                "type": "number"
+              },
+              "total_pages": {
+                "type": "number"
+              },
+              "request_id": {
+                "type": "string"
+              }
+            }
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "timestamp"
+        ]
+      },
+      "AuthIntrospectionSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "valid": {
+                "type": "boolean"
+              },
+              "payload": {
+                "type": "object",
+                "properties": {
+                  "sub": {
+                    "type": "string"
+                  },
+                  "iat": {
+                    "type": "number"
+                  },
+                  "exp": {
+                    "type": "number"
+                  },
+                  "jti": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "sub",
+                  "iat"
+                ]
+              },
+              "user": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "issuedAt": {
+                    "type": "string"
+                  },
+                  "expiresAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tokenId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "issuedAt",
+                  "expiresAt"
+                ]
+              },
+              "error": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "valid"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "data",
+          "timestamp"
+        ]
+      },
+      "AuthSuccessResponseSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "jwt": {
+            "type": "object",
+            "properties": {
+              "sub": {
+                "type": "string"
+              },
+              "iat": {
+                "type": "number"
+              },
+              "exp": {
+                "type": "number"
+              },
+              "jti": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sub",
+              "iat"
+            ]
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "issuedAt": {
+                "type": "string"
+              },
+              "expiresAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "tokenId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "issuedAt",
+              "expiresAt"
+            ]
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "message",
+          "jwt",
+          "user",
+          "timestamp"
+        ]
+      },
+      "CreateRedirectSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "pattern": "^[a-zA-Z0-9\\-_]+$"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "url"
+        ]
+      },
+      "HealthCheckSchema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "error"
+            ]
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "runtime": {
+            "type": "string"
+          },
+          "cf_ray": {
+            "type": "string"
+          },
+          "cf_datacenter": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "timestamp",
+          "version",
+          "environment"
+        ]
+      },
+      "JWTDetailsSchema": {
+        "type": "object",
+        "properties": {
+          "sub": {
+            "type": "string"
+          },
+          "iat": {
+            "type": "number"
+          },
+          "exp": {
+            "type": "number"
+          },
+          "jti": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "sub",
+          "iat"
+        ]
+      },
+      "JWTPayloadSchema": {
+        "type": "object",
+        "properties": {
+          "sub": {
+            "type": "string"
+          },
+          "iat": {
+            "type": "number"
+          },
+          "exp": {
+            "type": "number"
+          },
+          "jti": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "sub",
+          "iat"
+        ]
+      },
+      "KVDataSchema": {
+        "type": "object",
+        "properties": {
+          "metrics": {
+            "type": "object",
+            "properties": {
+              "resources": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "number"
+                    },
+                    "error": {
+                      "type": "number"
+                    },
+                    "times": {
+                      "type": "object",
+                      "properties": {
+                        "last-hit": {
+                          "type": "number"
+                        },
+                        "last-error": {
+                          "type": "number"
+                        },
+                        "last-ok": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "last-hit",
+                        "last-error",
+                        "last-ok"
+                      ]
+                    },
+                    "visitor": {
+                      "type": "object",
+                      "properties": {
+                        "human": {
+                          "type": "number"
+                        },
+                        "bot": {
+                          "type": "number"
+                        },
+                        "unknown": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "human",
+                        "bot",
+                        "unknown"
+                      ]
+                    },
+                    "group": {
+                      "type": "object",
+                      "properties": {
+                        "1xx": {
+                          "type": "number"
+                        },
+                        "2xx": {
+                          "type": "number"
+                        },
+                        "3xx": {
+                          "type": "number"
+                        },
+                        "4xx": {
+                          "type": "number"
+                        },
+                        "5xx": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "1xx",
+                        "2xx",
+                        "3xx",
+                        "4xx",
+                        "5xx"
+                      ]
+                    },
+                    "status": {
+                      "type": "object",
+                      "properties": {
+                        "304": {
+                          "type": "number"
+                        },
+                        "307": {
+                          "type": "number"
+                        },
+                        "404": {
+                          "type": "number"
+                        },
+                        "405": {
+                          "type": "number"
+                        },
+                        "500": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "error",
+                    "times",
+                    "visitor",
+                    "group",
+                    "status"
+                  ]
+                }
+              },
+              "redirect": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "number"
+                    },
+                    "error": {
+                      "type": "number"
+                    },
+                    "times": {
+                      "type": "object",
+                      "properties": {
+                        "last-hit": {
+                          "type": "number"
+                        },
+                        "last-error": {
+                          "type": "number"
+                        },
+                        "last-ok": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "last-hit",
+                        "last-error",
+                        "last-ok"
+                      ]
+                    },
+                    "visitor": {
+                      "type": "object",
+                      "properties": {
+                        "human": {
+                          "type": "number"
+                        },
+                        "bot": {
+                          "type": "number"
+                        },
+                        "unknown": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "human",
+                        "bot",
+                        "unknown"
+                      ]
+                    },
+                    "group": {
+                      "type": "object",
+                      "properties": {
+                        "1xx": {
+                          "type": "number"
+                        },
+                        "2xx": {
+                          "type": "number"
+                        },
+                        "3xx": {
+                          "type": "number"
+                        },
+                        "4xx": {
+                          "type": "number"
+                        },
+                        "5xx": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "1xx",
+                        "2xx",
+                        "3xx",
+                        "4xx",
+                        "5xx"
+                      ]
+                    },
+                    "status": {
+                      "type": "object",
+                      "properties": {
+                        "304": {
+                          "type": "number"
+                        },
+                        "307": {
+                          "type": "number"
+                        },
+                        "404": {
+                          "type": "number"
+                        },
+                        "405": {
+                          "type": "number"
+                        },
+                        "500": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "error",
+                    "times",
+                    "visitor",
+                    "group",
+                    "status"
+                  ]
+                }
+              },
+              "ok": {
+                "type": "number"
+              },
+              "error": {
+                "type": "number"
+              },
+              "times": {
+                "type": "object",
+                "properties": {
+                  "last-hit": {
+                    "type": "number"
+                  },
+                  "last-error": {
+                    "type": "number"
+                  },
+                  "last-ok": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "last-hit",
+                  "last-error",
+                  "last-ok"
+                ]
+              },
+              "visitor": {
+                "type": "object",
+                "properties": {
+                  "human": {
+                    "type": "number"
+                  },
+                  "bot": {
+                    "type": "number"
+                  },
+                  "unknown": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "human",
+                  "bot",
+                  "unknown"
+                ]
+              },
+              "group": {
+                "type": "object",
+                "properties": {
+                  "1xx": {
+                    "type": "number"
+                  },
+                  "2xx": {
+                    "type": "number"
+                  },
+                  "3xx": {
+                    "type": "number"
+                  },
+                  "4xx": {
+                    "type": "number"
+                  },
+                  "5xx": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "1xx",
+                  "2xx",
+                  "3xx",
+                  "4xx",
+                  "5xx"
+                ]
+              },
+              "status": {
+                "type": "object",
+                "properties": {
+                  "304": {
+                    "type": "number"
+                  },
+                  "307": {
+                    "type": "number"
+                  },
+                  "404": {
+                    "type": "number"
+                  },
+                  "405": {
+                    "type": "number"
+                  },
+                  "500": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "required": [
+              "resources",
+              "redirect",
+              "ok",
+              "error",
+              "times",
+              "visitor",
+              "group",
+              "status"
+            ]
+          },
+          "redirect": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "required": [
+          "metrics",
+          "redirect"
+        ]
+      },
+      "KVGroupMetricsSchema": {
+        "type": "object",
+        "properties": {
+          "1xx": {
+            "type": "number"
+          },
+          "2xx": {
+            "type": "number"
+          },
+          "3xx": {
+            "type": "number"
+          },
+          "4xx": {
+            "type": "number"
+          },
+          "5xx": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "1xx",
+          "2xx",
+          "3xx",
+          "4xx",
+          "5xx"
+        ]
+      },
+      "KVMetricsSchema": {
+        "type": "object",
+        "properties": {
+          "resources": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "number"
+                },
+                "error": {
+                  "type": "number"
+                },
+                "times": {
+                  "type": "object",
+                  "properties": {
+                    "last-hit": {
+                      "type": "number"
+                    },
+                    "last-error": {
+                      "type": "number"
+                    },
+                    "last-ok": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "last-hit",
+                    "last-error",
+                    "last-ok"
+                  ]
+                },
+                "visitor": {
+                  "type": "object",
+                  "properties": {
+                    "human": {
+                      "type": "number"
+                    },
+                    "bot": {
+                      "type": "number"
+                    },
+                    "unknown": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "human",
+                    "bot",
+                    "unknown"
+                  ]
+                },
+                "group": {
+                  "type": "object",
+                  "properties": {
+                    "1xx": {
+                      "type": "number"
+                    },
+                    "2xx": {
+                      "type": "number"
+                    },
+                    "3xx": {
+                      "type": "number"
+                    },
+                    "4xx": {
+                      "type": "number"
+                    },
+                    "5xx": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "1xx",
+                    "2xx",
+                    "3xx",
+                    "4xx",
+                    "5xx"
+                  ]
+                },
+                "status": {
+                  "type": "object",
+                  "properties": {
+                    "304": {
+                      "type": "number"
+                    },
+                    "307": {
+                      "type": "number"
+                    },
+                    "404": {
+                      "type": "number"
+                    },
+                    "405": {
+                      "type": "number"
+                    },
+                    "500": {
+                      "type": "number"
+                    }
+                  }
+                }
+              },
+              "required": [
+                "ok",
+                "error",
+                "times",
+                "visitor",
+                "group",
+                "status"
+              ]
+            }
+          },
+          "redirect": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "number"
+                },
+                "error": {
+                  "type": "number"
+                },
+                "times": {
+                  "type": "object",
+                  "properties": {
+                    "last-hit": {
+                      "type": "number"
+                    },
+                    "last-error": {
+                      "type": "number"
+                    },
+                    "last-ok": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "last-hit",
+                    "last-error",
+                    "last-ok"
+                  ]
+                },
+                "visitor": {
+                  "type": "object",
+                  "properties": {
+                    "human": {
+                      "type": "number"
+                    },
+                    "bot": {
+                      "type": "number"
+                    },
+                    "unknown": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "human",
+                    "bot",
+                    "unknown"
+                  ]
+                },
+                "group": {
+                  "type": "object",
+                  "properties": {
+                    "1xx": {
+                      "type": "number"
+                    },
+                    "2xx": {
+                      "type": "number"
+                    },
+                    "3xx": {
+                      "type": "number"
+                    },
+                    "4xx": {
+                      "type": "number"
+                    },
+                    "5xx": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "1xx",
+                    "2xx",
+                    "3xx",
+                    "4xx",
+                    "5xx"
+                  ]
+                },
+                "status": {
+                  "type": "object",
+                  "properties": {
+                    "304": {
+                      "type": "number"
+                    },
+                    "307": {
+                      "type": "number"
+                    },
+                    "404": {
+                      "type": "number"
+                    },
+                    "405": {
+                      "type": "number"
+                    },
+                    "500": {
+                      "type": "number"
+                    }
+                  }
+                }
+              },
+              "required": [
+                "ok",
+                "error",
+                "times",
+                "visitor",
+                "group",
+                "status"
+              ]
+            }
+          },
+          "ok": {
+            "type": "number"
+          },
+          "error": {
+            "type": "number"
+          },
+          "times": {
+            "type": "object",
+            "properties": {
+              "last-hit": {
+                "type": "number"
+              },
+              "last-error": {
+                "type": "number"
+              },
+              "last-ok": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "last-hit",
+              "last-error",
+              "last-ok"
+            ]
+          },
+          "visitor": {
+            "type": "object",
+            "properties": {
+              "human": {
+                "type": "number"
+              },
+              "bot": {
+                "type": "number"
+              },
+              "unknown": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "human",
+              "bot",
+              "unknown"
+            ]
+          },
+          "group": {
+            "type": "object",
+            "properties": {
+              "1xx": {
+                "type": "number"
+              },
+              "2xx": {
+                "type": "number"
+              },
+              "3xx": {
+                "type": "number"
+              },
+              "4xx": {
+                "type": "number"
+              },
+              "5xx": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "1xx",
+              "2xx",
+              "3xx",
+              "4xx",
+              "5xx"
+            ]
+          },
+          "status": {
+            "type": "object",
+            "properties": {
+              "304": {
+                "type": "number"
+              },
+              "307": {
+                "type": "number"
+              },
+              "404": {
+                "type": "number"
+              },
+              "405": {
+                "type": "number"
+              },
+              "500": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "required": [
+          "resources",
+          "redirect",
+          "ok",
+          "error",
+          "times",
+          "visitor",
+          "group",
+          "status"
+        ]
+      },
+      "KVRedirectMappingSchema": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "KVRedirectMetricsSchema": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "ok": {
+              "type": "number"
+            },
+            "error": {
+              "type": "number"
+            },
+            "times": {
+              "type": "object",
+              "properties": {
+                "last-hit": {
+                  "type": "number"
+                },
+                "last-error": {
+                  "type": "number"
+                },
+                "last-ok": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "last-hit",
+                "last-error",
+                "last-ok"
+              ]
+            },
+            "visitor": {
+              "type": "object",
+              "properties": {
+                "human": {
+                  "type": "number"
+                },
+                "bot": {
+                  "type": "number"
+                },
+                "unknown": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "human",
+                "bot",
+                "unknown"
+              ]
+            },
+            "group": {
+              "type": "object",
+              "properties": {
+                "1xx": {
+                  "type": "number"
+                },
+                "2xx": {
+                  "type": "number"
+                },
+                "3xx": {
+                  "type": "number"
+                },
+                "4xx": {
+                  "type": "number"
+                },
+                "5xx": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "1xx",
+                "2xx",
+                "3xx",
+                "4xx",
+                "5xx"
+              ]
+            },
+            "status": {
+              "type": "object",
+              "properties": {
+                "304": {
+                  "type": "number"
+                },
+                "307": {
+                  "type": "number"
+                },
+                "404": {
+                  "type": "number"
+                },
+                "405": {
+                  "type": "number"
+                },
+                "500": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "required": [
+            "ok",
+            "error",
+            "times",
+            "visitor",
+            "group",
+            "status"
+          ]
+        }
+      },
+      "KVResourceMetricsSchema": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "ok": {
+              "type": "number"
+            },
+            "error": {
+              "type": "number"
+            },
+            "times": {
+              "type": "object",
+              "properties": {
+                "last-hit": {
+                  "type": "number"
+                },
+                "last-error": {
+                  "type": "number"
+                },
+                "last-ok": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "last-hit",
+                "last-error",
+                "last-ok"
+              ]
+            },
+            "visitor": {
+              "type": "object",
+              "properties": {
+                "human": {
+                  "type": "number"
+                },
+                "bot": {
+                  "type": "number"
+                },
+                "unknown": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "human",
+                "bot",
+                "unknown"
+              ]
+            },
+            "group": {
+              "type": "object",
+              "properties": {
+                "1xx": {
+                  "type": "number"
+                },
+                "2xx": {
+                  "type": "number"
+                },
+                "3xx": {
+                  "type": "number"
+                },
+                "4xx": {
+                  "type": "number"
+                },
+                "5xx": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "1xx",
+                "2xx",
+                "3xx",
+                "4xx",
+                "5xx"
+              ]
+            },
+            "status": {
+              "type": "object",
+              "properties": {
+                "304": {
+                  "type": "number"
+                },
+                "307": {
+                  "type": "number"
+                },
+                "404": {
+                  "type": "number"
+                },
+                "405": {
+                  "type": "number"
+                },
+                "500": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "required": [
+            "ok",
+            "error",
+            "times",
+            "visitor",
+            "group",
+            "status"
+          ]
+        }
+      },
+      "KVSampleMetricsSchema": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "number"
+          },
+          "error": {
+            "type": "number"
+          },
+          "times": {
+            "type": "object",
+            "properties": {
+              "last-hit": {
+                "type": "number"
+              },
+              "last-error": {
+                "type": "number"
+              },
+              "last-ok": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "last-hit",
+              "last-error",
+              "last-ok"
+            ]
+          },
+          "visitor": {
+            "type": "object",
+            "properties": {
+              "human": {
+                "type": "number"
+              },
+              "bot": {
+                "type": "number"
+              },
+              "unknown": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "human",
+              "bot",
+              "unknown"
+            ]
+          },
+          "group": {
+            "type": "object",
+            "properties": {
+              "1xx": {
+                "type": "number"
+              },
+              "2xx": {
+                "type": "number"
+              },
+              "3xx": {
+                "type": "number"
+              },
+              "4xx": {
+                "type": "number"
+              },
+              "5xx": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "1xx",
+              "2xx",
+              "3xx",
+              "4xx",
+              "5xx"
+            ]
+          },
+          "status": {
+            "type": "object",
+            "properties": {
+              "304": {
+                "type": "number"
+              },
+              "307": {
+                "type": "number"
+              },
+              "404": {
+                "type": "number"
+              },
+              "405": {
+                "type": "number"
+              },
+              "500": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "required": [
+          "ok",
+          "error",
+          "times",
+          "visitor",
+          "group",
+          "status"
+        ]
+      },
+      "KVStatusMetricsSchema": {
+        "type": "object",
+        "properties": {
+          "304": {
+            "type": "number"
+          },
+          "307": {
+            "type": "number"
+          },
+          "404": {
+            "type": "number"
+          },
+          "405": {
+            "type": "number"
+          },
+          "500": {
+            "type": "number"
+          }
+        }
+      },
+      "KVTimeMetricsSchema": {
+        "type": "object",
+        "properties": {
+          "last-hit": {
+            "type": "number"
+          },
+          "last-error": {
+            "type": "number"
+          },
+          "last-ok": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "last-hit",
+          "last-error",
+          "last-ok"
+        ]
+      },
+      "KVVisitorMetricsSchema": {
+        "type": "object",
+        "properties": {
+          "human": {
+            "type": "number"
+          },
+          "bot": {
+            "type": "number"
+          },
+          "unknown": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "human",
+          "bot",
+          "unknown"
+        ]
+      },
+      "SystemMetricsSchema": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "object",
+            "properties": {
+              "total": {
+                "type": "number"
+              },
+              "active": {
+                "type": "number"
+              },
+              "new_today": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "total",
+              "active",
+              "new_today"
+            ]
+          },
+          "posts": {
+            "type": "object",
+            "properties": {
+              "total": {
+                "type": "number"
+              },
+              "published": {
+                "type": "number"
+              },
+              "drafts": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "total",
+              "published",
+              "drafts"
+            ]
+          },
+          "system": {
+            "type": "object",
+            "properties": {
+              "runtime": {
+                "type": "string"
+              },
+              "timestamp": {
+                "type": "string"
+              },
+              "cf_ray": {
+                "type": "string"
+              },
+              "cf_datacenter": {
+                "type": "string"
+              },
+              "cf_country": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "runtime",
+              "timestamp"
+            ]
+          },
+          "api": {
+            "type": "object",
+            "properties": {
+              "version": {
+                "type": "string"
+              },
+              "endpoints_available": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "version",
+              "endpoints_available"
+            ]
+          }
+        },
+        "required": [
+          "users",
+          "posts",
+          "system",
+          "api"
+        ]
+      },
+      "TokenMetricsSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "total_requests": {
+                "type": "number"
+              },
+              "successful_requests": {
+                "type": "number"
+              },
+              "failed_requests": {
+                "type": "number"
+              },
+              "redirect_clicks": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "total_requests",
+              "successful_requests",
+              "failed_requests",
+              "redirect_clicks"
+            ]
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success",
+          "data",
+          "timestamp"
+        ]
+      },
+      "TokenUsageSchema": {
+        "type": "object",
+        "properties": {
+          "token_id": {
+            "type": "string"
+          },
+          "usage_count": {
+            "type": "number"
+          },
+          "max_requests": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "last_used": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "token_id",
+          "usage_count",
+          "created_at"
+        ]
+      },
+      "UrlRedirectSchema": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "pattern": "^[a-zA-Z0-9\\-_]+$"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "clicks": {
+            "type": "number",
+            "default": 0
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "url",
+          "created_at"
+        ]
+      },
+      "UserSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "issuedAt": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tokenId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "issuedAt",
+          "expiresAt"
+        ]
+      },
+      "WorkerInfoSchema": {
+        "type": "object",
+        "properties": {
+          "runtime": {
+            "type": "string"
+          },
+          "preset": {
+            "type": "string"
+          },
+          "api_available": {
+            "type": "boolean"
+          },
+          "server_side_rendering": {
+            "type": "boolean"
+          },
+          "edge_functions": {
+            "type": "boolean"
+          },
+          "cf_ray": {
+            "type": "string"
+          },
+          "cf_ipcountry": {
+            "type": "string"
+          },
+          "cf_connecting_ip": {
+            "type": "string"
+          },
+          "worker_limits": {
+            "type": "object",
+            "properties": {
+              "cpu_time": {
+                "type": "string"
+              },
+              "memory": {
+                "type": "string"
+              },
+              "request_timeout": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "cpu_time",
+              "memory",
+              "request_timeout"
+            ]
+          }
+        },
+        "required": [
+          "runtime",
+          "preset",
+          "api_available",
+          "server_side_rendering",
+          "edge_functions",
+          "cf_ray",
+          "cf_ipcountry",
+          "cf_connecting_ip",
+          "worker_limits"
+        ]
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {},
+  "webhooks": {}
+}
