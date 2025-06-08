@@ -309,7 +309,9 @@ Nuxt 3 + Cloudflare Workers REST API platform. Migrated from simple Worker to en
 ## Key APIs
 
 **Core**: `/api/internal/health`, `/api/internal/ping`, `/api/internal/auth`, `/api/internal/metrics` (json/yaml/prometheus)
-**AI**: `/api/ai/alt` (GET url param, POST body/upload)
+**AI**: `/api/ai/alt` (GET url param, POST raw base64)
+  - **BREAKING CHANGE**: POST handler no longer accepts data URLs. Supply raw base64 only.
+  - Images limited to 4MB after decoding
 **Tokens**: `/api/tokens/{uuid}/usage`, `/api/tokens/{uuid}/revoke`
 **Redirects**: `/go/{slug}` (gh/tw/li)
 

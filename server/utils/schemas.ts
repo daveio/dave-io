@@ -212,7 +212,12 @@ export const CreateRedirectSchema = z.object({
 export const AiAltTextRequestSchema = z
   .object({
     url: z.string().url().optional(),
-    image: z.string().optional() // base64 encoded image
+    image: z
+      .string()
+      .refine((val) => !val.startsWith("data:"), {
+        message: "Image must be raw base64 without data URL"
+      })
+      .optional() // base64 encoded image
   })
   .refine((data) => data.url || data.image, {
     message: "Either url or image must be provided"
