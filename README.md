@@ -414,10 +414,10 @@ redirect:
 - **Anchor Processing**: Properly handles YAML anchors and excludes `_anchors` section
 - **Schema Conversion**: Converts nested YAML back to flat KV keys automatically
 
-**Export Patterns (new structured hierarchy):**
+**Export Patterns (hierarchical YAML, flat KV keys like `metrics:ok` and `redirect:gh`):**
 
-- `metrics` - Single structured JSON object with all metrics
-- `redirect` - Single JSON object with all redirect mappings
+- `metrics` - YAML tree of metrics, stored using keys like `metrics:ok`
+- `redirect` - YAML tree of redirect mappings, stored using keys like `redirect:gh`
 - `dashboard:*` - Dashboard cache data
 - `routeros:*` - RouterOS cache (legacy, may be removed)
 
