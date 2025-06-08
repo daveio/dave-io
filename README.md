@@ -69,16 +69,16 @@ bun jwt create --interactive
 
 ### 📊 KV Metrics Which Would Make Google Jealous
 
-**🚨 BREAKING CHANGE**: New hierarchical schema implemented!
+**🚨 BREAKING CHANGE**: New flat key schema implemented!
 
 - Comprehensive API metrics in JSON, YAML, or Prometheus formats
 - Request/response statistics with Cloudflare metadata
 - Perfect for when you want to obsess over your site's performance
-- **Structured JSON Storage**: Single `metrics` key containing nested hierarchy
+- **Flat Key Storage**: colon-separated, lower-case keys with simple values
 - **Resource-Based Tracking**: Separate metrics for API resources (`internal`, `ai`, etc.)
 - **Redirect Analytics**: Individual tracking for each redirect slug
 - **Comprehensive Metrics**: Hit counts, visitor classification, status codes, timing data
-- **Real-time Updates**: Atomic updates to structured data for consistency
+- **Real-time Updates**: Atomic updates to metric values for consistency
 
 ### 🔗 URL Shortening & Redirects
 
