@@ -4,12 +4,14 @@ import { getCloudflareEnv } from "~/server/utils/cloudflare"
 import { formatMetricsAsPrometheus, formatMetricsAsYAML, handleResponseFormat } from "~/server/utils/formatters"
 import { createApiError, isApiError, logRequest } from "~/server/utils/response"
 import { TokenMetricsSchema } from "~/server/utils/schemas"
+import { getKVAggregatedTimings } from "~/server/utils/kv-metrics"
 
 async function getMetricsFromKV(kv?: KVNamespace): Promise<{
   total_requests: number
   successful_requests: number
   failed_requests: number
   redirect_clicks: number
+  kv_timings_ms: Record<string, number>
 }> {
   if (!kv) {
     throw new Error("KV storage is required for metrics")
@@ -17,7 +19,10 @@ async function getMetricsFromKV(kv?: KVNamespace): Promise<{
 
   try {
     // Get basic metrics using simple KV keys
-    const [okStr, errorStr] = await Promise.all([kv.get("metrics:ok"), kv.get("metrics:error")])
+    const [okStr, errorStr] = await Promise.all([
+      kv.get("metrics:ok"),
+      kv.get("metrics:error")
+    ])
 
     const successfulRequests = okStr ? Number.parseInt(okStr, 10) : 0
     const failedRequests = errorStr ? Number.parseInt(errorStr, 10) : 0
@@ -28,11 +33,14 @@ async function getMetricsFromKV(kv?: KVNamespace): Promise<{
     const goOkStr = await kv.get("metrics:resources:go:ok")
     const redirectClicks = goOkStr ? Number.parseInt(goOkStr, 10) : 0
 
+    const timingData = await getKVAggregatedTimings(kv)
+
     const metricsData = {
       total_requests: totalRequests,
       successful_requests: successfulRequests,
       failed_requests: failedRequests,
-      redirect_clicks: redirectClicks
+      redirect_clicks: redirectClicks,
+      kv_timings_ms: timingData
     }
 
     return metricsData

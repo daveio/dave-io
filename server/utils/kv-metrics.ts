@@ -1,6 +1,70 @@
 import type { H3Event } from "h3"
 
 /**
+ * Execute a KV get without recording timing metrics
+ */
+async function rawKVGet(kv: KVNamespace, key: string): Promise<string | null> {
+  return kv.get(key)
+}
+
+/**
+ * Execute a KV put without recording timing metrics
+ */
+async function rawKVPut(
+  kv: KVNamespace,
+  key: string,
+  value: string
+): Promise<void> {
+  await kv.put(key, value)
+}
+
+/**
+ * Increment a KV metric without triggering timing measurements
+ */
+async function incrementKVMetricRaw(
+  kv: KVNamespace,
+  key: string,
+  increment = 1
+): Promise<void> {
+  const currentValue = await rawKVGet(kv, key).then((v) =>
+    Number.parseInt(v || "0")
+  )
+  await rawKVPut(kv, key, String(currentValue + increment))
+}
+
+/**
+ * Wrapper around kv.get that records timing metrics
+ */
+async function timedKVGet(kv: KVNamespace, key: string): Promise<string | null> {
+  const start = Date.now()
+  const result = await rawKVGet(kv, key)
+  const duration = Date.now() - start
+
+  if (!key.startsWith("metrics:timings:")) {
+    await incrementKVMetricRaw(kv, `metrics:timings:lookup:${key}`, duration)
+  }
+
+  return result
+}
+
+/**
+ * Wrapper around kv.put that records timing metrics
+ */
+async function timedKVPut(
+  kv: KVNamespace,
+  key: string,
+  value: string
+): Promise<void> {
+  const start = Date.now()
+  await rawKVPut(kv, key, value)
+  const duration = Date.now() - start
+
+  if (!key.startsWith("metrics:timings:")) {
+    await incrementKVMetricRaw(kv, `metrics:timings:lookup:${key}`, duration)
+  }
+}
+
+/**
  * KV counter entry for simple increments or value sets
  */
 interface KVCounterEntry {
@@ -19,12 +83,18 @@ export async function writeKVMetrics(kvNamespace: KVNamespace, kvCounters: KVCou
         try {
           if (counter.value !== undefined) {
             // Set specific value
-            await kvNamespace.put(counter.key, String(counter.value))
+            await timedKVPut(kvNamespace, counter.key, String(counter.value))
           } else {
             // Increment by specified amount (default 1)
-            const currentValue = await kvNamespace.get(counter.key).then((v) => Number.parseInt(v || "0"))
+            const currentValue = await timedKVGet(kvNamespace, counter.key).then(
+              (v) => Number.parseInt(v || "0")
+            )
             const increment = counter.increment || 1
-            await kvNamespace.put(counter.key, String(currentValue + increment))
+            await timedKVPut(
+              kvNamespace,
+              counter.key,
+              String(currentValue + increment)
+            )
           }
         } catch (error) {
           console.error("Failed to update KV counter:", counter.key, error)
@@ -43,7 +113,7 @@ export async function writeKVMetrics(kvNamespace: KVNamespace, kvCounters: KVCou
  */
 export async function getKVMetric(kv: KVNamespace, key: string): Promise<number> {
   try {
-    const value = await kv.get(key)
+    const value = await timedKVGet(kv, key)
     return value ? Number.parseInt(value) : 0
   } catch (error) {
     // trunk-ignore(semgrep/javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring): Safe string template
@@ -57,7 +127,7 @@ export async function getKVMetric(kv: KVNamespace, key: string): Promise<number>
  */
 export async function setKVMetric(kv: KVNamespace, key: string, value: number): Promise<void> {
   try {
-    await kv.put(key, String(value))
+    await timedKVPut(kv, key, String(value))
   } catch (error) {
     // trunk-ignore(semgrep/javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring): Safe string template
     console.error(`Failed to set KV metric ${key}:`, error)
@@ -302,6 +372,30 @@ export async function getKVMetrics(kv: KVNamespace, keys: string[]): Promise<Rec
 }
 
 /**
+ * Get aggregated KV lookup timing metrics
+ */
+export async function getKVAggregatedTimings(
+  kv: KVNamespace
+): Promise<Record<string, number>> {
+  try {
+    const prefix = "metrics:timings:lookup:"
+    const listed = await kv.list({ prefix })
+    const keys = listed.keys.map((k) => k.name)
+    const values = await Promise.all(keys.map((k) => timedKVGet(kv, k)))
+    const result: Record<string, number> = {}
+    keys.forEach((fullKey, index) => {
+      const shortKey = fullKey.substring(prefix.length)
+      const value = Number.parseInt(values[index] || "0")
+      result[shortKey] = Number.isNaN(value) ? 0 : value
+    })
+    return result
+  } catch (error) {
+    console.error("Failed to get timing metrics:", error)
+    return {}
+  }
+}
+
+/**
  * Legacy helper functions for backward compatibility - now call new functions
  */
 export function createAPIRequestKVCounters(
@@ -358,4 +452,5 @@ export function isBot(userAgent: string): boolean {
   return classifyVisitor(userAgent) === "bot"
 }
 
+export { getKVAggregatedTimings }
 export type { KVCounterEntry }

@@ -246,7 +246,8 @@ export const TokenMetricsSchema = z.object({
     total_requests: z.number(),
     successful_requests: z.number(),
     failed_requests: z.number(),
-    redirect_clicks: z.number()
+    redirect_clicks: z.number(),
+    kv_timings_ms: z.record(z.string(), z.number()).optional()
   }),
   timestamp: z.string()
 })
