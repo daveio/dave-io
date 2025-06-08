@@ -416,62 +416,33 @@ Reference implementation for production-ready serverless APIs with TypeScript, t
 
 ## KV Metrics System
 
-**BREAKING CHANGE**: New hierarchical schema implemented replacing flat key structure. All legacy KV counter functions removed.
+**BREAKING CHANGE**: Metrics moved from a single JSON blob to separate KV keys.
 
-**Storage**: Single structured JSON object at `metrics` key for performance and simplicity
-**Schema**: Nested hierarchical structure with top-level, resource-specific, and redirect-specific metrics
-**Data Format**: YAML-based export/import with anchor support for configuration management
-**Performance**: Fast single-key reads for dashboard queries, optimized for Cloudflare Workers edge compute
-**Middleware**: Automatic metrics tracking via `recordAPIMetrics()` and `recordAPIErrorMetrics()` functions
+**Storage**: Each counter is stored under its own key such as `metrics:ok` or `metrics:resources:internal:ok`.
+**Organization**: Colon-separated segments group metrics by type, resource, or redirect.
+**Data Format**: YAML export/import with anchor support remains for convenience.
+**Performance**: Individual key updates keep writes lightweight; dashboards perform multiple reads.
+**Middleware**: `recordAPIMetrics()` and `recordAPIErrorMetrics()` handle updates automatically.
 
-### New KV Schema Structure
-
-**Top-Level Keys**:
-- `metrics` - Single JSON object containing all metrics data
-- `redirect` - Single JSON object containing all redirect mappings (slug → URL)
-
-**Metrics Structure**:
-```typescript
-{
-  // Worker-wide metrics
-  ok: number,
-  error: number,
-  times: { "last-hit": unix_time, "last-error": unix_time, "last-ok": unix_time },
-  visitor: { human: number, bot: number, unknown: number },
-  group: { "1xx": number, "2xx": number, "3xx": number, "4xx": number, "5xx": number },
-  status: { "200": number, "404": number, "500": number, ... },
-  // Resource-specific metrics (internal, ai, go, etc.)
-  resources: {
-    [resource]: { /* same structure as top-level */ }
-  },
-
-  // Redirect-specific metrics
-  redirect: {
-    [slug]: { /* same structure as top-level */ }
-  }
-}
+### Example Key Layout
+```plaintext
+metrics:ok = "42"
+metrics:error = "3"
+metrics:resources:internal:ok = "20"
+metrics:redirect:gh:ok = "15"
 ```
 
-**Redirect Mappings**:
-```typescript
-{
-  [slug]: "https://target-url.com",
-  gh: "https://github.com/daveio",
-  blog: "https://blog.dave.io"
-}
-```
-
-**Resource Extraction**: First URL segment after `/api/` (e.g., `/api/internal/auth` → `internal` resource). Special case: `/go` endpoints tracked as `go` resource
-**User Agent Classification**: Automatic bot/human/unknown classification based on user agent patterns
-**Metrics Updates**: Atomic updates to single JSON objects via `updateAPIRequestMetrics()` and `updateRedirectMetrics()`
-**YAML Export**: Structured YAML with anchor support for configuration management
+**Resource Extraction**: The first URL segment after `/api/` becomes the resource; `/go` endpoints use the `go` resource.
+**User Agent Classification**: Automatic bot/human/unknown detection based on user agent patterns.
+**Metrics Updates**: `updateAPIRequestMetrics()` and `updateRedirectMetrics()` increment each key.
+**YAML Export**: Keys and values are exported in structured YAML.
 
 ### Migration from Legacy Schema
 
-**REMOVED**: All legacy KV counter functions (`createAPIRequestKVCounters`, `createAuthKVCounters`, `createAIKVCounters`, `createRedirectKVCounters`, `writeKVMetrics`)
-**REPLACED**: Individual KV key writes with structured JSON updates to single `metrics` key
-**ADDED**: `/go` resource tracking (previously excluded from metrics)
-**IMPROVED**: Consistent metrics across all endpoints via middleware functions
+**REMOVED**: All legacy KV counter functions (`createAPIRequestKVCounters`, `createAuthKVCounters`, `createAIKVCounters`, `createRedirectKVCounters`, `writeKVMetrics`).
+**REPLACED**: The monolithic `metrics` JSON object with individual metric keys.
+**ADDED**: `/go` resource tracking (previously excluded from metrics).
+**IMPROVED**: Consistent metrics across all endpoints via middleware functions.
 
 ## Next Steps
 
