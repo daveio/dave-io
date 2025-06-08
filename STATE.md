@@ -111,3 +111,8 @@
 - **Redirect Testing**: ✅ WORKING (4/4 redirects now pass)
 
 **REMAINING GOAL**: Resolve JWT signature verification for admin tokens to achieve 35-40/40 tests passing.
+
+## NEW FIX
+
+- **✅ IMPLEMENTED**: Added warning log if JWT secret from Cloudflare environment differs from runtime config.
+- **✅ ADDED TEST**: `authorizeEndpoint` unit test ensures mismatch warning is triggered and token still verifies with Cloudflare secret.
