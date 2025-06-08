@@ -1,4 +1,4 @@
-# KV initialisation file
+# KV initialization file
 # This file should be updated as new keys are defined.
 # This file can be imported with: bun run kv import data/kv/base-new.yaml --wipe
 
