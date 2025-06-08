@@ -25,6 +25,20 @@
       "database_id": "106894e2-1f5c-4979-a777-0b45febbb993"
     }
   ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "DASHBOARD_WS",
+        "class_name": "DashboardWebSocket"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_classes": ["DashboardWebSocket"]
+    }
+  ],
   "routes": [
     {
       "pattern": "next.dave.io",
