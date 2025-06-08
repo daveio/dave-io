@@ -339,10 +339,10 @@ class APITester {
     // Test AI alt-text without auth (should return 401)
     results.push(await this.makeRequest("/api/ai/alt", "GET", undefined, undefined, {}, 401))
 
-    // Test AI alt-text GET with image parameter (should return 200 or 400)
+    // Test AI alt-text GET with url parameter (should return 200 or 400)
     results.push(
       await this.makeRequest(
-        "/api/ai/alt?image=https://example.com/image.jpg",
+        "/api/ai/alt?url=https://example.com/image.jpg",
         "GET",
         this.tokens.get("ai"),
         undefined,
@@ -367,13 +367,13 @@ class APITester {
 
     // Test AI alt-text with invalid URL (should return 400)
     results.push(
-      await this.makeRequest("/api/ai/alt?image=invalid-url", "GET", this.tokens.get("ai"), undefined, {}, 400)
+      await this.makeRequest("/api/ai/alt?url=invalid-url", "GET", this.tokens.get("ai"), undefined, {}, 400)
     )
 
     // Test AI alt-text with wrong permission token (should return 401)
     results.push(
       await this.makeRequest(
-        "/api/ai/alt?image=https://example.com/image.jpg",
+        "/api/ai/alt?url=https://example.com/image.jpg",
         "GET",
         this.tokens.get("metrics"),
         undefined,

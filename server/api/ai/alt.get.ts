@@ -12,10 +12,10 @@ export default defineEventHandler(async (event) => {
     const auth = await requireAIAuth(event, "alt")
 
     const query = getQuery(event)
-    const imageUrl = query.image as string
+    const imageUrl = query.url as string
 
     if (!imageUrl) {
-      throw createApiError(400, "Image URL is required (image parameter)")
+      throw createApiError(400, "Image URL is required (url parameter)")
     }
 
     // Get environment bindings using helper
