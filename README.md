@@ -655,7 +655,16 @@ metrics:redirect:blog:error = "2"
 
 **Trade-offs**: Simple flat keys prioritize code maintainability over query performance. Multiple KV lookups required for dashboard aggregation.
 
-> **TODO**: Add metrics to measure KV lookup timing impacts. Track time taken for each operation and all operations. Quantify any performance difference between the flat key structure and the previous hierarchical JSON schema.
+The API now tracks how long each KV lookup takes. Aggregated timings are stored under `metrics:timings:lookup:*` and exposed via the `/api/internal/metrics` endpoint. Example snippet:
+
+```json
+{
+  "kv_timings_ms": {
+    "metrics:ok": 12,
+    "metrics:error": 5
+  }
+}
+```
 
 ### Current Architecture Benefits
 
