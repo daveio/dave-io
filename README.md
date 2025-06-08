@@ -59,12 +59,13 @@ bun jwt create --interactive
 
 **Permission Hierarchy**: `api:metrics` → `api` → `admin` → `*` (each level inherits access to lower levels)
 
-### 🤖 AI Integration (Now With Real AI Magic!)
+-### 🤖 AI Integration (Now With Real AI Magic!)
 
-- Alt-text generation for images (URL or file upload) using Cloudflare AI
+- Alt-text generation for images (URL or raw base64) using Cloudflare AI
 - Powered by `@cf/llava-hf/llava-1.5-7b-hf` model (because we don't mess around with fake AI)
 - Because accessibility matters, even for personal sites that are way too complicated
-- File size validation and proper error handling (up to 10MB images)
+- File size validation and proper error handling (up to 4MB images)
+- **🚨 BREAKING CHANGE**: POST body now accepts raw base64 only (no data URLs)
 - Consistent authentication and response formatting across both GET and POST endpoints
 
 ### 📊 KV Metrics Which Would Make Google Jealous
@@ -225,15 +226,10 @@ Generate alt-text for images. Because accessibility is cooler than avocado toast
 # Via URL parameter (the lazy way)
 curl -H "Authorization: Bearer <token>" "http://localhost:3000/api/ai/alt?url=https://example.com/image.jpg"
 
-# Via POST body (the proper way)
+# Via POST body (raw base64)
 curl -X POST -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com/image.jpg"}' \
-  http://localhost:3000/api/ai/alt
-
-# File upload (for when you're feeling fancy)
-curl -X POST -H "Authorization: Bearer <token>" \
-  -F "file=@image.jpg" \
+  -d '{"image": "<base64-image>"}' \
   http://localhost:3000/api/ai/alt
 ```
 

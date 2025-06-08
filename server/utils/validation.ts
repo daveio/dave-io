@@ -1,3 +1,4 @@
+import { fileTypeFromBuffer } from "file-type"
 import type { H3Event } from "h3"
 import { validate as validateUUID } from "uuid"
 import { createApiError } from "./response"
@@ -79,6 +80,31 @@ export async function validateImageURL(imageUrl: string): Promise<ArrayBuffer> {
   }
 
   return imageBuffer
+}
+
+/**
+ * Decode and validate a base64-encoded image
+ */
+export async function validateBase64Image(base64: string): Promise<Buffer> {
+  if (base64.startsWith("data:")) {
+    throw createApiError(400, "Base64 data should not include a data URL prefix")
+  }
+
+  let buffer: Buffer
+  try {
+    buffer = Buffer.from(base64, "base64")
+  } catch {
+    throw createApiError(400, "Invalid base64 image data")
+  }
+
+  validateFileSize(buffer, 4 * 1024 * 1024, "Image")
+
+  const type = await fileTypeFromBuffer(buffer)
+  if (!type || !type.mime.startsWith("image/")) {
+    throw createApiError(400, "Uploaded data is not a valid image")
+  }
+
+  return buffer
 }
 
 /**

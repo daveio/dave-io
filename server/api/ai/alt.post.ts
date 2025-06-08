@@ -3,6 +3,7 @@ import { requireAIAuth } from "~/server/utils/auth-helpers"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
 import { AiAltTextRequestSchema } from "~/server/utils/schemas"
+import { validateBase64Image, validateImageURL } from "~/server/utils/validation"
 
 export default defineEventHandler(async (event) => {
   try {
@@ -22,37 +23,13 @@ export default defineEventHandler(async (event) => {
     let imageData: Buffer
 
     if (request.url) {
-      // Fetch image from URL
-      try {
-        const response = await fetch(request.url)
-        if (!response.ok) {
-          createApiError(400, `Failed to fetch image: ${response.statusText}`)
-        }
-
-        const contentType = response.headers.get("content-type")
-        if (!contentType?.startsWith("image/")) {
-          createApiError(400, "URL does not point to an image")
-        }
-
-        imageData = Buffer.from(await response.arrayBuffer())
-      } catch (error) {
-        createApiError(400, `Failed to fetch image from URL: ${error}`)
-      }
+      // Fetch and validate image from URL
+      const buffer = await validateImageURL(request.url)
+      imageData = Buffer.from(buffer)
     } else if (request.image) {
-      // Decode base64 image
-      try {
-        imageData = Buffer.from(request.image, "base64")
-      } catch {
-        createApiError(400, "Invalid base64 image data")
-      }
+      imageData = await validateBase64Image(request.image)
     } else {
       createApiError(400, "Either url or image must be provided")
-    }
-
-    // Validate image size
-    if (imageData.length > 10 * 1024 * 1024) {
-      // 10MB limit
-      createApiError(400, "Image too large (max 10MB)")
     }
 
     // Use Cloudflare AI for image analysis
