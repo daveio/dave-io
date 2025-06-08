@@ -74,7 +74,7 @@ bun jwt create --interactive
 - Comprehensive API metrics in JSON, YAML, or Prometheus formats
 - Request/response statistics with Cloudflare metadata
 - Perfect for when you want to obsess over your site's performance
-- **Flat Key Storage**: colon-separated, lower-case keys with simple values
+- **Flat Key Storage**: colon-separated, lowercase, kebab-cased keys with simple values
 - **Resource-Based Tracking**: Separate metrics for API resources (`internal`, `ai`, etc.)
 - **Redirect Analytics**: Individual tracking for each redirect slug
 - **Comprehensive Metrics**: Hit counts, visitor classification, status codes, timing data
