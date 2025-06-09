@@ -91,7 +91,7 @@ Build flags:
 
 ## Project Structure
 
-```
+```text
 go-reader/
 ├── reader.go           # Complete WASM implementation
 ├── build-wasm.sh       # WASM build script
@@ -161,11 +161,11 @@ export default defineEventHandler(async (event) => {
   const url = getRouterParam(event, 'path');
   const wasmModule = await getWASMModule(); // Cached module
   const result = await wasmModule.processReader(url);
-  
+
   if (result.error) {
     throw createError({ statusCode: 500, statusMessage: result.error });
   }
-  
+
   return result.html;
 });
 ```

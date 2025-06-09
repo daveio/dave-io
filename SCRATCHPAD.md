@@ -57,7 +57,7 @@ Create an API service that automatically resizes and compresses uploaded images 
 
  **Logic** :
 
-```
+```text
 IF quality parameter is specified:
   → Output lossy WebP at specified quality
 ELSE IF input is lossy format (e.g., JPEG):

@@ -30,13 +30,15 @@ log_error() {
 }
 
 # Check if running as root (optional warning)
-if [ "$(id -u)" = "0" ]; then
+user_id=$(id -u)
+if [ "${user_id}" = "0" ]; then
   log_warning "Running as root - this may not be necessary for all operations"
 fi
 
 # Function to check if a command exists
 command_exists() {
   command -v "$1" >/dev/null 2>&1
+  return $?
 }
 
 # Main initialization process
@@ -65,6 +67,7 @@ main() {
   fi
 
   # Verify fish installation
+  # trunk-ignore(shellcheck/SC2310)
   if ! command_exists fish; then
     log_error "Fish shell installation failed - command not found"
     exit 1
@@ -80,7 +83,7 @@ main() {
     log_warning "Environment script not found at bin/container/env.fish"
   fi
 
-  printf "\n\n${BLUE}===== SYSTEM SETUP COMPLETE =====${NC}\n\n"
+  printf "\n\n%s===== SYSTEM SETUP COMPLETE =====%s\n\n" "${BLUE}" "${NC}"
 
   # Run development environment setup
   log_info "Starting development environment setup..."

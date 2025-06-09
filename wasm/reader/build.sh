@@ -10,14 +10,12 @@ export GOARCH=wasm
 export CGO_ENABLED=0
 
 # Build the WASM module
-go build -ldflags="-w -s" -o go-reader.wasm reader.go
-
-if [[ $? -eq 0 ]]; then
+if go build -ldflags="-w -s" -o go-reader.wasm reader.go; then
   echo "✅ WASM build successful! Output: go-reader.wasm"
   echo "📦 WASM module ready for Cloudflare Worker integration"
 
   # Get the size of the WASM file
-  size=$(du -h go-reader.wasm | cut -f1)
+  size=$(du -h go-reader.wasm | cut -f1) || true
   echo "📊 WASM file size: ${size}"
 else
   echo "❌ WASM build failed"

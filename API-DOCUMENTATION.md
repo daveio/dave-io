@@ -36,9 +36,9 @@ Meanwhile, your schemas in `server/utils/schemas.ts` are sitting there, perfectl
    // server/utils/schemas.ts (enhanced)
    import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'
    import { z } from 'zod'
-   
+
    extendZodWithOpenApi(z)
-   
+
    export const ApiSuccessResponseSchema = z.object({
      success: z.literal(true),
      data: z.any().optional(),
@@ -59,7 +59,7 @@ Meanwhile, your schemas in `server/utils/schemas.ts` are sitting there, perfectl
    import { OpenAPIGenerator } from '@asteasolutions/zod-to-openapi'
    import { writeFileSync } from 'fs'
    import * as schemas from '../server/utils/schemas'
-   
+
    const generator = new OpenAPIGenerator([/* your route definitions */])
    const spec = generator.generateDocument({
      openapi: '3.0.0',
@@ -69,7 +69,7 @@ Meanwhile, your schemas in `server/utils/schemas.ts` are sitting there, perfectl
        description: 'The most spectacularly over-engineered personal website API'
      }
    })
-   
+
    writeFileSync('./public/openapi.json', JSON.stringify(spec, null, 2))
    ```
 
@@ -219,46 +219,55 @@ Meanwhile, your schemas in `server/utils/schemas.ts` are sitting there, perfectl
 3. **Add Swagger UI** for interactive documentation
 4. **Pray you remember** to update docs when changing APIs
 
-**Bonuses you'd get**:
+#### Bonuses you'd get
+
 - Perfect documentation (when maintained)
 - Custom examples and descriptions
 - Full OpenAPI 3.1 feature support
 
-**Drawbacks**:
+#### Drawbacks
+
 - **MANUAL MAINTENANCE HELL**
 - Guaranteed to become out of sync
 - Double the work for every API change
 - No type safety between code and docs
 
-**Time to implement**: 1 week initially, then ongoing maintenance burden
+#### Time to implement
+
+1 week initially, then ongoing maintenance burden
 
 ---
 
 ### Option 5: Code Generation from Comments (JSDoc Style) 💬
 
-**What it does**: Generate OpenAPI from specially formatted comments in your code.
+#### What it does
+Generate OpenAPI from specially formatted comments in your code.
 
-**Why you might consider it**:
+#### Why you might consider it
 - Documentation lives next to code
 - Some tooling support available
 
-**What you'd need to do**:
+#### What you'd need to do
 
 1. **Add JSDoc comments** to every endpoint
 2. **Install comment-parsing tools** like `swagger-jsdoc`
 3. **Maintain documentation** in comments
 
-**Bonuses you'd get**:
+#### Bonuses you'd get (JSDoc)
+
 - Documentation close to code
 - Some IDE integration
 
-**Drawbacks**:
+#### Drawbacks (JSDoc)
+
 - Comments become stale
 - No validation between docs and implementation
 - Another place to maintain documentation
 - Limited schema reuse
 
-**Time to implement**: 3-5 hours, ongoing maintenance
+#### Time to implement (JSDoc)
+
+3-5 hours, ongoing maintenance
 
 ---
 
@@ -266,7 +275,7 @@ Meanwhile, your schemas in `server/utils/schemas.ts` are sitting there, perfectl
 
 ### For Your Codebase: **Option 1 (`zod-to-openapi`)** 🏆
 
-**Why this is the right choice**:
+#### Why this is the right choice
 
 1. **You already have comprehensive Zod schemas** - `server/utils/schemas.ts` is begging to be used
 2. **Single source of truth** - your schemas become the documentation
@@ -276,7 +285,8 @@ Meanwhile, your schemas in `server/utils/schemas.ts` are sitting there, perfectl
 
 ### Implementation Plan (The Practical Path)
 
-**Phase 1: Basic Setup (1-2 hours)**
+#### Phase 1: Basic Setup (1-2 hours)
+
 ```bash
 # Install dependency
 bun add @asteasolutions/zod-to-openapi swagger-ui-express
@@ -288,22 +298,22 @@ echo "Creating bin/generate-docs.ts..."
 echo "Adding docs:generate script to package.json..."
 ```
 
-**Phase 2: Schema Enhancement (2-3 hours)**
+#### Phase 2: Schema Enhancement (2-3 hours)
 - Add `.openapi()` metadata to key schemas in `schemas.ts`
 - Focus on public endpoints first (`/api/internal/health`, `/api/ai/alt`)
 - Add examples and descriptions to commonly used schemas
 
-**Phase 3: Route Registration (1-2 hours)**
+#### Phase 3: Route Registration (1-2 hours)
 - Create route definitions for automatic endpoint discovery
 - Map your existing API endpoints to schemas
 - Generate initial `openapi.json`
 
-**Phase 4: Documentation UI (30 minutes)**
+#### Phase 4: Documentation UI (30 minutes)
 - Add Swagger UI endpoint at `/api/docs`
 - Configure interactive documentation
 - Test with your existing JWT authentication
 
-**Phase 5: Automation (30 minutes)**
+#### Phase 5: Automation (30 minutes)
 - Add doc generation to build process
 - Set up pre-commit hooks for doc updates
 - Configure CI/CD to serve updated docs
@@ -334,20 +344,20 @@ export const ApiSuccessResponseSchema = z.object({
 
 // Enhanced for OpenAPI
 export const ApiSuccessResponseSchema = z.object({
-  success: z.literal(true).openapi({ 
+  success: z.literal(true).openapi({
     description: "Indicates successful operation",
-    example: true 
+    example: true
   }),
-  data: z.any().optional().openapi({ 
-    description: "Response payload data" 
+  data: z.any().optional().openapi({
+    description: "Response payload data"
   }),
-  message: z.string().optional().openapi({ 
+  message: z.string().optional().openapi({
     description: "Human-readable success message",
-    example: "Operation completed successfully" 
+    example: "Operation completed successfully"
   }),
-  timestamp: z.string().openapi({ 
+  timestamp: z.string().openapi({
     description: "ISO 8601 timestamp",
-    example: "2024-01-01T12:00:00Z" 
+    example: "2024-01-01T12:00:00Z"
   })
 }).openapi({
   description: "Standard success response format",

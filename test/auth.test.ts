@@ -1,13 +1,13 @@
 import type { IncomingMessage, ServerResponse } from "node:http"
 import type { H3Event } from "h3"
 import { SignJWT } from "jose"
-import { beforeEach, describe, expect, it } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import {
+  authorizeEndpoint,
   checkEndpointPermission,
   extractToken,
   getUserFromPayload,
-  verifyJWT,
-  authorizeEndpoint
+  verifyJWT
 } from "~/server/utils/auth"
 
 // Mock H3Event for testing - this is a simplified version for unit testing
@@ -266,8 +266,14 @@ describe("Authentication System", () => {
         .sign(encoder.encode(envSecret))
 
       const event = mockH3Event({ authorization: `Bearer ${token}` })
-      event.context = { cloudflare: { env: { API_JWT_SECRET: envSecret } } }
-      ;(global as any).useRuntimeConfig = () => ({ apiJwtSecret: configSecret })
+      ;(event.context as { cloudflare?: { env?: Record<string, unknown> } }) = {
+        cloudflare: {
+          env: { API_JWT_SECRET: envSecret }
+        }
+      }
+      ;(global as typeof globalThis & { useRuntimeConfig: () => { apiJwtSecret: string } }).useRuntimeConfig = () => ({
+        apiJwtSecret: configSecret
+      })
       const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {})
 
       const authFunc = await authorizeEndpoint("api")

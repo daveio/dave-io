@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"syscall/js"
+	"syscall/js" // trunk-ignore(golangci-lint2/typecheck)
 	"time"
 	"unicode/utf8"
 
@@ -266,11 +266,11 @@ func generateReadablePage(title, content, sourceURL, author, publishDate, descri
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>%s - Go Reader</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Victor+Mono:ital,wght@0,100..700;1,100..700&family=Ysabeau+Infant:ital,wght@0,1..1000;1,1..1000&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             --base: %s; --mantle: %s; --crust: %s; --text: %s;
@@ -278,73 +278,73 @@ func generateReadablePage(title, content, sourceURL, author, publishDate, descri
             --surface2: %s; --blue: %s; --lavender: %s; --sapphire: %s;
             --sky: %s; --green: %s; --mauve: %s;
         }
-        
+
         body {
             background-color: rgb(var(--base)); color: rgb(var(--text));
             font-family: 'Ysabeau Infant', sans-serif; font-weight: 300;
             line-height: 1.7; margin: 0; padding: 2rem 1rem;
         }
-        
+
         .reader-container { max-width: 65ch; margin: 0 auto; }
-        
+
         .reader-header {
             border-bottom: 2px solid rgb(var(--surface0));
             padding-bottom: 2rem; margin-bottom: 3rem;
         }
-        
+
         .reader-title {
             font-size: 2.5rem; font-weight: 700; color: rgb(var(--blue));
             margin-bottom: 1rem; line-height: 1.2;
         }
-        
+
         .reader-meta {
             color: rgb(var(--subtext1)); font-size: 0.9rem;
             display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
         }
-        
+
         .reader-source {
             color: rgb(var(--sapphire)); text-decoration: none;
             padding: 0.25rem 0.75rem; background-color: rgb(var(--surface0));
             border-radius: 0.5rem; font-size: 0.8rem;
         }
-        
+
         .reader-source:hover { background-color: rgb(var(--surface1)); }
-        
+
         .reader-content h1, .reader-content h2, .reader-content h3,
         .reader-content h4, .reader-content h5, .reader-content h6 {
             color: rgb(var(--lavender)); font-weight: 600;
             margin-top: 2.5rem; margin-bottom: 1rem; line-height: 1.3;
         }
-        
+
         .reader-content p { margin-bottom: 1.5rem; text-align: justify; }
-        
+
         .reader-content a {
             color: rgb(var(--blue)); text-decoration: underline;
             text-decoration-color: rgb(var(--surface2)); text-underline-offset: 3px;
         }
-        
+
         .reader-content a:hover {
             color: rgb(var(--sky)); text-decoration-color: rgb(var(--sky));
         }
-        
+
         .reader-content code {
             font-family: 'Victor Mono', monospace; background-color: rgb(var(--surface0));
             color: rgb(var(--green)); padding: 0.2rem 0.4rem;
             border-radius: 0.25rem; font-size: 0.9em;
         }
-        
+
         .reader-content pre {
             font-family: 'Victor Mono', monospace; background-color: rgb(var(--crust));
             color: rgb(var(--text)); padding: 1.5rem; border-radius: 0.5rem;
             overflow-x: auto; margin: 2rem 0; border: 1px solid rgb(var(--surface0));
         }
-        
+
         .reader-content blockquote {
             border-left: 4px solid rgb(var(--mauve)); background-color: rgb(var(--mantle));
             padding: 1.5rem; margin: 2rem 0; border-radius: 0 0.5rem 0.5rem 0;
             font-style: italic; color: rgb(var(--subtext1));
         }
-        
+
         @media (max-width: 768px) {
             .reader-container { padding: 1rem 0.75rem; }
             .reader-title { font-size: 2rem; }
@@ -363,7 +363,7 @@ func generateReadablePage(title, content, sourceURL, author, publishDate, descri
                 </a>
             </div>
         </header>
-        
+
         <main class="reader-content">
             %s
         </main>

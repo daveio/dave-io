@@ -21,9 +21,9 @@ The next-dave-io application is a Nuxt.js 3 application with the following key c
 
 ### Current API Endpoints
 
-```
+```text
 /api/internal/health        - Health check
-/api/internal/metrics       - System metrics  
+/api/internal/metrics       - System metrics
 /api/internal/auth          - Authentication
 /api/ai/alt                 - AI alt text generation
 /api/dashboard/[name]       - Dashboard data
@@ -51,26 +51,26 @@ Mount the Go Reader at `/api/reader/{url}` to maintain consistency with existing
    // server/api/reader/[...path].get.ts
    import { readFileSync } from 'node:fs'
    import { join } from 'node:path'
-   
+
    export default defineEventHandler(async (event) => {
      const path = getRouterParam(event, 'path')
      const url = Array.isArray(path) ? path.join('/') : path
-     
+
      if (!url) {
        throw createError({
          statusCode: 400,
          statusMessage: 'URL parameter required'
        })
      }
-     
+
      // Load and instantiate WASM module
      const wasmPath = join(process.cwd(), 'public/reader.wasm')
      const wasmBuffer = readFileSync(wasmPath)
      const wasmModule = await WebAssembly.instantiate(wasmBuffer)
-     
+
      // Process URL through WASM
      const result = await processURLWithWASM(wasmModule, url)
-     
+
      // Return HTML response
      setHeader(event, 'Content-Type', 'text/html; charset=utf-8')
      return result
@@ -86,7 +86,7 @@ Mount the Go Reader at `/api/reader/{url}` to maintain consistency with existing
        memory: WebAssembly.Memory
      }
    }
-   
+
    export async function processURLWithWASM(module: WebAssembly.Module, url: string): Promise<string> {
      const instance = await WebAssembly.instantiate(module) as GoWASM
      return instance.exports.processURL(url)
@@ -99,7 +99,7 @@ Mount the Go Reader at `/api/reader/{url}` to maintain consistency with existing
    export const ReaderRequestSchema = z.object({
      url: z.string().url().max(2048)
    })
-   
+
    export const ReaderResponseSchema = z.object({
      success: z.literal(true),
      content: z.string(),
@@ -170,15 +170,15 @@ If API namespace conflicts arise, mount at `/reader/{url}` instead.
 export class WASMReaderManager {
   private module: WebAssembly.Module | null = null
   private instance: WebAssembly.Instance | null = null
-  
+
   async initialize() {
     const wasmBuffer = await this.loadWASM()
     this.module = await WebAssembly.compile(wasmBuffer)
   }
-  
+
   async processURL(url: string): Promise<string> {
     if (!this.module) await this.initialize()
-    
+
     this.instance = await WebAssembly.instantiate(this.module)
     try {
       return this.callGoFunction('processURL', url)
@@ -186,7 +186,7 @@ export class WASMReaderManager {
       this.cleanup()
     }
   }
-  
+
   private cleanup() {
     this.instance = null
   }
@@ -200,22 +200,22 @@ export default defineEventHandler(async (event) => {
   try {
     const startTime = Date.now()
     const url = validateReaderURL(event)
-    
+
     const content = await wasmManager.processURL(url)
-    
+
     // Log successful request
     logRequest(event, 'reader', 'GET', 200, {
       target: url,
       responseTime: `${Date.now() - startTime}ms`
     })
-    
+
     return content
   } catch (error) {
     const statusCode = getErrorStatusCode(error)
     logRequest(event, 'reader', 'GET', statusCode, {
       error: error.message
     })
-    
+
     throw createApiError(statusCode, error.message)
   }
 })
@@ -261,16 +261,16 @@ export default defineEventHandler(async (event) => {
 function validateReaderURL(event: H3Event): string {
   const path = getRouterParam(event, 'path')
   const url = Array.isArray(path) ? path.join('/') : path
-  
+
   if (!url) {
     throw createApiError(400, 'URL parameter required')
   }
-  
+
   // Fix Go path handling (single slash)
-  const normalizedURL = url.startsWith('https:/') && !url.startsWith('https://') 
-    ? url.replace('https:/', 'https://') 
+  const normalizedURL = url.startsWith('https:/') && !url.startsWith('https://')
+    ? url.replace('https:/', 'https://')
     : url
-  
+
   const validated = ReaderRequestSchema.parse({ url: normalizedURL })
   return validated.url
 }
@@ -282,12 +282,12 @@ function validateReaderURL(event: H3Event): string {
 // Integrate with existing metrics system
 export default defineEventHandler(async (event) => {
   const cfInfo = getCloudflareRequestInfo(event)
-  
+
   // Check rate limits
   await checkRateLimit(cfInfo.ip, 'reader', 100) // 100 requests per hour
-  
+
   // Process request...
-  
+
   // Update metrics
   await updateReaderMetrics(cfInfo.ip, 200)
 })
@@ -300,12 +300,12 @@ export default defineEventHandler(async (event) => {
 ```typescript
 // server/utils/reader-metrics.ts
 export async function updateReaderMetrics(
-  ip: string, 
-  statusCode: number, 
+  ip: string,
+  statusCode: number,
   processingTime: number
 ) {
   const kv = getKVNamespace()
-  
+
   // Update metrics using the flat key/value approach
   await Promise.all([
     updateResourceMetrics(kv, 'reader', statusCode),
@@ -326,7 +326,7 @@ export default defineEventHandler(async (event) => {
     memory_usage: getWASMMemoryUsage(),
     timestamp: new Date().toISOString()
   }
-  
+
   return createApiResponse(healthData, "Reader service is healthy")
 })
 ```
@@ -342,7 +342,7 @@ describe('Reader API', () => {
     const response = await $fetch('/api/reader/https:/example.com')
     expect(response).toContain('<!DOCTYPE html>')
   })
-  
+
   test('handles invalid URL', async () => {
     await expect($fetch('/api/reader/invalid')).rejects.toThrow()
   })
@@ -385,18 +385,18 @@ export async function getWASMModule(): Promise<WebAssembly.Module> {
 export default defineEventHandler(async (event) => {
   const url = validateReaderURL(event)
   const cacheKey = `reader:${hashURL(url)}`
-  
+
   // Check cache first
   const cached = await getFromCache(cacheKey)
   if (cached) {
     setHeader(event, 'X-Cache', 'HIT')
     return cached
   }
-  
+
   // Process and cache result
   const content = await processURL(url)
   await setCache(cacheKey, content, 3600) // 1 hour TTL
-  
+
   setHeader(event, 'X-Cache', 'MISS')
   return content
 })

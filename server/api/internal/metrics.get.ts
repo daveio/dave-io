@@ -2,9 +2,9 @@ import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/met
 import { requireAPIAuth } from "~/server/utils/auth-helpers"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
 import { formatMetricsAsPrometheus, formatMetricsAsYAML, handleResponseFormat } from "~/server/utils/formatters"
+import { getKVAggregatedTimings } from "~/server/utils/kv-metrics"
 import { createApiError, isApiError, logRequest } from "~/server/utils/response"
 import { TokenMetricsSchema } from "~/server/utils/schemas"
-import { getKVAggregatedTimings } from "~/server/utils/kv-metrics"
 
 async function getMetricsFromKV(kv?: KVNamespace): Promise<{
   total_requests: number

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest"
+import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { getEnvironmentConfig, getEnvironmentVariable, isDevelopment, isProduction } from "~/server/utils/environment"
 
 let originalNodeEnv: string | undefined
@@ -27,7 +27,7 @@ afterEach(() => {
   if (originalTestVar !== undefined) {
     process.env.TEST_VAR = originalTestVar
   } else {
-    delete (process.env as Record<string, string>).TEST_VAR
+    ;(process.env as Record<string, string | undefined>).TEST_VAR = undefined
   }
 })
 
@@ -76,13 +76,13 @@ describe("getEnvironmentVariable", () => {
   })
 
   it("returns undefined for optional missing variable", () => {
-    delete (process.env as Record<string, string>).TEST_VAR
+    ;(process.env as Record<string, string | undefined>).TEST_VAR = undefined
     const value = getEnvironmentVariable("TEST_VAR")
     expect(value).toBeUndefined()
   })
 
   it("throws for required missing variable", () => {
-    delete (process.env as Record<string, string>).TEST_VAR
+    ;(process.env as Record<string, string | undefined>).TEST_VAR = undefined
     expect(() => getEnvironmentVariable("TEST_VAR", true)).toThrow("Required environment variable TEST_VAR is not set")
   })
 })
