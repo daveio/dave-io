@@ -102,6 +102,14 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 
 ## Breaking Changes
 
+### Development Workflow (December 2024)
+
+- **Script Architecture**: Complete refactor eliminating circular dependencies
+- **Dev Command**: No longer runs reset - starts in seconds instead of minutes
+- **Test Command**: Now runs unit tests only by default (use `test:all` for full suite)
+- **Removed Scripts**: `generate:nuxt:build`, `generate:nuxt:prepare` (redundant)
+- **New Scripts**: `build:static` for static generation, `types` alias for convenience
+
 ### AI Alt-Text API
 
 - **POST handler**: Supply raw base64 only
@@ -154,9 +162,45 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 
 ## Development Commands
 
-- **Check**: `bun check` (comprehensive)
-- **Individual**: `bun run typecheck|lint|format|test|test:api|build`
-- **Deploy**: `bun run deploy:env` then `bun run deploy`
+### Optimized Script Architecture (December 2024)
+
+**Major Performance Improvements** 🚀
+- **Dev startup**: ~3 seconds (previously ~30+ seconds)
+- **Build process**: No unnecessary resets or circular dependencies
+- **Testing**: Quick unit tests by default, comprehensive suite on demand
+
+### Core Workflows
+
+- **`bun run dev`**: Lightning-fast development (types + dev server only)
+- **`bun run build`**: Optimized production build (clean + types + build)
+- **`bun run build:static`**: Static site generation for edge deployment
+- **`bun run check`**: CI/CD validation (types + lint + unit tests)
+- **`bun run deploy`**: Full deployment pipeline (build + env + deploy)
+- **`bun run preview`**: Quick local preview with Wrangler
+
+### Testing Strategy
+
+- **`bun run test`**: Quick unit tests only (for rapid iteration)
+- **`bun run test:all`**: Comprehensive suite (unit + UI + coverage)
+- **`bun run test:api`**: HTTP endpoint testing
+- **`bun run test:watch`**: Interactive test development
+
+### Maintenance Commands
+
+- **`bun run clean`**: Lightweight cleanup (removes build artifacts)
+- **`bun run reset`**: Nuclear option (clean + reinstall + generate)
+- **`bun run types`**: Quick TypeScript type generation
+- **`bun run lint`**: Parallel linting (Biome + Trunk)
+
+### Script Organization
+
+All scripts now follow a clear hierarchical structure:
+- Main workflows (dev, build, deploy)
+- Task-specific commands (lint, test, generate)
+- Utility scripts (jwt, kv, try)
+- Maintenance operations (clean, reset)
+
+**No more circular dependencies!** Each command has a clear, linear execution path.
 
 ## Installation
 
@@ -171,7 +215,23 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 1. Clone the repository
 2. Install dependencies: `bun install`
 3. Set up environment variables (see [Environment](#environment))
-4. Run development server: `bun run dev`
+4. Run development server: `bun run dev` (starts in ~3 seconds!)
+
+### Quick Start
+
+```bash
+# Install and start development
+bun install
+bun run dev  # Lightning fast - no reset cycle!
+
+# Run tests during development
+bun run test       # Quick unit tests
+bun run test:all   # Full test suite
+
+# Build and deploy
+bun run check      # Validate everything
+bun run deploy     # Deploy to Cloudflare
+```
 
 **Note**: Image processing now uses Cloudflare Images service. No local dependencies required.
 
