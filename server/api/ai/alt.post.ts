@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     } else if (request.image) {
       originalImageData = await validateBase64Image(request.image)
     } else {
-      createApiError(400, "Either url or image must be provided")
+      throw createApiError(400, "Either url or image must be provided")
     }
 
     // Optimise the image using the 'alt' preset (≤ 4MB)
