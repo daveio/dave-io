@@ -73,10 +73,10 @@ bun run test:api    # HTTP API integration tests
 
 **RATIONALE**: Outdated docs are worse than no docs. They mislead and waste time.
 
+**BREAKING CHANGE**: README.md is now a placeholder file only. All documentation lives exclusively in CLAUDE.md.
+
 **MANDATORY UPDATES**:
-After ANY significant change, update BOTH:
-- `CLAUDE.md` - Technical reference for AI agents and developers
-- `README.md` - User-friendly guide with examples and personality
+After ANY significant change, update `CLAUDE.md` which is the single source of truth for all documentation.
 
 **UPDATE TRIGGERS**:
 - API endpoint changes
@@ -87,8 +87,8 @@ After ANY significant change, update BOTH:
 - Breaking changes
 
 **DOCUMENTATION STYLE**:
-- CLAUDE.md: Technical, precise, structured
-- README.md: Friendly, sardonic, example-rich (reflects Dave's personality)
+- CLAUDE.md: Complete technical documentation, examples, setup instructions, and all project information
+- README.md: Minimal placeholder redirecting to CLAUDE.md
 
 ### 5️⃣ **QUALITY VERIFICATION WORKFLOW**
 
@@ -266,6 +266,39 @@ await cloudflare.kv.namespaces.values.update(namespace, key, {
 
 **DATA MANAGEMENT**: Update `data/kv/_init.yaml` when defining new KV keys or modifying the schema structure. This file serves as the canonical reference for all KV key definitions and should be kept synchronized with code changes.
 
+### 🔟 **MANDATORY SHARED CODE EXTRACTION**
+
+**RATIONALE**: Duplicated code creates maintenance burden, increases bug risk, and violates DRY principles. Shared functionality must be extracted immediately.
+
+**CORE RULE**: Whenever you spot duplicated logic patterns, extract them into shared utilities or middleware. No exceptions.
+
+**WHAT MUST BE SHARED**:
+- ✅ Validation logic appearing in multiple endpoints
+- ✅ Data transformation and formatting functions
+- ✅ Authentication and authorisation checks
+- ✅ External service integration (R2, AI, KV operations)
+- ✅ Error handling patterns
+- ✅ File processing and manipulation
+- ✅ Hash generation and verification
+
+**EXTRACTION REQUIREMENTS**:
+- ✅ Create shared function in appropriate `server/utils/` file
+- ✅ Add comprehensive JSDoc documentation
+- ✅ Include TypeScript types for all parameters and returns
+- ✅ Write comprehensive tests for shared functions
+- ✅ Update all existing code to use shared implementation
+- ✅ Document breaking changes if function signatures differ
+
+**FORBIDDEN PATTERNS**:
+- ❌ Copy-pasting similar code between endpoints
+- ❌ "Minor differences" justifying separate implementations
+- ❌ Deferring extraction with TODO comments
+- ❌ One-off implementations for common operations
+
+**IMMEDIATE ACTION**: When reviewing code, shared patterns MUST be extracted before proceeding with new work.
+
+**PRINCIPLE**: Write once, use everywhere. Every duplicated line is a future bug waiting to happen.
+
 ## Overview
 
 Nuxt 3 + Cloudflare Workers REST API platform. Migrated from simple Worker to enterprise-grade application with authentication, validation, testing, deployment automation.
@@ -311,10 +344,12 @@ Nuxt 3 + Cloudflare Workers REST API platform. Migrated from simple Worker to en
 **Core**: `/api/internal/health`, `/api/internal/ping`, `/api/internal/auth`, `/api/internal/metrics` (json/yaml/prometheus)
 **AI**: `/api/ai/alt` (GET url param, POST raw base64)
   - **BREAKING CHANGE**: POST handler no longer accepts data URLs. Supply raw base64 only.
-  - Images automatically optimised via `/api/images/optimise/preset/alt` before AI processing
+  - Images automatically optimised using direct function invocation before AI processing
 **Images**: `/api/images/optimise` (GET/POST), `/api/images/optimise/preset/{preset}`
   - WebP conversion with smart compression strategy
-  - R2 storage with BLAKE3 hash filenames: `{UNIX_TIME}-{BLAKE3_HASH}.webp`
+  - R2 storage with BLAKE3 hash filenames: `{BLAKE3_HEX}-q{QUALITY}.webp` or `{BLAKE3_HEX}-ll.webp` for lossless
+  - File existence caching to avoid duplicate processing
+  - Direct function invocation for AI processing (no HTTP overhead)
   - Requires `api:images` permission scope
 **Tokens**: `/api/tokens/{uuid}/usage`, `/api/tokens/{uuid}/revoke`
 **Redirects**: `/go/{slug}` (gh/tw/li)
@@ -397,25 +432,357 @@ Nuxt 3 + Cloudflare Workers REST API platform. Migrated from simple Worker to en
 
 **Config**: `nuxt.config.ts`, `wrangler.jsonc`, `vitest.config.ts`, `biome.json`
 **Core**: `server/utils/{auth,schemas,response}.ts`, `server/middleware/{error,shell-scripts}.ts`
+**Image Processing**: `server/utils/{image-processing,image-presets,image-optimisation}.ts`
 **Examples**: `server/api/internal/{auth,metrics}.get.ts`, `server/api/ai/alt.{get,post}.ts`
 
 ## Migration Context
 
 Maintains API compatibility with original Worker while adding: TypeScript + Zod validation, comprehensive testing, enhanced JWT auth, consistent error handling, CLI tools, security headers.
 
+## Installation & Setup
+
+### Prerequisites
+
+- **Bun** (recommended package manager)
+- **Node.js 18+**
+- **Cloudflare Account**
+
+### Installation Process
+
+```bash
+# Clone repository
+git clone https://github.com/daveio/next-dave-io.git
+cd next-dave-io
+
+# Install dependencies
+bun install
+
+# Environment setup
+cp .env.example .env
+# Edit .env with required values
+
+# Generate types and prepare
+bun run types
+bun run nuxt prepare
+
+# Start development
+bun run dev
+```
+
+### Environment Variables
+
+**Required Configuration**:
+
+```bash
+# JWT Secret (required for authentication)
+API_JWT_SECRET=your-super-secret-jwt-key-that-definitely-isnt-password123
+
+# Cloudflare credentials (required for production)
+CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
+CLOUDFLARE_ACCOUNT_ID=your-account-id
+
+# Public API base URL
+NUXT_PUBLIC_API_BASE_URL=/api
+```
+
+**Development Options**:
+
+```bash
+# Legacy API key authentication (development only)
+API_DEV_USE_DANGEROUS_GLOBAL_KEY=1
+CLOUDFLARE_API_KEY=your-api-key
+CLOUDFLARE_EMAIL=your-email
+```
+
+## Project Structure
+
+```plaintext
+├── server/                  # Backend API implementation
+│   ├── api/                 # API endpoints
+│   │   ├── internal/        # System endpoints (health, auth, metrics)
+│   │   ├── ai/              # AI services (alt-text generation)
+│   │   ├── images/          # Image optimisation service
+│   │   ├── dashboard/       # Dashboard data feeds
+│   │   └── tokens/          # Token management
+│   ├── utils/               # Shared server utilities
+│   │   ├── auth.ts          # Authentication logic
+│   │   ├── response.ts      # Response formatting
+│   │   ├── schemas.ts       # Zod validation schemas
+│   │   ├── image-*.ts       # Image processing utilities
+│   │   └── environment.ts   # Runtime configuration
+│   └── middleware/          # Request middleware
+├── test/                    # Unit tests (Vitest)
+├── bin/                     # CLI tools
+│   ├── jwt.ts              # JWT token management
+│   ├── api-test.ts         # HTTP API testing
+│   ├── kv.ts               # KV storage management
+│   └── deploy-env.ts       # Environment deployment
+├── types/                   # TypeScript definitions
+├── data/kv/                 # KV data exports/imports
+└── wasm/reader/             # WebAssembly utilities
+```
+
+## Complete API Examples
+
+### Core System Endpoints
+
+```bash
+# Health check
+curl http://localhost:3000/api/internal/health
+
+# System ping with metrics
+curl http://localhost:3000/api/internal/ping
+
+# Worker runtime info
+curl http://localhost:3000/api/internal/worker
+
+# Token validation
+curl -H "Authorization: Bearer <token>" http://localhost:3000/api/internal/auth
+```
+
+### Metrics API
+
+```bash
+# JSON format (default)
+curl -H "Authorization: Bearer <token>" http://localhost:3000/api/internal/metrics
+
+# YAML format
+curl -H "Authorization: Bearer <token>" http://localhost:3000/api/internal/metrics?format=yaml
+
+# Prometheus format
+curl -H "Authorization: Bearer <token>" http://localhost:3000/api/internal/metrics?format=prometheus
+```
+
+### AI Alt-Text Generation
+
+```bash
+# GET with URL parameter
+curl -H "Authorization: Bearer <token>" \
+  "http://localhost:3000/api/ai/alt?url=https://example.com/image.jpg"
+
+# POST with base64 data
+curl -X POST -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"image": "<base64-image>"}' \
+  http://localhost:3000/api/ai/alt
+```
+
+### Image Optimisation
+
+```bash
+# General optimisation with quality
+curl -X POST "https://dave.io/api/images/optimise" \
+  -H "Authorization: Bearer $JWT" \
+  -H "Content-Type: application/json" \
+  -d '{"image": "<base64-data>", "quality": 80}'
+
+# Smart compression (follows input format)
+curl -X POST "https://dave.io/api/images/optimise" \
+  -H "Authorization: Bearer $JWT" \
+  -H "Content-Type: application/json" \
+  -d '{"image": "<base64-data>"}'
+
+# AI-ready preset (≤ 4MB)
+curl -X GET "https://dave.io/api/images/optimise/preset/alt?url=https://example.com/image.jpg" \
+  -H "Authorization: Bearer $JWT"
+```
+
+## Complete CLI Usage
+
+### JWT Token Management
+
+```bash
+# Initialize D1 database schema
+bun jwt init
+
+# Create tokens with specific permissions
+bun jwt create --sub "api:metrics" --description "Metrics access" --expiry "30d"
+bun jwt create --sub "ai:alt" --description "Alt-text generation" --expiry "7d"
+bun jwt create --sub "api:images" --description "Image processing" --expiry "7d"
+bun jwt create --sub "api" --description "Full API access" --expiry "1d"
+bun jwt create --sub "admin" --description "God mode" --no-expiry --seriously-no-expiry
+
+# Token operations
+bun jwt verify "eyJhbGciOiJIUzI1NiJ9..."
+bun jwt list
+bun jwt show <uuid>
+
+# Search tokens
+bun jwt search --sub "api"
+bun jwt search --description "test"
+bun jwt search --uuid "123e4567-e89b"
+
+# Revoke tokens
+bun jwt revoke <uuid>
+bun jwt revoke <uuid> --confirm
+
+# Interactive mode
+bun jwt create --interactive
+```
+
+### KV Storage Management
+
+```bash
+# Remote operations (production)
+bun run kv export                    # Export selected patterns
+bun run kv export --all              # Export everything
+bun run kv import data/kv/backup.yaml
+bun run kv import backup.yaml --yes  # Skip confirmation
+bun run kv import backup.yaml --wipe # Nuclear import
+bun run kv list
+bun run kv list --pattern "metrics"
+bun run kv wipe                      # Requires CONFIRM_WIPE=yes
+
+# Local operations (development)
+bun run kv --local export
+bun run kv --local import backup.yaml
+bun run kv --local list
+bun run kv --local wipe
+```
+
+### API Testing
+
+```bash
+# Test local development
+bun run test:api
+
+# Test production
+bun run test:api --url https://dave.io
+
+# Focused testing
+bun run test:api --auth-only
+bun run test:api --metrics-only
+bun run test:api --ai-only
+bun run test:api --dashboard-only
+
+# Use existing token
+bun run test:api --token "eyJhbGciOiJIUzI1NiJ9..."
+```
+
+## YAML KV Schema Structure
+
+**Complete YAML Structure with Anchors**:
+
+```yaml
+_anchors:  # Anchor definitions (excluded from import)
+  sample_metrics: &sample_metrics
+    ok: 0
+    error: 0
+    times: { last-hit: 0, last-error: 0, last-ok: 0 }
+
+metrics:
+  resources:
+    internal:
+      <<: *sample_metrics  # Reference anchor
+      ok: 100             # Override values
+    ai:
+      <<: *sample_metrics
+      ok: 50
+  redirect: {}
+  <<: *sample_metrics      # Top-level metrics
+
+redirect:
+  gh: https://github.com/daveio
+  blog: https://blog.dave.io
+```
+
+**Converted to Flat KV Keys**:
+
+```plaintext
+metrics:ok = "1000"
+metrics:error = "50"
+metrics:resources:internal:ok = "500"
+metrics:resources:ai:ok = "200"
+redirect:gh = "https://github.com/daveio"
+```
+
+## KV Visual Documentation
+
+**Reference Files**:
+- **📊 [Interactive Mermaid Diagram](KV.mmd)** - Source diagram
+- **🖼️ [Vector Graphic (SVG)](KV.svg)** - Scalable documentation
+- **📸 [Raster Image (PNG)](KV.png)** - Static reference
+
+## Deployment Process
+
+### Initial Cloudflare Setup
+
+```bash
+# Create Cloudflare resources
+wrangler kv:namespace create DATA
+wrangler d1 create NEXT_API_AUTH_METADATA
+
+# Update wrangler.jsonc with resource IDs
+# JWT tool reads these automatically
+
+# Initialize database schema
+bun jwt init
+
+# Deploy environment variables
+bun run deploy:env
+
+# Deploy application
+bun run deploy
+
+# Test deployment
+bun run test:api --url https://your-worker.your-subdomain.workers.dev
+
+# Create production token
+bun jwt create --sub "admin" --description "Production admin" --expiry "90d"
+```
+
+### Ongoing Deployment
+
+```bash
+# Development workflow
+bun run dev
+
+# Quality checks (mandatory)
+bun check
+
+# Deploy to production
+bun run deploy
+
+# Verify deployment
+curl https://your-production-url.com/api/health
+```
+
+## Technologies Used
+
+- **Nuxt 3**: Vue.js framework
+- **TypeScript**: Type safety and development experience
+- **Zod**: Runtime schema validation
+- **JOSE**: JWT handling and cryptography
+- **Vitest**: Unit testing framework
+- **Cloudflare Workers**: Serverless runtime
+- **Bun**: JavaScript runtime and package manager
+- **Biome**: Code linting and formatting
+- **Commander**: CLI framework for bin/ tools
+
+## Build Warnings (Safe to Ignore)
+
+During builds, Cloudflare SDK warnings appear:
+
+```plaintext
+node_modules/cloudflare/core.mjs (...): The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+```
+
+These warnings are harmless and come from the official Cloudflare SDK. They do not affect functionality and can be safely ignored.
+
 ## Documentation Guidelines
 
-1. README: Friendly, sardonic tone reflecting Dave's personality
-2. Technical accuracy: Test all examples and commands
-3. Comprehensive coverage with examples
-4. Update CLAUDE.md and README.md after significant work
+1. **CLAUDE.md**: Authoritative technical documentation for AI agents and developers
+2. **README.md**: Placeholder file only - all documentation lives in CLAUDE.md
+3. **Technical accuracy**: Test all examples and commands before documenting
+4. **Comprehensive coverage**: Include complete examples and configuration details
+5. **Update requirement**: Synchronize CLAUDE.md after any significant changes
 
 ## AI Agent Guidelines
 
 **Code Quality**: Maintain API compatibility, use hierarchical auth, Zod validation, type guards, comprehensive tests
 **Type Safety**: TypeScript strict, avoid `any`, schema-first development, export types via `types/api.ts`
 **Testing**: Unit + integration tests, test auth hierarchies and error scenarios
-**Performance**: Monitor bundle size, minimize cold starts, optimize caching
+**Performance**: Monitor bundle size, minimise cold starts, optimise caching
 **Security**: Validate all inputs, verify tokens/permissions, security headers, log security events
 
 Reference implementation for production-ready serverless APIs with TypeScript, testing, enterprise security.
@@ -450,11 +817,23 @@ metrics:redirect:gh:ok = "15"
 **ADDED**: `/go` resource tracking (previously excluded from metrics).
 **IMPROVED**: Consistent metrics across all endpoints via middleware functions.
 
+### Image Optimisation Breaking Changes
+
+**BREAKING CHANGE**: Filename format changed from `{UNIX_TIME}-{BLAKE3_HASH}.webp` to `{BLAKE3_HEX}-q{QUALITY}.webp` or `{BLAKE3_HEX}-ll.webp`.
+
+**REMOVED**: Duplicated image processing code across endpoints.
+**REPLACED**: HTTP-based internal calls with direct function invocation for AI processing.
+**ADDED**: Smart caching based on quality settings and image content hash.
+**ADDED**: Minimum quality enforcement (10-100 range) with automatic bumping.
+**IMPROVED**: Shared utilities for validation, hashing, R2 upload, and preset processing.
+**FIXED**: Hash extraction bugs with hyphenated filenames and base64 encoding.
+**FIXED**: Resizing logic that could enlarge images beyond original dimensions.
+
 ## Next Steps
 
 **Immediate**: Frontend dev, enhanced monitoring, JWT management dashboard
 **Security**: Token rotation, IP allowlisting, audit logging, content validation
-**Performance**: Response caching, bundle optimization, compression, CDN
+**Performance**: Response caching, bundle optimisation, compression, CDN
 **DevEx**: OpenAPI docs, client SDKs, Docker dev env, CI/CD, monitoring dashboard
 **Architecture**: Microservices, event-driven (Queues), multi-tenancy, API versioning, WebSockets (Durable Objects)
 
@@ -504,21 +883,28 @@ metrics:redirect:gh:ok = "15"
 - **BLAKE3 Hashing**: Filename generation based on original image content
 - **AI Integration**: Alt text endpoints automatically use optimisation service
 
-**Filename Format**: `{UNIX_TIME}-{BLAKE3_HASH}.webp`
+**Filename Format**: `{BLAKE3_HEX}-q{QUALITY}.webp` or `{BLAKE3_HEX}-ll.webp` for lossless
 **Storage URL**: `https://images.dave.io/opt/{filename}`
 **Authentication**: Requires `api:images` permission scope
 **File Size**: 4MB limit after base64 decoding
 
 **Compression Strategy**:
-- Quality parameter specified → lossy WebP at specified quality
+- Quality parameter specified → lossy WebP at specified quality (minimum 10, maximum 100)
+- Quality below 10 automatically bumped to minimum value 10
 - JPEG input (no quality) → lossy WebP at quality 80
 - PNG/other lossless formats (no quality) → lossless WebP with maximum effort
 
 **Alt Preset Strategy** (≤ 4MB target):
-1. **Phase 1**: Binary search quality optimization (10-95 quality range)
+1. **Phase 1**: Binary search quality optimisation (10-95 quality range)
 2. **Phase 2**: If still too large, reduce dimensions by 15% per iteration
 3. **Hard Limit**: 1024px minimum on long edge before error
 4. **Fallback**: Lossy compression with minimum quality if needed
 5. **Error Handling**: 422 error if cannot achieve target at minimum dimensions
+
+**Performance Improvements**:
+- **Smart Caching**: Quality-based filename generation enables automatic cache hits
+- **Direct Function Invocation**: AI processing uses direct function calls instead of HTTP requests
+- **Shared Utilities**: Extracted common image processing logic to prevent code duplication
+- **Hash Extraction Fix**: Resolved filename parsing issues with hyphenated base64 hashes
 
 **TODO**: Fix test configuration issues - tests are hanging during execution

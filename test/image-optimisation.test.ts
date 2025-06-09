@@ -154,8 +154,9 @@ describe("Image Optimisation Core Functions", () => {
   })
 })
 
-describe("Filename Generation", () => {
-  it("should generate valid filename format", () => {
+describe("Filename Generation (Legacy Tests)", () => {
+  // These tests reflect the old timestamp-based format for backwards compatibility testing
+  it("should generate valid legacy filename format", () => {
     const buffer = Buffer.from("test data")
     const timestamp = Math.floor(Date.now() / 1000)
     const hash = blake3(buffer, { dkLen: 16 })
@@ -163,13 +164,13 @@ describe("Filename Generation", () => {
 
     const filename = `${timestamp}-${base64Hash}.webp`
 
-    // Should match expected format
+    // Should match legacy format
     expect(filename).toMatch(/^\d{10}-[A-Za-z0-9_-]+\.webp$/)
     expect(filename).toContain(".webp")
     expect(filename.split("-")).toHaveLength(2)
   })
 
-  it("should include current timestamp", () => {
+  it("should include current timestamp in legacy format", () => {
     const buffer = Buffer.from("test data")
     const beforeTimestamp = Math.floor(Date.now() / 1000)
 
@@ -202,7 +203,7 @@ describe("Preset Optimisation Logic", () => {
       resultBuffer = await sharp(largeImage).webp({ quality, lossless: false, effort: 6 }).toBuffer()
 
       if (resultBuffer.length > targetSize) {
-        quality = Math.max(10, quality - 20) // Reduce quality
+        quality = Math.max(10, quality - 20) // Reduce quality, but never below 10
       } else {
         break // Within target
       }
@@ -250,7 +251,7 @@ describe("Integration Tests", () => {
     const fileType = await fileTypeFromBuffer(originalBuffer)
     expect(fileType?.mime).toBe("image/png")
 
-    // Generate filename
+    // Generate filename using legacy format for this test
     const timestamp = Math.floor(Date.now() / 1000)
     const hash = blake3(originalBuffer, { dkLen: 16 })
     const base64Hash = Buffer.from(hash).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "")

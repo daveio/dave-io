@@ -1,150 +1,12 @@
-import { blake3 } from "@noble/hashes/blake3"
-import { fileTypeFromBuffer } from "file-type"
-import sharp from "sharp"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAPIAuth } from "~/server/utils/auth-helpers"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
+import { processImageOptimisation, type OptimisedImageResult } from "~/server/utils/image-processing"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
-import { validateBase64Image, validateImageURL, validateNumericParam } from "~/server/utils/validation"
+import { validateBase64Image, validateImageQuality, validateImageURL } from "~/server/utils/validation"
 
 interface OptimisationOptions {
   quality?: number
-}
-
-interface OptimisedImage {
-  buffer: Buffer
-  originalSize: number
-  optimisedSize: number
-  format: string
-  hash: string
-  url: string
-}
-
-const LOSSY_FORMATS = ["image/jpeg", "image/jpg", "image/webp", "image/heic", "image/heif"]
-const VALID_IMAGE_FORMATS = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/gif",
-  "image/webp",
-  "image/bmp",
-  "image/tiff",
-  "image/avif",
-  "image/heic",
-  "image/heif",
-  "image/svg+xml"
-]
-
-async function validateAndDetectMimeType(buffer: Buffer): Promise<string> {
-  const fileType = await fileTypeFromBuffer(buffer)
-
-  if (!fileType || !VALID_IMAGE_FORMATS.includes(fileType.mime)) {
-    throw createApiError(406, `Unsupported file type. Expected image, got: ${fileType?.mime || "unknown"}`)
-  }
-
-  return fileType.mime
-}
-
-async function optimiseImage(
-  inputBuffer: Buffer,
-  options: OptimisationOptions = {}
-): Promise<{ buffer: Buffer; originalMimeType: string }> {
-  const originalMimeType = await validateAndDetectMimeType(inputBuffer)
-
-  let sharpImage = sharp(inputBuffer)
-
-  // Preserve transparency and original image orientation
-  const _metadata = await sharpImage.metadata()
-
-  // Determine compression strategy based on input format and options
-  if (options.quality !== undefined) {
-    // Explicit quality specified - use lossy WebP
-    sharpImage = sharpImage.webp({
-      quality: options.quality,
-      lossless: false,
-      effort: 6 // Maximum compression effort
-    })
-  } else if (LOSSY_FORMATS.includes(originalMimeType)) {
-    // Input is lossy format (JPEG) - use lossy WebP
-    sharpImage = sharpImage.webp({
-      quality: 80,
-      lossless: false,
-      effort: 6
-    })
-  } else {
-    // Input is lossless format (PNG, etc.) - use lossless WebP
-    sharpImage = sharpImage.webp({
-      lossless: true,
-      effort: 6
-    })
-  }
-
-  const optimisedBuffer = await sharpImage.toBuffer()
-
-  return {
-    buffer: optimisedBuffer,
-    originalMimeType
-  }
-}
-
-function generateFilename(originalBuffer: Buffer): string {
-  const timestamp = Math.floor(Date.now() / 1000)
-  const hash = blake3(originalBuffer, { dkLen: 16 }) // 128 bits = 16 bytes
-  const base64Hash = Buffer.from(hash).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "")
-
-  return `${timestamp}-${base64Hash}.webp`
-}
-
-async function uploadToR2(env: Env, buffer: Buffer, filename: string, originalMimeType: string): Promise<string> {
-  if (!env.IMAGES) {
-    throw createApiError(503, "Image storage service not available")
-  }
-
-  const key = `opt/${filename}`
-
-  await env.IMAGES.put(key, buffer, {
-    httpMetadata: {
-      contentType: "image/webp"
-    },
-    customMetadata: {
-      originalMimeType,
-      uploadedAt: new Date().toISOString()
-    }
-  })
-
-  // Return the public URL
-  return `https://images.dave.io/${key}`
-}
-
-async function processImageOptimisation(
-  imageBuffer: Buffer,
-  options: OptimisationOptions,
-  env: Env
-): Promise<OptimisedImage> {
-  const startTime = Date.now()
-
-  // Generate filename based on original image hash
-  const filename = generateFilename(imageBuffer)
-
-  // Optimise the image
-  const { buffer: optimisedBuffer, originalMimeType } = await optimiseImage(imageBuffer, options)
-
-  // Upload to R2 bucket
-  const url = await uploadToR2(env, optimisedBuffer, filename, originalMimeType)
-
-  const processingTime = Date.now() - startTime
-  console.log(
-    `Image optimisation completed in ${processingTime}ms: ${imageBuffer.length} → ${optimisedBuffer.length} bytes`
-  )
-
-  return {
-    buffer: optimisedBuffer,
-    originalSize: imageBuffer.length,
-    optimisedSize: optimisedBuffer.length,
-    format: "webp",
-    hash: filename.split("-")[1]?.split(".")[0] || "",
-    url
-  }
 }
 
 export default defineEventHandler(async (event) => {
@@ -170,7 +32,7 @@ export default defineEventHandler(async (event) => {
       }
 
       // Parse optimisation options from query parameters
-      options.quality = validateNumericParam(query.quality, "quality", { min: 0, max: 100, integer: true })
+      options.quality = validateImageQuality(query.quality)
 
       const arrayBuffer = await validateImageURL(imageUrl)
       imageBuffer = Buffer.from(arrayBuffer)
@@ -189,7 +51,7 @@ export default defineEventHandler(async (event) => {
         }
 
         imageBuffer = await validateBase64Image(body.image)
-        options.quality = validateNumericParam(body.quality, "quality", { min: 0, max: 100, integer: true })
+        options.quality = validateImageQuality(body.quality)
       } else {
         throw createApiError(400, "Invalid request body format")
       }
@@ -199,7 +61,7 @@ export default defineEventHandler(async (event) => {
       throw createApiError(405, `Method ${method} not allowed`)
     }
 
-    // Process the image
+    // Process the image using shared utilities
     const result = await processImageOptimisation(imageBuffer, options, env as Env)
 
     // Record successful request

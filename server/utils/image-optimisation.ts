@@ -1,5 +1,6 @@
 import type { H3Event } from "h3"
-import { createApiError } from "./response"
+import { getCloudflareEnv } from "./cloudflare"
+import { optimiseImageForAI as directOptimiseImageForAI } from "./image-presets"
 
 interface OptimisationResult {
   url: string
@@ -12,52 +13,34 @@ interface OptimisationResult {
 }
 
 /**
- * Call the internal image optimisation service with the 'alt' preset
- * This ensures images are ≤ 4MB for AI processing
+ * Optimise image for AI processing using direct function invocation
+ * This replaces the HTTP-based approach for better performance and reduces complexity
  */
 export async function optimiseImageForAI(event: H3Event, imageBuffer: Buffer): Promise<OptimisationResult> {
   try {
-    // Create base64 representation for internal API call
-    const base64Image = imageBuffer.toString("base64")
+    const env = getCloudflareEnv(event)
 
-    // Get the request origin to construct internal URL
-    const headers = getHeaders(event)
-    const protocol = headers["x-forwarded-proto"] || "https"
-    const host = headers.host || headers["x-forwarded-host"] || "localhost"
-    const baseUrl = `${protocol}://${host}`
+    // Use direct function invocation instead of HTTP calls
+    const result = await directOptimiseImageForAI(imageBuffer, env as Env)
 
-    // Call internal optimisation API with 'alt' preset
-    const optimisationResponse = await $fetch<{
-      success: boolean
-      data?: OptimisationResult
-      error?: string
-    }>(`${baseUrl}/api/images/optimise/preset/alt`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        // Forward authorization header for internal call
-        ...(headers.authorization && { authorization: headers.authorization })
-      },
-      body: JSON.stringify({
-        image: base64Image
-      })
-    })
-
-    if (!optimisationResponse.success || !optimisationResponse.data) {
-      console.error("Image optimisation failed:", optimisationResponse.error)
-      throw createApiError(500, "Failed to optimise image for AI processing")
+    return {
+      url: result.url,
+      originalSizeBytes: result.originalSize,
+      optimisedSizeBytes: result.optimisedSize,
+      compressionRatio: Math.round((1 - result.optimisedSize / result.originalSize) * 100),
+      format: result.format,
+      hash: result.hash,
+      quality: result.quality
     }
-
-    return optimisationResponse.data
   } catch (error) {
-    console.error("Internal image optimisation error:", error)
+    console.error("Direct image optimisation error:", error)
 
     // If it's already an API error, re-throw it
     if (error && typeof error === "object" && "statusCode" in error) {
       throw error
     }
 
-    throw createApiError(500, "Image optimisation service unavailable")
+    throw new Error("Image optimisation service unavailable")
   }
 }
 
@@ -74,13 +57,13 @@ export async function fetchOptimisedImage(optimisedUrl: string): Promise<Buffer>
     })
 
     if (!response.ok) {
-      throw createApiError(500, `Failed to fetch optimised image: ${response.status}`)
+      throw new Error(`Failed to fetch optimised image: ${response.status}`)
     }
 
     const arrayBuffer = await response.arrayBuffer()
     return Buffer.from(arrayBuffer)
   } catch (error) {
     console.error("Failed to fetch optimised image:", error)
-    throw createApiError(500, "Failed to retrieve optimised image")
+    throw new Error("Failed to retrieve optimised image")
   }
 }

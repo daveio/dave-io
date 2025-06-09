@@ -197,3 +197,34 @@ export function validateNumericParam(
 
   return num
 }
+
+/**
+ * Validate image quality parameter with automatic minimum enforcement
+ * Ensures quality is between 10-100, automatically bumping values below 10
+ */
+export function validateImageQuality(
+  value: unknown,
+  paramName = "quality"
+): number | undefined {
+  if (value === undefined || value === null) {
+    return undefined
+  }
+
+  const quality = validateNumericParam(value, paramName, {
+    min: 1, // Allow input validation from 1, but we'll bump to 10
+    max: 100,
+    integer: true
+  })
+
+  if (quality === undefined) {
+    return undefined
+  }
+
+  // Automatically bump quality below 10 to minimum of 10
+  if (quality < 10) {
+    console.log(`Quality ${quality} bumped to minimum value 10`)
+    return 10
+  }
+
+  return quality
+}
