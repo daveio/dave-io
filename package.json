@@ -85,7 +85,7 @@
     "test:watch": "bun run vitest",
     "typecheck": "bun run tsc --noEmit",
     "types": "bun run cf-typegen",
-    "docs:generate": "bun run bin/generate-docs.ts"
+    "docs:generate": "bun run bin/generate-docs.ts && bun run biome format --write public/openapi.json"
   },
   "type": "module",
   "trustedDependencies": [
