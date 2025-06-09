@@ -331,7 +331,8 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": ["alt"]
                   },
                   "description": {
                     "type": "string"

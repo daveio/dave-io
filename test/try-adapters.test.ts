@@ -8,7 +8,7 @@ import {
   InternalAdapter,
   type RequestConfig,
   TokensAdapter
-} from "../bin/adapters"
+} from "../bin/try"
 
 // Mock fetch globally
 const mockFetch = vi.fn() as any

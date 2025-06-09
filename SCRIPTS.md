@@ -29,24 +29,20 @@ graph TD
 
     %% Dev chain
     dev --> reset
-    dev --> types["`types` ⚠️ MISSING"]
+    dev --> generate
     dev --> devNuxt["dev:nuxt"]
 
-    %% Preview chains
-    preview --> previewCloudflare["preview:cloudflare"]
-    previewCloudflare --> types
-    previewCloudflare --> buildNuxt
-    previewCloudflare --> wranglerDev["`wrangler:dev` ⚠️ MISSING"]
+    %% Preview chain
+    preview --> generate
+    preview --> generateNuxtBuild["generate:nuxt:build"]
+    preview --> previewWrangler["preview:wrangler"]
 
-    previewNuxt["preview:nuxt"] --> types
-    previewNuxt --> nuxtPreview["`nuxt:preview` ⚠️ MISSING"]
-
-    %% Reset chain
+    %% Reset chain (CIRCULAR!)
     reset --> resetClean["reset:clean"]
     reset --> resetPackages["reset:packages"]
     reset --> generate
 
-    %% Reset packages chain
+    %% Reset packages subchain
     resetPackages --> resetPackagesDelete["reset:packages:delete"]
     resetPackages --> resetPackagesInstall["reset:packages:install"]
 
@@ -55,125 +51,114 @@ graph TD
     generate --> generateNuxt["generate:nuxt"]
     generate --> generateTypes["generate:types"]
 
-    %% Lint chain
-    lint --> lintCheck["lint:check"]
-    lint --> lintTypes["lint:types"]
+    %% Generate openapi subchain
+    generateOpenapi --> binGenerateDocs["bin/generate-docs.ts"]
+    generateOpenapi --> biomeFmt["biome format"]
 
-    %% Test chain
+    %% Lint chain (parallel)
+    lint -.-> lintCheck["lint:check"]
+    lint -.-> lintTypes["lint:types"]
+
+    %% Lint check subchain
+    lintCheck --> biomeCheck["biome check --write"]
+    lintCheck --> trunkCheck["trunk check -a --fix"]
+
+    %% Test chain (sequential)
     test --> testUnit["test:unit"]
-    test --> testUi["test:ui"]
+    test --> testUI["test:ui"]
     test --> testCoverage["test:coverage"]
 
-    %% Docs chain
-    docs --> docsGenerate["`docs:generate` ⚠️ MISSING"]
-
-    %% Postinstall chain
-    postinstall --> types
-    postinstall --> nuxtPrepare["`nuxt:prepare` ⚠️ MISSING"]
-
-    %% Standalone scripts
+    %% Standalone utilities
     jwt["jwt"]
     kv["kv"]
-    lintFormat["lint:format"]
-    testApi["test:api"]
+    try["try"]
+    testAPI["test:api"]
     testWatch["test:watch"]
-    resetKv["reset:kv"]
+    resetKV["reset:kv"]
+    lintFormat["lint:format"]
+    previewNuxt["preview:nuxt"]
+    generateNuxtGenerate["generate:nuxt:generate"]
+    generateNuxtPrepare["generate:nuxt:prepare"]
 
-    %% Style missing scripts
-    classDef missing fill:#ffcccc,stroke:#ff0000,stroke-width:2px,color:#000000
-    class types,docsGenerate,nuxtPrepare,wranglerDev,nuxtPreview missing
+    %% Postinstall hook
+    postinstall["postinstall"] --> generate
 
-    %% Style main entry points
-    classDef entryPoint fill:#cceeff,stroke:#0066cc,stroke-width:3px
-    class build,check,deploy,dev,preview entryPoint
+    %% CIRCULAR DEPENDENCY HIGHLIGHTING
+    build -.->|"🔄 CIRCULAR"| reset
+    dev -.->|"🔄 CIRCULAR"| reset
+    deploy -.->|"🔄 CIRCULAR"| reset
+    reset -.->|"🔄 CIRCULAR"| generate
 
-    %% Style circular dependency scripts
-    classDef circular fill:#ffffcc,stroke:#ff9900,stroke-width:2px
-    class reset,generate,dev,build circular
+    %% REDUNDANCY HIGHLIGHTING
+    generateNuxtBuild -.->|"🔁 SAME AS build:nuxt"| buildNuxt
+    generateNuxt -.->|"🔁 SAME AS generate:nuxt:prepare"| generateNuxtPrepare
+
+    %% Style classes
+    classDef circular fill:#ffcccc,stroke:#ff0000,stroke-width:2px
+    classDef redundant fill:#fff3cd,stroke:#ffc107,stroke-width:2px
+    classDef standalone fill:#e7f3ff,stroke:#0066cc,stroke-width:1px
+    classDef parallel fill:#f0f8f0,stroke:#28a745,stroke-width:1px,stroke-dasharray: 5 5
+
+    class build,check,dev,deploy,reset circular
+    class generateNuxtBuild,generateNuxt,generateNuxtPrepare redundant
+    class jwt,kv,try,testAPI,testWatch,resetKV,lintFormat,previewNuxt,generateNuxtGenerate standalone
+    class lintCheck,lintTypes parallel
 ```
 
-## Identified Problems
+## Issues Identified
 
-### 1. Missing Script Definitions
+### 1. **Major Circular Dependencies** 🔄
+The most critical issue is the circular dependency chain:
+- `build` → `reset` → `generate` → `generate:nuxt` (runs `nuxt prepare`)
+- `dev` → `reset` → `generate` → `generate:nuxt` (runs `nuxt prepare`)
+- `deploy` → `reset` → `generate` → `generate:nuxt` (runs `nuxt prepare`)
+- `check` → `build` → (inherits the same circular chain)
 
-The following scripts are referenced by other scripts but are not defined:
+**Impact:** Every main command runs a full reset + generation cycle, making development extremely slow.
 
-- **`types`** - Referenced by `dev`, `postinstall`, `preview:cloudflare`, `preview:nuxt`
-  - *Likely should be:* `generate:types` (which runs `wrangler types`)
+### 2. **Script Redundancy** 🔁
+Multiple scripts do identical operations:
+- `generate:nuxt:build` runs `nuxt build` (same as `build:nuxt`)
+- `generate:nuxt` runs `nuxt prepare` (same as `generate:nuxt:prepare`)
+- `preview` uses `generate:nuxt:build` but could use `build:nuxt`
 
-- **`docs:generate`** - Referenced by `docs`
-  - *Missing implementation*
+### 3. **Development Performance Issues** 🐌
+- `dev` runs full `reset` (clean + reinstall packages + generate) before starting dev server
+- This makes development startup extremely slow and unnecessary
+- `reset` should be reserved for "nuclear option" scenarios
 
-- **`nuxt:prepare`** - Referenced by `postinstall`
-  - *Likely should be:* `nuxt prepare` command
+### 4. **Potential File Reference Issue** ⚠️
+- `try` script references `bin/try.ts` but if the file was renamed to `bin/try-cli.ts`, this needs updating
 
-- **`wrangler:dev`** - Referenced by `preview:cloudflare`
-  - *Likely should be:* `wrangler dev` command
+### 5. **Testing Logic Issues** 🧪
+- `test` runs unit tests, then UI tests, then coverage - but coverage should include all tests
+- Sequential execution when some could be parallel
 
-- **`nuxt:preview`** - Referenced by `preview:nuxt`
-  - *Likely should be:* `nuxt preview` command
+## Current Problems Summary
 
-### 2. Circular Dependencies
+1. **Everything is slow** - All main commands trigger full resets
+2. **Circular dependencies** - Generate depends on reset, reset depends on generate
+3. **Redundant scripts** - Multiple scripts doing the same operations
+4. **Development workflow** - `dev` is overkill with full reset
+5. **Build logic** - `build` does reset+generate then builds (why generate before build?)
 
-Several circular dependency chains exist:
+## Recommendations
 
-- **`build` → `reset` → `generate` → `generate:nuxt`**
-  - `build` calls `reset` which runs `generate:nuxt`, then calls `build:nuxt`
-  - This runs Nuxt generate AND Nuxt build, which is redundant
+1. **Break the circular dependencies:**
+   - Remove `reset` from `build`, `dev`, `deploy`
+   - Make `reset` a standalone "nuclear option"
+   - Create lightweight alternative for common prep work
 
-- **`dev` → `reset` → `generate` → `generate:types`**
-  - `dev` needs `types` (should be `generate:types`) but also calls `reset` which runs `generate:types`
-  - This creates unnecessary regeneration
+2. **Optimize development workflow:**
+   - `dev` should be fast: just ensure types + start dev server
+   - Remove unnecessary `reset` and `generate` from `dev`
 
-### 3. Logic Issues
+3. **Consolidate redundant scripts:**
+   - Use `build:nuxt` instead of `generate:nuxt:build`
+   - Decide between `generate:nuxt` and `generate:nuxt:prepare`
 
-- **Redundant Nuxt operations in `build`:**
-  - `reset` runs `generate:nuxt` (nuxt generate)
-  - Then `build:nuxt` runs `nuxt build`
-  - These should be separate workflows
-
-- **Heavy `check` script:**
-  - Runs full `build` (including `reset`) then `test`
-  - Could be optimized to avoid full reset for checking
-
-- **Inconsistent naming:**
-  - Some scripts use `types` (missing), should probably use `generate:types`
-  - Mix of `:` and no separator in script names
-
-### 4. Unused Scripts
-
-These scripts exist but aren't referenced by any other scripts:
-
-- `lint:format`
-- `test:api`
-- `test:watch`
-- `reset:kv`
-- `jwt`
-- `kv`
-
-## Recommended Fixes
-
-1. **Add missing scripts:**
-   ```json
-   "types": "bun run generate:types",
-   "docs:generate": "// implement documentation generation",
-   "nuxt:prepare": "nuxt prepare",
-   "wrangler:dev": "wrangler dev",
-   "nuxt:preview": "nuxt preview"
-   ```
-
-2. **Restructure build workflow:**
-   - Remove `generate:nuxt` from `reset`
-   - Create separate `build:static` script for static generation
-   - Make `build` focused on building, not generating
-
-3. **Optimize dependency chains:**
-   - Make `types` generation more targeted
-   - Reduce unnecessary resets in development workflows
-
-4. **Standardize naming:**
-   - Use consistent `:` separator for all namespaced scripts
-   - Align script purposes with their names
+4. **Fix file references:**
+   - Update `try` script path if file was renamed to `try-cli.ts`
 
 ## Proposed Refactored Script Structure
 
@@ -188,7 +173,7 @@ Here's a complete refactored `package.json` scripts section that fixes all the i
     "check": "bun run-s types lint test:unit",
     "deploy": "bun run-s build deploy:env deploy:wrangler",
     "dev": "bun run-s types dev:nuxt",
-    "preview": "bun run preview:cloudflare",
+    "preview": "bun run preview:wrangler",
 
     // === BUILD TASKS ===
     "build:nuxt": "bun run nuxt build",
@@ -197,30 +182,19 @@ Here's a complete refactored `package.json` scripts section that fixes all the i
     "dev:nuxt": "bun run nuxt dev",
 
     // === PREVIEW ===
-    "preview:cloudflare": "bun run-s types build:nuxt wrangler:dev",
-    "preview:nuxt": "bun run-s types nuxt:preview",
+    "preview:wrangler": "bun run wrangler dev",
+    "preview:nuxt": "bun run nuxt preview",
 
     // === DEPLOYMENT ===
     "deploy:env": "bun run bin/env.ts",
     "deploy:wrangler": "bun run wrangler deploy",
 
     // === GENERATION ===
-    "generate": "bun run-p generate:openapi generate:types",
+    "generate": "bun run-s generate:types generate:openapi",
     "generate:openapi": "bun run bin/generate-docs.ts && biome format --write public/openapi.json",
-    "generate:nuxt": "nuxt generate",
-    "generate:types": "wrangler types",
-
-    // === CLEANUP ===
-    "clean": "bun run rimraf .nuxt .output .wrangler *.d.ts",
-
-    // === PACKAGE MANAGEMENT ===
-    "install:fresh": "bun run-s install:clean install:packages",
-    "install:clean": "bun run rimraf node_modules bun.lock",
-    "install:packages": "bun install",
-
-    // === RESET (FULL REFRESH) ===
-    "reset": "bun run-s install:fresh generate",
-    "reset:kv": "bun run kv import data/kv/_init.yaml --wipe --yes",
+    "generate:nuxt": "bun run nuxt generate",
+    "generate:types": "bun run wrangler types",
+    "types": "bun run generate:types",
 
     // === LINTING ===
     "lint": "bun run-p lint:check lint:types",
@@ -229,60 +203,52 @@ Here's a complete refactored `package.json` scripts section that fixes all the i
     "lint:types": "tsc --noEmit",
 
     // === TESTING ===
-    "test": "bun run-s test:unit test:ui test:coverage",
+    "test": "bun run test:unit",
+    "test:all": "bun run-s test:unit test:ui test:coverage",
     "test:api": "bun run bin/api.ts",
     "test:coverage": "vitest --coverage",
     "test:ui": "vitest --ui",
     "test:unit": "vitest run",
     "test:watch": "vitest",
 
-    // === DOCUMENTATION ===
-    "docs": "bun run docs:generate",
-    "docs:generate": "echo 'Documentation generation not implemented yet'",
+    // === MAINTENANCE ===
+    "clean": "bun run rimraf .nuxt .output .wrangler *.d.ts",
+    "reset": "bun run-s reset:clean reset:packages generate",
+    "reset:clean": "bun run clean",
+    "reset:kv": "bun run kv import data/kv/_init.yaml --wipe --yes",
+    "reset:packages": "bun run-s reset:packages:delete reset:packages:install",
+    "reset:packages:delete": "bun run rimraf node_modules bun.lock",
+    "reset:packages:install": "bun install",
 
     // === UTILITIES ===
     "jwt": "bun run bin/jwt.ts",
     "kv": "bun run bin/kv.ts",
-    "types": "bun run generate:types",
-    "postinstall": "bun run-s types nuxt:prepare",
+    "try": "bun run bin/try-cli.ts",
 
-    // === MISSING IMPLEMENTATIONS ===
-    "nuxt:prepare": "nuxt prepare",
-    "nuxt:preview": "nuxt preview",
-    "wrangler:dev": "wrangler dev"
+    // === HOOKS ===
+    "postinstall": "bun run generate"
   }
 }
 ```
 
-## Key Changes Made
+## Key Improvements in the Proposed Structure
 
-### 1. **Eliminated Circular Dependencies**
-- `build` no longer calls `reset` - it's now `clean` → `types` → `build:nuxt`
-- `dev` no longer calls `reset` - it's now just `types` → `dev:nuxt`
-- `reset` is now reserved for full project refresh scenarios
+🚀 **Performance Gains:**
+- `dev` is now lightning fast (just types + dev server)
+- `build` is streamlined without unnecessary resets
+- `check` is lightweight for CI/CD pipelines
 
-### 2. **Added Missing Scripts**
-- `types`: Alias for `generate:types`
-- `nuxt:prepare`: Standard Nuxt prepare command
-- `nuxt:preview`: Standard Nuxt preview command
-- `wrangler:dev`: Standard Wrangler dev command
-- `docs:generate`: Placeholder for documentation generation
+🔧 **Dependency Resolution:**
+- Eliminated all circular dependencies
+- Clear separation of concerns
+- Parallel execution where beneficial
 
-### 3. **Improved Workflow Efficiency**
-- **Development**: `dev` only runs necessary setup (types + dev server)
-- **Building**: `build` is streamlined (clean + types + build)
-- **Static Generation**: New `build:static` for static site generation
-- **Checking**: `check` avoids expensive builds, just runs types + lint + tests
+📚 **Better Organization:**
+- Logical groupings with comments
+- Consistent naming with `:` separators
+- Removed redundant operations
 
-### 4. **Better Organization**
-- **Parallel where possible**: `generate` runs openapi + types in parallel
-- **Renamed for clarity**: `reset:packages` → `install:fresh` with sub-tasks
-- **Consistent naming**: All related scripts use `:` separator
-- **Logical grouping**: Scripts grouped by function with comments
-
-### 5. **Optimized Reset**
-- `reset` now only does fresh install + generation
-- No longer mixed with build concerns
-- Much faster for development scenarios
-
-This structure eliminates redundancy, fixes circular dependencies, and creates clear, efficient workflows for different development scenarios.
+✅ **Workflow Optimization:**
+- `reset` reserved for "nuclear option" scenarios
+- `clean` as lightweight alternative
+- `test:all` for comprehensive testing vs `test` for quick checks

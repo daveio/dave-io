@@ -2,7 +2,6 @@
 import boxen from "boxen"
 import chalk from "chalk"
 import { Command } from "commander"
-import type { Ora } from "ora"
 import {
   AIAdapter,
   type ApiResponse,
@@ -11,7 +10,7 @@ import {
   InternalAdapter,
   type RequestConfig,
   TokensAdapter
-} from "./adapters"
+} from "./endpoints"
 import { getJWTSecret } from "./shared/cli-utils"
 
 const program = new Command()
@@ -95,10 +94,18 @@ async function displayResult<T>(result: ApiResponse<T>, options: GlobalOptions, 
 
   if (result.meta) {
     const metaLines = []
-    if (result.meta.request_id) metaLines.push(`Request ID: ${result.meta.request_id}`)
-    if (result.meta.timestamp) metaLines.push(`Timestamp: ${result.meta.timestamp}`)
-    if (result.meta.cfRay) metaLines.push(`CF-Ray: ${result.meta.cfRay}`)
-    if (result.meta.country) metaLines.push(`Country: ${result.meta.country}`)
+    if (result.meta.request_id) {
+      metaLines.push(`Request ID: ${result.meta.request_id}`)
+    }
+    if (result.meta.timestamp) {
+      metaLines.push(`Timestamp: ${result.meta.timestamp}`)
+    }
+    if (result.meta.cfRay) {
+      metaLines.push(`CF-Ray: ${result.meta.cfRay}`)
+    }
+    if (result.meta.country) {
+      metaLines.push(`Country: ${result.meta.country}`)
+    }
     if (metaLines.length > 0) {
       content.push(chalk.gray(`Meta: ${metaLines.join(", ")}`))
     }
@@ -195,7 +202,6 @@ aiCommand
 
 // Images Commands
 const imagesCommand = program.command("images").description("Image optimization operations")
-
 imagesCommand
   .command("optimize-url <imageUrl>")
   .description("Optimize image from URL")
@@ -445,7 +451,7 @@ Examples:
 
 Environment Variables:
   ${chalk.yellow("API_JWT_SECRET")}                JWT secret for authentication
-  
+
 Token Creation:
   ${chalk.green("bun jwt create --sub 'ai:alt' --description 'AI testing'")}
   ${chalk.green("bun jwt create --sub 'api:images' --description 'Image testing'")}
