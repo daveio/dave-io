@@ -51,10 +51,13 @@ export interface CloudflareEnv {
   AI?: Ai
   /** D1 Database for relational data */
   DB?: D1Database
-  /** R2 Bucket for image storage */
-  IMAGES?: R2Bucket
-  /** Base URL for image CDN */
-  IMAGES_BASE_URL?: string
+  /** Cloudflare Images binding for image processing */
+  // biome-ignore lint/suspicious/noExplicitAny: Images binding type not available in @cloudflare/workers-types
+  IMAGES?: any
+  /** Cloudflare API token for Images API */
+  CLOUDFLARE_API_TOKEN?: string
+  /** Cloudflare account ID */
+  CLOUDFLARE_ACCOUNT_ID?: string
 }
 
 /**

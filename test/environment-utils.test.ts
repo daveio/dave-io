@@ -15,18 +15,21 @@ afterEach(() => {
   if (originalNodeEnv !== undefined) {
     process.env.NODE_ENV = originalNodeEnv
   } else {
+    // biome-ignore lint/performance/noDelete: Test cleanup requires deletion of env vars
     delete process.env.NODE_ENV
   }
 
   if (originalCfEnv !== undefined) {
     process.env.CLOUDFLARE_ENVIRONMENT = originalCfEnv
   } else {
+    // biome-ignore lint/performance/noDelete: Test cleanup requires deletion of env vars
     delete process.env.CLOUDFLARE_ENVIRONMENT
   }
 
   if (originalTestVar !== undefined) {
     process.env.TEST_VAR = originalTestVar
   } else {
+    // biome-ignore lint/performance/noDelete: Test cleanup requires deletion of env vars
     delete process.env.TEST_VAR
   }
 })
@@ -34,6 +37,7 @@ afterEach(() => {
 describe("getEnvironmentConfig", () => {
   it("returns development config when NODE_ENV is development", () => {
     process.env.NODE_ENV = "development"
+    // biome-ignore lint/performance/noDelete: Test requires undefined env var
     delete process.env.CLOUDFLARE_ENVIRONMENT
     const config = getEnvironmentConfig()
     expect(config.environment).toBe("development")
@@ -43,6 +47,7 @@ describe("getEnvironmentConfig", () => {
 
   it("returns production config when NODE_ENV is production", () => {
     process.env.NODE_ENV = "production"
+    // biome-ignore lint/performance/noDelete: Test requires undefined env var
     delete process.env.CLOUDFLARE_ENVIRONMENT
     const config = getEnvironmentConfig()
     expect(config.environment).toBe("production")
@@ -76,12 +81,14 @@ describe("getEnvironmentVariable", () => {
   })
 
   it("returns undefined for optional missing variable", () => {
+    // biome-ignore lint/performance/noDelete: Test requires undefined env var
     delete process.env.TEST_VAR
     const value = getEnvironmentVariable("TEST_VAR")
     expect(value).toBeUndefined()
   })
 
   it("throws for required missing variable", () => {
+    // biome-ignore lint/performance/noDelete: Test requires undefined env var
     delete process.env.TEST_VAR
     expect(() => getEnvironmentVariable("TEST_VAR", true)).toThrow("Required environment variable TEST_VAR is not set")
   })
@@ -90,6 +97,7 @@ describe("getEnvironmentVariable", () => {
 describe("environment helpers", () => {
   it("isDevelopment returns true in development", () => {
     process.env.NODE_ENV = "development"
+    // biome-ignore lint/performance/noDelete: Test requires undefined env var
     delete process.env.CLOUDFLARE_ENVIRONMENT
     expect(isDevelopment()).toBe(true)
     expect(isProduction()).toBe(false)

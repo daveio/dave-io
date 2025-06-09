@@ -1,9 +1,4 @@
-import {
-  type AdvancedOptimisationOptions,
-  type OptimisedImageResult,
-  optimiseImageBufferAdvanced,
-  processImageOptimisation
-} from "./image-processing"
+import { processImageWithCloudflareImages } from "./cloudflare-images"
 import { createApiError } from "./response"
 
 /**
@@ -25,7 +20,7 @@ export const PRESETS: Record<string, PresetConfig> = {
 } as const
 
 /**
- * Process image optimisation for a specific preset
+ * Process image optimisation for a specific preset using Cloudflare Images
  * @param imageBuffer - Original image buffer
  * @param presetName - Name of the preset to apply
  * @param env - Cloudflare environment
@@ -35,7 +30,16 @@ export async function processPresetOptimisation(
   imageBuffer: Buffer,
   presetName: string,
   env: Env
-): Promise<OptimisedImageResult> {
+): Promise<{
+  buffer: Buffer
+  originalSize: number
+  optimisedSize: number
+  format: string
+  hash: string
+  url: string
+  quality?: number
+  originalMimeType: string
+}> {
   const preset = PRESETS[presetName]
   if (!preset) {
     const availablePresets = Object.keys(PRESETS).join(", ")
@@ -44,40 +48,37 @@ export async function processPresetOptimisation(
 
   const startTime = Date.now()
 
-  // Use the advanced optimisation from image-processing.ts with preset-specific options
-  const options: AdvancedOptimisationOptions = {
-    targetSizeBytes: preset.maxSizeBytes,
-    minQuality: 10,
-    maxQuality: 95
-  }
+  // For AI processing, we want high quality since it's for analysis
+  // Cloudflare Images will handle the size optimization automatically
+  const quality = presetName === "alt" ? 85 : undefined
 
-  const { buffer: optimisedBuffer, originalMimeType, quality } = await optimiseImageBufferAdvanced(
-    imageBuffer,
-    options
-  )
-
-  // Use the standard processing workflow with preset-specific options
-  const result = await processImageOptimisation(imageBuffer, { quality }, env, { preset: presetName })
+  const result = await processImageWithCloudflareImages(imageBuffer, { quality }, env, { preset: presetName })
 
   const processingTime = Date.now() - startTime
   console.log(`Preset '${presetName}' optimisation completed in ${processingTime}ms`)
 
-  // Override the buffer with our preset-optimised version
-  return {
-    ...result,
-    buffer: optimisedBuffer,
-    optimisedSize: optimisedBuffer.length,
-    quality
-  }
+  return result
 }
 
 /**
  * Direct optimisation for AI processing without HTTP calls
- * Replaces the HTTP-based optimiseImageForAI function
+ * Uses Cloudflare Images instead of Sharp
  * @param imageBuffer - Image buffer to optimise
  * @param env - Cloudflare environment
  * @returns Promise<OptimisedImageResult> - Optimisation result
  */
-export async function optimiseImageForAI(imageBuffer: Buffer, env: Env): Promise<OptimisedImageResult> {
+export async function optimiseImageForAI(
+  imageBuffer: Buffer,
+  env: Env
+): Promise<{
+  buffer: Buffer
+  originalSize: number
+  optimisedSize: number
+  format: string
+  hash: string
+  url: string
+  quality?: number
+  originalMimeType: string
+}> {
   return processPresetOptimisation(imageBuffer, "alt", env)
 }

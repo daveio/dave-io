@@ -1,7 +1,7 @@
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAIAuth } from "~/server/utils/auth-helpers"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
-import { optimiseImageForAI } from "~/server/utils/image-optimisation"
+import { optimiseImageForAI } from "~/server/utils/image-presets"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
 import { AiAltTextRequestSchema } from "~/server/utils/schemas"
 import { validateBase64Image, validateImageURL } from "~/server/utils/validation"
@@ -34,10 +34,11 @@ export default defineEventHandler(async (event) => {
     }
 
     // Optimise the image using the 'alt' preset (≤ 4MB)
-    const optimisationResult = await optimiseImageForAI(event, originalImageData)
+    const optimisationResult = await optimiseImageForAI(originalImageData, env as Env)
 
     // Use the optimized buffer directly - no HTTP fetch needed!
     const imageData = optimisationResult.buffer
+    const compressionRatio = Math.round((1 - optimisationResult.optimisedSize / optimisationResult.originalSize) * 100)
 
     // Use Cloudflare AI for image analysis
     let altText: string
@@ -84,7 +85,7 @@ export default defineEventHandler(async (event) => {
       user: auth.payload?.sub || "anonymous",
       originalImageSize: originalImageData.length,
       optimisedImageSize: imageData.length,
-      compressionRatio: optimisationResult.compressionRatio,
+      compressionRatio,
       processingTime,
       success: true
     })
@@ -98,7 +99,7 @@ export default defineEventHandler(async (event) => {
         processingTimeMs: processingTime,
         originalImageSizeBytes: originalImageData.length,
         optimisedImageSizeBytes: imageData.length,
-        compressionRatio: optimisationResult.compressionRatio,
+        compressionRatio,
         optimisedImageUrl: optimisationResult.url
       },
       "Alt text generated successfully"
