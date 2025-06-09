@@ -1,5 +1,6 @@
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi"
 import { z } from "zod"
+import { PRESETS } from "./image-presets"
 
 extendZodWithOpenApi(z)
 
@@ -255,6 +256,45 @@ export const TokenMetricsSchema = z.object({
   timestamp: z.string()
 })
 
+// Image optimisation schemas
+export const ImageOptimisationRequestSchema = z
+  .object({
+    image: z
+      .string()
+      .refine((val) => !val.startsWith("data:"), {
+        message: "Image must be raw base64 without data URL"
+      })
+      .optional(),
+    quality: z.number().min(0).max(100).optional()
+  })
+  .refine((data) => data.image, {
+    message: "Image field is required for POST requests"
+  })
+
+export const ImageOptimisationResponseSchema = z.object({
+  success: z.literal(true),
+  data: z.object({
+    url: z.string().url(),
+    originalSizeBytes: z.number(),
+    optimisedSizeBytes: z.number(),
+    compressionRatio: z.number(),
+    format: z.literal("webp"),
+    hash: z.string(),
+    quality: z.number().optional(),
+    preset: z
+      .object({
+        name: z.enum(Object.keys(PRESETS) as [string, ...string[]]),
+        description: z.string(),
+        maxSizeBytes: z.number()
+      })
+      .optional(),
+    imageSource: z.string(),
+    timestamp: z.string()
+  }),
+  message: z.string(),
+  timestamp: z.string()
+})
+
 // Export commonly used types
 export type ApiSuccessResponse = z.infer<typeof ApiSuccessResponseSchema>
 export type ApiErrorResponse = z.infer<typeof ApiErrorResponseSchema>
@@ -272,6 +312,8 @@ export type AiAltTextRequest = z.infer<typeof AiAltTextRequestSchema>
 export type AiAltTextResponse = z.infer<typeof AiAltTextResponseSchema>
 export type TokenUsage = z.infer<typeof TokenUsageSchema>
 export type TokenMetrics = z.infer<typeof TokenMetricsSchema>
+export type ImageOptimisationRequest = z.infer<typeof ImageOptimisationRequestSchema>
+export type ImageOptimisationResponse = z.infer<typeof ImageOptimisationResponseSchema>
 
 // New KV schema types
 export type KVTimeMetrics = z.infer<typeof KVTimeMetricsSchema>

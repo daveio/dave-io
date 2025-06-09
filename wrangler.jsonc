@@ -25,6 +25,12 @@
       "database_id": "106894e2-1f5c-4979-a777-0b45febbb993"
     }
   ],
+  "r2_buckets": [
+    {
+      "binding": "IMAGES",
+      "bucket_name": "images-dave-io"
+    }
+  ],
   "durable_objects": {
     "bindings": [
       {
@@ -46,6 +52,7 @@
     }
   ],
   "vars": {
-    "CLOUDFLARE_ACCOUNT_ID": "def50674a738cee409235f71819973cf"
+    "CLOUDFLARE_ACCOUNT_ID": "def50674a738cee409235f71819973cf",
+    "IMAGES_BASE_URL": "https://images.dave.io"
   }
 }

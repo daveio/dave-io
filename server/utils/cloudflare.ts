@@ -51,6 +51,10 @@ export interface CloudflareEnv {
   AI?: Ai
   /** D1 Database for relational data */
   DB?: D1Database
+  /** R2 Bucket for image storage */
+  IMAGES?: R2Bucket
+  /** Base URL for image CDN */
+  IMAGES_BASE_URL?: string
 }
 
 /**
@@ -109,26 +113,21 @@ export function getD1Database(env: CloudflareEnv): D1Database {
   return env.DB
 }
 
-/**
- * Batch KV operations helper - reduces duplication of Promise.all + parseInt patterns
- */
 export async function batchKVGet(kv: KVNamespace, keys: string[], defaultValue = "0"): Promise<number[]> {
-  const results = await Promise.all(
+  return await Promise.all(
     keys.map(async (key) => {
       const value = await kv.get(key)
       const parsed = Number.parseInt(value || defaultValue, 10)
       return Number.isNaN(parsed) ? 0 : parsed
     })
   )
-  return results
 }
 
 /**
  * Get multiple KV values as strings
  */
 export async function batchKVGetStrings(kv: KVNamespace, keys: string[], defaultValue = ""): Promise<string[]> {
-  const results = await Promise.all(keys.map((key) => kv.get(key).then((v) => v || defaultValue)))
-  return results
+  return await Promise.all(keys.map((key) => kv.get(key).then((v) => v || defaultValue)))
 }
 
 /**

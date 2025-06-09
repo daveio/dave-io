@@ -141,7 +141,9 @@ function getResourceFromEndpoint(endpoint: string): string {
  * Classify user agent as human, bot, or unknown
  */
 function classifyVisitor(userAgent: string): "human" | "bot" | "unknown" {
-  if (!userAgent) return "unknown"
+  if (!userAgent) {
+    return "unknown"
+  }
 
   const botPatterns = [
     /bot/i,
@@ -327,11 +329,19 @@ export function updateRedirectMetricsAsync(
  * Get status code group (1xx, 2xx, etc.)
  */
 function getStatusGroup(statusCode: number): "1xx" | "2xx" | "3xx" | "4xx" | "5xx" {
-  if (statusCode >= 100 && statusCode < 200) return "1xx"
-  if (statusCode >= 200 && statusCode < 300) return "2xx"
-  if (statusCode >= 300 && statusCode < 400) return "3xx"
-  if (statusCode >= 400 && statusCode < 500) return "4xx"
-  return "5xx"
+ if (statusCode >= 100 && statusCode < 200) {
+  return "1xx"
+ }
+ if (statusCode >= 200 && statusCode < 300) {
+  return "2xx"
+ }
+ if (statusCode >= 300 && statusCode < 400) {
+  return "3xx"
+ }
+ if (statusCode >= 400 && statusCode < 500) {
+  return "4xx"
+ }
+ return "5xx"
 }
 
 /**
@@ -430,5 +440,4 @@ export function isBot(userAgent: string): boolean {
   return classifyVisitor(userAgent) === "bot"
 }
 
-export { getKVAggregatedTimings }
 export type { KVCounterEntry }

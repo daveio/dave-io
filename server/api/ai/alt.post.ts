@@ -1,6 +1,7 @@
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAIAuth } from "~/server/utils/auth-helpers"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
+import { optimiseImageForAI } from "~/server/utils/image-optimisation"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
 import { AiAltTextRequestSchema } from "~/server/utils/schemas"
 import { validateBase64Image, validateImageURL } from "~/server/utils/validation"
@@ -19,18 +20,24 @@ export default defineEventHandler(async (event) => {
 
     const startTime = Date.now()
 
-    // Process the image data
-    let imageData: Buffer
+    // Process the image data and optimise for AI
+    let originalImageData: Buffer
 
     if (request.url) {
       // Fetch and validate image from URL
       const buffer = await validateImageURL(request.url)
-      imageData = Buffer.from(buffer)
+      originalImageData = Buffer.from(buffer)
     } else if (request.image) {
-      imageData = await validateBase64Image(request.image)
+      originalImageData = await validateBase64Image(request.image)
     } else {
-      createApiError(400, "Either url or image must be provided")
+      throw createApiError(400, "Either url or image must be provided")
     }
+
+    // Optimise the image using the 'alt' preset (≤ 4MB)
+    const optimisationResult = await optimiseImageForAI(event, originalImageData)
+
+    // Use the optimized buffer directly - no HTTP fetch needed!
+    const imageData = optimisationResult.buffer
 
     // Use Cloudflare AI for image analysis
     let altText: string
@@ -75,7 +82,9 @@ export default defineEventHandler(async (event) => {
     // Log successful request
     logRequest(event, "ai/alt", "POST", 200, {
       user: auth.payload?.sub || "anonymous",
-      imageSize: imageData.length,
+      originalImageSize: originalImageData.length,
+      optimisedImageSize: imageData.length,
+      compressionRatio: optimisationResult.compressionRatio,
       processingTime,
       success: true
     })
@@ -87,7 +96,10 @@ export default defineEventHandler(async (event) => {
         model: aiModel,
         timestamp: new Date().toISOString(),
         processingTimeMs: processingTime,
-        imageSizeBytes: imageData.length
+        originalImageSizeBytes: originalImageData.length,
+        optimisedImageSizeBytes: imageData.length,
+        compressionRatio: optimisationResult.compressionRatio,
+        optimisedImageUrl: optimisationResult.url
       },
       "Alt text generated successfully"
     )
@@ -102,7 +114,9 @@ export default defineEventHandler(async (event) => {
     const statusCode = isApiError(error) ? (error as any).statusCode || 500 : 500
     logRequest(event, "ai/alt", "POST", statusCode, {
       user: "unknown",
-      imageSize: 0,
+      originalImageSize: 0,
+      optimisedImageSize: 0,
+      compressionRatio: 0,
       processingTime: 0,
       success: false
     })
