@@ -40,6 +40,8 @@ JWT-based fortress protecting my digital empire with dual authentication methods
 - **`/api/internal/auth`** - Token validation (any valid JWT)
 - **`/api/internal/metrics`** - API metrics (`api:metrics`, `api`, `admin`, or `*`)
 - **`/api/ai/alt`** (GET/POST) - Alt-text generation (`ai:alt`, `ai`, `admin`, or `*`)
+- **`/api/images/optimise`** (GET/POST) - Image optimisation (`api:images`, `api`, `admin`, or `*`)
+- **`/api/images/optimise/preset/{preset}`** (GET/POST) - Preset optimisation (`api:images`, `api`, `admin`, or `*`)
 - **`/api/tokens/{uuid}/*`** - Token management (`api:tokens`, `api`, `admin`, or `*`)
 #### 🔧 Token Generation
 
@@ -50,6 +52,9 @@ bun jwt create --sub "api:metrics" --description "Metrics access" --expiry "30d"
 # AI service access
 bun jwt create --sub "ai:alt" --description "Alt-text generation" --expiry "7d"
 
+# Image optimisation access
+bun jwt create --sub "api:images" --description "Image processing" --expiry "7d"
+
 # Full API access
 bun jwt create --sub "api" --description "Full API access" --expiry "1d"
 
@@ -59,13 +64,39 @@ bun jwt create --interactive
 
 **Permission Hierarchy**: `api:metrics` → `api` → `admin` → `*` (each level inherits access to lower levels)
 
--### 🤖 AI Integration (Now With Real AI Magic!)
+### 🖼️ Image Optimisation Service (Because Why Not Over-Engineer Images Too?)
+
+- **Automatic WebP conversion** with smart compression strategy that's smarter than most humans
+- **R2 bucket storage** with BLAKE3 hash filenames (because MD5 is for amateurs)
+- **AI-optimised preset** ensuring images are ≤ 4MB for AI processing (no more "file too large" tears)
+- **Two-phase optimisation**: Quality reduction first, then dimension scaling if needed
+- **Smart resizing strategy**: Reduces dimensions by 15% per iteration until target reached
+- **Hard limit protection**: 1024px minimum on long edge before throwing in the towel
+- **Lossless for PNG, lossy for JPEG** - because we respect your original format choices
+- **Transparency preservation** because invisible pixels matter too
+- **Requires `api:images` scope** (we're not running a charity here)
+
+```bash
+# General image optimisation
+curl -X POST "https://dave.io/api/images/optimise" \
+  -H "Authorization: Bearer $JWT" \
+  -H "Content-Type: application/json" \
+  -d '{"image": "<base64-data>", "quality": 80}'
+
+# AI-ready preset (≤ 4MB guaranteed)
+curl -X GET "https://dave.io/api/images/optimise/preset/alt?url=https://example.com/image.jpg" \
+  -H "Authorization: Bearer $JWT"
+```
+
+### 🤖 AI Integration (Now With Real AI Magic!)
 
 - Alt-text generation for images (URL or raw base64) using Cloudflare AI
+- **Images automatically optimised** before AI processing via our shiny new optimisation service
 - Powered by `@cf/llava-hf/llava-1.5-7b-hf` model (because we don't mess around with fake AI)
 - Because accessibility matters, even for personal sites that are way too complicated
 - File size validation and proper error handling (up to 4MB images)
 - **🚨 BREAKING CHANGE**: POST body now accepts raw base64 only (no data URLs)
+- **🚨 BREAKING CHANGE**: Responses now include optimisation metrics (compression ratios, etc.)
 - Consistent authentication and response formatting across both GET and POST endpoints
 
 ### 📊 KV Metrics Which Would Make Google Jealous

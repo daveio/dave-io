@@ -57,9 +57,86 @@ async function optimiseForPreset(
 ): Promise<{ buffer: Buffer; originalMimeType: string; quality: number }> {
   const originalMimeType = await validateAndDetectMimeType(inputBuffer)
 
-  let sharpImage = sharp(inputBuffer)
+  // Get original image metadata for resizing logic
+  const originalMetadata = await sharp(inputBuffer).metadata()
+  const originalWidth = originalMetadata.width || 0
+  const originalHeight = originalMetadata.height || 0
+  const originalLongEdge = Math.max(originalWidth, originalHeight)
 
-  // For the 'alt' preset, we need to get as close to 4MB as possible
+  console.log(`Original image: ${originalWidth}x${originalHeight} (${inputBuffer.length} bytes)`)
+
+  let currentBuffer = inputBuffer
+  let currentWidth = originalWidth
+  let currentHeight = originalHeight
+  let resizeAttempts = 0
+  const minLongEdge = 1024
+
+  // Phase 1: Try quality optimization first without resizing
+  let result = await optimiseWithQuality(currentBuffer, originalMimeType, preset.maxSizeBytes)
+  
+  // Phase 2: If still too large, start reducing dimensions
+  while (result.buffer.length > preset.maxSizeBytes && Math.max(currentWidth, currentHeight) > minLongEdge) {
+    resizeAttempts++
+    console.log(`Attempt ${resizeAttempts}: Image still ${result.buffer.length} bytes, trying dimension reduction`)
+    
+    // Reduce dimensions by 15% each iteration (more aggressive than quality reduction)
+    const scaleFactor = 0.85
+    currentWidth = Math.floor(currentWidth * scaleFactor)
+    currentHeight = Math.floor(currentHeight * scaleFactor)
+    
+    // Ensure we don't go below minimum dimensions
+    const currentLongEdge = Math.max(currentWidth, currentHeight)
+    if (currentLongEdge < minLongEdge) {
+      const scale = minLongEdge / currentLongEdge
+      currentWidth = Math.floor(currentWidth * scale)
+      currentHeight = Math.floor(currentHeight * scale)
+    }
+    
+    console.log(`Resizing to ${currentWidth}x${currentHeight}`)
+    
+    // Resize the image
+    currentBuffer = await sharp(inputBuffer)
+      .resize(currentWidth, currentHeight, { 
+        fit: 'inside',
+        withoutEnlargement: true 
+      })
+      .toBuffer()
+    
+    // Try quality optimization again with the smaller image
+    result = await optimiseWithQuality(currentBuffer, originalMimeType, preset.maxSizeBytes)
+    
+    // Safety check to prevent infinite loops
+    if (resizeAttempts >= 10) {
+      console.warn(`Reached maximum resize attempts (${resizeAttempts})`)
+      break
+    }
+  }
+
+  // Final check - if we're at minimum dimensions and still over target, throw error
+  if (result.buffer.length > preset.maxSizeBytes) {
+    const currentLongEdge = Math.max(currentWidth, currentHeight)
+    if (currentLongEdge <= minLongEdge) {
+      throw createApiError(
+        422, 
+        `Unable to compress image below ${preset.maxSizeBytes} bytes even at minimum dimensions (${currentWidth}x${currentHeight}). Current size: ${result.buffer.length} bytes`
+      )
+    }
+  }
+
+  console.log(
+    `Preset optimisation completed: ${inputBuffer.length} → ${result.buffer.length} bytes ` +
+    `(${originalWidth}x${originalHeight} → ${currentWidth}x${currentHeight}) ` +
+    `at quality ${result.quality}${resizeAttempts > 0 ? ` after ${resizeAttempts} resize attempts` : ''}`
+  )
+
+  return result
+}
+
+async function optimiseWithQuality(
+  inputBuffer: Buffer,
+  originalMimeType: string,
+  targetSize: number
+): Promise<{ buffer: Buffer; originalMimeType: string; quality: number }> {
   // Start with a reasonable quality and adjust based on output size
   let quality = LOSSY_FORMATS.includes(originalMimeType) ? 60 : 80
   let optimisedBuffer: Buffer
@@ -73,7 +150,7 @@ async function optimiseForPreset(
   do {
     attempts++
 
-    sharpImage = sharp(inputBuffer)
+    let sharpImage = sharp(inputBuffer)
 
     if (LOSSY_FORMATS.includes(originalMimeType) || quality < 95) {
       // Use lossy compression
@@ -93,7 +170,6 @@ async function optimiseForPreset(
     optimisedBuffer = await sharpImage.toBuffer()
 
     // If we're within 10% of target size or under target, we're done
-    const targetSize = preset.maxSizeBytes
     const tolerance = targetSize * 0.1
 
     if (optimisedBuffer.length <= targetSize) {
@@ -115,9 +191,9 @@ async function optimiseForPreset(
     }
   } while (attempts < maxAttempts && Math.abs(maxQuality - minQuality) > 1)
 
-  // Final check - if still over target, use minimum quality
-  if (optimisedBuffer.length > preset.maxSizeBytes && quality > 10) {
-    sharpImage = sharp(inputBuffer).webp({
+  // Final attempt with minimum quality if still over target
+  if (optimisedBuffer.length > targetSize && quality > 10) {
+    const sharpImage = sharp(inputBuffer).webp({
       quality: 10,
       lossless: false,
       effort: 6
@@ -125,10 +201,6 @@ async function optimiseForPreset(
     optimisedBuffer = await sharpImage.toBuffer()
     quality = 10
   }
-
-  console.log(
-    `Preset optimisation completed after ${attempts} attempts: ${inputBuffer.length} → ${optimisedBuffer.length} bytes at quality ${quality}`
-  )
 
   return {
     buffer: optimisedBuffer,

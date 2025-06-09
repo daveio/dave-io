@@ -311,7 +311,11 @@ Nuxt 3 + Cloudflare Workers REST API platform. Migrated from simple Worker to en
 **Core**: `/api/internal/health`, `/api/internal/ping`, `/api/internal/auth`, `/api/internal/metrics` (json/yaml/prometheus)
 **AI**: `/api/ai/alt` (GET url param, POST raw base64)
   - **BREAKING CHANGE**: POST handler no longer accepts data URLs. Supply raw base64 only.
-  - Images limited to 4MB after decoding
+  - Images automatically optimised via `/api/images/optimise/preset/alt` before AI processing
+**Images**: `/api/images/optimise` (GET/POST), `/api/images/optimise/preset/{preset}`
+  - WebP conversion with smart compression strategy
+  - R2 storage with BLAKE3 hash filenames: `{UNIX_TIME}-{BLAKE3_HASH}.webp`
+  - Requires `api:images` permission scope
 **Tokens**: `/api/tokens/{uuid}/usage`, `/api/tokens/{uuid}/revoke`
 **Redirects**: `/go/{slug}` (gh/tw/li)
 
@@ -330,7 +334,7 @@ Nuxt 3 + Cloudflare Workers REST API platform. Migrated from simple Worker to en
 ## Config
 
 **Env**: `API_JWT_SECRET`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
-**Bindings**: KV (DATA), D1 (DB), AI
+**Bindings**: KV (DATA), D1 (DB), AI, R2 (IMAGES)
 **Optional**: `NUXT_PUBLIC_API_BASE_URL=/api`
 **Dev Options**:
 
@@ -454,7 +458,7 @@ metrics:redirect:gh:ok = "15"
 **DevEx**: OpenAPI docs, client SDKs, Docker dev env, CI/CD, monitoring dashboard
 **Architecture**: Microservices, event-driven (Queues), multi-tenancy, API versioning, WebSockets (Durable Objects)
 
-**Completed**: ✅ D1 integration, ✅ Code quality, ✅ Real AI integration, ✅ Custom domain, ✅ Rate limiting removal, ✅ JWT maxRequests field removal
+**Completed**: ✅ D1 integration, ✅ Code quality, ✅ Real AI integration, ✅ Custom domain, ✅ Rate limiting removal, ✅ JWT maxRequests field removal, ✅ Image optimisation service
 
 ## KV Data Management
 
@@ -482,3 +486,39 @@ metrics:redirect:gh:ok = "15"
 
 **Schema Compatibility**: Imports automatically convert nested YAML structure to flat KV keys for backward compatibility
 **Data Validation**: TypeScript schemas validate imported data structure before KV storage
+
+## Image Optimisation Service
+
+**Purpose**: Automatic image resizing, compression, and WebP conversion for improved load times and AI processing compatibility.
+
+**Endpoints**:
+- `GET /api/images/optimise?url=<image_url>[&quality=N][&lossy=true]` - Optimise from URL
+- `POST /api/images/optimise` - Optimise from base64 data with options
+- `GET /api/images/optimise/preset/alt?url=<image_url>` - AI-optimised preset (≤ 4MB)
+- `POST /api/images/optimise/preset/alt` - AI-optimised preset from base64
+
+**Features**:
+- **WebP Conversion**: All images converted to WebP format with transparency preservation
+- **Smart Compression**: Lossy for JPEG inputs, lossless for PNG/other formats
+- **R2 Storage**: Files stored in `images-dave-io` bucket with `/opt/` prefix
+- **BLAKE3 Hashing**: Filename generation based on original image content
+- **AI Integration**: Alt text endpoints automatically use optimisation service
+
+**Filename Format**: `{UNIX_TIME}-{BLAKE3_HASH}.webp`
+**Storage URL**: `https://images.dave.io/opt/{filename}`
+**Authentication**: Requires `api:images` permission scope
+**File Size**: 4MB limit after base64 decoding
+
+**Compression Strategy**:
+- Explicit quality parameter → lossy WebP at specified quality
+- JPEG input → lossy WebP at quality 60
+- PNG/other lossless formats → lossless WebP with maximum effort
+
+**Alt Preset Strategy** (≤ 4MB target):
+1. **Phase 1**: Binary search quality optimization (10-95 quality range)
+2. **Phase 2**: If still too large, reduce dimensions by 15% per iteration
+3. **Hard Limit**: 1024px minimum on long edge before error
+4. **Fallback**: Lossy compression with minimum quality if needed
+5. **Error Handling**: 422 error if cannot achieve target at minimum dimensions
+
+**TODO**: Fix test configuration issues - tests are hanging during execution
