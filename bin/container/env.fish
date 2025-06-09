@@ -2,7 +2,7 @@
 
 # Container environment inspector - prints environment variables as a nicely formatted Markdown table
 # Usage: ./env.fish [--filter PATTERN] [--hide-sensitive] [--format FORMAT]
-# 
+#
 # Arguments:
 #   --filter PATTERN     Only show variables matching pattern (case-insensitive)
 #   --hide-sensitive     Mask values for potentially sensitive variables
@@ -92,19 +92,19 @@ for var in (env | sort)
     set parts (string split -m 1 "=" $var)
     set var_name $parts[1]
     set var_value $parts[2]
-    
+
     # Apply filter if specified
     if test -n "$filter_pattern"
         if not string match -qi "*$filter_pattern*" $var_name
             continue
         end
     end
-    
+
     # Handle sensitive variables
     if test $hide_sensitive = true; and is_sensitive $var_name
         set var_value (mask_value $var_value)
     end
-    
+
     # Escape special characters based on output format
     switch $output_format
         case table
@@ -113,18 +113,18 @@ for var in (env | sort)
             set var_value (string replace -a '"' '\\"' $var_value)
             set var_value (string replace -a '\\' '\\\\' $var_value)
     end
-    
+
     # Track maximum lengths for table formatting
     set var_len (string length $var_name)
     if test $var_len -gt $max_var_len
         set max_var_len $var_len
     end
-    
+
     set val_len (string length $var_value)
     if test $val_len -gt $max_val_len
         set max_val_len $val_len
     end
-    
+
     # Store the variable data
     set all_vars $all_vars "$var_name=$var_value"
 end
@@ -144,7 +144,7 @@ switch $output_format
         end
         echo ""
         echo "}"
-        
+
     case yaml
         echo "# Environment Variables"
         echo "# Generated on "(date)
@@ -153,33 +153,33 @@ switch $output_format
             set parts (string split -m 1 "=" $var_data)
             printf "  %s: \"%s\"\n" $parts[1] $parts[2]
         end
-        
+
     case table
         # Print title
         echo "# Container Environment Variables"
         echo "Generated on "(date)" | Variables: "(count $all_vars)
         echo ""
-        
+
         # Print the header with proper padding
         set header_var (string pad -w $max_var_len "Variable")
         set header_val (string pad -w $max_val_len "Value")
         echo "| $header_var | $header_val |"
-        
+
         # Print the separator line
         set separator_var (string repeat -n $max_var_len "-")
         set separator_val (string repeat -n $max_val_len "-")
         echo "|-$separator_var-|-$separator_val-|"
-        
+
         # Print all variables with proper alignment
         for var_data in $all_vars
             set parts (string split -m 1 "=" $var_data)
             set var_name $parts[1]
             set var_value $parts[2]
-            
+
             # Pad both columns to their maximum widths
             set padded_var (string pad -w $max_var_len $var_name)
             set padded_val (string pad -w $max_val_len $var_value)
-            
+
             # Print the table row
             echo "| $padded_var | $padded_val |"
         end
