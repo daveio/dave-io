@@ -251,13 +251,32 @@ export async function processImageOptimisation(
     const url = `https://images.dave.io/opt/${filename}`
     console.log(`Using cached optimised image: ${filename}`)
 
-    // For cached images, we need to optimise locally to get the buffer and sizes
-    const { buffer: optimisedBuffer, originalMimeType, quality } = await optimiseImageBuffer(imageBuffer, options)
+    // Fetch the cached image from R2 to get accurate metadata and buffer
+    const key = `opt/${filename}`
+    const cachedObject = await env.IMAGES.get(key)
+
+    if (!cachedObject) {
+      throw createApiError(503, "Failed to retrieve cached image from storage")
+    }
+
+    const cachedBuffer = await cachedObject.arrayBuffer()
+    const cachedBufferAsBuffer = Buffer.from(cachedBuffer)
+
+    // Extract metadata from the cached object
+    const originalMimeType = cachedObject.customMetadata?.originalMimeType || "unknown"
+
+    // Parse quality from filename for consistency
+    const nameWithoutExt = filename.replace(/\.webp$/, "")
+    let quality: number | undefined
+    if (nameWithoutExt.includes("-q")) {
+      const qualityMatch = nameWithoutExt.match(/-q(\d+)$/)
+      quality = qualityMatch ? parseInt(qualityMatch[1], 10) : undefined
+    }
 
     return {
-      buffer: optimisedBuffer,
+      buffer: cachedBufferAsBuffer,
       originalSize: imageBuffer.length,
-      optimisedSize: optimisedBuffer.length,
+      optimisedSize: cachedBufferAsBuffer.length,
       format: "webp",
       hash: extractHashFromFilename(filename),
       url,
