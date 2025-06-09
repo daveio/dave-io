@@ -430,5 +430,4 @@ export function isBot(userAgent: string): boolean {
   return classifyVisitor(userAgent) === "bot"
 }
 
-export { getKVAggregatedTimings }
 export type { KVCounterEntry }
