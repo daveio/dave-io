@@ -1,10 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest"
-import {
-  getEnvironmentConfig,
-  getEnvironmentVariable,
-  isDevelopment,
-  isProduction
-} from "~/server/utils/environment"
+import { getEnvironmentConfig, getEnvironmentVariable, isDevelopment, isProduction } from "~/server/utils/environment"
 
 let originalNodeEnv: string | undefined
 let originalCfEnv: string | undefined
@@ -88,9 +83,7 @@ describe("getEnvironmentVariable", () => {
 
   it("throws for required missing variable", () => {
     delete (process.env as Record<string, string>).TEST_VAR
-    expect(() => getEnvironmentVariable("TEST_VAR", true)).toThrow(
-      "Required environment variable TEST_VAR is not set"
-    )
+    expect(() => getEnvironmentVariable("TEST_VAR", true)).toThrow("Required environment variable TEST_VAR is not set")
   })
 })
 

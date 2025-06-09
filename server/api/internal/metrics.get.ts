@@ -19,10 +19,7 @@ async function getMetricsFromKV(kv?: KVNamespace): Promise<{
 
   try {
     // Get basic metrics using simple KV keys
-    const [okStr, errorStr] = await Promise.all([
-      kv.get("metrics:ok"),
-      kv.get("metrics:error")
-    ])
+    const [okStr, errorStr] = await Promise.all([kv.get("metrics:ok"), kv.get("metrics:error")])
 
     const successfulRequests = okStr ? Number.parseInt(okStr, 10) : 0
     const failedRequests = errorStr ? Number.parseInt(errorStr, 10) : 0

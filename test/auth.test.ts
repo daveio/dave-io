@@ -267,16 +267,13 @@ describe("Authentication System", () => {
 
       const event = mockH3Event({ authorization: `Bearer ${token}` })
       event.context = { cloudflare: { env: { API_JWT_SECRET: envSecret } } }
-
       ;(global as any).useRuntimeConfig = () => ({ apiJwtSecret: configSecret })
       const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {})
 
       const authFunc = await authorizeEndpoint("api")
       const result = await authFunc(event)
 
-      expect(warnSpy).toHaveBeenCalledWith(
-        "JWT secret mismatch between Cloudflare environment and runtime config"
-      )
+      expect(warnSpy).toHaveBeenCalledWith("JWT secret mismatch between Cloudflare environment and runtime config")
       expect(result.success).toBe(true)
 
       warnSpy.mockRestore()

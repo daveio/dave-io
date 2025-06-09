@@ -164,9 +164,7 @@ export async function authorizeEndpoint(
 
       // Detect mismatched secrets between environments
       if (configSecret && configSecret !== secret) {
-        console.warn(
-          "JWT secret mismatch between Cloudflare environment and runtime config"
-        )
+        console.warn("JWT secret mismatch between Cloudflare environment and runtime config")
       }
     } else {
       // Fallback to runtime config for non-Cloudflare environments

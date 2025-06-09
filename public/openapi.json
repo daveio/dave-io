@@ -24,9 +24,7 @@
         "properties": {
           "success": {
             "type": "boolean",
-            "enum": [
-              true
-            ]
+            "enum": [true]
           },
           "alt_text": {
             "type": "string"
@@ -41,20 +39,14 @@
             "type": "string"
           }
         },
-        "required": [
-          "success",
-          "alt_text",
-          "timestamp"
-        ]
+        "required": ["success", "alt_text", "timestamp"]
       },
       "ApiErrorResponseSchema": {
         "type": "object",
         "properties": {
           "success": {
             "type": "boolean",
-            "enum": [
-              false
-            ]
+            "enum": [false]
           },
           "error": {
             "type": "string"
@@ -72,20 +64,14 @@
             "type": "string"
           }
         },
-        "required": [
-          "success",
-          "error",
-          "timestamp"
-        ]
+        "required": ["success", "error", "timestamp"]
       },
       "ApiSuccessResponseSchema": {
         "type": "object",
         "properties": {
           "success": {
             "type": "boolean",
-            "enum": [
-              true
-            ]
+            "enum": [true]
           },
           "data": {},
           "message": {
@@ -115,10 +101,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "success",
-          "timestamp"
-        ]
+        "required": ["success", "timestamp"]
       },
       "AuthIntrospectionSchema": {
         "type": "object",
@@ -148,10 +131,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "sub",
-                  "iat"
-                ]
+                "required": ["sub", "iat"]
               },
               "user": {
                 "type": "object",
@@ -163,28 +143,19 @@
                     "type": "string"
                   },
                   "expiresAt": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": ["string", "null"]
                   },
                   "tokenId": {
                     "type": "string"
                   }
                 },
-                "required": [
-                  "id",
-                  "issuedAt",
-                  "expiresAt"
-                ]
+                "required": ["id", "issuedAt", "expiresAt"]
               },
               "error": {
                 "type": "string"
               }
             },
-            "required": [
-              "valid"
-            ]
+            "required": ["valid"]
           },
           "message": {
             "type": "string"
@@ -193,20 +164,14 @@
             "type": "string"
           }
         },
-        "required": [
-          "success",
-          "data",
-          "timestamp"
-        ]
+        "required": ["success", "data", "timestamp"]
       },
       "AuthSuccessResponseSchema": {
         "type": "object",
         "properties": {
           "success": {
             "type": "boolean",
-            "enum": [
-              true
-            ]
+            "enum": [true]
           },
           "message": {
             "type": "string"
@@ -227,10 +192,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "sub",
-              "iat"
-            ]
+            "required": ["sub", "iat"]
           },
           "user": {
             "type": "object",
@@ -242,32 +204,19 @@
                 "type": "string"
               },
               "expiresAt": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "tokenId": {
                 "type": "string"
               }
             },
-            "required": [
-              "id",
-              "issuedAt",
-              "expiresAt"
-            ]
+            "required": ["id", "issuedAt", "expiresAt"]
           },
           "timestamp": {
             "type": "string"
           }
         },
-        "required": [
-          "success",
-          "message",
-          "jwt",
-          "user",
-          "timestamp"
-        ]
+        "required": ["success", "message", "jwt", "user", "timestamp"]
       },
       "CreateRedirectSchema": {
         "type": "object",
@@ -289,20 +238,14 @@
             "type": "string"
           }
         },
-        "required": [
-          "slug",
-          "url"
-        ]
+        "required": ["slug", "url"]
       },
       "HealthCheckSchema": {
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "enum": [
-              "ok",
-              "error"
-            ]
+            "enum": ["ok", "error"]
           },
           "timestamp": {
             "type": "string"
@@ -323,12 +266,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "status",
-          "timestamp",
-          "version",
-          "environment"
-        ]
+        "required": ["status", "timestamp", "version", "environment"]
       },
       "JWTDetailsSchema": {
         "type": "object",
@@ -346,10 +284,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "sub",
-          "iat"
-        ]
+        "required": ["sub", "iat"]
       },
       "JWTPayloadSchema": {
         "type": "object",
@@ -367,10 +302,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "sub",
-          "iat"
-        ]
+        "required": ["sub", "iat"]
       },
       "KVDataSchema": {
         "type": "object",
@@ -402,11 +334,7 @@
                           "type": "number"
                         }
                       },
-                      "required": [
-                        "last-hit",
-                        "last-error",
-                        "last-ok"
-                      ]
+                      "required": ["last-hit", "last-error", "last-ok"]
                     },
                     "visitor": {
                       "type": "object",
@@ -421,11 +349,7 @@
                           "type": "number"
                         }
                       },
-                      "required": [
-                        "human",
-                        "bot",
-                        "unknown"
-                      ]
+                      "required": ["human", "bot", "unknown"]
                     },
                     "group": {
                       "type": "object",
@@ -446,13 +370,7 @@
                           "type": "number"
                         }
                       },
-                      "required": [
-                        "1xx",
-                        "2xx",
-                        "3xx",
-                        "4xx",
-                        "5xx"
-                      ]
+                      "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
                     },
                     "status": {
                       "type": "object",
@@ -475,14 +393,7 @@
                       }
                     }
                   },
-                  "required": [
-                    "ok",
-                    "error",
-                    "times",
-                    "visitor",
-                    "group",
-                    "status"
-                  ]
+                  "required": ["ok", "error", "times", "visitor", "group", "status"]
                 }
               },
               "redirect": {
@@ -509,11 +420,7 @@
                           "type": "number"
                         }
                       },
-                      "required": [
-                        "last-hit",
-                        "last-error",
-                        "last-ok"
-                      ]
+                      "required": ["last-hit", "last-error", "last-ok"]
                     },
                     "visitor": {
                       "type": "object",
@@ -528,11 +435,7 @@
                           "type": "number"
                         }
                       },
-                      "required": [
-                        "human",
-                        "bot",
-                        "unknown"
-                      ]
+                      "required": ["human", "bot", "unknown"]
                     },
                     "group": {
                       "type": "object",
@@ -553,13 +456,7 @@
                           "type": "number"
                         }
                       },
-                      "required": [
-                        "1xx",
-                        "2xx",
-                        "3xx",
-                        "4xx",
-                        "5xx"
-                      ]
+                      "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
                     },
                     "status": {
                       "type": "object",
@@ -582,14 +479,7 @@
                       }
                     }
                   },
-                  "required": [
-                    "ok",
-                    "error",
-                    "times",
-                    "visitor",
-                    "group",
-                    "status"
-                  ]
+                  "required": ["ok", "error", "times", "visitor", "group", "status"]
                 }
               },
               "ok": {
@@ -611,11 +501,7 @@
                     "type": "number"
                   }
                 },
-                "required": [
-                  "last-hit",
-                  "last-error",
-                  "last-ok"
-                ]
+                "required": ["last-hit", "last-error", "last-ok"]
               },
               "visitor": {
                 "type": "object",
@@ -630,11 +516,7 @@
                     "type": "number"
                   }
                 },
-                "required": [
-                  "human",
-                  "bot",
-                  "unknown"
-                ]
+                "required": ["human", "bot", "unknown"]
               },
               "group": {
                 "type": "object",
@@ -655,13 +537,7 @@
                     "type": "number"
                   }
                 },
-                "required": [
-                  "1xx",
-                  "2xx",
-                  "3xx",
-                  "4xx",
-                  "5xx"
-                ]
+                "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
               },
               "status": {
                 "type": "object",
@@ -684,16 +560,7 @@
                 }
               }
             },
-            "required": [
-              "resources",
-              "redirect",
-              "ok",
-              "error",
-              "times",
-              "visitor",
-              "group",
-              "status"
-            ]
+            "required": ["resources", "redirect", "ok", "error", "times", "visitor", "group", "status"]
           },
           "redirect": {
             "type": "object",
@@ -703,10 +570,7 @@
             }
           }
         },
-        "required": [
-          "metrics",
-          "redirect"
-        ]
+        "required": ["metrics", "redirect"]
       },
       "KVGroupMetricsSchema": {
         "type": "object",
@@ -727,13 +591,7 @@
             "type": "number"
           }
         },
-        "required": [
-          "1xx",
-          "2xx",
-          "3xx",
-          "4xx",
-          "5xx"
-        ]
+        "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
       },
       "KVMetricsSchema": {
         "type": "object",
@@ -762,11 +620,7 @@
                       "type": "number"
                     }
                   },
-                  "required": [
-                    "last-hit",
-                    "last-error",
-                    "last-ok"
-                  ]
+                  "required": ["last-hit", "last-error", "last-ok"]
                 },
                 "visitor": {
                   "type": "object",
@@ -781,11 +635,7 @@
                       "type": "number"
                     }
                   },
-                  "required": [
-                    "human",
-                    "bot",
-                    "unknown"
-                  ]
+                  "required": ["human", "bot", "unknown"]
                 },
                 "group": {
                   "type": "object",
@@ -806,13 +656,7 @@
                       "type": "number"
                     }
                   },
-                  "required": [
-                    "1xx",
-                    "2xx",
-                    "3xx",
-                    "4xx",
-                    "5xx"
-                  ]
+                  "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
                 },
                 "status": {
                   "type": "object",
@@ -835,14 +679,7 @@
                   }
                 }
               },
-              "required": [
-                "ok",
-                "error",
-                "times",
-                "visitor",
-                "group",
-                "status"
-              ]
+              "required": ["ok", "error", "times", "visitor", "group", "status"]
             }
           },
           "redirect": {
@@ -869,11 +706,7 @@
                       "type": "number"
                     }
                   },
-                  "required": [
-                    "last-hit",
-                    "last-error",
-                    "last-ok"
-                  ]
+                  "required": ["last-hit", "last-error", "last-ok"]
                 },
                 "visitor": {
                   "type": "object",
@@ -888,11 +721,7 @@
                       "type": "number"
                     }
                   },
-                  "required": [
-                    "human",
-                    "bot",
-                    "unknown"
-                  ]
+                  "required": ["human", "bot", "unknown"]
                 },
                 "group": {
                   "type": "object",
@@ -913,13 +742,7 @@
                       "type": "number"
                     }
                   },
-                  "required": [
-                    "1xx",
-                    "2xx",
-                    "3xx",
-                    "4xx",
-                    "5xx"
-                  ]
+                  "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
                 },
                 "status": {
                   "type": "object",
@@ -942,14 +765,7 @@
                   }
                 }
               },
-              "required": [
-                "ok",
-                "error",
-                "times",
-                "visitor",
-                "group",
-                "status"
-              ]
+              "required": ["ok", "error", "times", "visitor", "group", "status"]
             }
           },
           "ok": {
@@ -971,11 +787,7 @@
                 "type": "number"
               }
             },
-            "required": [
-              "last-hit",
-              "last-error",
-              "last-ok"
-            ]
+            "required": ["last-hit", "last-error", "last-ok"]
           },
           "visitor": {
             "type": "object",
@@ -990,11 +802,7 @@
                 "type": "number"
               }
             },
-            "required": [
-              "human",
-              "bot",
-              "unknown"
-            ]
+            "required": ["human", "bot", "unknown"]
           },
           "group": {
             "type": "object",
@@ -1015,13 +823,7 @@
                 "type": "number"
               }
             },
-            "required": [
-              "1xx",
-              "2xx",
-              "3xx",
-              "4xx",
-              "5xx"
-            ]
+            "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
           },
           "status": {
             "type": "object",
@@ -1044,16 +846,7 @@
             }
           }
         },
-        "required": [
-          "resources",
-          "redirect",
-          "ok",
-          "error",
-          "times",
-          "visitor",
-          "group",
-          "status"
-        ]
+        "required": ["resources", "redirect", "ok", "error", "times", "visitor", "group", "status"]
       },
       "KVRedirectMappingSchema": {
         "type": "object",
@@ -1086,11 +879,7 @@
                   "type": "number"
                 }
               },
-              "required": [
-                "last-hit",
-                "last-error",
-                "last-ok"
-              ]
+              "required": ["last-hit", "last-error", "last-ok"]
             },
             "visitor": {
               "type": "object",
@@ -1105,11 +894,7 @@
                   "type": "number"
                 }
               },
-              "required": [
-                "human",
-                "bot",
-                "unknown"
-              ]
+              "required": ["human", "bot", "unknown"]
             },
             "group": {
               "type": "object",
@@ -1130,13 +915,7 @@
                   "type": "number"
                 }
               },
-              "required": [
-                "1xx",
-                "2xx",
-                "3xx",
-                "4xx",
-                "5xx"
-              ]
+              "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
             },
             "status": {
               "type": "object",
@@ -1159,14 +938,7 @@
               }
             }
           },
-          "required": [
-            "ok",
-            "error",
-            "times",
-            "visitor",
-            "group",
-            "status"
-          ]
+          "required": ["ok", "error", "times", "visitor", "group", "status"]
         }
       },
       "KVResourceMetricsSchema": {
@@ -1193,11 +965,7 @@
                   "type": "number"
                 }
               },
-              "required": [
-                "last-hit",
-                "last-error",
-                "last-ok"
-              ]
+              "required": ["last-hit", "last-error", "last-ok"]
             },
             "visitor": {
               "type": "object",
@@ -1212,11 +980,7 @@
                   "type": "number"
                 }
               },
-              "required": [
-                "human",
-                "bot",
-                "unknown"
-              ]
+              "required": ["human", "bot", "unknown"]
             },
             "group": {
               "type": "object",
@@ -1237,13 +1001,7 @@
                   "type": "number"
                 }
               },
-              "required": [
-                "1xx",
-                "2xx",
-                "3xx",
-                "4xx",
-                "5xx"
-              ]
+              "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
             },
             "status": {
               "type": "object",
@@ -1266,14 +1024,7 @@
               }
             }
           },
-          "required": [
-            "ok",
-            "error",
-            "times",
-            "visitor",
-            "group",
-            "status"
-          ]
+          "required": ["ok", "error", "times", "visitor", "group", "status"]
         }
       },
       "KVSampleMetricsSchema": {
@@ -1298,11 +1049,7 @@
                 "type": "number"
               }
             },
-            "required": [
-              "last-hit",
-              "last-error",
-              "last-ok"
-            ]
+            "required": ["last-hit", "last-error", "last-ok"]
           },
           "visitor": {
             "type": "object",
@@ -1317,11 +1064,7 @@
                 "type": "number"
               }
             },
-            "required": [
-              "human",
-              "bot",
-              "unknown"
-            ]
+            "required": ["human", "bot", "unknown"]
           },
           "group": {
             "type": "object",
@@ -1342,13 +1085,7 @@
                 "type": "number"
               }
             },
-            "required": [
-              "1xx",
-              "2xx",
-              "3xx",
-              "4xx",
-              "5xx"
-            ]
+            "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
           },
           "status": {
             "type": "object",
@@ -1371,14 +1108,7 @@
             }
           }
         },
-        "required": [
-          "ok",
-          "error",
-          "times",
-          "visitor",
-          "group",
-          "status"
-        ]
+        "required": ["ok", "error", "times", "visitor", "group", "status"]
       },
       "KVStatusMetricsSchema": {
         "type": "object",
@@ -1413,11 +1143,7 @@
             "type": "number"
           }
         },
-        "required": [
-          "last-hit",
-          "last-error",
-          "last-ok"
-        ]
+        "required": ["last-hit", "last-error", "last-ok"]
       },
       "KVVisitorMetricsSchema": {
         "type": "object",
@@ -1432,11 +1158,7 @@
             "type": "number"
           }
         },
-        "required": [
-          "human",
-          "bot",
-          "unknown"
-        ]
+        "required": ["human", "bot", "unknown"]
       },
       "SystemMetricsSchema": {
         "type": "object",
@@ -1454,11 +1176,7 @@
                 "type": "number"
               }
             },
-            "required": [
-              "total",
-              "active",
-              "new_today"
-            ]
+            "required": ["total", "active", "new_today"]
           },
           "posts": {
             "type": "object",
@@ -1473,11 +1191,7 @@
                 "type": "number"
               }
             },
-            "required": [
-              "total",
-              "published",
-              "drafts"
-            ]
+            "required": ["total", "published", "drafts"]
           },
           "system": {
             "type": "object",
@@ -1498,10 +1212,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "runtime",
-              "timestamp"
-            ]
+            "required": ["runtime", "timestamp"]
           },
           "api": {
             "type": "object",
@@ -1513,27 +1224,17 @@
                 "type": "number"
               }
             },
-            "required": [
-              "version",
-              "endpoints_available"
-            ]
+            "required": ["version", "endpoints_available"]
           }
         },
-        "required": [
-          "users",
-          "posts",
-          "system",
-          "api"
-        ]
+        "required": ["users", "posts", "system", "api"]
       },
       "TokenMetricsSchema": {
         "type": "object",
         "properties": {
           "success": {
             "type": "boolean",
-            "enum": [
-              true
-            ]
+            "enum": [true]
           },
           "data": {
             "type": "object",
@@ -1551,22 +1252,13 @@
                 "type": "number"
               }
             },
-            "required": [
-              "total_requests",
-              "successful_requests",
-              "failed_requests",
-              "redirect_clicks"
-            ]
+            "required": ["total_requests", "successful_requests", "failed_requests", "redirect_clicks"]
           },
           "timestamp": {
             "type": "string"
           }
         },
-        "required": [
-          "success",
-          "data",
-          "timestamp"
-        ]
+        "required": ["success", "data", "timestamp"]
       },
       "TokenUsageSchema": {
         "type": "object",
@@ -1578,10 +1270,7 @@
             "type": "number"
           },
           "max_requests": {
-            "type": [
-              "number",
-              "null"
-            ]
+            "type": ["number", "null"]
           },
           "created_at": {
             "type": "string"
@@ -1590,11 +1279,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "token_id",
-          "usage_count",
-          "created_at"
-        ]
+        "required": ["token_id", "usage_count", "created_at"]
       },
       "UrlRedirectSchema": {
         "type": "object",
@@ -1626,11 +1311,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "slug",
-          "url",
-          "created_at"
-        ]
+        "required": ["slug", "url", "created_at"]
       },
       "UserSchema": {
         "type": "object",
@@ -1642,20 +1323,13 @@
             "type": "string"
           },
           "expiresAt": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "tokenId": {
             "type": "string"
           }
         },
-        "required": [
-          "id",
-          "issuedAt",
-          "expiresAt"
-        ]
+        "required": ["id", "issuedAt", "expiresAt"]
       },
       "WorkerInfoSchema": {
         "type": "object",
@@ -1697,11 +1371,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "cpu_time",
-              "memory",
-              "request_timeout"
-            ]
+            "required": ["cpu_time", "memory", "request_timeout"]
           }
         },
         "required": [

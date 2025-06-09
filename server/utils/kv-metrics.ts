@@ -10,25 +10,15 @@ async function rawKVGet(kv: KVNamespace, key: string): Promise<string | null> {
 /**
  * Execute a KV put without recording timing metrics
  */
-async function rawKVPut(
-  kv: KVNamespace,
-  key: string,
-  value: string
-): Promise<void> {
+async function rawKVPut(kv: KVNamespace, key: string, value: string): Promise<void> {
   await kv.put(key, value)
 }
 
 /**
  * Increment a KV metric without triggering timing measurements
  */
-async function incrementKVMetricRaw(
-  kv: KVNamespace,
-  key: string,
-  increment = 1
-): Promise<void> {
-  const currentValue = await rawKVGet(kv, key).then((v) =>
-    Number.parseInt(v || "0")
-  )
+async function incrementKVMetricRaw(kv: KVNamespace, key: string, increment = 1): Promise<void> {
+  const currentValue = await rawKVGet(kv, key).then((v) => Number.parseInt(v || "0"))
   await rawKVPut(kv, key, String(currentValue + increment))
 }
 
@@ -50,11 +40,7 @@ async function timedKVGet(kv: KVNamespace, key: string): Promise<string | null> 
 /**
  * Wrapper around kv.put that records timing metrics
  */
-async function timedKVPut(
-  kv: KVNamespace,
-  key: string,
-  value: string
-): Promise<void> {
+async function timedKVPut(kv: KVNamespace, key: string, value: string): Promise<void> {
   const start = Date.now()
   await rawKVPut(kv, key, value)
   const duration = Date.now() - start
@@ -86,15 +72,9 @@ export async function writeKVMetrics(kvNamespace: KVNamespace, kvCounters: KVCou
             await timedKVPut(kvNamespace, counter.key, String(counter.value))
           } else {
             // Increment by specified amount (default 1)
-            const currentValue = await timedKVGet(kvNamespace, counter.key).then(
-              (v) => Number.parseInt(v || "0")
-            )
+            const currentValue = await timedKVGet(kvNamespace, counter.key).then((v) => Number.parseInt(v || "0"))
             const increment = counter.increment || 1
-            await timedKVPut(
-              kvNamespace,
-              counter.key,
-              String(currentValue + increment)
-            )
+            await timedKVPut(kvNamespace, counter.key, String(currentValue + increment))
           }
         } catch (error) {
           console.error("Failed to update KV counter:", counter.key, error)
@@ -374,9 +354,7 @@ export async function getKVMetrics(kv: KVNamespace, keys: string[]): Promise<Rec
 /**
  * Get aggregated KV lookup timing metrics
  */
-export async function getKVAggregatedTimings(
-  kv: KVNamespace
-): Promise<Record<string, number>> {
+export async function getKVAggregatedTimings(kv: KVNamespace): Promise<Record<string, number>> {
   try {
     const prefix = "metrics:timings:lookup:"
     const listed = await kv.list({ prefix })
