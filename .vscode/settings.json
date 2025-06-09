@@ -8,5 +8,6 @@
     "go": "/Users/dave/.local/share/mise/shims/go",
     "gopls": "/Users/dave/.local/share/mise/shims/gopls"
   },
-  "workbench.colorCustomizations": {}
+  "workbench.colorCustomizations": {},
+  "postman.settings.dotenv-detection-notification-visibility": false
 }
