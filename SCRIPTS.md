@@ -108,7 +108,9 @@ graph TD
 ## Issues Identified
 
 ### 1. **Major Circular Dependencies** 🔄
+
 The most critical issue is the circular dependency chain:
+
 - `build` → `reset` → `generate` → `generate:nuxt` (runs `nuxt prepare`)
 - `dev` → `reset` → `generate` → `generate:nuxt` (runs `nuxt prepare`)
 - `deploy` → `reset` → `generate` → `generate:nuxt` (runs `nuxt prepare`)
@@ -117,20 +119,25 @@ The most critical issue is the circular dependency chain:
 **Impact:** Every main command runs a full reset + generation cycle, making development extremely slow.
 
 ### 2. **Script Redundancy** 🔁
+
 Multiple scripts do identical operations:
+
 - `generate:nuxt:build` runs `nuxt build` (same as `build:nuxt`)
 - `generate:nuxt` runs `nuxt prepare` (same as `generate:nuxt:prepare`)
 - `preview` uses `generate:nuxt:build` but could use `build:nuxt`
 
 ### 3. **Development Performance Issues** 🐌
+
 - `dev` runs full `reset` (clean + reinstall packages + generate) before starting dev server
 - This makes development startup extremely slow and unnecessary
 - `reset` should be reserved for "nuclear option" scenarios
 
 ### 4. **Potential File Reference Issue** ⚠️
+
 - `try` script references `bin/try.ts` but if the file was renamed to `bin/try-cli.ts`, this needs updating
 
 ### 5. **Testing Logic Issues** 🧪
+
 - `test` runs unit tests, then UI tests, then coverage - but coverage should include all tests
 - Sequential execution when some could be parallel
 
@@ -145,15 +152,18 @@ Multiple scripts do identical operations:
 ## Recommendations
 
 1. **Break the circular dependencies:**
+
    - Remove `reset` from `build`, `dev`, `deploy`
    - Make `reset` a standalone "nuclear option"
    - Create lightweight alternative for common prep work
 
 2. **Optimize development workflow:**
+
    - `dev` should be fast: just ensure types + start dev server
    - Remove unnecessary `reset` and `generate` from `dev`
 
 3. **Consolidate redundant scripts:**
+
    - Use `build:nuxt` instead of `generate:nuxt:build`
    - Decide between `generate:nuxt` and `generate:nuxt:prepare`
 
@@ -234,21 +244,25 @@ Here's a complete refactored `package.json` scripts section that fixes all the i
 ## Key Improvements in the Proposed Structure
 
 🚀 **Performance Gains:**
+
 - `dev` is now lightning fast (just types + dev server)
 - `build` is streamlined without unnecessary resets
 - `check` is lightweight for CI/CD pipelines
 
 🔧 **Dependency Resolution:**
+
 - Eliminated all circular dependencies
 - Clear separation of concerns
 - Parallel execution where beneficial
 
 📚 **Better Organization:**
+
 - Logical groupings with comments
 - Consistent naming with `:` separators
 - Removed redundant operations
 
 ✅ **Workflow Optimization:**
+
 - `reset` reserved for "nuclear option" scenarios
 - `clean` as lightweight alternative
 - `test:all` for comprehensive testing vs `test` for quick checks
