@@ -31,7 +31,7 @@
 ### Quality Verification Workflow
 
 **Mandatory sequence**:
-1. `bun run lint`, `bun run typecheck`, `bun run test`
+1. `bun run lint:check`, `bun run lint:types`, `bun run test`
 2. Only then: `bun run check` (full build)
 - ❌ Never commit broken code
 
