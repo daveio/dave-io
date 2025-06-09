@@ -5,104 +5,111 @@ This document shows the relationships between all npm scripts in this project an
 ## Script Dependency Graph
 
 ```mermaid
-graph TD
-    %% Main entry points
-    build["build"]
-    check["check"]
-    deploy["deploy"]
-    dev["dev"]
-    preview["preview"]
+---
+config:
+   theme: neo-dark
+   layout: elk
+id: 5f730ef0-86d7-4b9e-a609-ce6d29d48851
+---
 
-    %% Build chain
-    build --> reset
-    build --> buildNuxt["build:nuxt"]
+graph LR
+   %% Main entry points
+   build["build"]
+   check["check"]
+   deploy["deploy"]
+   dev["dev"]
+   preview["preview"]
 
-    %% Check chain
-    check --> build
-    check --> lint
-    check --> test
+   %% Build chain
+   build --> reset
+   build --> buildNuxt["build:nuxt"]
 
-    %% Deploy chain
-    deploy --> reset
-    deploy --> deployEnv["deploy:env"]
-    deploy --> deployWrangler["deploy:wrangler"]
+   %% Check chain
+   check --> build
+   check --> lint
+   check --> test
 
-    %% Dev chain
-    dev --> reset
-    dev --> generate
-    dev --> devNuxt["dev:nuxt"]
+   %% Deploy chain
+   deploy --> reset
+   deploy --> deployEnv["deploy:env"]
+   deploy --> deployWrangler["deploy:wrangler"]
 
-    %% Preview chain
-    preview --> generate
-    preview --> generateNuxtBuild["generate:nuxt:build"]
-    preview --> previewWrangler["preview:wrangler"]
+   %% Dev chain
+   dev --> reset
+   dev --> generate
+   dev --> devNuxt["dev:nuxt"]
 
-    %% Reset chain (CIRCULAR!)
-    reset --> resetClean["reset:clean"]
-    reset --> resetPackages["reset:packages"]
-    reset --> generate
+   %% Preview chain
+   preview --> generate
+   preview --> generateNuxtBuild["generate:nuxt:build"]
+   preview --> previewWrangler["preview:wrangler"]
 
-    %% Reset packages subchain
-    resetPackages --> resetPackagesDelete["reset:packages:delete"]
-    resetPackages --> resetPackagesInstall["reset:packages:install"]
+   %% Reset chain (CIRCULAR!)
+   reset --> resetClean["reset:clean"]
+   reset --> resetPackages["reset:packages"]
+   reset --> generate
 
-    %% Generate chain
-    generate --> generateOpenapi["generate:openapi"]
-    generate --> generateNuxt["generate:nuxt"]
-    generate --> generateTypes["generate:types"]
+   %% Reset packages subchain
+   resetPackages --> resetPackagesDelete["reset:packages:delete"]
+   resetPackages --> resetPackagesInstall["reset:packages:install"]
 
-    %% Generate openapi subchain
-    generateOpenapi --> binGenerateDocs["bin/generate-docs.ts"]
-    generateOpenapi --> biomeFmt["biome format"]
+   %% Generate chain
+   generate --> generateOpenapi["generate:openapi"]
+   generate --> generateNuxt["generate:nuxt"]
+   generate --> generateTypes["generate:types"]
 
-    %% Lint chain (parallel)
-    lint -.-> lintCheck["lint:check"]
-    lint -.-> lintTypes["lint:types"]
+   %% Generate openapi subchain
+   generateOpenapi --> binGenerateDocs["bin/generate-docs.ts"]
+   generateOpenapi --> biomeFmt["biome format"]
 
-    %% Lint check subchain
-    lintCheck --> biomeCheck["biome check --write"]
-    lintCheck --> trunkCheck["trunk check -a --fix"]
+   %% Lint chain (parallel)
+   lint -.-> lintCheck["lint:check"]
+   lint -.-> lintTypes["lint:types"]
 
-    %% Test chain (sequential)
-    test --> testUnit["test:unit"]
-    test --> testUI["test:ui"]
-    test --> testCoverage["test:coverage"]
+   %% Lint check subchain
+   lintCheck --> biomeCheck["biome check --write"]
+   lintCheck --> trunkCheck["trunk check -a --fix"]
 
-    %% Standalone utilities
-    jwt["jwt"]
-    kv["kv"]
-    try["try"]
-    testAPI["test:api"]
-    testWatch["test:watch"]
-    resetKV["reset:kv"]
-    lintFormat["lint:format"]
-    previewNuxt["preview:nuxt"]
-    generateNuxtGenerate["generate:nuxt:generate"]
-    generateNuxtPrepare["generate:nuxt:prepare"]
+   %% Test chain (sequential)
+   test --> testUnit["test:unit"]
+   test --> testUI["test:ui"]
+   test --> testCoverage["test:coverage"]
 
-    %% Postinstall hook
-    postinstall["postinstall"] --> generate
+   %% Standalone utilities
+   jwt["jwt"]
+   kv["kv"]
+   try["try"]
+   testAPI["test:api"]
+   testWatch["test:watch"]
+   resetKV["reset:kv"]
+   lintFormat["lint:format"]
+   previewNuxt["preview:nuxt"]
+   generateNuxtGenerate["generate:nuxt:generate"]
+   generateNuxtPrepare["generate:nuxt:prepare"]
 
-    %% CIRCULAR DEPENDENCY HIGHLIGHTING
-    build -.->|"🔄 CIRCULAR"| reset
-    dev -.->|"🔄 CIRCULAR"| reset
-    deploy -.->|"🔄 CIRCULAR"| reset
-    reset -.->|"🔄 CIRCULAR"| generate
+   %% Postinstall hook
+   postinstall["postinstall"] --> generate
 
-    %% REDUNDANCY HIGHLIGHTING
-    generateNuxtBuild -.->|"🔁 SAME AS build:nuxt"| buildNuxt
-    generateNuxt -.->|"🔁 SAME AS generate:nuxt:prepare"| generateNuxtPrepare
+   %% CIRCULAR DEPENDENCY HIGHLIGHTING
+   build -.->|"🔄 CIRCULAR"| reset
+   dev -.->|"🔄 CIRCULAR"| reset
+   deploy -.->|"🔄 CIRCULAR"| reset
+   reset -.->|"🔄 CIRCULAR"| generate
 
-    %% Style classes
-    classDef circular fill:#ffcccc,stroke:#ff0000,stroke-width:2px
-    classDef redundant fill:#fff3cd,stroke:#ffc107,stroke-width:2px
-    classDef standalone fill:#e7f3ff,stroke:#0066cc,stroke-width:1px
-    classDef parallel fill:#f0f8f0,stroke:#28a745,stroke-width:1px,stroke-dasharray: 5 5
+   %% REDUNDANCY HIGHLIGHTING
+   generateNuxtBuild -.->|"🔁 SAME AS build:nuxt"| buildNuxt
+   generateNuxt -.->|"🔁 SAME AS generate:nuxt:prepare"| generateNuxtPrepare
 
-    class build,check,dev,deploy,reset circular
-    class generateNuxtBuild,generateNuxt,generateNuxtPrepare redundant
-    class jwt,kv,try,testAPI,testWatch,resetKV,lintFormat,previewNuxt,generateNuxtGenerate standalone
-    class lintCheck,lintTypes parallel
+   %% Style classes
+   classDef standalone fill:#424242, color:#FFFFFF
+   classDef circular fill:#670000, color:#FFFFFF
+   classDef redundant fill:#393c00, color:#FFFFFF
+   classDef parallel fill:#00440a, color:#FFFFFF
+
+   class build,check,dev,deploy,reset circular
+   class generateNuxtBuild,generateNuxt,generateNuxtPrepare redundant
+   class jwt,kv,try,testAPI,testWatch,resetKV,lintFormat,previewNuxt,generateNuxtGenerate standalone
+   class lintCheck,lintTypes parallel
 ```
 
 ## Issues Identified
