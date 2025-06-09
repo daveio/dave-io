@@ -25,12 +25,9 @@
       "database_id": "106894e2-1f5c-4979-a777-0b45febbb993"
     }
   ],
-  "r2_buckets": [
-    {
-      "binding": "IMAGES",
-      "bucket_name": "images-dave-io"
-    }
-  ],
+  "images": {
+    "binding": "IMAGES"
+  },
   "durable_objects": {
     "bindings": [
       {

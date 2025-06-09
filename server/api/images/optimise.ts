@@ -1,7 +1,7 @@
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAPIAuth } from "~/server/utils/auth-helpers"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
-import { type OptimisedImageResult, processImageOptimisation } from "~/server/utils/image-processing"
+import { processImageWithCloudflareImages } from "~/server/utils/cloudflare-images"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
 import { validateBase64Image, validateImageQuality, validateImageURL } from "~/server/utils/validation"
 
@@ -61,8 +61,8 @@ export default defineEventHandler(async (event) => {
       throw createApiError(405, `Method ${method} not allowed`)
     }
 
-    // Process the image using shared utilities
-    const result = await processImageOptimisation(imageBuffer, options, env as Env)
+    // Process the image using Cloudflare Images
+    const result = await processImageWithCloudflareImages(imageBuffer, options, env as Env)
 
     // Record successful request
     recordAPIMetrics(event, 200)

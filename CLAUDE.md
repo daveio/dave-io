@@ -107,11 +107,12 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 - **POST handler**: Supply raw base64 only
 - 4MB limit, but images auto-optimised to 4MB via direct function invocation
 
-### Image Optimisation
+### Image Optimisation (Cloudflare Images Migration)
 
-- **Filename format**: `{BLAKE3_HEX}-q{QUALITY}.webp` or `{BLAKE3_HEX}-ll.webp`
-- **R2 storage**: BLAKE3 hash filenames, smart compression strategy
-- **Direct invocation**: AI processing uses function calls, not HTTP
+- **Service**: Migrated from Sharp to Cloudflare Images API + binding
+- **Storage**: Cloudflare Images service (global CDN) instead of R2
+- **ID format**: `{BLAKE3_HEX}` or `{BLAKE3_HEX}-q{QUALITY}` for cache differentiation
+- **Processing**: API upload + binding transformations for optimal performance
 
 ### KV Metrics System
 
@@ -134,7 +135,7 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 ## Environment
 
 **Required**: `API_JWT_SECRET`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
-**Bindings**: KV (DATA), D1 (DB), AI, R2 (IMAGES)
+**Bindings**: KV (DATA), D1 (DB), AI, Images (IMAGES)
 **Dev**: `API_DEV_USE_DANGEROUS_GLOBAL_KEY=1` + legacy API key
 
 ## CLI Tools
@@ -162,10 +163,7 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 
 - **Node.js**: Version 18 or higher
 - **Bun**: Package manager (<https://bun.sh/>)
-- **libvips**: Required for Sharp image processing
-  - **macOS**: `brew install vips`
-  - **Ubuntu/Debian**: `apt-get install libvips-dev`
-  - **CentOS/RHEL**: `yum install vips-devel`
+- **Cloudflare Images**: Subscription required for image processing service
 
 ### Steps
 
@@ -174,19 +172,19 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 3. Set up environment variables (see [Environment](#environment))
 4. Run development server: `bun run dev`
 
-**Note**: On macOS ARM64, the Sharp library may require additional configuration. This is automatically handled by the `fix-sharp` script that runs during `postinstall`. The script creates the necessary symlinks for libvips to work correctly with Sharp.
+**Note**: Image processing now uses Cloudflare Images service. No local dependencies required.
 
 ### Troubleshooting
 
-- **libvips errors on macOS**: Ensure you have installed libvips with `brew install vips`. If you still encounter issues after running `bun install`, try `bun run fix-sharp` manually.
-- **Sharp loading errors**: These are typically resolved by the automated postinstall script, but you can run `bun run fix-sharp` if needed.
+- **Images API errors**: Ensure `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are set correctly in your environment
+- **Missing Images binding**: Verify `wrangler.jsonc` includes the Images binding configuration
 
 ## Project Structure
 
 ```plaintext
 server/
 ├── api/           # Endpoints (internal/, ai/, images/, dashboard/, tokens/)
-├── utils/         # Shared utilities (auth, response, schemas, image-*)
+├── utils/         # Shared utilities (auth, response, schemas, cloudflare-images)
 └── middleware/    # Request middleware
 test/              # Unit tests
 bin/               # CLI tools
@@ -263,13 +261,15 @@ bun run deploy
 bun run test:api --url https://your-worker.workers.dev
 ```
 
-## Image Optimisation Service
+## Image Optimisation Service (Cloudflare Images)
 
-- **Purpose**: Auto resize, compress, WebP conversion
-- **Storage**: R2 bucket with `/opt/` prefix, BLAKE3 filenames
-- **Compression**: Smart lossy/lossless based on input format
-- **AI Integration**: Auto-optimisation for alt-text endpoints
+- **Purpose**: Auto resize, compress, format conversion via Cloudflare Images
+- **Storage**: Cloudflare Images service with global CDN delivery
+- **Processing**: Hybrid API upload + binding transformations
+- **Caching**: Content-based deduplication using BLAKE3 hashing
+- **AI Integration**: Direct function invocation for alt-text processing
 - **Limits**: 4MB post-decode, requires `api:images` scope
+- **Benefits**: No external dependencies, global edge network, automatic optimization
 
 ## Linting Guidelines
 
@@ -303,4 +303,4 @@ Cloudflare SDK warnings about `'this'` keyword are harmless.
 **DevEx**: OpenAPI docs, SDKs, Docker, CI/CD
 **Architecture**: Microservices, Queues, multi-tenancy, WebSockets
 
-**Completed**: ✅ D1 integration, ✅ Real AI, ✅ Custom domain, ✅ Image optimization
+**Completed**: ✅ D1 integration, ✅ Real AI, ✅ Custom domain, ✅ Image optimization, ✅ Cloudflare Images migration

@@ -33,7 +33,7 @@ lint:
     - vale
   enabled:
     - gofmt@1.20.4
-    - golangci-lint2@2.1.6
+    - golangci-lint2
     - actionlint@1.7.7
     - biome@1.9.4
     - checkov@3.2.439

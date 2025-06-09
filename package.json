@@ -26,7 +26,6 @@
     "lodash-es": "4.17.21",
     "nuxt": "3.17.5",
     "pinia": "3.0.3",
-    "sharp": "^0.34.2",
     "swagger-ui-express": "5.0.1",
     "typescript": "5.8.3",
     "uuid": "11.1.0",
@@ -57,9 +56,6 @@
     "vitest": "3.2.3",
     "wrangler": "4.19.1"
   },
-  "optionalDependencies": {
-    "@img/sharp-libvips-darwin-arm64": "^1.1.0"
-  },
   "private": true,
   "scripts": {
     "build": "bun run types && bun run nuxt build",
@@ -70,14 +66,13 @@
     "dev": "bun run types && bun run nuxt dev",
     "docs:generate": "bun run bin/generate-docs.ts && bun run biome format --write public/openapi.json",
     "env": "bun run bin/env.ts",
-    "fix-sharp": "bun run bin/fix-sharp.ts",
     "format": "bun run biome format --write && bun run trunk fmt -a",
     "generate": "bun run types && bun run nuxt generate",
     "jwt": "bun run bin/jwt.ts",
     "kv": "bun run bin/kv.ts",
     "lint": "bun run biome check --write && bun run trunk check -a --fix",
     "packages": "bun run rimraf node_modules bun.lock && bun install",
-    "postinstall": "bun run fix-sharp && bun run types && bun run nuxt prepare",
+    "postinstall": "bun run types && bun run nuxt prepare",
     "preview:cloudflare": "bun run types && bun run build && bun run wrangler dev",
     "preview:nuxt": "bun run types && bun run nuxt preview",
     "preview": "bun run preview:cloudflare",
@@ -99,7 +94,6 @@
     "@scarf/scarf",
     "@tailwindcss/oxide",
     "esbuild",
-    "sharp",
     "vue-demi",
     "workerd"
   ],
