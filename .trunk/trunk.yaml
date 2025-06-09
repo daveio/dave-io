@@ -36,10 +36,10 @@ lint:
     - golangci-lint2@2.1.6
     - actionlint@1.7.7
     - biome@1.9.4
-    - checkov@3.2.437
+    - checkov@3.2.439
     - dustilock@1.2.0
     - git-diff-check
-    - gitleaks@8.27.0
+    - gitleaks@8.27.2
     - hadolint@2.12.1-beta
     - markdownlint@0.45.0
     - osv-scanner@2.0.2
@@ -50,7 +50,7 @@ lint:
     - sourcery@1.37.0
     - svgo@3.3.2
     - taplo@0.9.3
-    - trufflehog@3.88.35
+    - trufflehog@3.89.0
     - trunk-toolbox@0.5.4
     - yamllint@1.37.1
   ignore:

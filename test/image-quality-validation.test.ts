@@ -1,12 +1,12 @@
-import { describe, expect, it, vi } from "vitest"
-import { validateImageQuality } from "~/server/utils/validation"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { extractHashFromFilename, generateOptimisedFilename } from "~/server/utils/image-processing"
+import { validateImageQuality } from "~/server/utils/validation"
 
 describe("validateImageQuality", () => {
   beforeEach(() => {
     vi.clearAllMocks()
     // Mock console.log to verify bumping messages
-    vi.spyOn(console, 'log').mockImplementation(() => {})
+    vi.spyOn(console, "log").mockImplementation(() => {})
   })
 
   afterEach(() => {
@@ -35,7 +35,7 @@ describe("validateImageQuality", () => {
     expect(validateImageQuality(5)).toBe(10)
     expect(validateImageQuality(9)).toBe(10)
     expect(validateImageQuality("3")).toBe(10)
-    
+
     // Verify logging for quality bumping
     expect(console.log).toHaveBeenCalledWith("Quality 1 bumped to minimum value 10")
     expect(console.log).toHaveBeenCalledWith("Quality 5 bumped to minimum value 10")
@@ -78,7 +78,7 @@ describe("generateOptimisedFilename", () => {
 
   it("should generate filename with quality suffix", () => {
     const filename = generateOptimisedFilename(testBuffer, 80)
-    
+
     // Should match new format: {HASH}-q{QUALITY}.webp
     expect(filename).toMatch(/^[a-f0-9]+-q80\.webp$/)
     expect(filename).toContain("-q80.webp")
@@ -86,7 +86,7 @@ describe("generateOptimisedFilename", () => {
 
   it("should generate filename with lossless suffix", () => {
     const filename = generateOptimisedFilename(testBuffer)
-    
+
     // Should match new format: {HASH}-ll.webp
     expect(filename).toMatch(/^[a-f0-9]+-ll\.webp$/)
     expect(filename).toContain("-ll.webp")
@@ -95,14 +95,14 @@ describe("generateOptimisedFilename", () => {
   it("should generate consistent filenames for same input and quality", () => {
     const filename1 = generateOptimisedFilename(testBuffer, 75)
     const filename2 = generateOptimisedFilename(testBuffer, 75)
-    
+
     expect(filename1).toBe(filename2)
   })
 
   it("should generate different filenames for different qualities", () => {
     const filename1 = generateOptimisedFilename(testBuffer, 50)
     const filename2 = generateOptimisedFilename(testBuffer, 80)
-    
+
     expect(filename1).not.toBe(filename2)
     expect(filename1).toContain("-q50.webp")
     expect(filename2).toContain("-q80.webp")
@@ -111,10 +111,10 @@ describe("generateOptimisedFilename", () => {
   it("should generate different filenames for different input data", () => {
     const buffer1 = Buffer.from("content 1")
     const buffer2 = Buffer.from("content 2")
-    
+
     const filename1 = generateOptimisedFilename(buffer1, 80)
     const filename2 = generateOptimisedFilename(buffer2, 80)
-    
+
     expect(filename1).not.toBe(filename2)
     // Both should have same quality suffix but different hashes
     expect(filename1).toContain("-q80.webp")
@@ -123,10 +123,10 @@ describe("generateOptimisedFilename", () => {
 
   it("should use hex encoding for hash", () => {
     const filename = generateOptimisedFilename(testBuffer, 60)
-    
+
     // Extract hash part (everything before the last hyphen)
     const hashPart = filename.split("-").slice(0, -1).join("-")
-    
+
     // Should be valid hex string
     expect(hashPart).toMatch(/^[a-f0-9]+$/)
     expect(hashPart).toHaveLength(32) // 16 bytes = 32 hex chars
@@ -139,7 +139,7 @@ describe("extractHashFromFilename", () => {
   it("should extract hash from new format filename", () => {
     const filename = generateOptimisedFilename(testBuffer, 80)
     const extractedHash = extractHashFromFilename(filename)
-    
+
     expect(extractedHash).toBeTruthy()
     expect(extractedHash).toMatch(/^[a-f0-9]+$/)
     expect(extractedHash).toHaveLength(32) // 16 bytes = 32 hex chars
@@ -148,7 +148,7 @@ describe("extractHashFromFilename", () => {
   it("should extract hash from lossless filename", () => {
     const filename = generateOptimisedFilename(testBuffer)
     const extractedHash = extractHashFromFilename(filename)
-    
+
     expect(extractedHash).toBeTruthy()
     expect(extractedHash).toMatch(/^[a-f0-9]+$/)
   })
@@ -156,14 +156,14 @@ describe("extractHashFromFilename", () => {
   it("should handle old format filenames (q{QUALITY}-{HASH})", () => {
     const oldFormatFilename = "q80-abcdef123456789012345678901234567890.webp"
     const extractedHash = extractHashFromFilename(oldFormatFilename)
-    
+
     expect(extractedHash).toBe("abcdef123456789012345678901234567890")
   })
 
   it("should handle legacy format filenames ({TIMESTAMP}-{HASH})", () => {
     const legacyFilename = "1234567890-abcdef123456789012345678901234567890.webp"
     const extractedHash = extractHashFromFilename(legacyFilename)
-    
+
     expect(extractedHash).toBe("abcdef123456789012345678901234567890")
   })
 
@@ -182,7 +182,7 @@ describe("extractHashFromFilename", () => {
     // Test case where hash itself might contain hyphens (base64 replacement scenario)
     const filename = "abc123def456-ghi789-q75.webp"
     const extractedHash = extractHashFromFilename(filename)
-    
+
     expect(extractedHash).toBe("abc123def456-ghi789")
   })
 })

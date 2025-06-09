@@ -1,6 +1,13 @@
 import sharp from "sharp"
+import {
+  LOSSY_FORMATS,
+  type OptimisationOptions,
+  type OptimisedImageResult,
+  optimiseImageBuffer,
+  processImageOptimisation,
+  validateAndDetectMimeType
+} from "./image-processing"
 import { createApiError } from "./response"
-import { LOSSY_FORMATS, OptimisationOptions, OptimisedImageResult, optimiseImageBuffer, processImageOptimisation, validateAndDetectMimeType } from "./image-processing"
 
 /**
  * Configuration for image optimisation presets
@@ -34,13 +41,14 @@ export async function optimiseWithQualityTargeting(
   targetSize: number
 ): Promise<{ buffer: Buffer; originalMimeType: string; quality: number }> {
   // Start with a reasonable quality and adjust based on output size
+  // biome-ignore lint/suspicious/noExplicitAny: LOSSY_FORMATS requires flexible string comparison
   let quality = LOSSY_FORMATS.includes(originalMimeType as any) ? 60 : 80
   let optimisedBuffer: Buffer
   let attempts = 0
   const maxAttempts = 10
 
   // Binary search approach to find optimal quality
-  const minQuality = 10  // Enforce minimum quality of 10
+  let minQuality = 10 // Enforce minimum quality of 10
   let maxQuality = 95
 
   do {
@@ -48,6 +56,7 @@ export async function optimiseWithQualityTargeting(
 
     let sharpImage = sharp(inputBuffer)
 
+    // biome-ignore lint/suspicious/noExplicitAny: LOSSY_FORMATS requires flexible string comparison
     if (LOSSY_FORMATS.includes(originalMimeType as any) || quality < 95) {
       // Use lossy compression
       sharpImage = sharpImage.webp({
@@ -82,7 +91,7 @@ export async function optimiseWithQualityTargeting(
       quality = Math.floor((minQuality + quality) / 2)
 
       if (quality <= minQuality) {
-        quality = minQuality  // Ensure we never go below 10
+        quality = minQuality // Ensure we never go below 10
         break // Can't reduce further
       }
     }
@@ -222,15 +231,11 @@ export async function processPresetOptimisation(
   const startTime = Date.now()
 
   // Optimise the image for the preset
+  // biome-ignore lint/correctness/noUnusedVariables: originalMimeType used for debugging and future metadata
   const { buffer: optimisedBuffer, originalMimeType, quality } = await optimiseForPreset(imageBuffer, preset)
 
   // Use the standard processing workflow with preset-specific options
-  const result = await processImageOptimisation(
-    imageBuffer,
-    { quality },
-    env,
-    { preset: presetName }
-  )
+  const result = await processImageOptimisation(imageBuffer, { quality }, env, { preset: presetName })
 
   const processingTime = Date.now() - startTime
   console.log(`Preset '${presetName}' optimisation completed in ${processingTime}ms`)

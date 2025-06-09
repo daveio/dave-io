@@ -1,7 +1,7 @@
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAPIAuth } from "~/server/utils/auth-helpers"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
-import { processImageOptimisation, type OptimisedImageResult } from "~/server/utils/image-processing"
+import { type OptimisedImageResult, processImageOptimisation } from "~/server/utils/image-processing"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
 import { validateBase64Image, validateImageQuality, validateImageURL } from "~/server/utils/validation"
 

@@ -24,12 +24,7 @@ export const VALID_IMAGE_FORMATS = [
  * Image formats that use lossy compression by default
  * Note: webp removed from here as it can be either lossy or lossless
  */
-export const LOSSY_FORMATS = [
-  "image/jpeg",
-  "image/jpg",
-  "image/heic",
-  "image/heif"
-] as const
+export const LOSSY_FORMATS = ["image/jpeg", "image/jpg", "image/heic", "image/heif"] as const
 
 /**
  * Options for image optimisation
@@ -62,6 +57,7 @@ export interface OptimisedImageResult {
 export async function validateAndDetectMimeType(buffer: Buffer): Promise<string> {
   const fileType = await fileTypeFromBuffer(buffer)
 
+  // biome-ignore lint/suspicious/noExplicitAny: fileType.mime comes from external library with loose typing
   if (!fileType || !VALID_IMAGE_FORMATS.includes(fileType.mime as any)) {
     throw createApiError(406, `Unsupported file type. Expected image, got: ${fileType?.mime || "unknown"}`)
   }
@@ -93,23 +89,23 @@ export function generateOptimisedFilename(originalBuffer: Buffer, quality?: numb
 export function extractHashFromFilename(filename: string): string {
   // Remove .webp extension
   const nameWithoutExt = filename.replace(/\.webp$/, "")
-  
+
   // Handle new format: {HASH}-q{QUALITY} or {HASH}-ll
   if (nameWithoutExt.match(/-(q\d+|ll)$/)) {
     return nameWithoutExt.split("-").slice(0, -1).join("-")
   }
-  
+
   // Handle old format: q{QUALITY}-{HASH} or ll-{HASH}
   if (nameWithoutExt.match(/^(q\d+|ll)-/)) {
     return nameWithoutExt.split("-").slice(1).join("-")
   }
-  
+
   // Handle legacy format: {TIMESTAMP}-{HASH}
   const parts = nameWithoutExt.split("-")
   if (parts.length >= 2) {
     return parts.slice(1).join("-")
   }
-  
+
   return ""
 }
 
@@ -147,6 +143,7 @@ export async function optimiseImageBuffer(
       lossless: true,
       effort: 6
     })
+    // biome-ignore lint/suspicious/noExplicitAny: LOSSY_FORMATS requires flexible string comparison
   } else if (LOSSY_FORMATS.includes(originalMimeType as any)) {
     // Input is lossy format (JPEG, HEIC) - use lossy WebP
     actualQuality = 80
@@ -253,10 +250,10 @@ export async function processImageOptimisation(
   if (exists) {
     const url = `https://images.dave.io/opt/${filename}`
     console.log(`Using cached optimised image: ${filename}`)
-    
+
     // For cached images, we need to optimise locally to get the buffer and sizes
     const { buffer: optimisedBuffer, originalMimeType, quality } = await optimiseImageBuffer(imageBuffer, options)
-    
+
     return {
       buffer: optimisedBuffer,
       originalSize: imageBuffer.length,

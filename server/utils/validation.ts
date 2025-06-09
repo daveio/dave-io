@@ -202,10 +202,7 @@ export function validateNumericParam(
  * Validate image quality parameter with automatic minimum enforcement
  * Ensures quality is between 10-100, automatically bumping values below 10
  */
-export function validateImageQuality(
-  value: unknown,
-  paramName = "quality"
-): number | undefined {
+export function validateImageQuality(value: unknown, paramName = "quality"): number | undefined {
   if (value === undefined || value === null) {
     return undefined
   }
