@@ -4,7 +4,113 @@ This document shows the relationships between all npm scripts in this project an
 
 ## Script Dependency Graph
 
-![SCRIPTS.svg](SCRIPTS.svg)
+```mermaid
+---
+config:
+   theme: neo-dark
+   layout: elk
+id: 5f730ef0-86d7-4b9e-a609-ce6d29d48851
+---
+
+graph LR
+   %% Main entry points
+   build["build"]
+   check["check"]
+   deploy["deploy"]
+   dev["dev"]
+   preview["preview"]
+
+   %% Build chain
+   build --> reset
+   build --> buildNuxt["build:nuxt"]
+
+   %% Check chain
+   check --> build
+   check --> lint
+   check --> test
+
+   %% Deploy chain
+   deploy --> reset
+   deploy --> deployEnv["deploy:env"]
+   deploy --> deployWrangler["deploy:wrangler"]
+
+   %% Dev chain
+   dev --> reset
+   dev --> generate
+   dev --> devNuxt["dev:nuxt"]
+
+   %% Preview chain
+   preview --> generate
+   preview --> generateNuxtBuild["generate:nuxt:build"]
+   preview --> previewWrangler["preview:wrangler"]
+
+   %% Reset chain (CIRCULAR!)
+   reset --> resetClean["reset:clean"]
+   reset --> resetPackages["reset:packages"]
+   reset --> generate
+
+   %% Reset packages subchain
+   resetPackages --> resetPackagesDelete["reset:packages:delete"]
+   resetPackages --> resetPackagesInstall["reset:packages:install"]
+
+   %% Generate chain
+   generate --> generateOpenapi["generate:openapi"]
+   generate --> generateNuxt["generate:nuxt"]
+   generate --> generateTypes["generate:types"]
+
+   %% Generate openapi subchain
+   generateOpenapi --> binGenerateDocs["bin/generate-docs.ts"]
+   generateOpenapi --> biomeFmt["biome format"]
+
+   %% Lint chain (parallel)
+   lint -.-> lintCheck["lint:check"]
+   lint -.-> lintTypes["lint:types"]
+
+   %% Lint check subchain
+   lintCheck --> biomeCheck["biome check --write"]
+   lintCheck --> trunkCheck["trunk check -a --fix"]
+
+   %% Test chain (sequential)
+   test --> testUnit["test:unit"]
+   test --> testUI["test:ui"]
+   test --> testCoverage["test:coverage"]
+
+   %% Standalone utilities
+   jwt["jwt"]
+   kv["kv"]
+   try["try"]
+   testAPI["test:api"]
+   testWatch["test:watch"]
+   resetKV["reset:kv"]
+   lintFormat["lint:format"]
+   previewNuxt["preview:nuxt"]
+   generateNuxtGenerate["generate:nuxt:generate"]
+   generateNuxtPrepare["generate:nuxt:prepare"]
+
+   %% Postinstall hook
+   postinstall["postinstall"] --> generate
+
+   %% CIRCULAR DEPENDENCY HIGHLIGHTING
+   build -.->|"🔄 CIRCULAR"| reset
+   dev -.->|"🔄 CIRCULAR"| reset
+   deploy -.->|"🔄 CIRCULAR"| reset
+   reset -.->|"🔄 CIRCULAR"| generate
+
+   %% REDUNDANCY HIGHLIGHTING
+   generateNuxtBuild -.->|"🔁 SAME AS build:nuxt"| buildNuxt
+   generateNuxt -.->|"🔁 SAME AS generate:nuxt:prepare"| generateNuxtPrepare
+
+   %% Style classes
+   classDef standalone fill:#424242, color:#FFFFFF
+   classDef circular fill:#670000, color:#FFFFFF
+   classDef redundant fill:#393c00, color:#FFFFFF
+   classDef parallel fill:#00440a, color:#FFFFFF
+
+   class build,check,dev,deploy,reset circular
+   class generateNuxtBuild,generateNuxt,generateNuxtPrepare redundant
+   class jwt,kv,try,testAPI,testWatch,resetKV,lintFormat,previewNuxt,generateNuxtGenerate standalone
+   class lintCheck,lintTypes parallel
+```
 
 ## Issues Identified
 

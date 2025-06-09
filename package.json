@@ -59,8 +59,7 @@
   },
   "private": true,
   "scripts": {
-    "build": "bun run-s reset build:nuxt",
-    "build:nuxt": "bun run nuxt build",
+    "build": "bun run-s reset generate:nuxt:build",
     "check": "bun run-s build lint test",
     "deploy": "bun run-s reset deploy:env deploy:wrangler",
     "deploy:env": "bun run bin/env.ts",
