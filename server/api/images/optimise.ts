@@ -9,7 +9,6 @@ import { validateBase64Image, validateImageURL, validateNumericParam } from "~/s
 
 interface OptimisationOptions {
   quality?: number
-  lossy?: boolean
 }
 
 interface OptimisedImage {
@@ -62,8 +61,8 @@ async function optimiseImage(
       lossless: false,
       effort: 6 // Maximum compression effort
     })
-  } else if (options.lossy || LOSSY_FORMATS.includes(originalMimeType)) {
-    // Input is lossy format (JPEG) or lossy explicitly requested
+  } else if (LOSSY_FORMATS.includes(originalMimeType)) {
+    // Input is lossy format (JPEG) - use lossy WebP
     sharpImage = sharpImage.webp({
       quality: 60,
       lossless: false,
@@ -169,7 +168,6 @@ export default defineEventHandler(async (event) => {
 
       // Parse optimisation options from query parameters
       options.quality = validateNumericParam(query.quality, "quality", { min: 0, max: 100, integer: true })
-      options.lossy = query.lossy === "true"
 
       const arrayBuffer = await validateImageURL(imageUrl)
       imageBuffer = Buffer.from(arrayBuffer)
@@ -189,7 +187,6 @@ export default defineEventHandler(async (event) => {
 
         imageBuffer = await validateBase64Image(body.image)
         options.quality = validateNumericParam(body.quality, "quality", { min: 0, max: 100, integer: true })
-        options.lossy = body.lossy === true
       } else {
         throw createApiError(400, "Invalid request body format")
       }

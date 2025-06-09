@@ -3,6 +3,8 @@ import { fileTypeFromBuffer } from "file-type"
 import sharp from "sharp"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
+// TODO: Fix test configuration issues - tests are hanging during execution
+
 // Test data - small PNG image (1x1 pixel)
 const smallPngBase64 =
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAE/AO/lZy6hAAAAABJRU5ErkJggg=="

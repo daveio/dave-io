@@ -492,7 +492,7 @@ metrics:redirect:gh:ok = "15"
 **Purpose**: Automatic image resizing, compression, and WebP conversion for improved load times and AI processing compatibility.
 
 **Endpoints**:
-- `GET /api/images/optimise?url=<image_url>[&quality=N][&lossy=true]` - Optimise from URL
+- `GET /api/images/optimise?url=<image_url>[&quality=N]` - Optimise from URL
 - `POST /api/images/optimise` - Optimise from base64 data with options
 - `GET /api/images/optimise/preset/alt?url=<image_url>` - AI-optimised preset (≤ 4MB)
 - `POST /api/images/optimise/preset/alt` - AI-optimised preset from base64
@@ -510,9 +510,9 @@ metrics:redirect:gh:ok = "15"
 **File Size**: 4MB limit after base64 decoding
 
 **Compression Strategy**:
-- Explicit quality parameter → lossy WebP at specified quality
-- JPEG input → lossy WebP at quality 60
-- PNG/other lossless formats → lossless WebP with maximum effort
+- Quality parameter specified → lossy WebP at specified quality
+- JPEG input (no quality) → lossy WebP at quality 60
+- PNG/other lossless formats (no quality) → lossless WebP with maximum effort
 
 **Alt Preset Strategy** (≤ 4MB target):
 1. **Phase 1**: Binary search quality optimization (10-95 quality range)

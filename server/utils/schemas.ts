@@ -264,8 +264,7 @@ export const ImageOptimisationRequestSchema = z
         message: "Image must be raw base64 without data URL"
       })
       .optional(),
-    quality: z.number().min(0).max(100).optional(),
-    lossy: z.boolean().optional()
+    quality: z.number().min(0).max(100).optional()
   })
   .refine((data) => data.image, {
     message: "Image field is required for POST requests"

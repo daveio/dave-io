@@ -72,16 +72,22 @@ bun jwt create --interactive
 - **Two-phase optimisation**: Quality reduction first, then dimension scaling if needed
 - **Smart resizing strategy**: Reduces dimensions by 15% per iteration until target reached
 - **Hard limit protection**: 1024px minimum on long edge before throwing in the towel
-- **Lossless for PNG, lossy for JPEG** - because we respect your original format choices
+- **Smart compression logic**: Quality parameter = lossy, no quality = follow input format
 - **Transparency preservation** because invisible pixels matter too
 - **Requires `api:images` scope** (we're not running a charity here)
 
 ```bash
-# General image optimisation
+# General image optimisation (quality specified = lossy)
 curl -X POST "https://dave.io/api/images/optimise" \
   -H "Authorization: Bearer $JWT" \
   -H "Content-Type: application/json" \
   -d '{"image": "<base64-data>", "quality": 80}'
+
+# Smart compression (follows input format)
+curl -X POST "https://dave.io/api/images/optimise" \
+  -H "Authorization: Bearer $JWT" \
+  -H "Content-Type: application/json" \
+  -d '{"image": "<base64-data>"}'
 
 # AI-ready preset (≤ 4MB guaranteed)
 curl -X GET "https://dave.io/api/images/optimise/preset/alt?url=https://example.com/image.jpg" \
