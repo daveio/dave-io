@@ -90,6 +90,7 @@
     "test:ui": "vitest --ui",
     "test:unit": "vitest run",
     "test:watch": "vitest",
+    "try": "bun run bin/try.ts",
     "generate": "bun run-s generate:openapi generate:nuxt generate:types",
     "generate:openapi": "bun run bin/generate-docs.ts && biome format --write public/openapi.json",
     "generate:nuxt": "nuxt generate",

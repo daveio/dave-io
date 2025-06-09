@@ -142,6 +142,7 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 
 - **JWT** (`bin/jwt.ts`): `init|create|verify|list|show|search|revoke`
 - **API Test** (`bin/api-test.ts`): End-to-end testing, `--auth-only|--ai-only|etc`
+- **Try** (`bin/try.ts`): Interactive endpoint tester with pretty output, `ai|images|internal|tokens|dashboard`
 - **KV** (`bin/kv.ts`): `export|import|list|wipe`, local mode with `--local`
 - **Deploy** (`bin/deploy-env.ts`): Secure environment deployment
 
@@ -226,6 +227,19 @@ bun run kv list --pattern "metrics"
 # API testing
 bun run test:api --auth-only
 bun run test:api --url https://dave.io --token "eyJ..."
+
+# Interactive endpoint testing (try.ts)
+bun try internal health              # Test system health (no auth required)
+bun try internal auth                # Validate JWT token
+bun try internal metrics --format yaml  # Get metrics in YAML format
+bun try ai alt-url "https://example.com/image.jpg"  # Generate alt-text from URL
+bun try images optimize-file "./image.png" --quality 75  # Optimize local image
+bun try tokens info <uuid>           # Get token information
+bun try dashboard data "hacker-news" # Get dashboard data
+bun try --remote internal health     # Test against production [default]
+bun try --local internal health      # Test against local dev server
+bun try --script internal health     # JSON output for automation
+bun try --dry-run ai alt-url "..."   # Show what would be done without executing
 ```
 
 ## KV Schema (YAML)

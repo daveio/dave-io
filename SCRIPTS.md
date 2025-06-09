@@ -29,17 +29,17 @@ graph TD
 
     %% Dev chain
     dev --> reset
-    dev --> types["`types`<br/>⚠️ MISSING"]
+    dev --> types["`types` ⚠️ MISSING"]
     dev --> devNuxt["dev:nuxt"]
 
     %% Preview chains
     preview --> previewCloudflare["preview:cloudflare"]
     previewCloudflare --> types
     previewCloudflare --> buildNuxt
-    previewCloudflare --> wranglerDev["`wrangler:dev`<br/>⚠️ MISSING"]
+    previewCloudflare --> wranglerDev["`wrangler:dev` ⚠️ MISSING"]
 
     previewNuxt["preview:nuxt"] --> types
-    previewNuxt --> nuxtPreview["`nuxt:preview`<br/>⚠️ MISSING"]
+    previewNuxt --> nuxtPreview["`nuxt:preview` ⚠️ MISSING"]
 
     %% Reset chain
     reset --> resetClean["reset:clean"]
@@ -65,11 +65,11 @@ graph TD
     test --> testCoverage["test:coverage"]
 
     %% Docs chain
-    docs --> docsGenerate["`docs:generate`<br/>⚠️ MISSING"]
+    docs --> docsGenerate["`docs:generate` ⚠️ MISSING"]
 
     %% Postinstall chain
     postinstall --> types
-    postinstall --> nuxtPrepare["`nuxt:prepare`<br/>⚠️ MISSING"]
+    postinstall --> nuxtPrepare["`nuxt:prepare` ⚠️ MISSING"]
 
     %% Standalone scripts
     jwt["jwt"]
