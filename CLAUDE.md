@@ -152,7 +152,7 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 - **API Test** (`bin/api-test.ts`): End-to-end testing, `--auth-only|--ai-only|etc`
 - **Try** (`bin/try.ts`): Interactive endpoint tester with pretty output, `ai|images|internal|tokens|dashboard`
 - **KV** (`bin/kv.ts`): `export|import|list|wipe`, local mode with `--local`
-- **Deploy** (`bin/deploy-env.ts`): Secure environment deployment
+- **Deploy** (`bin/env.ts`): Secure environment deployment
 
 ## Testing
 

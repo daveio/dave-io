@@ -83,7 +83,7 @@
 
     "// === GENERATION ===": "",
     "generate": "bun run-s generate:types generate:openapi",
-    "generate:openapi": "bun run bin/generate-docs.ts && biome format --write public/openapi.json",
+    "generate:openapi": "bun run bin/openapi.ts && biome format --write public/openapi.json",
     "generate:nuxt": "bun run nuxt generate",
     "generate:types": "bun run wrangler types",
     "types": "bun run generate:types",
