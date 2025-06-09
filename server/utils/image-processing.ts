@@ -97,6 +97,11 @@ export function generateOptimisedFilename(originalBuffer: Buffer, quality?: numb
  * @returns Extracted hash or empty string if extraction fails
  */
 export function extractHashFromFilename(filename: string): string {
+  // Return empty string for invalid/empty filenames
+  if (!filename) {
+    return ""
+  }
+
   // Remove .webp extension
   const nameWithoutExt = filename.replace(/\.webp$/, "")
 
@@ -111,11 +116,13 @@ export function extractHashFromFilename(filename: string): string {
   }
 
   // Handle legacy format: {TIMESTAMP}-{HASH}
+  // Ensure the first part looks like a timestamp (all digits, 10 chars)
   const parts = nameWithoutExt.split("-")
-  if (parts.length >= 2) {
+  if (parts.length >= 2 && /^\d{10}$/.test(parts[0])) {
     return parts.slice(1).join("-")
   }
 
+  // If none of the expected formats match, return empty string
   return ""
 }
 

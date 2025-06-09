@@ -215,6 +215,11 @@ export function validateImageQuality(value: unknown, paramName = "quality"): num
     return undefined
   }
 
+  // Check for valid input types first
+  if (typeof value !== "string" && typeof value !== "number") {
+    throw createApiError(400, `${paramName} must be a valid number`)
+  }
+
   const quality = validateNumericParam(value, paramName, {
     min: 1, // Allow input validation from 1, but we'll bump to 10
     max: 100,
