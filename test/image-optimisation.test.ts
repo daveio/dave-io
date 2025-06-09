@@ -114,7 +114,7 @@ describe("Image Optimisation Core Functions", () => {
     it("should convert JPEG to WebP lossy", async () => {
       const jpegBuffer = await createTestImage(50, 50, "jpeg")
 
-      const webpBuffer = await sharp(jpegBuffer).webp({ quality: 60, lossless: false, effort: 6 }).toBuffer()
+      const webpBuffer = await sharp(jpegBuffer).webp({ quality: 80, lossless: false, effort: 6 }).toBuffer()
 
       const fileType = await fileTypeFromBuffer(webpBuffer)
       expect(fileType?.mime).toBe("image/webp")

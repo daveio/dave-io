@@ -511,7 +511,7 @@ metrics:redirect:gh:ok = "15"
 
 **Compression Strategy**:
 - Quality parameter specified → lossy WebP at specified quality
-- JPEG input (no quality) → lossy WebP at quality 60
+- JPEG input (no quality) → lossy WebP at quality 80
 - PNG/other lossless formats (no quality) → lossless WebP with maximum effort
 
 **Alt Preset Strategy** (≤ 4MB target):

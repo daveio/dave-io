@@ -73,17 +73,17 @@ async function optimiseForPreset(
 
   // Phase 1: Try quality optimization first without resizing
   let result = await optimiseWithQuality(currentBuffer, originalMimeType, preset.maxSizeBytes)
-  
+
   // Phase 2: If still too large, start reducing dimensions
   while (result.buffer.length > preset.maxSizeBytes && Math.max(currentWidth, currentHeight) > minLongEdge) {
     resizeAttempts++
     console.log(`Attempt ${resizeAttempts}: Image still ${result.buffer.length} bytes, trying dimension reduction`)
-    
+
     // Reduce dimensions by 15% each iteration (more aggressive than quality reduction)
     const scaleFactor = 0.85
     currentWidth = Math.floor(currentWidth * scaleFactor)
     currentHeight = Math.floor(currentHeight * scaleFactor)
-    
+
     // Ensure we don't go below minimum dimensions
     const currentLongEdge = Math.max(currentWidth, currentHeight)
     if (currentLongEdge < minLongEdge) {
@@ -91,20 +91,20 @@ async function optimiseForPreset(
       currentWidth = Math.floor(currentWidth * scale)
       currentHeight = Math.floor(currentHeight * scale)
     }
-    
+
     console.log(`Resizing to ${currentWidth}x${currentHeight}`)
-    
+
     // Resize the image
     currentBuffer = await sharp(inputBuffer)
-      .resize(currentWidth, currentHeight, { 
-        fit: 'inside',
-        withoutEnlargement: true 
+      .resize(currentWidth, currentHeight, {
+        fit: "inside",
+        withoutEnlargement: true
       })
       .toBuffer()
-    
+
     // Try quality optimization again with the smaller image
     result = await optimiseWithQuality(currentBuffer, originalMimeType, preset.maxSizeBytes)
-    
+
     // Safety check to prevent infinite loops
     if (resizeAttempts >= 10) {
       console.warn(`Reached maximum resize attempts (${resizeAttempts})`)
@@ -117,7 +117,7 @@ async function optimiseForPreset(
     const currentLongEdge = Math.max(currentWidth, currentHeight)
     if (currentLongEdge <= minLongEdge) {
       throw createApiError(
-        422, 
+        422,
         `Unable to compress image below ${preset.maxSizeBytes} bytes even at minimum dimensions (${currentWidth}x${currentHeight}). Current size: ${result.buffer.length} bytes`
       )
     }
@@ -125,8 +125,8 @@ async function optimiseForPreset(
 
   console.log(
     `Preset optimisation completed: ${inputBuffer.length} → ${result.buffer.length} bytes ` +
-    `(${originalWidth}x${originalHeight} → ${currentWidth}x${currentHeight}) ` +
-    `at quality ${result.quality}${resizeAttempts > 0 ? ` after ${resizeAttempts} resize attempts` : ''}`
+      `(${originalWidth}x${originalHeight} → ${currentWidth}x${currentHeight}) ` +
+      `at quality ${result.quality}${resizeAttempts > 0 ? ` after ${resizeAttempts} resize attempts` : ""}`
   )
 
   return result

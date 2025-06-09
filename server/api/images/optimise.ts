@@ -20,7 +20,7 @@ interface OptimisedImage {
   url: string
 }
 
-const LOSSY_FORMATS = ["image/jpeg", "image/jpg"]
+const LOSSY_FORMATS = ["image/jpeg", "image/jpg", "image/webp", "image/heic", "image/heif"]
 const VALID_IMAGE_FORMATS = [
   "image/jpeg",
   "image/jpg",
@@ -29,7 +29,10 @@ const VALID_IMAGE_FORMATS = [
   "image/webp",
   "image/bmp",
   "image/tiff",
-  "image/avif"
+  "image/avif",
+  "image/heic",
+  "image/heif",
+  "image/svg+xml"
 ]
 
 async function validateAndDetectMimeType(buffer: Buffer): Promise<string> {
@@ -64,7 +67,7 @@ async function optimiseImage(
   } else if (LOSSY_FORMATS.includes(originalMimeType)) {
     // Input is lossy format (JPEG) - use lossy WebP
     sharpImage = sharpImage.webp({
-      quality: 60,
+      quality: 80,
       lossless: false,
       effort: 6
     })
