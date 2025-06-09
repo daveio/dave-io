@@ -48,7 +48,7 @@
   "devDependencies": {
     "@anthropic-ai/claude-code": "^1.0.17",
     "@biomejs/biome": "^1.9.4",
-    "@iconify/json": "^2.2.346",
+    "@iconify/json": "^2.2.347",
     "@openai/codex": "0.1.2505291658",
     "@pinegrow/vite-plugin": "^3.0.69",
     "@trunkio/launcher": "^1.3.4",
