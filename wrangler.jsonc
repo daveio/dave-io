@@ -52,6 +52,7 @@
     }
   ],
   "vars": {
-    "CLOUDFLARE_ACCOUNT_ID": "def50674a738cee409235f71819973cf"
+    "CLOUDFLARE_ACCOUNT_ID": "def50674a738cee409235f71819973cf",
+    "IMAGES_BASE_URL": "https://images.dave.io"
   }
 }

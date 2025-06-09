@@ -1,5 +1,6 @@
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi"
 import { z } from "zod"
+import { PRESETS } from "./image-presets"
 
 extendZodWithOpenApi(z)
 
@@ -282,7 +283,7 @@ export const ImageOptimisationResponseSchema = z.object({
     quality: z.number().optional(),
     preset: z
       .object({
-        name: z.string(),
+        name: z.enum(Object.keys(PRESETS) as [string, ...string[]]),
         description: z.string(),
         maxSizeBytes: z.number()
       })

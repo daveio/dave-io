@@ -1,7 +1,7 @@
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAIAuth } from "~/server/utils/auth-helpers"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
-import { fetchOptimisedImage, optimiseImageForAI } from "~/server/utils/image-optimisation"
+import { optimiseImageForAI } from "~/server/utils/image-optimisation"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
 import { validateImageURL } from "~/server/utils/validation"
 
@@ -30,8 +30,8 @@ export default defineEventHandler(async (event) => {
     // Optimise the image using the 'alt' preset (≤ 4MB)
     const optimisationResult = await optimiseImageForAI(event, originalBuffer)
 
-    // Fetch the optimised image for AI processing
-    const imageBuffer = await fetchOptimisedImage(optimisationResult.url)
+    // Use the optimized buffer directly - no HTTP fetch needed!
+    const imageBuffer = optimisationResult.buffer
 
     // Use Cloudflare AI for image analysis
     let altText: string

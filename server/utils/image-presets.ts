@@ -1,11 +1,8 @@
-import sharp from "sharp"
 import {
-  LOSSY_FORMATS,
-  type OptimisationOptions,
+  type AdvancedOptimisationOptions,
   type OptimisedImageResult,
-  optimiseImageBuffer,
-  processImageOptimisation,
-  validateAndDetectMimeType
+  optimiseImageBufferAdvanced,
+  processImageOptimisation
 } from "./image-processing"
 import { createApiError } from "./response"
 
@@ -28,189 +25,6 @@ export const PRESETS: Record<string, PresetConfig> = {
 } as const
 
 /**
- * Optimises image with quality targeting to meet size constraints
- * Uses binary search to find optimal quality setting
- * @param inputBuffer - Image buffer to optimise
- * @param originalMimeType - Original MIME type
- * @param targetSize - Target file size in bytes
- * @returns Promise<{buffer: Buffer, originalMimeType: string, quality: number}>
- */
-export async function optimiseWithQualityTargeting(
-  inputBuffer: Buffer,
-  originalMimeType: string,
-  targetSize: number
-): Promise<{ buffer: Buffer; originalMimeType: string; quality: number }> {
-  // Start with a reasonable quality and adjust based on output size
-  // biome-ignore lint/suspicious/noExplicitAny: LOSSY_FORMATS requires flexible string comparison
-  let quality = LOSSY_FORMATS.includes(originalMimeType as any) ? 60 : 80
-  let optimisedBuffer: Buffer
-  let attempts = 0
-  const maxAttempts = 10
-
-  // Binary search approach to find optimal quality
-  let minQuality = 10 // Enforce minimum quality of 10
-  let maxQuality = 95
-
-  do {
-    attempts++
-
-    let sharpImage = sharp(inputBuffer)
-
-    // biome-ignore lint/suspicious/noExplicitAny: LOSSY_FORMATS requires flexible string comparison
-    if (LOSSY_FORMATS.includes(originalMimeType as any) || quality < 95) {
-      // Use lossy compression
-      sharpImage = sharpImage.webp({
-        quality,
-        lossless: false,
-        effort: 6
-      })
-    } else {
-      // Use lossless compression (only if quality is at maximum)
-      sharpImage = sharpImage.webp({
-        lossless: true,
-        effort: 6
-      })
-    }
-
-    optimisedBuffer = await sharpImage.toBuffer()
-
-    // If we're within 10% of target size or under target, we're done
-    const tolerance = targetSize * 0.1
-
-    if (optimisedBuffer.length <= targetSize) {
-      // Under target - try to increase quality if possible
-      if (optimisedBuffer.length <= targetSize - tolerance && quality < maxQuality && attempts < maxAttempts) {
-        minQuality = quality
-        quality = Math.ceil((quality + maxQuality) / 2)
-      } else {
-        break // Close enough or at max quality
-      }
-    } else {
-      // Over target - reduce quality
-      maxQuality = quality
-      quality = Math.floor((minQuality + quality) / 2)
-
-      if (quality <= minQuality) {
-        quality = minQuality // Ensure we never go below 10
-        break // Can't reduce further
-      }
-    }
-  } while (attempts < maxAttempts && Math.abs(maxQuality - minQuality) > 1)
-
-  // Final attempt with minimum quality if still over target
-  if (optimisedBuffer.length > targetSize && quality > minQuality) {
-    const sharpImage = sharp(inputBuffer).webp({
-      quality: minQuality,
-      lossless: false,
-      effort: 6
-    })
-    optimisedBuffer = await sharpImage.toBuffer()
-    quality = minQuality
-  }
-
-  return {
-    buffer: optimisedBuffer,
-    originalMimeType,
-    quality
-  }
-}
-
-/**
- * Optimises image for a specific preset with aggressive size reduction
- * Combines quality optimisation with dimension reduction if needed
- * @param inputBuffer - Image buffer to optimise
- * @param preset - Preset configuration
- * @returns Promise<{buffer: Buffer, originalMimeType: string, quality: number}>
- */
-export async function optimiseForPreset(
-  inputBuffer: Buffer,
-  preset: PresetConfig
-): Promise<{ buffer: Buffer; originalMimeType: string; quality: number }> {
-  const originalMimeType = await validateAndDetectMimeType(inputBuffer)
-
-  // Get original image metadata for resizing logic
-  const originalMetadata = await sharp(inputBuffer).metadata()
-  const originalWidth = originalMetadata.width || 0
-  const originalHeight = originalMetadata.height || 0
-
-  console.log(`Original image: ${originalWidth}x${originalHeight} (${inputBuffer.length} bytes)`)
-
-  let currentBuffer = inputBuffer
-  let currentWidth = originalWidth
-  let currentHeight = originalHeight
-  let resizeAttempts = 0
-  const minLongEdge = 1024
-
-  // Phase 1: Try quality optimisation first without resizing
-  let result = await optimiseWithQualityTargeting(currentBuffer, originalMimeType, preset.maxSizeBytes)
-
-  // Phase 2: If still too large, start reducing dimensions
-  while (result.buffer.length > preset.maxSizeBytes && Math.max(currentWidth, currentHeight) > minLongEdge) {
-    resizeAttempts++
-    console.log(`Attempt ${resizeAttempts}: Image still ${result.buffer.length} bytes, trying dimension reduction`)
-
-    // Reduce dimensions by 15% each iteration (more aggressive than quality reduction)
-    const scaleFactor = 0.85
-    currentWidth = Math.floor(currentWidth * scaleFactor)
-    currentHeight = Math.floor(currentHeight * scaleFactor)
-
-    // Ensure we don't go below minimum dimensions, but don't enlarge
-    const currentLongEdge = Math.max(currentWidth, currentHeight)
-    if (currentLongEdge < minLongEdge) {
-      // Clamp to minimum instead of enlarging
-      const originalLongEdge = Math.max(originalWidth, originalHeight)
-      if (originalLongEdge >= minLongEdge) {
-        const scale = minLongEdge / currentLongEdge
-        currentWidth = Math.min(Math.floor(currentWidth * scale), originalWidth)
-        currentHeight = Math.min(Math.floor(currentHeight * scale), originalHeight)
-      }
-      // If original was smaller than minLongEdge, exit the loop
-      if (originalLongEdge < minLongEdge) {
-        break
-      }
-    }
-
-    console.log(`Resizing to ${currentWidth}x${currentHeight}`)
-
-    // Resize the image
-    currentBuffer = await sharp(inputBuffer)
-      .resize(currentWidth, currentHeight, {
-        fit: "inside",
-        withoutEnlargement: true
-      })
-      .toBuffer()
-
-    // Try quality optimisation again with the smaller image
-    result = await optimiseWithQualityTargeting(currentBuffer, originalMimeType, preset.maxSizeBytes)
-
-    // Safety check to prevent infinite loops
-    if (resizeAttempts >= 10) {
-      console.warn(`Reached maximum resize attempts (${resizeAttempts})`)
-      break
-    }
-  }
-
-  // Final check - if we're at minimum dimensions and still over target, throw error
-  if (result.buffer.length > preset.maxSizeBytes) {
-    const currentLongEdge = Math.max(currentWidth, currentHeight)
-    if (currentLongEdge <= minLongEdge) {
-      throw createApiError(
-        422,
-        `Unable to compress image below ${preset.maxSizeBytes} bytes even at minimum dimensions (${currentWidth}x${currentHeight}). Current size: ${result.buffer.length} bytes`
-      )
-    }
-  }
-
-  console.log(
-    `Preset optimisation completed: ${inputBuffer.length} → ${result.buffer.length} bytes ` +
-      `(${originalWidth}x${originalHeight} → ${currentWidth}x${currentHeight}) ` +
-      `at quality ${result.quality}${resizeAttempts > 0 ? ` after ${resizeAttempts} resize attempts` : ""}`
-  )
-
-  return result
-}
-
-/**
  * Process image optimisation for a specific preset
  * @param imageBuffer - Original image buffer
  * @param presetName - Name of the preset to apply
@@ -230,9 +44,17 @@ export async function processPresetOptimisation(
 
   const startTime = Date.now()
 
-  // Optimise the image for the preset
-  // biome-ignore lint/correctness/noUnusedVariables: originalMimeType used for debugging and future metadata
-  const { buffer: optimisedBuffer, originalMimeType, quality } = await optimiseForPreset(imageBuffer, preset)
+  // Use the advanced optimisation from image-processing.ts with preset-specific options
+  const options: AdvancedOptimisationOptions = {
+    targetSizeBytes: preset.maxSizeBytes,
+    minQuality: 10,
+    maxQuality: 95
+  }
+
+  const { buffer: optimisedBuffer, originalMimeType, quality } = await optimiseImageBufferAdvanced(
+    imageBuffer,
+    options
+  )
 
   // Use the standard processing workflow with preset-specific options
   const result = await processImageOptimisation(imageBuffer, { quality }, env, { preset: presetName })

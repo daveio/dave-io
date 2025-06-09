@@ -66,16 +66,17 @@ export async function validateImageURL(imageUrl: string): Promise<ArrayBuffer> {
     throw createApiError(400, `Unsupported image type: ${contentType}`)
   }
 
-  // Check file size (4MB limit)
+  // Check file size (4MB limit) - merged condition
   const contentLength = response.headers.get("content-length")
-  if (contentLength && Number.parseInt(contentLength) > 4 * 1024 * 1024) {
+  const maxSize = 4 * 1024 * 1024
+  if (contentLength !== null && Number.parseInt(contentLength) > maxSize) {
     throw createApiError(400, "Image too large (max 4MB)")
   }
 
   const imageBuffer = await response.arrayBuffer()
 
   // Double-check size after download
-  if (imageBuffer.byteLength > 4 * 1024 * 1024) {
+  if (imageBuffer.byteLength > maxSize) {
     throw createApiError(400, "Image too large (max 4MB)")
   }
 
@@ -100,7 +101,8 @@ export async function validateBase64Image(base64: string): Promise<Buffer> {
   validateFileSize(buffer, 4 * 1024 * 1024, "Image")
 
   const type = await fileTypeFromBuffer(buffer)
-  if (!type || !type.mime.startsWith("image/")) {
+  // Merged condition for better readability
+  if (type === null || type === undefined || !type.mime.startsWith("image/")) {
     throw createApiError(400, "Uploaded data is not a valid image")
   }
 
@@ -131,6 +133,7 @@ export function validateStringParam(
     pattern?: RegExp
   } = {}
 ): string | undefined {
+  // Merged null/undefined check
   if (value === undefined || value === null) {
     if (options.required) {
       throw createApiError(400, `${paramName} is required`)
@@ -142,15 +145,16 @@ export function validateStringParam(
     throw createApiError(400, `${paramName} must be a string`)
   }
 
-  if (options.minLength && value.length < options.minLength) {
+  // Merged length validation conditions
+  if (options.minLength !== undefined && value.length < options.minLength) {
     throw createApiError(400, `${paramName} must be at least ${options.minLength} characters`)
   }
 
-  if (options.maxLength && value.length > options.maxLength) {
+  if (options.maxLength !== undefined && value.length > options.maxLength) {
     throw createApiError(400, `${paramName} must be no more than ${options.maxLength} characters`)
   }
 
-  if (options.pattern && !options.pattern.test(value)) {
+  if (options.pattern !== undefined && !options.pattern.test(value)) {
     throw createApiError(400, `${paramName} format is invalid`)
   }
 
@@ -170,6 +174,7 @@ export function validateNumericParam(
     integer?: boolean
   } = {}
 ): number | undefined {
+  // Merged null/undefined check
   if (value === undefined || value === null) {
     if (options.required) {
       throw createApiError(400, `${paramName} is required`)
@@ -183,10 +188,12 @@ export function validateNumericParam(
     throw createApiError(400, `${paramName} must be a valid number`)
   }
 
-  if (options.integer && !Number.isInteger(num)) {
+  // Merged integer validation
+  if (options.integer === true && !Number.isInteger(num)) {
     throw createApiError(400, `${paramName} must be an integer`)
   }
 
+  // Merged range validation conditions
   if (options.min !== undefined && num < options.min) {
     throw createApiError(400, `${paramName} must be at least ${options.min}`)
   }
@@ -203,6 +210,7 @@ export function validateNumericParam(
  * Ensures quality is between 10-100, automatically bumping values below 10
  */
 export function validateImageQuality(value: unknown, paramName = "quality"): number | undefined {
+  // Early return for null/undefined
   if (value === undefined || value === null) {
     return undefined
   }
@@ -213,6 +221,7 @@ export function validateImageQuality(value: unknown, paramName = "quality"): num
     integer: true
   })
 
+  // Early return if validation failed
   if (quality === undefined) {
     return undefined
   }

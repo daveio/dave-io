@@ -1,8 +1,10 @@
 import type { H3Event } from "h3"
 import { getCloudflareEnv } from "./cloudflare"
 import { optimiseImageForAI as directOptimiseImageForAI } from "./image-presets"
+import { isApiError } from "./response"
 
 interface OptimisationResult {
+  buffer: Buffer
   url: string
   originalSizeBytes: number
   optimisedSizeBytes: number
@@ -15,6 +17,7 @@ interface OptimisationResult {
 /**
  * Optimise image for AI processing using direct function invocation
  * This replaces the HTTP-based approach for better performance and reduces complexity
+ * Returns the optimized buffer directly instead of requiring HTTP fetch
  */
 export async function optimiseImageForAI(event: H3Event, imageBuffer: Buffer): Promise<OptimisationResult> {
   try {
@@ -24,6 +27,7 @@ export async function optimiseImageForAI(event: H3Event, imageBuffer: Buffer): P
     const result = await directOptimiseImageForAI(imageBuffer, env as Env)
 
     return {
+      buffer: result.buffer, // Return the buffer directly - no HTTP fetch needed!
       url: result.url,
       originalSizeBytes: result.originalSize,
       optimisedSizeBytes: result.optimisedSize,
@@ -36,7 +40,7 @@ export async function optimiseImageForAI(event: H3Event, imageBuffer: Buffer): P
     console.error("Direct image optimisation error:", error)
 
     // If it's already an API error, re-throw it
-    if (error && typeof error === "object" && "statusCode" in error) {
+    if (isApiError(error)) {
       throw error
     }
 
