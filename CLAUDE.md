@@ -158,14 +158,28 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 
 ## Installation
 
-```bash
-git clone https://github.com/daveio/next-dave-io.git
-cd next-dave-io
-bun install
-cp .env.example .env  # Edit with required values
-bun run types && bun run nuxt prepare
-bun run dev
-```
+### Prerequisites
+
+- **Node.js**: Version 18 or higher
+- **Bun**: Package manager (<https://bun.sh/>)
+- **libvips**: Required for Sharp image processing
+  - **macOS**: `brew install vips`
+  - **Ubuntu/Debian**: `apt-get install libvips-dev`
+  - **CentOS/RHEL**: `yum install vips-devel`
+
+### Steps
+
+1. Clone the repository
+2. Install dependencies: `bun install`
+3. Set up environment variables (see [Environment](#environment))
+4. Run development server: `bun run dev`
+
+**Note**: On macOS ARM64, the Sharp library may require additional configuration. This is automatically handled by the `fix-sharp` script that runs during `postinstall`. The script creates the necessary symlinks for libvips to work correctly with Sharp.
+
+### Troubleshooting
+
+- **libvips errors on macOS**: Ensure you have installed libvips with `brew install vips`. If you still encounter issues after running `bun install`, try `bun run fix-sharp` manually.
+- **Sharp loading errors**: These are typically resolved by the automated postinstall script, but you can run `bun run fix-sharp` if needed.
 
 ## Project Structure
 

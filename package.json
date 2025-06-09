@@ -1,4 +1,5 @@
 {
+  "name": "next-dave-io",
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "7.3.3",
     "@iconify-json/heroicons": "1.2.2",
@@ -25,7 +26,7 @@
     "lodash-es": "4.17.21",
     "nuxt": "3.17.5",
     "pinia": "3.0.3",
-    "sharp": "0.34.2",
+    "sharp": "^0.34.2",
     "swagger-ui-express": "5.0.1",
     "typescript": "5.8.3",
     "uuid": "11.1.0",
@@ -56,7 +57,9 @@
     "vitest": "3.2.3",
     "wrangler": "4.19.1"
   },
-  "name": "next-dave-io",
+  "optionalDependencies": {
+    "@img/sharp-libvips-darwin-arm64": "^1.1.0"
+  },
   "private": true,
   "scripts": {
     "build": "bun run types && bun run nuxt build",
@@ -72,11 +75,13 @@
     "kv": "bun run bin/kv.ts",
     "lint": "bun run biome check --write && bun run trunk check -a --fix",
     "packages": "bun run rimraf node_modules bun.lock && bun install",
-    "postinstall": "bun run types && bun run nuxt prepare",
+    "postinstall": "bun run fix-sharp && bun run types && bun run nuxt prepare",
+    "fix-sharp": "bun run bin/fix-sharp.ts",
     "preview": "bun run preview:cloudflare",
     "preview:cloudflare": "bun run types && bun run build && bun run wrangler dev",
     "preview:nuxt": "bun run types && bun run nuxt preview",
     "reset": "bun run clean && bun run packages && bun run build",
+    "reset:packages": "bun run rimraf node_modules bun.lock && bun install",
     "reset:kv": "bun run kv import data/kv/_init.yaml --wipe --yes",
     "test": "bun run vitest run",
     "test:api": "bun run bin/api.ts",
@@ -87,7 +92,6 @@
     "types": "bun run cf-typegen",
     "docs:generate": "bun run bin/generate-docs.ts && bun run biome format --write public/openapi.json"
   },
-  "type": "module",
   "trustedDependencies": [
     "@anthropic-ai/claude-code",
     "@biomejs/biome",
@@ -98,5 +102,6 @@
     "sharp",
     "vue-demi",
     "workerd"
-  ]
+  ],
+  "type": "module"
 }
