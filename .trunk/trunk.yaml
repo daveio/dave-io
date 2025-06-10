@@ -69,7 +69,7 @@ lint:
         - '**/*.ico'
         - '**/*.jpg'
         - '**/*.png'
-        - CLAUDE.md
+        - AGENTS.md
         - components/ExtraLinks.vue
         - nuxt.config.ts
         - server/middleware/shell-scripts.ts
