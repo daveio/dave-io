@@ -15,17 +15,9 @@ interface ImageOptimiseResponse {
 
 /**
  * Adapter for image optimization operations (/api/images/*)
- * Requires 'api:images' scope or higher for authentication
+ * Public endpoint - authentication optional
  */
 export class ImagesAdapter extends BaseAdapter {
-  /**
-   * Create a new images adapter instance
-   * @param config Configuration for the adapter
-   */
-  constructor(config: RequestConfig) {
-    super(config)
-  }
-
   /**
    * Optimize an image from a URL
    * @param imageUrl URL of the image to optimize

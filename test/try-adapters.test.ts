@@ -11,6 +11,7 @@ import {
 } from "../bin/try"
 
 // Mock fetch globally
+// biome-ignore lint/suspicious/noExplicitAny: mock function type
 const mockFetch = vi.fn() as any
 global.fetch = mockFetch
 
@@ -117,6 +118,7 @@ describe("BaseAdapter", () => {
         }
       }
       const dryRunAdapter = new TestAdapter(dryRunConfig)
+      // biome-ignore lint/suspicious/noExplicitAny: cast for test access
       const result = await (dryRunAdapter as any).testMethod()
 
       expect(result.success).toBe(true)
@@ -451,6 +453,23 @@ describe("ImagesAdapter", () => {
         body: JSON.stringify({ image: "base64data", quality: 75 })
       })
     )
+  })
+
+  it("should omit token when not provided", async () => {
+    const noTokenConfig = { ...config, token: undefined }
+    adapter = new ImagesAdapter(noTokenConfig)
+
+    const mockResponse = {
+      ok: true,
+      status: 200,
+      json: async () => ({ success: true })
+    }
+    mockFetch.mockResolvedValueOnce(mockResponse)
+
+    await adapter.optimiseFromUrl("https://example.com/test.png")
+
+    const calledUrl = mockFetch.mock.calls[0][0] as string
+    expect(calledUrl).not.toContain("token=")
   })
 })
 
