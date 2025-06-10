@@ -116,6 +116,7 @@
     "jwt": "bun run bin/jwt.ts",
     "kv": "bun run bin/kv.ts",
     "try": "bun run bin/try.ts",
+    "wasm": "bun run bin/wasm.ts",
 
     "// === HOOKS ===": "",
     "postinstall": "bun run generate"
