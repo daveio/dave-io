@@ -9,7 +9,7 @@ export default defineNuxtConfig({
   // Vite configuration to disable sourcemaps in production
   vite: {
     build: {
-      sourcemap: false // Disable sourcemaps in production to avoid warnings
+      sourcemap: true // Enable sourcemaps in production (disable if warnings)
     }
   },
   nitro: {

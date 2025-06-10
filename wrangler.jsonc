@@ -13,7 +13,7 @@
   "main": "./dist/index.js",
 
   // Compatibility date - determines which version of the Workers runtime is used
-  "compatibility_date": "2025-05-29",
+  "compatibility_date": "2025-06-10",
 
   // ===============================
   // RUNTIME CONFIGURATION
@@ -21,8 +21,8 @@
 
   // List of flags that enable features from upcoming versions of the Workers runtime
   "compatibility_flags": [
-    "nodejs_compat",                    // Enable Node.js compatibility
-    "nodejs_compat_populate_process_env" // Populate process.env with environment variables
+    "nodejs_compat",                      // Enable Node.js compatibility
+    "nodejs_compat_populate_process_env"  // Populate process.env
   ],
 
   // Account ID associated with your zone (can also be set via CLOUDFLARE_ACCOUNT_ID env var)
@@ -32,7 +32,7 @@
   "workers_dev": false,
 
   // Enable Preview URLs to test your Worker
-  "preview_urls": true,
+  "preview_urls": false,
 
   // Whether Wrangler should keep variables configured in the dashboard on deploy
   "keep_vars": false,
@@ -119,28 +119,10 @@
   },
 
   // Module loading rules for additional files
-  "rules": [
-    // Example: Include all TypeScript files as ES Modules
-    // { "type": "ESModule", "globs": ["**/*.ts"], "fallthrough": false },
-    // Example: Include markdown files as text modules
-    // { "type": "Text", "globs": ["**/*.md"], "fallthrough": true },
-    // Example: Include WASM files as compiled WebAssembly
-    // { "type": "CompiledWasm", "globs": ["**/*.wasm"], "fallthrough": false },
-    // Example: Include binary data files
-    // { "type": "Data", "globs": ["**/*.bin"], "fallthrough": false }
-  ],
-
-  // Module aliasing for package replacements
-  "alias": {
-    // Example: Replace node-fetch with built-in fetch
-    // "node-fetch": "./fetch-polyfill.js"
-  },
-
-  // Global variable replacements during build
-  "define": {
-    // Example: Replace process.env.NODE_ENV with a literal value
-    // "process.env.NODE_ENV": "\"production\""
-  },
+  // "rules": [
+  //   // Example: Include WASM files as compiled WebAssembly
+  //   { "type": "CompiledWasm", "globs": ["**/*.wasm"], "fallthrough": false },
+  // ],
 
   // ===============================
   // BINDINGS & SERVICES
@@ -185,220 +167,8 @@
     }
   ],
 
-  // R2 bucket bindings for object storage
-  "r2_buckets": [
-    // {
-    //   "binding": "MY_BUCKET",         // Variable name in your Worker
-    //   "bucket_name": "my-bucket-name",
-    //   "preview_bucket_name": "my-preview-bucket", // For wrangler dev --remote
-    //   "jurisdiction": "eu"            // Optional: jurisdictional restrictions
-    // }
-  ],
-
-  // Vectorize index bindings for vector search
-  "vectorize": [
-    // {
-    //   "binding": "VECTORIZE_INDEX",   // Variable name in your Worker
-    //   "index_name": "my-index"
-    // }
-  ],
-
-  // Analytics Engine dataset bindings for analytics data
-  "analytics_engine_datasets": [
-    // {
-    //   "binding": "ANALYTICS",         // Variable name in your Worker
-    //   "dataset": "my-dataset"         // Defaults to binding name if not specified
-    // }
-  ],
-
-  // Service bindings to other Workers
-  "services": [
-    // {
-    //   "binding": "OTHER_WORKER",      // Variable name in your Worker
-    //   "service": "other-worker-name", // Name of the Worker to bind to
-    //   "entrypoint": "default"         // Optional: specific entrypoint to bind to
-    // }
-  ],
-
-  // Queue producer bindings for sending messages
-  "queues": {
-    "producers": [
-      // {
-      //   "binding": "MY_QUEUE",        // Variable name in your Worker
-      //   "queue": "my-queue-name",     // Queue name in dashboard
-      //   "delivery_delay": 0           // Default delay in seconds
-      // }
-    ],
-    // Queue consumer bindings for receiving messages
-    "consumers": [
-      // {
-      //   "queue": "my-queue-name",     // Queue name to consume from
-      //   "max_batch_size": 10,         // Max messages per batch
-      //   "max_batch_timeout": 30,      // Max seconds to wait for batch
-      //   "max_retries": 3,             // Max retry attempts
-      //   "dead_letter_queue": "dlq",   // Queue for failed messages
-      //   "max_concurrency": 1,         // Max concurrent consumers
-      //   "retry_delay": 30             // Delay before retrying (seconds)
-      // }
-    ]
-  },
-
-  // Hyperdrive bindings for database connections
-  "hyperdrive": [
-    // {
-    //   "binding": "DATABASE",          // Variable name in your Worker
-    //   "id": "hyperdrive-config-id"    // Hyperdrive configuration ID
-    // }
-  ],
-
   // Browser rendering bindings for headless browser automation
-  // "browser": {
-  //   "binding": "BROWSER"             // Variable name in your Worker
-  // },
-
-  // mTLS certificate bindings for client authentication
-  "mtls_certificates": [
-    // {
-    //   "binding": "CLIENT_CERT",       // Variable name in your Worker
-    //   "certificate_id": "cert-id"     // Certificate ID from wrangler mtls-certificate upload
-    // }
-  ],
-
-  // Email sending bindings for Email Routing
-  "send_email": [
-    // {
-    //   "name": "EMAIL_SENDER",         // Variable name in your Worker
-    //   "destination_address": "user@example.com"  // Verified email address
-    // },
-    // {
-    //   "name": "EMAIL_ALLOWLIST",      // Variable name in your Worker
-    //   "allowed_destination_addresses": ["user1@example.com", "user2@example.com"]
-    // }
-  ],
-
-  // Dispatch namespace bindings for Workers for Platforms
-  "dispatch_namespaces": [
-    // {
-    //   "binding": "NAMESPACE",         // Variable name in your Worker
-    //   "namespace": "my-namespace",    // Dispatch namespace name
-    //   "outbound": {
-    //     "service": "outbound-worker", // Outbound Worker name
-    //     "parameters": ["param1"]      // Parameters to pass
-    //   }
-    // }
-  ],
-
-  // ===============================
-  // DURABLE OBJECTS
-  // ===============================
-
-  // Durable Object bindings for stateful objects
-  "durable_objects": {
-    "bindings": [
-      // {
-      //   "name": "MY_DURABLE_OBJECT",  // Variable name in your Worker
-      //   "class_name": "MyDurableObject", // Class name in your code
-      //   "script_name": "other-worker", // Optional: if defined in another Worker
-      //   "environment": "production"    // Optional: environment of the script_name
-      // }
-    ]
-  },
-
-  // Durable Object migrations for schema changes
-  "migrations": [
-    // {
-    //   "tag": "v1",                    // Unique identifier for this migration
-    //   "new_sqlite_classes": ["MyDurableObject"], // New Durable Objects
-    //   "renamed_classes": [            // Renamed Durable Objects
-    //     { "from": "OldName", "to": "NewName" }
-    //   ],
-    //   "deleted_classes": ["DeprecatedClass"] // Removed Durable Objects
-    // }
-  ],
-
-  // ===============================
-  // STATIC ASSETS
-  // ===============================
-
-  // Static assets configuration (replaces Workers Sites)
-  "assets": {
-    // "directory": "./public",         // Folder of static assets to serve
-    // "binding": "ASSETS",             // Optional: binding name for Worker access
-    // "run_worker_first": false,       // Whether to run Worker before serving assets
-    // "html_handling": "auto-trailing-slash", // HTML redirect/rewrite behavior
-    // "not_found_handling": "none"     // 404 handling: "single-page-application", "404-page", "none"
-  },
-
-  // ===============================
-  // CRON TRIGGERS
-  // ===============================
-
-  // Cron triggers for scheduled functions
-  "triggers": {
-    "crons": [
-      // "0 0 * * *"                   // Daily at midnight UTC
-      // "*/15 * * * *"                // Every 15 minutes
-    ]
-  },
-
-  // ===============================
-  // TAIL WORKERS
-  // ===============================
-
-  // Tail Workers for processing logs from other Workers
-  "tail_consumers": [
-    // {
-    //   "service": "tail-worker",       // Name of the Tail Worker
-    //   "environment": "production"     // Optional: environment of the service
-    // }
-  ],
-
-  // ===============================
-  // LOCAL DEVELOPMENT
-  // ===============================
-
-  // Local development server configuration
-  "dev": {
-    "ip": "127.0.0.1",                  // IP address for local dev server
-    "port": 8787,                       // Port for local dev server
-    "local_protocol": "http",           // Protocol for local requests
-    "upstream_protocol": "https",       // Protocol for upstream requests
-    "host": "localhost"                 // Host to forward requests to
-  },
-
-  // ===============================
-  // DEPRECATED/LEGACY
-  // ===============================
-
-  // Workers Sites (deprecated - use assets instead)
-  // "site": {
-  //   "bucket": "./public",            // Directory containing static assets
-  //   "include": ["**/*"],             // Files to include (gitignore-style patterns)
-  //   "exclude": ["node_modules/**"]   // Files to exclude (gitignore-style patterns)
-  // }
-
-  // ===============================
-  // ENVIRONMENT-SPECIFIC CONFIG
-  // ===============================
-
-  // Different configurations for different environments
-  "env": {
-    // Example staging environment
-    // "staging": {
-    //   "name": "next-dave-io-staging",
-    //   "route": {
-    //     "pattern": "staging.dave.io",
-    //     "custom_domain": true
-    //   },
-    //   "vars": {
-    //     "ENVIRONMENT": "staging"
-    //   },
-    //   "kv_namespaces": [
-    //     {
-    //       "binding": "DATA",
-    //       "id": "staging-kv-namespace-id"
-    //     }
-    //   ]
-    // }
+  "browser": {
+    "binding": "BROWSER"             // Variable name in your Worker
   }
 }
