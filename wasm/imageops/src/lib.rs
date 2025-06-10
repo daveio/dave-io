@@ -1,6 +1,6 @@
-use wasm_bindgen::prelude::*;
-use image::{ImageFormat, DynamicImage, GenericImageView};
+use image::{DynamicImage, GenericImageView, ImageFormat};
 use std::io::Cursor;
+use wasm_bindgen::prelude::*;
 
 extern crate wee_alloc;
 
@@ -53,7 +53,7 @@ impl ImageProcessor {
     #[wasm_bindgen]
     pub fn load_image(&mut self, data: &[u8]) -> Result<String, JsValue> {
         console_log!("Loading image of {} bytes", data.len());
-        
+
         let cursor = Cursor::new(data);
         match image::load_from_memory(data) {
             Ok(img) => {
@@ -64,7 +64,7 @@ impl ImageProcessor {
                     width, height
                 ))
             }
-            Err(e) => Err(JsValue::from_str(&format!("Failed to load image: {}", e)))
+            Err(e) => Err(JsValue::from_str(&format!("Failed to load image: {}", e))),
         }
     }
 
@@ -79,7 +79,7 @@ impl ImageProcessor {
                     width, height
                 ))
             }
-            None => Err(JsValue::from_str("No image loaded"))
+            None => Err(JsValue::from_str("No image loaded")),
         }
     }
 
@@ -94,7 +94,7 @@ impl ImageProcessor {
                     x, y, width, height
                 ))
             }
-            None => Err(JsValue::from_str("No image loaded"))
+            None => Err(JsValue::from_str("No image loaded")),
         }
     }
 
@@ -106,7 +106,7 @@ impl ImageProcessor {
                 self.image = Some(rotated);
                 Ok(r#"{"success": true, "operation": "rotate90"}"#.to_string())
             }
-            None => Err(JsValue::from_str("No image loaded"))
+            None => Err(JsValue::from_str("No image loaded")),
         }
     }
 
@@ -121,7 +121,7 @@ impl ImageProcessor {
                     value
                 ))
             }
-            None => Err(JsValue::from_str("No image loaded"))
+            None => Err(JsValue::from_str("No image loaded")),
         }
     }
 
@@ -136,7 +136,7 @@ impl ImageProcessor {
                     contrast
                 ))
             }
-            None => Err(JsValue::from_str("No image loaded"))
+            None => Err(JsValue::from_str("No image loaded")),
         }
     }
 
@@ -146,13 +146,13 @@ impl ImageProcessor {
             Some(img) => {
                 let mut buffer = Vec::new();
                 let mut cursor = Cursor::new(&mut buffer);
-                
+
                 match img.write_to(&mut cursor, ImageFormat::WebP) {
                     Ok(_) => Ok(buffer),
-                    Err(e) => Err(JsValue::from_str(&format!("Failed to encode WebP: {}", e)))
+                    Err(e) => Err(JsValue::from_str(&format!("Failed to encode WebP: {}", e))),
                 }
             }
-            None => Err(JsValue::from_str("No image loaded"))
+            None => Err(JsValue::from_str("No image loaded")),
         }
     }
 
@@ -162,13 +162,13 @@ impl ImageProcessor {
             Some(img) => {
                 let mut buffer = Vec::new();
                 let mut cursor = Cursor::new(&mut buffer);
-                
+
                 match img.write_to(&mut cursor, ImageFormat::Jpeg) {
                     Ok(_) => Ok(buffer),
-                    Err(e) => Err(JsValue::from_str(&format!("Failed to encode JPEG: {}", e)))
+                    Err(e) => Err(JsValue::from_str(&format!("Failed to encode JPEG: {}", e))),
                 }
             }
-            None => Err(JsValue::from_str("No image loaded"))
+            None => Err(JsValue::from_str("No image loaded")),
         }
     }
 
@@ -178,13 +178,13 @@ impl ImageProcessor {
             Some(img) => {
                 let mut buffer = Vec::new();
                 let mut cursor = Cursor::new(&mut buffer);
-                
+
                 match img.write_to(&mut cursor, ImageFormat::Png) {
                     Ok(_) => Ok(buffer),
-                    Err(e) => Err(JsValue::from_str(&format!("Failed to encode PNG: {}", e)))
+                    Err(e) => Err(JsValue::from_str(&format!("Failed to encode PNG: {}", e))),
                 }
             }
-            None => Err(JsValue::from_str("No image loaded"))
+            None => Err(JsValue::from_str("No image loaded")),
         }
     }
 
@@ -193,12 +193,9 @@ impl ImageProcessor {
         match &self.image {
             Some(img) => {
                 let (width, height) = img.dimensions();
-                Ok(format!(
-                    r#"{{"width": {}, "height": {}}}"#,
-                    width, height
-                ))
+                Ok(format!(r#"{{"width": {}, "height": {}}}"#, width, height))
             }
-            None => Err(JsValue::from_str("No image loaded"))
+            None => Err(JsValue::from_str("No image loaded")),
         }
     }
 }
