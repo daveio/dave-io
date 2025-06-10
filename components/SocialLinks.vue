@@ -116,7 +116,7 @@
           <UIcon name="i-heroicons-x-mark" class="mr-2 text-gray-400 font-bold" />
           Twitter
         </span>
-        <span class="text-gray-500 link-url">We don't use Twitter any more.</span>
+        <span class="text-gray-500">Nope.</span>
       </div>
     </div>
   </div>
@@ -161,7 +161,7 @@ const handleLinkClick = (service: string, url: string) => {
 
 @media (max-width: 800px) {
   .social-links-table {
-    grid-template-columns: 0.6fr 1.3fr;
+    grid-template-columns: 0.7fr 1.2fr;
     font-size: 0.95em;
     max-width: 100%;
     gap: 0.5rem 1rem;

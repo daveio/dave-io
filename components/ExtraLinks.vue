@@ -94,10 +94,11 @@ const handleLinkClick = (service: string, url: string) => {
 
 @media (max-width: 800px) {
   .extra-links-table {
-    grid-template-columns: 0.9fr 1.1fr;
+    grid-template-columns: 1fr 1fr;
     font-size: 0.95em;
     max-width: 100%;
     gap: 0.5rem 1rem;
+    padding-left: 1rem;
   }
 
   .link-name,
