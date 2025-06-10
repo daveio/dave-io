@@ -326,6 +326,7 @@ dev_setup() {
     fi
 
     # Verify mise is now accessible
+    # trunk-ignore(shellcheck/SC2310)
     if ! command_exists mise; then
       log_error "mise command still not found after installation and PATH update"
       exit 1
