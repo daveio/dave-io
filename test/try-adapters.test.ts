@@ -618,25 +618,4 @@ describe("DashboardAdapter", () => {
     expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining("/api/dashboard/test-dashboard"), expect.any(Object))
   })
 
-  it("should get live dashboard", async () => {
-    const mockResponse = {
-      ok: true,
-      status: 200,
-      json: async () => ({
-        success: true,
-        data: {
-          connections: 42,
-          lastUpdate: "2023-01-01T00:00:00Z",
-          data: { live: true }
-        }
-      })
-    }
-    mockFetch.mockResolvedValueOnce(mockResponse)
-
-    const result = await adapter.getLiveDashboard()
-
-    expect(result.success).toBe(true)
-    expect(result.data?.connections).toBe(42)
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining("/api/dashboard/live"), expect.any(Object))
-  })
 })

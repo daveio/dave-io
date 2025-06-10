@@ -320,7 +320,6 @@ bun try ai alt file "./image.png"    # Generate alt-text from local image file
 bun try images optimise file "./image.png" --quality 75  # Optimise local image (public)
 bun try tokens info <uuid>           # Get token information
 bun try dashboard "hacker-news"      # Get dashboard data by name
-bun try dashboard live               # Get live dashboard updates
 bun try --remote internal health     # Test against production [default]
 bun try --local internal health      # Test against local dev server
 bun try --script internal health     # JSON output for automation

@@ -21,6 +21,10 @@ export default defineNuxtConfig({
     experimental: {
       wasm: true
     },
+    rollupConfig: {
+      external: [],
+      plugins: []
+    },
     routeRules: {
       "/api/**": {
         cors: true,

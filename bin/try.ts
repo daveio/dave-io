@@ -419,19 +419,6 @@ dashboardCommand
     await displayResult(result, options, "Dashboard Data")
   })
 
-dashboardCommand
-  .command("live")
-  .description("Get live dashboard updates")
-  .action(async (_options, command) => {
-    const options = command.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
-    validateToken(config, "dashboard")
-
-    const adapter = new DashboardAdapter(config)
-    const result = await withSpinner(adapter.getLiveDashboard(), "Getting live dashboard data", options)
-
-    await displayResult(result, options, "Live Dashboard")
-  })
 
 // Help text
 program.addHelpText(
@@ -467,7 +454,6 @@ ${chalk.cyan("Token Management:")}
 
 ${chalk.cyan("Dashboard Data:")}
   bun try dashboard <name>               Get dashboard data by name
-  bun try dashboard live                 Get live dashboard updates
 
 ${chalk.bold("Examples:")}
   ${chalk.cyan("# Public endpoints (no authentication)")}

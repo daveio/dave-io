@@ -11,14 +11,6 @@ interface DashboardDataResponse {
   ttl?: number
 }
 
-/**
- * Response format for live dashboard updates
- */
-interface LiveDashboardResponse {
-  connections: number
-  lastUpdate: string
-  data: unknown
-}
 
 /**
  * Adapter for dashboard data operations (/api/dashboard/*)
@@ -34,11 +26,4 @@ export class DashboardAdapter extends BaseAdapter {
     return this.makeRequest(`/api/dashboard/${name}`)
   }
 
-  /**
-   * Get live dashboard updates
-   * @returns Live dashboard data with connection info
-   */
-  async getLiveDashboard(): Promise<ApiResponse<LiveDashboardResponse>> {
-    return this.makeRequest("/api/dashboard/live")
-  }
 }
