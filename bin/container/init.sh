@@ -18,7 +18,6 @@ FILTER_PATTERN=""
 HIDE_SENSITIVE="false"
 OUTPUT_FORMAT="table"
 ENV_ONLY="false"
-SETUP_ONLY="false"
 
 # Logging functions
 log_info() {
@@ -287,48 +286,6 @@ install_with_retry() {
   return 1
 }
 
-# System initialization function
-system_init() {
-  log_info "Starting system initialization..."
-
-  # Check if running as root (optional warning)
-  user_id=$(id -u)
-  if [ "${user_id}" = "0" ]; then
-    log_warning "Running as root - this may not be necessary for all operations"
-  fi
-
-  # Update package lists
-  log_info "Updating package lists..."
-  if ! sudo apt update; then
-    log_error "Failed to update package lists"
-    exit 1
-  fi
-
-  # Upgrade system packages
-  log_info "Upgrading system packages..."
-  if ! sudo apt -y full-upgrade; then
-    log_error "Failed to upgrade system packages"
-    exit 1
-  fi
-
-  # Install fish shell
-  log_info "Installing fish shell..."
-  if ! sudo apt -y install fish; then
-    log_error "Failed to install fish shell"
-    exit 1
-  fi
-
-  # Verify fish installation
-  command_exists fish
-  fish_available=$?
-  if [ "${fish_available}" -ne 0 ]; then
-    log_error "Fish shell installation failed - command not found"
-    exit 1
-  fi
-
-  log_success "System setup completed successfully"
-}
-
 # Development environment setup function
 dev_setup() {
   log_info "Starting development environment setup..."
@@ -430,10 +387,6 @@ parse_args() {
       ENV_ONLY="true"
       shift
       ;;
-    --setup-only)
-      SETUP_ONLY="true"
-      shift
-      ;;
     --env-help)
       show_env_help
       exit 0
@@ -455,29 +408,11 @@ parse_args() {
 main() {
   parse_args "$@"
 
-  # Check for conflicting options
-  if [ "${ENV_ONLY}" = "true" ] && [ "${SETUP_ONLY}" = "true" ]; then
-    log_error "Cannot specify both --env-only and --setup-only"
-    exit 1
-  fi
-
   # Run environment inspector only
   if [ "${ENV_ONLY}" = "true" ]; then
     inspect_environment
     exit 0
   fi
-
-  # Run setup only (skip system init and env display)
-  if [ "${SETUP_ONLY}" = "true" ]; then
-    dev_setup
-    printf "\n%s===== DEVELOPMENT ENVIRONMENT READY =====%s\n" "${GREEN}" "${NC}"
-    log_info "Environment setup completed successfully!"
-    log_info "You can now start development with: bun run dev"
-    exit 0
-  fi
-
-  # Full initialization process
-  system_init
 
   # Display environment information
   log_info "Displaying environment information..."
