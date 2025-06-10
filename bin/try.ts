@@ -209,7 +209,6 @@ imagesCommand
   .action(async (imageUrl, cmdOptions, command) => {
     const options = command.parent?.parent?.opts() as GlobalOptions
     const config = createConfig(options)
-    validateToken(config, "api:images")
 
     const adapter = new ImagesAdapter(config)
     const result = await withSpinner(
@@ -228,7 +227,6 @@ imagesCommand
   .action(async (filePath, cmdOptions, command) => {
     const options = command.parent?.parent?.opts() as GlobalOptions
     const config = createConfig(options)
-    validateToken(config, "api:images")
 
     const adapter = new ImagesAdapter(config)
     const result = await withSpinner(
@@ -454,7 +452,6 @@ Environment Variables:
 
 Token Creation:
   ${chalk.green("bun jwt create --sub 'ai:alt' --description 'AI testing'")}
-  ${chalk.green("bun jwt create --sub 'api:images' --description 'Image testing'")}
   ${chalk.green("bun jwt create --sub 'api:metrics' --description 'Metrics access'")}
 `
 )

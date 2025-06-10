@@ -1,5 +1,4 @@
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
-import { requireAPIAuth } from "~/server/utils/auth-helpers"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
 import { processImageWithCloudflareImages } from "~/server/utils/cloudflare-images"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
@@ -13,9 +12,6 @@ export default defineEventHandler(async (event) => {
   const method = getMethod(event)
 
   try {
-    // Require API authentication for image optimisation
-    const auth = await requireAPIAuth(event, "images")
-
     const env = getCloudflareEnv(event)
 
     let imageBuffer: Buffer
@@ -69,7 +65,6 @@ export default defineEventHandler(async (event) => {
 
     // Log successful request
     logRequest(event, "images/optimise", method, 200, {
-      user: auth.payload?.sub || "anonymous",
       originalSize: result.originalSize,
       optimisedSize: result.optimisedSize,
       compressionRatio: Math.round((1 - result.optimisedSize / result.originalSize) * 100),

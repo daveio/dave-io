@@ -92,12 +92,11 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 
 ## Key Endpoints
 
-**Public**: `/api/internal/health|ping|worker`, `/go/{slug}`
+**Public**: `/api/internal/health|ping|worker`, `/api/images/optimise`, `/go/{slug}`
 **Protected** (require JWT + scope):
 - `/api/internal/auth` - Token validation (any token)
 - `/api/internal/metrics` - API metrics (`api:metrics`+)
 - `/api/ai/alt` - Alt-text generation (`ai:alt`+)
-- `/api/images/optimise` - Image processing (`api:images`+)
 - `/api/tokens/{uuid}/*` - Token management (`api:tokens`+)
 
 ## Breaking Changes
@@ -268,7 +267,7 @@ curl -H "Authorization: Bearer <token>" "http://localhost:3000/api/ai/alt?url=ht
 curl -X POST -H "Authorization: Bearer <token>" -d '{"image": "<base64>"}' http://localhost:3000/api/ai/alt
 
 # Image optimisation
-curl -X POST -H "Authorization: Bearer <token>" -d '{"image": "<base64>", "quality": 80}' http://localhost:3000/api/images/optimise
+curl -X POST -d '{"image": "<base64>", "quality": 80}' http://localhost:3000/api/images/optimise
 ```
 
 ## CLI Usage
@@ -293,7 +292,7 @@ bun try internal health              # Test system health (no auth required)
 bun try internal auth                # Validate JWT token
 bun try internal metrics --format yaml  # Get metrics in YAML format
 bun try ai alt-url "https://example.com/image.jpg"  # Generate alt-text from URL
-bun try images optimize-file "./image.png" --quality 75  # Optimize local image
+bun try images optimize-file "./image.png" --quality 75  # Optimize local image (public)
 bun try tokens info <uuid>           # Get token information
 bun try dashboard data "hacker-news" # Get dashboard data
 bun try --remote internal health     # Test against production [default]
@@ -342,7 +341,7 @@ bun run test:api --url https://your-worker.workers.dev
 - **Processing**: Hybrid API upload + binding transformations
 - **Caching**: Content-based deduplication using BLAKE3 hashing
 - **AI Integration**: Direct function invocation for alt-text processing
-- **Limits**: 4MB post-decode, requires `api:images` scope
+- **Limits**: 4MB post-decode, no authentication required
 - **Benefits**: No external dependencies, global edge network, automatic optimization
 
 ## Linting Guidelines
