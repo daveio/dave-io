@@ -13,7 +13,6 @@
       "components.d.ts",
       "auto-imports.d.ts",
       ".nuxt",
-      "wasm",
       ".codacy",
       ".output"
     ]
