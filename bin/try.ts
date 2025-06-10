@@ -474,13 +474,14 @@ ${chalk.bold("Examples:")}
   bun try internal health
   bun try internal ping
   bun try internal worker
+  bun try images optimise file "./image.png" --quality 75
+  bun try images optimise url "https://example.com/image.jpg"
 
   ${chalk.cyan("# Authenticated endpoints (requires token)")}
   bun try --token "eyJ..." internal auth
   bun try internal metrics
   bun try ai alt url "https://example.com/image.jpg"
   bun try ai alt file "./image.png"
-  bun try images optimise file "./image.png" --quality 75
   bun try dashboard hacker-news
 
   ${chalk.cyan("# Environment selection")}
