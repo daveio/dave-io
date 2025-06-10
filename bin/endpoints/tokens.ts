@@ -35,14 +35,6 @@ interface TokenRevokeResponse {
  */
 export class TokensAdapter extends BaseAdapter {
   /**
-   * Create a new tokens adapter instance
-   * @param config Configuration for the adapter
-   */
-  constructor(config: RequestConfig) {
-    super(config)
-  }
-
-  /**
    * Get basic token information and metadata
    * @param uuid Token UUID to query
    * @returns Token information including usage stats

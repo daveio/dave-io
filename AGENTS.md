@@ -25,7 +25,9 @@
 
 ### Documentation Sync
 
-- CLAUDE.md = single source of truth
+- **AGENTS.md = single source of truth** (AI agent documentation)
+- **README.md and CLAUDE.md are symbolic links** to AGENTS.md for functional purposes
+- **Make all documentation changes to AGENTS.md only**
 - Update after: API changes, features, architecture, auth changes
 
 ### Quality Verification Workflow
@@ -55,6 +57,25 @@
 ```typescript
 // TODO: Implement user preference caching with Redis
 throw new Error("User preferences not implemented yet")
+```
+
+### TODO Management
+
+- **ID**: Assign each TODO a unique ID of 6 hex characters. You can generate one with `openssl rand -hex 3` or generate a random one yourself.
+- **Use TODO.md** for tracking tasks that need addressing. See examples.
+- **Code TODOs**: Use `// TODO:` comments for location-specific tasks. Update `TODO.md` too. In case of multiple code locations, add comments to each. See examples.
+- **General TODOs**: Use `TODO.md` for tasks without code locations or with unknown code locations. Include the ID. See examples.
+- **Purpose**: Provides a convenient central place to check what needs doing, and somewhere to track tasks which don't have a code location.
+- Keep `TODO.md` updated - remove completed items, add new discoveries.
+
+Examples:
+
+```typescript
+// TODO: (37c7b2) Fix uploadFile tests - they require Bun.file mocking.
+```
+
+```markdown
+- **TODO:** *(37c7b2:test/try-adapters.test.ts)* Fix uploadFile tests - they require Bun.file mocking.
 ```
 
 ### KV Simple Data Storage
@@ -291,14 +312,16 @@ bun run test:api --url https://dave.io --token "eyJ..."
 bun try internal health              # Test system health (no auth required)
 bun try internal auth                # Validate JWT token
 bun try internal metrics --format yaml  # Get metrics in YAML format
-bun try ai alt-url "https://example.com/image.jpg"  # Generate alt-text from URL
-bun try images optimize-file "./image.png" --quality 75  # Optimize local image (public)
+bun try ai alt url "https://example.com/image.jpg"  # Generate alt-text from URL
+bun try ai alt file "./image.png"    # Generate alt-text from local image file
+bun try images optimise file "./image.png" --quality 75  # Optimise local image (public)
 bun try tokens info <uuid>           # Get token information
-bun try dashboard data "hacker-news" # Get dashboard data
+bun try dashboard "hacker-news"      # Get dashboard data by name
+bun try dashboard live               # Get live dashboard updates
 bun try --remote internal health     # Test against production [default]
 bun try --local internal health      # Test against local dev server
 bun try --script internal health     # JSON output for automation
-bun try --dry-run ai alt-url "..."   # Show what would be done without executing
+bun try --dry-run ai alt url "..."   # Show what would be done without executing
 ```
 
 ## KV Schema (YAML)

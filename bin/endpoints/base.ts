@@ -131,7 +131,7 @@ export abstract class BaseAdapter {
     if (this.config.verbose) {
       console.log(`🌐 ${method} ${url}`)
       if (body && this.config.verbose) {
-        console.log(`📤 Body:`, JSON.stringify(body, null, 2))
+        console.log("📤 Body:", JSON.stringify(body, null, 2))
       }
     }
 
@@ -150,7 +150,7 @@ export abstract class BaseAdapter {
       const data = (await response.json()) as ApiResponse<T>
 
       if (this.config.verbose) {
-        console.log(`📥 Response (${response.status}):`, JSON.stringify(data, null, 2))
+        console.log("📥 Response (%d):", response.status, JSON.stringify(data, null, 2))
       }
 
       if (!response.ok) {
@@ -167,7 +167,7 @@ export abstract class BaseAdapter {
       const errorMessage = error instanceof Error ? error.message : String(error)
 
       if (this.config.verbose) {
-        console.error(`❌ Request failed:`, error)
+        console.error("❌ Request failed:", error)
       }
 
       return {

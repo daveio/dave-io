@@ -26,14 +26,6 @@ interface LiveDashboardResponse {
  */
 export class DashboardAdapter extends BaseAdapter {
   /**
-   * Create a new dashboard adapter instance
-   * @param config Configuration for the adapter
-   */
-  constructor(config: RequestConfig) {
-    super(config)
-  }
-
-  /**
    * Get dashboard data by name
    * @param name Dashboard name to retrieve (e.g., 'hacker-news')
    * @returns Dashboard data with caching information

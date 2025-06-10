@@ -61,14 +61,6 @@ interface HeadersResponse {
  */
 export class InternalAdapter extends BaseAdapter {
   /**
-   * Create a new internal adapter instance
-   * @param config Configuration for the adapter
-   */
-  constructor(config: RequestConfig) {
-    super(config)
-  }
-
-  /**
    * Check system health status (public endpoint)
    * @returns System health information
    */

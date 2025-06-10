@@ -15,14 +15,6 @@ interface AltTextResponse {
  */
 export class AIAdapter extends BaseAdapter {
   /**
-   * Create a new AI adapter instance
-   * @param config Configuration for the adapter
-   */
-  constructor(config: RequestConfig) {
-    super(config)
-  }
-
-  /**
    * Generate alt-text description from an image URL
    * @param imageUrl URL of the image to analyze
    * @returns AI-generated alt-text description

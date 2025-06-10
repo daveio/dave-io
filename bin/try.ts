@@ -163,12 +163,13 @@ program
 
 // AI Commands
 const aiCommand = program.command("ai").description("AI-powered operations")
+const aiAltCommand = aiCommand.command("alt").description("Generate alt-text for images")
 
-aiCommand
-  .command("alt-url <imageUrl>")
+aiAltCommand
+  .command("url <imageUrl>")
   .description("Generate alt-text from image URL")
   .action(async (imageUrl, _options, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
+    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
     const config = createConfig(options)
     validateToken(config, "ai:alt")
 
@@ -182,11 +183,11 @@ aiCommand
     await displayResult(result, options, "AI Alt-Text Generation")
   })
 
-aiCommand
-  .command("alt-file <filePath>")
+aiAltCommand
+  .command("file <filePath>")
   .description("Generate alt-text from image file")
   .action(async (filePath, _options, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
+    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
     const config = createConfig(options)
     validateToken(config, "ai:alt")
 
@@ -201,41 +202,43 @@ aiCommand
   })
 
 // Images Commands
-const imagesCommand = program.command("images").description("Image optimization operations")
-imagesCommand
-  .command("optimize-url <imageUrl>")
-  .description("Optimize image from URL")
+const imagesCommand = program.command("images").description("Image optimisation operations")
+const imagesOptimiseCommand = imagesCommand.command("optimise").description("Optimise images for web")
+
+imagesOptimiseCommand
+  .command("url <imageUrl>")
+  .description("Optimise image from URL")
   .option("-q, --quality <number>", "Image quality (0-100)", (value) => Number.parseInt(value), 80)
   .action(async (imageUrl, cmdOptions, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
+    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
     const config = createConfig(options)
 
     const adapter = new ImagesAdapter(config)
     const result = await withSpinner(
       adapter.optimiseFromUrl(imageUrl, cmdOptions.quality),
-      `Optimizing image ${imageUrl}`,
+      `Optimising image ${imageUrl}`,
       options
     )
 
-    await displayResult(result, options, "Image Optimization")
+    await displayResult(result, options, "Image Optimisation")
   })
 
-imagesCommand
-  .command("optimize-file <filePath>")
-  .description("Optimize image from file")
+imagesOptimiseCommand
+  .command("file <filePath>")
+  .description("Optimise image from file")
   .option("-q, --quality <number>", "Image quality (0-100)", (value) => Number.parseInt(value), 80)
   .action(async (filePath, cmdOptions, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
+    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
     const config = createConfig(options)
 
     const adapter = new ImagesAdapter(config)
     const result = await withSpinner(
       adapter.optimiseFromFile(filePath, cmdOptions.quality),
-      `Optimizing image ${filePath}`,
+      `Optimising image ${filePath}`,
       options
     )
 
-    await displayResult(result, options, "Image Optimization")
+    await displayResult(result, options, "Image Optimisation")
   })
 
 // Internal Commands
@@ -297,7 +300,7 @@ internalCommand
   .command("auth")
   .description("Validate JWT token")
   .action(async (_options, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
+    const options = command.parent?.opts() as GlobalOptions
     const config = createConfig(options)
     validateToken(config, "any")
 
@@ -312,7 +315,7 @@ internalCommand
   .description("Get API metrics")
   .option("-f, --format <format>", "Output format (json|yaml|prometheus)", "json")
   .action(async (cmdOptions, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
+    const options = command.parent?.opts() as GlobalOptions
     const config = createConfig(options)
     validateToken(config, "api:metrics")
 
@@ -329,7 +332,7 @@ tokensCommand
   .command("info <uuid>")
   .description("Get token information")
   .action(async (uuid, _options, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
+    const options = command.parent?.opts() as GlobalOptions
     const config = createConfig(options)
     validateToken(config, "api:tokens")
 
@@ -343,7 +346,7 @@ tokensCommand
   .command("usage <uuid>")
   .description("Get token usage statistics")
   .action(async (uuid, _options, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
+    const options = command.parent?.opts() as GlobalOptions
     const config = createConfig(options)
     validateToken(config, "api:tokens")
 
@@ -357,7 +360,7 @@ tokensCommand
   .command("revoke <uuid>")
   .description("Revoke a token")
   .action(async (uuid, _options, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
+    const options = command.parent?.opts() as GlobalOptions
     const config = createConfig(options)
     validateToken(config, "api:tokens")
 
@@ -371,7 +374,7 @@ tokensCommand
   .command("unrevoke <uuid>")
   .description("Unrevoke a token")
   .action(async (uuid, _options, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
+    const options = command.parent?.opts() as GlobalOptions
     const config = createConfig(options)
     validateToken(config, "api:tokens")
 
@@ -381,14 +384,32 @@ tokensCommand
     await displayResult(result, options, "Token Unrevocation")
   })
 
+tokensCommand
+  .command("operation <uuid> <path>")
+  .description("Perform dynamic operation on token endpoint")
+  .action(async (uuid, path, _options, command) => {
+    const options = command.parent?.opts() as GlobalOptions
+    const config = createConfig(options)
+    validateToken(config, "api:tokens")
+
+    const adapter = new TokensAdapter(config)
+    const result = await withSpinner(
+      adapter.dynamicTokenOperation(uuid, path),
+      `Performing operation ${path} on token ${uuid}`,
+      options
+    )
+
+    await displayResult(result, options, "Token Operation")
+  })
+
 // Dashboard Commands
 const dashboardCommand = program.command("dashboard").description("Dashboard data operations")
 
 dashboardCommand
-  .command("data <name>")
+  .command("<name>")
   .description("Get dashboard data by name")
   .action(async (name, _options, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
+    const options = command.parent?.opts() as GlobalOptions
     const config = createConfig(options)
     validateToken(config, "dashboard")
 
@@ -402,7 +423,7 @@ dashboardCommand
   .command("live")
   .description("Get live dashboard updates")
   .action(async (_options, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
+    const options = command.parent?.opts() as GlobalOptions
     const config = createConfig(options)
     validateToken(config, "dashboard")
 
@@ -416,41 +437,66 @@ dashboardCommand
 program.addHelpText(
   "after",
   `
-Examples:
-  ${chalk.cyan("# Test endpoints without authentication")}
+${chalk.bold("Command Structure:")}
+  ${chalk.cyan("bun try")} ${chalk.yellow("<category>")} ${chalk.green("[subcategory]")} ${chalk.blue("[variant]")} ${chalk.magenta("<arguments>")} ${chalk.gray("[options]")}
+
+${chalk.bold("Available Commands:")}
+
+${chalk.cyan("AI Operations:")}
+  bun try ai alt url <imageUrl>          Generate alt-text from image URL
+  bun try ai alt file <filePath>         Generate alt-text from local image file
+
+${chalk.cyan("Image Optimisation:")}
+  bun try images optimise url <imageUrl> [--quality N]    Optimise image from URL
+  bun try images optimise file <filePath> [--quality N]   Optimise local image file
+
+${chalk.cyan("Internal System:")}
+  bun try internal health                Check system health status
+  bun try internal ping                  Ping the server
+  bun try internal worker                Get worker runtime information
+  bun try internal headers               Debug request headers
+  bun try internal auth                  Validate JWT token
+  bun try internal metrics [--format]   Get API metrics (json|yaml|prometheus)
+
+${chalk.cyan("Token Management:")}
+  bun try tokens info <uuid>             Get token information
+  bun try tokens usage <uuid>            Get token usage statistics
+  bun try tokens revoke <uuid>           Revoke a token
+  bun try tokens unrevoke <uuid>         Unrevoke a token
+  bun try tokens operation <uuid> <path> Perform custom token operation
+
+${chalk.cyan("Dashboard Data:")}
+  bun try dashboard <name>               Get dashboard data by name
+  bun try dashboard live                 Get live dashboard updates
+
+${chalk.bold("Examples:")}
+  ${chalk.cyan("# Public endpoints (no authentication)")}
   bun try internal health
   bun try internal ping
   bun try internal worker
 
-  ${chalk.cyan("# Test with authentication (requires token)")}
+  ${chalk.cyan("# Authenticated endpoints (requires token)")}
   bun try --token "eyJ..." internal auth
   bun try internal metrics
-  bun try ai alt-url "https://example.com/image.jpg"
-  bun try images optimize-file "./image.png" --quality 75
+  bun try ai alt url "https://example.com/image.jpg"
+  bun try ai alt file "./image.png"
+  bun try images optimise file "./image.png" --quality 75
+  bun try dashboard hacker-news
 
-  ${chalk.cyan("# Different environments")}
-  bun try --local internal health          # Local development
-  bun try --remote internal health         # Remote production [default]
+  ${chalk.cyan("# Environment selection")}
+  bun try --local internal health        # Local development
+  bun try --remote internal health       # Remote production [default]
 
-  ${chalk.cyan("# Output modes")}
-  bun try --script internal health         # JSON output for scripting
-  bun try --quiet internal health          # Minimal output
-  bun try --verbose internal health        # Detailed output
-  bun try --dry-run ai alt-url "..."       # Show what would be done
+  ${chalk.cyan("# Output control")}
+  bun try --script internal health       # JSON output for scripting
+  bun try --quiet internal health        # Minimal output
+  bun try --verbose internal health      # Detailed output
+  bun try --dry-run ai alt url "..."     # Show what would be done
 
-  ${chalk.cyan("# Token management")}
-  bun try tokens info <uuid>
-  bun try tokens usage <uuid>
-  bun try tokens revoke <uuid>
+${chalk.bold("Environment Variables:")}
+  ${chalk.yellow("API_JWT_SECRET")}      JWT secret for authentication
 
-  ${chalk.cyan("# Dashboard operations")}
-  bun try dashboard data "hacker-news"
-  bun try dashboard live
-
-Environment Variables:
-  ${chalk.yellow("API_JWT_SECRET")}                JWT secret for authentication
-
-Token Creation:
+${chalk.bold("Token Creation:")}
   ${chalk.green("bun jwt create --sub 'ai:alt' --description 'AI testing'")}
   ${chalk.green("bun jwt create --sub 'api:metrics' --description 'Metrics access'")}
 `
