@@ -1,5 +1,4 @@
-use image::{DynamicImage, GenericImageView, ImageFormat};
-use std::io::Cursor;
+use image::DynamicImage;
 use wasm_bindgen::prelude::*;
 
 extern crate wee_alloc;
@@ -28,6 +27,12 @@ pub struct ImageProcessor {
 }
 
 #[wasm_bindgen]
+impl Default for ImageProcessor {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ImageProcessor {
     #[wasm_bindgen(constructor)]
     pub fn new() -> ImageProcessor {
