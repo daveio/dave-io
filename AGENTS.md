@@ -61,9 +61,9 @@ throw new Error("User preferences not implemented yet")
 
 ### TODO Management
 
-- **ID**: Assign each TODO a unique ID of 6 hex characters. You can generate one with `openssl rand -hex 3` or generate a random one yourself.
+- **Issue ID**: Assign each TODO a unique ID of 6 hex characters FOR THE LOGICAL ISSUE so we can group TODOs by issue. You can generate one with `openssl rand -hex 3` or generate a random one yourself.
 - **Use TODO.md** for tracking tasks that need addressing. See examples.
-- **Code TODOs**: Use `// TODO:` comments for location-specific tasks. Update `TODO.md` too. In case of multiple code locations, add comments to each. See examples.
+- **Code TODOs**: Use `// TODO:` comments for location-specific tasks. Update `TODO.md` too, include the ID, filename, and file location. In case of multiple code locations, add comments to each. See examples.
 - **General TODOs**: Use `TODO.md` for tasks without code locations or with unknown code locations. Include the ID. See examples.
 - **Purpose**: Provides a convenient central place to check what needs doing, and somewhere to track tasks which don't have a code location.
 - Keep `TODO.md` updated - remove completed items, add new discoveries.
@@ -71,11 +71,14 @@ throw new Error("User preferences not implemented yet")
 Examples:
 
 ```typescript
+// TODO: (37c7b2) Skip Bun mocking for now - we'll test these methods separately
 // TODO: (37c7b2) Fix uploadFile tests - they require Bun.file mocking.
 ```
 
 ```markdown
-- **TODO:** *(37c7b2:test/try-adapters.test.ts)* Fix uploadFile tests - they require Bun.file mocking.
+- **TODO:** *d8b3f7* Tests are hanging.
+- **TODO:** *37c7b2* `test/try-adapters.test.ts:18` Skip Bun mocking for now - we'll test these methods separately
+- **TODO:** *37c7b2* `test/try-adapters.test.ts:224` Fix uploadFile tests - they require Bun.file mocking.
 ```
 
 ### KV Simple Data Storage

@@ -15,7 +15,7 @@ import {
 const mockFetch = vi.fn() as any
 global.fetch = mockFetch
 
-// Skip Bun mocking for now - we'll test these methods separately
+// TODO: (37c7b2) Skip Bun mocking for now - we'll test these methods separately
 
 describe("BaseAdapter", () => {
   let adapter: BaseAdapter
