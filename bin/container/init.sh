@@ -63,17 +63,16 @@ show_env_help() {
 # Function to check if a command exists
 command_exists() {
   command -v "$1" >/dev/null 2>&1
-  return $?
 }
 
 # Function to check if variable name is sensitive
 is_sensitive() {
   var_name="$1"
   # Convert to uppercase for comparison
-  var_upper=$(echo "$var_name" | tr '[:lower:]' '[:upper:]')
+  var_upper=$(echo "${var_name}" | tr '[:lower:]' '[:upper:]' || true)
 
   # Check against sensitive patterns
-  case "$var_upper" in
+  case "${var_upper}" in
   *SECRET* | *PASSWORD* | *TOKEN* | *KEY* | *AUTH* | *CREDENTIAL* | *PRIVATE*)
     return 0
     ;;
@@ -88,10 +87,10 @@ mask_value() {
   value="$1"
   length=${#value}
 
-  if [ "$length" -le 8 ]; then
+  if [ "${length}" -le 8 ]; then
     echo "***"
   else
-    visible=$(echo "$value" | cut -c1-3)
+    visible=$(echo "${value}" | cut -c1-3 || true)
     echo "${visible}...(masked)"
   fi
 }
@@ -101,17 +100,17 @@ escape_for_format() {
   value="$1"
   format="$2"
 
-  case "$format" in
+  case "${format}" in
   table)
     # Escape pipe characters for Markdown table
-    echo "$value" | sed 's/|/\\|/g'
+    echo "${value}" | sed 's/|/\\|/g'
     ;;
   json)
     # Escape quotes and backslashes for JSON
-    echo "$value" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g'
+    echo "${value}" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g'
     ;;
   *)
-    echo "$value"
+    echo "${value}"
     ;;
   esac
 }
@@ -129,16 +128,16 @@ inspect_environment() {
   # Process each environment variable
   for var_line in $(env | sort); do
     # Split variable name and value
-    var_name=$(echo "$var_line" | cut -d'=' -f1)
-    var_value=$(echo "$var_line" | cut -d'=' -f2-)
+    var_name=$(echo "${var_line}" | cut -d'=' -f1)
+    var_value=$(echo "${var_line}" | cut -d'=' -f2-)
 
     # Apply filter if specified
-    if [ -n "$FILTER_PATTERN" ]; then
+    if [ -n "${FILTER_PATTERN}" ]; then
       # Case-insensitive pattern matching
-      var_upper=$(echo "$var_name" | tr '[:lower:]' '[:upper:]')
-      pattern_upper=$(echo "$FILTER_PATTERN" | tr '[:lower:]' '[:upper:]')
-      case "$var_upper" in
-      *$pattern_upper*) ;;
+      var_upper=$(echo "${var_name}" | tr '[:lower:]' '[:upper:]')
+      pattern_upper=$(echo "${FILTER_PATTERN}" | tr '[:lower:]' '[:upper:]')
+      case "${var_upper}" in
+      *${pattern_upper}*) ;;
       *)
         continue
         ;;
@@ -146,26 +145,27 @@ inspect_environment() {
     fi
 
     # Handle sensitive variables
-    if [ "$HIDE_SENSITIVE" = "true" ] && is_sensitive "$var_name"; then
-      var_value=$(mask_value "$var_value")
+    # trunk-ignore(shellcheck/SC2310)
+    if [ "${HIDE_SENSITIVE}" = "true" ] && is_sensitive "${var_name}"; then
+      var_value=$(mask_value "${var_value}")
     fi
 
     # Escape special characters based on output format
-    var_value=$(escape_for_format "$var_value" "$OUTPUT_FORMAT")
+    var_value=$(escape_for_format "${var_value}" "${OUTPUT_FORMAT}")
 
     # Track maximum lengths for table formatting
     var_len=${#var_name}
-    if [ "$var_len" -gt "$max_var_len" ]; then
-      max_var_len="$var_len"
+    if [ "${var_len}" -gt "${max_var_len}" ]; then
+      max_var_len="${var_len}"
     fi
 
     val_len=${#var_value}
-    if [ "$val_len" -gt "$max_val_len" ]; then
-      max_val_len="$val_len"
+    if [ "${val_len}" -gt "${max_val_len}" ]; then
+      max_val_len="${val_len}"
     fi
 
     # Store the variable data
-    if [ -z "$env_vars" ]; then
+    if [ -z "${env_vars}" ]; then
       env_vars="${var_name}=${var_value}"
     else
       env_vars="${env_vars}
@@ -175,18 +175,18 @@ ${var_name}=${var_value}"
   done
 
   # Output in requested format
-  case "$OUTPUT_FORMAT" in
+  case "${OUTPUT_FORMAT}" in
   json)
     echo "{"
     first=true
-    echo "$env_vars" | while IFS= read -r var_data; do
-      if [ -n "$var_data" ]; then
-        var_name=$(echo "$var_data" | cut -d'=' -f1)
-        var_value=$(echo "$var_data" | cut -d'=' -f2-)
-        if [ "$first" = "false" ]; then
+    echo "${env_vars}" | while IFS= read -r var_data; do
+      if [ -n "${var_data}" ]; then
+        var_name=$(echo "${var_data}" | cut -d'=' -f1)
+        var_value=$(echo "${var_data}" | cut -d'=' -f2-)
+        if [ "${first}" = "false" ]; then
           echo ","
         fi
-        printf '  "%s": "%s"' "$var_name" "$var_value"
+        printf '  "%s": "%s"' "${var_name}" "${var_value}"
         first=false
       fi
     done
@@ -196,13 +196,13 @@ ${var_name}=${var_value}"
 
   yaml)
     echo "# Environment Variables"
-    echo "# Generated on $(date)"
+    echo "# Generated on $(date || true)"
     echo "environment:"
-    echo "$env_vars" | while IFS= read -r var_data; do
-      if [ -n "$var_data" ]; then
-        var_name=$(echo "$var_data" | cut -d'=' -f1)
-        var_value=$(echo "$var_data" | cut -d'=' -f2-)
-        printf "  %s: \"%s\"\n" "$var_name" "$var_value"
+    echo "${env_vars}" | while IFS= read -r var_data; do
+      if [ -n "${var_data}" ]; then
+        var_name=$(echo "${var_data}" | cut -d'=' -f1)
+        var_value=$(echo "${var_data}" | cut -d'=' -f2-)
+        printf "  %s: \"%s\"\n" "${var_name}" "${var_value}"
       fi
     done
     ;;
@@ -210,7 +210,7 @@ ${var_name}=${var_value}"
   table)
     # Print title
     echo "# Container Environment Variables"
-    echo "Generated on $(date) | Variables: $var_count"
+    echo "Generated on $(date || true) | Variables: ${var_count}"
     echo ""
 
     # Create padding functions
@@ -218,39 +218,43 @@ ${var_name}=${var_value}"
       str="$1"
       width="$2"
       str_len=${#str}
-      if [ "$str_len" -lt "$width" ]; then
+      if [ "${str_len}" -lt "${width}" ]; then
         padding=$((width - str_len))
-        spaces=$(printf "%*s" $padding "")
+        spaces=$(printf "%*s" "${padding}" "")
         echo "${str}${spaces}"
       else
-        echo "$str"
+        echo "${str}"
       fi
     }
 
     # Print the header with proper padding
-    header_var=$(pad_string "Variable" "$max_var_len")
-    header_val=$(pad_string "Value" "$max_val_len")
-    echo "| $header_var | $header_val |"
+    header_var=$(pad_string "Variable" "${max_var_len}")
+    header_val=$(pad_string "Value" "${max_val_len}")
+    echo "| ${header_var} | ${header_val} |"
 
     # Print the separator line
-    separator_var=$(printf "%*s" "$max_var_len" "" | tr ' ' '-')
-    separator_val=$(printf "%*s" "$max_val_len" "" | tr ' ' '-')
-    echo "|-$separator_var-|-$separator_val-|"
+    separator_var=$(printf "%*s" "${max_var_len}" "" | tr ' ' '-')
+    separator_val=$(printf "%*s" "${max_val_len}" "" | tr ' ' '-')
+    echo "|-${separator_var}-|-${separator_val}-|"
 
     # Print all variables with proper alignment
-    echo "$env_vars" | while IFS= read -r var_data; do
-      if [ -n "$var_data" ]; then
-        var_name=$(echo "$var_data" | cut -d'=' -f1)
-        var_value=$(echo "$var_data" | cut -d'=' -f2-)
+    echo "${env_vars}" | while IFS= read -r var_data; do
+      if [ -n "${var_data}" ]; then
+        var_name=$(echo "${var_data}" | cut -d'=' -f1)
+        var_value=$(echo "${var_data}" | cut -d'=' -f2-)
 
         # Pad both columns to their maximum widths
-        padded_var=$(pad_string "$var_name" "$max_var_len")
-        padded_val=$(pad_string "$var_value" "$max_val_len")
+        padded_var=$(pad_string "${var_name}" "${max_var_len}")
+        padded_val=$(pad_string "${var_value}" "${max_val_len}")
 
         # Print the table row
-        echo "| $padded_var | $padded_val |"
+        echo "| ${padded_var} | ${padded_val} |"
       fi
     done
+    ;;
+  *)
+    log_error "Unsupported output format: ${OUTPUT_FORMAT}"
+    exit 1
     ;;
   esac
 }
@@ -262,24 +266,24 @@ install_with_retry() {
   max_attempts=3
   attempt=1
 
-  while [ "$attempt" -le "$max_attempts" ]; do
-    log_info "Installing $package_name (attempt $attempt/$max_attempts)..."
+  while [ "${attempt}" -le "${max_attempts}" ]; do
+    log_info "Installing ${package_name} (attempt ${attempt}/${max_attempts})..."
 
-    if eval "$install_command"; then
-      log_success "$package_name installed successfully"
+    if eval "${install_command}"; then
+      log_success "${package_name} installed successfully"
       return 0
     else
-      log_warning "Attempt $attempt failed for $package_name"
+      log_warning "Attempt ${attempt} failed for ${package_name}"
       attempt=$((attempt + 1))
 
-      if [ "$attempt" -le "$max_attempts" ]; then
+      if [ "${attempt}" -le "${max_attempts}" ]; then
         log_info "Waiting 5 seconds before retry..."
         sleep 5
       fi
     fi
   done
 
-  log_error "Failed to install $package_name after $max_attempts attempts"
+  log_error "Failed to install ${package_name} after ${max_attempts} attempts"
   return 1
 }
 
@@ -289,7 +293,7 @@ system_init() {
 
   # Check if running as root (optional warning)
   user_id=$(id -u)
-  if [ "$user_id" = "0" ]; then
+  if [ "${user_id}" = "0" ]; then
     log_warning "Running as root - this may not be necessary for all operations"
   fi
 
@@ -315,7 +319,9 @@ system_init() {
   fi
 
   # Verify fish installation
-  if ! command_exists fish; then
+  command_exists fish
+  fish_available=$?
+  if [ "${fish_available}" -ne 0 ]; then
     log_error "Fish shell installation failed - command not found"
     exit 1
   fi
@@ -328,8 +334,12 @@ dev_setup() {
   log_info "Starting development environment setup..."
 
   # Install Trunk (code quality toolkit)
-  if ! command_exists trunk; then
-    if ! install_with_retry "Trunk" "curl -fsSL https://get.trunk.io | sh"; then
+  command_exists trunk
+  trunk_installed=$?
+  if [ "${trunk_installed}" -ne 0 ]; then
+    install_with_retry "Trunk" "curl -fsSL https://get.trunk.io | sh"
+    trunk_install_result=$?
+    if [ "${trunk_install_result}" -ne 0 ]; then
       log_error "Failed to install Trunk - continuing anyway"
     fi
   else
@@ -337,8 +347,12 @@ dev_setup() {
   fi
 
   # Install mise (development environment manager)
-  if ! command_exists mise; then
-    if ! install_with_retry "mise" "curl -fsSL https://mise.run | sh"; then
+  command_exists mise
+  mise_installed=$?
+  if [ "${mise_installed}" -ne 0 ]; then
+    install_with_retry "mise" "curl -fsSL https://mise.run | sh"
+    mise_install_result=$?
+    if [ "${mise_install_result}" -ne 0 ]; then
       log_error "Failed to install mise"
       exit 1
     fi
@@ -348,7 +362,9 @@ dev_setup() {
 
   # Trust and install mise tools
   log_info "Configuring mise environment..."
-  if ! mise trust 2>/dev/null; then
+  mise trust 2>/dev/null
+  trust_result=$?
+  if [ "${trust_result}" -ne 0 ]; then
     log_warning "Failed to trust mise configuration"
   fi
 
@@ -440,21 +456,21 @@ main() {
   parse_args "$@"
 
   # Check for conflicting options
-  if [ "$ENV_ONLY" = "true" ] && [ "$SETUP_ONLY" = "true" ]; then
+  if [ "${ENV_ONLY}" = "true" ] && [ "${SETUP_ONLY}" = "true" ]; then
     log_error "Cannot specify both --env-only and --setup-only"
     exit 1
   fi
 
   # Run environment inspector only
-  if [ "$ENV_ONLY" = "true" ]; then
+  if [ "${ENV_ONLY}" = "true" ]; then
     inspect_environment
     exit 0
   fi
 
   # Run setup only (skip system init and env display)
-  if [ "$SETUP_ONLY" = "true" ]; then
+  if [ "${SETUP_ONLY}" = "true" ]; then
     dev_setup
-    printf "\n${GREEN}===== DEVELOPMENT ENVIRONMENT READY =====${NC}\n"
+    printf "\n%s===== DEVELOPMENT ENVIRONMENT READY =====%s\n" "${GREEN}" "${NC}"
     log_info "Environment setup completed successfully!"
     log_info "You can now start development with: bun run dev"
     exit 0
@@ -467,13 +483,13 @@ main() {
   log_info "Displaying environment information..."
   inspect_environment
 
-  printf "\n\n${BLUE}===== SYSTEM SETUP COMPLETE =====${NC}\n\n"
+  printf "\n\n%s===== SYSTEM SETUP COMPLETE =====%s\n\n" "${BLUE}" "${NC}"
 
   # Run development environment setup
   dev_setup
 
   # Display completion message
-  printf "\n${GREEN}===== DEVELOPMENT ENVIRONMENT READY =====${NC}\n"
+  printf "\n%s===== DEVELOPMENT ENVIRONMENT READY =====%s\n" "${GREEN}" "${NC}"
   log_info "Full initialization completed successfully!"
   log_info "You can now start development with: bun run dev"
 }
