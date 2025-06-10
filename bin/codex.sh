@@ -313,18 +313,37 @@ dev_setup() {
       log_error "Failed to install mise"
       exit 1
     fi
+
+    # Update PATH to include mise installation location
+    if [ -f "${HOME}/.local/bin/mise" ]; then
+      export PATH="${HOME}/.local/bin:${PATH}"
+      log_info "Updated PATH to include mise"
+    elif [ -f "${HOME}/.mise/bin/mise" ]; then
+      export PATH="${HOME}/.mise/bin:${PATH}"
+      log_info "Updated PATH to include mise"
+    else
+      log_warning "Could not find mise binary after installation"
+    fi
+
+    # Verify mise is now accessible
+    if ! command_exists mise; then
+      log_error "mise command still not found after installation and PATH update"
+      exit 1
+    fi
   else
     log_info "mise already installed"
   fi
 
   # Trust and install mise tools
   log_info "Configuring mise environment..."
+  log_info "Running 'mise trust'..."
   mise trust 2>/dev/null
   trust_result=$?
   if [ "${trust_result}" -ne 0 ]; then
-    log_warning "Failed to trust mise configuration"
+    log_warning "Failed to trust mise configuration (exit code: ${trust_result})"
   fi
 
+  log_info "Running 'mise install'..."
   if ! mise install; then
     log_error "Failed to install mise tools"
     exit 1
@@ -334,6 +353,7 @@ dev_setup() {
 
   # Install Node.js dependencies
   log_info "Installing Node.js dependencies..."
+  log_info "Running 'bun install'..."
   if ! bun install; then
     log_error "Failed to install dependencies with bun"
     exit 1
@@ -343,6 +363,7 @@ dev_setup() {
 
   # Run project reset/build
   log_info "Building project..."
+  log_info "Running 'bun run reset'..."
   if ! bun run reset; then
     log_error "Failed to reset/build project"
     exit 1
