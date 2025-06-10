@@ -32,8 +32,8 @@ lint:
     - stylelint
     - vale
   enabled:
-    - clippy@1.65.0
-    - rustfmt@1.65.0
+    - clippy
+    - rustfmt
     - gofmt@1.20.4
     - golangci-lint2
     - actionlint@1.7.7
