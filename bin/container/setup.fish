@@ -12,19 +12,19 @@ set -g NC '\033[0m' # No Color
 
 # Logging functions
 function log_info
-    printf "$BLUE[INFO]$NC %s\n" $argv[1]
+    printf "$BLUE[INFO]$NC %s\n" "$argv"
 end
 
 function log_success
-    printf "$GREEN[SUCCESS]$NC %s\n" $argv[1]
+    printf "$GREEN[SUCCESS]$NC %s\n" "$argv"
 end
 
 function log_warning
-    printf "$YELLOW[WARNING]$NC %s\n" $argv[1]
+    printf "$YELLOW[WARNING]$NC %s\n" "$argv"
 end
 
 function log_error
-    printf "$RED[ERROR]$NC %s\n" $argv[1] >&2
+    printf "$RED[ERROR]$NC %s\n" "$argv" >&2
 end
 
 # Function to check if a command exists
