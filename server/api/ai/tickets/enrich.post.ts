@@ -58,6 +58,8 @@ Respond with the complete enriched description only.`
     temperature: 0.4
   })
 
+// TODO: Use a cheaper model if an image is not supplied.
+
   const description = aiResponse.response?.trim() || "No enriched description generated"
 
   return createApiResponse({

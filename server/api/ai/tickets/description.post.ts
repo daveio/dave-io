@@ -32,6 +32,8 @@ Format the response as a proper ticket description that a developer could work f
     temperature: 0.4
   })
 
+// TODO: This endpoint only accepts text. Use a cheaper model.
+
   const description = aiResponse.response?.trim() || "No description generated"
 
   return createApiResponse({

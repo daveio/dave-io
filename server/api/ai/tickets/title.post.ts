@@ -50,6 +50,8 @@ The title should be short, clear, and actionable. Use basic Markdown formatting 
     max_tokens: 100,
     temperature: 0.3
   })
+  
+// TODO: Use a cheaper model if an image is not supplied.
 
   const title = aiResponse.response?.trim() || "Untitled Task"
 
