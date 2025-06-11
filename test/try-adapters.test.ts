@@ -15,7 +15,10 @@ import {
 const mockFetch = vi.fn() as any
 global.fetch = mockFetch
 
-// TODO: (37c7b2) Skip Bun mocking for now - we'll test these methods separately
+// Mock global Bun for tests that need it
+const mockBunFile = vi.fn()
+// biome-ignore lint/suspicious/noExplicitAny: Mock global assignment
+;(global as any).Bun = { file: mockBunFile }
 
 describe("BaseAdapter", () => {
   let adapter: BaseAdapter
@@ -221,8 +224,145 @@ describe("BaseAdapter", () => {
     })
   })
 
-  // TODO: (37c7b2) Fix uploadFile tests - they require Bun.file mocking.
-  // describe("uploadFile", () => { ... })
+  describe("uploadFile", () => {
+    beforeEach(() => {
+      // Reset and configure Bun mock before each test
+      mockBunFile.mockReset()
+    })
+
+    it("should upload file successfully", async () => {
+      // Mock Bun.file
+      const mockFile = {
+        exists: vi.fn().mockResolvedValue(true),
+        arrayBuffer: vi.fn().mockResolvedValue(Buffer.from("test file content"))
+      }
+      mockBunFile.mockReturnValue(mockFile)
+
+      const mockResponse = {
+        ok: true,
+        status: 200,
+        json: async () => ({ ok: true, data: { uploaded: true } })
+      }
+      mockFetch.mockResolvedValueOnce(mockResponse)
+
+      class TestAdapter extends BaseAdapter {
+        async testUploadFile() {
+          return this.uploadFile("/upload", "/path/to/test.jpg")
+        }
+      }
+      const testAdapter = new TestAdapter(config)
+      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      const result = await (testAdapter as any).testUploadFile()
+
+      expect(result.ok).toBe(true)
+      expect(result.data?.uploaded).toBe(true)
+      expect(mockBunFile).toHaveBeenCalledWith("/path/to/test.jpg")
+      expect(mockFile.exists).toHaveBeenCalled()
+      expect(mockFile.arrayBuffer).toHaveBeenCalled()
+      expect(mockFetch).toHaveBeenCalledWith(
+        "https://test.example.com/upload?token=test-token",
+        expect.objectContaining({
+          method: "POST",
+          body: JSON.stringify({
+            image: Buffer.from("test file content").toString("base64")
+          })
+        })
+      )
+    })
+
+    it("should handle file not found", async () => {
+      // Mock Bun.file for non-existent file
+      const mockFile = {
+        exists: vi.fn().mockResolvedValue(false)
+      }
+      // biome-ignore lint/suspicious/noExplicitAny: Mock global Bun object
+      const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
+      global.Bun = mockBun
+
+      class TestAdapter extends BaseAdapter {
+        async testUploadFile() {
+          return this.uploadFile("/upload", "/path/to/nonexistent.jpg")
+        }
+      }
+      const testAdapter = new TestAdapter(config)
+      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      const result = await (testAdapter as any).testUploadFile()
+
+      expect(result.ok).toBe(false)
+      expect(result.error).toBe("File not found: /path/to/nonexistent.jpg")
+      expect(mockBun.file).toHaveBeenCalledWith("/path/to/nonexistent.jpg")
+      expect(mockFile.exists).toHaveBeenCalled()
+      expect(mockFetch).not.toHaveBeenCalled()
+    })
+
+    it("should include additional data in upload", async () => {
+      // Mock Bun.file
+      const mockFile = {
+        exists: vi.fn().mockResolvedValue(true),
+        arrayBuffer: vi.fn().mockResolvedValue(Buffer.from("test content"))
+      }
+      // biome-ignore lint/suspicious/noExplicitAny: Mock global Bun object
+      const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
+      global.Bun = mockBun
+
+      const mockResponse = {
+        ok: true,
+        status: 200,
+        json: async () => ({ ok: true })
+      }
+      mockFetch.mockResolvedValueOnce(mockResponse)
+
+      class TestAdapter extends BaseAdapter {
+        async testUploadFile() {
+          return this.uploadFile("/upload", "/path/to/test.jpg", { quality: 85, format: "webp" })
+        }
+      }
+      const testAdapter = new TestAdapter(config)
+      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      await (testAdapter as any).testUploadFile()
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          method: "POST",
+          body: JSON.stringify({
+            image: Buffer.from("test content").toString("base64"),
+            quality: 85,
+            format: "webp"
+          })
+        })
+      )
+    })
+
+    it("should handle dry run mode", async () => {
+      const dryRunConfig = { ...config, dryRun: true }
+
+      // Mock Bun.file
+      const mockFile = {
+        exists: vi.fn().mockResolvedValue(true),
+        arrayBuffer: vi.fn().mockResolvedValue(Buffer.from("test content"))
+      }
+      // biome-ignore lint/suspicious/noExplicitAny: Mock global Bun object
+      const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
+      global.Bun = mockBun
+
+      class TestAdapter extends BaseAdapter {
+        async testUploadFile() {
+          return this.uploadFile("/upload", "/path/to/test.jpg")
+        }
+      }
+      const dryRunAdapter = new TestAdapter(dryRunConfig)
+      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      const result = await (dryRunAdapter as any).testUploadFile()
+
+      expect(result.ok).toBe(true)
+      expect(result.message).toContain("DRY RUN: Would POST")
+      expect(mockBun.file).toHaveBeenCalledWith("/path/to/test.jpg")
+      expect(mockFile.exists).toHaveBeenCalled()
+      expect(mockFile.arrayBuffer).toHaveBeenCalled()
+      expect(mockFetch).not.toHaveBeenCalled()
+    })
+  })
 
   describe("uploadImageFromUrl", () => {
     it("should upload image from URL", async () => {
@@ -322,6 +462,63 @@ describe("AIAdapter", () => {
       })
     )
   })
+
+  it("should generate alt text from file", async () => {
+    // Mock Bun.file
+    const mockFile = {
+      exists: vi.fn().mockResolvedValue(true),
+      arrayBuffer: vi.fn().mockResolvedValue(Buffer.from("image file content"))
+    }
+    // biome-ignore lint/suspicious/noExplicitAny: Mock global Bun object
+    const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
+    global.Bun = mockBun
+
+    const mockResponse = {
+      ok: true,
+      status: 200,
+      json: async () => ({
+        ok: true,
+        data: { altText: "An uploaded image", confidence: 0.89 }
+      })
+    }
+    mockFetch.mockResolvedValueOnce(mockResponse)
+
+    const result = await adapter.generateAltTextFromFile("/path/to/image.png")
+
+    expect(result.ok).toBe(true)
+    expect(result.data?.altText).toBe("An uploaded image")
+    expect(result.data?.confidence).toBe(0.89)
+    expect(mockBun.file).toHaveBeenCalledWith("/path/to/image.png")
+    expect(mockFile.exists).toHaveBeenCalled()
+    expect(mockFile.arrayBuffer).toHaveBeenCalled()
+    expect(mockFetch).toHaveBeenCalledWith(
+      "https://test.example.com/api/ai/alt?token=test-token",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          image: Buffer.from("image file content").toString("base64")
+        })
+      })
+    )
+  })
+
+  it("should handle file not found in generateAltTextFromFile", async () => {
+    // Mock Bun.file for non-existent file
+    const mockFile = {
+      exists: vi.fn().mockResolvedValue(false)
+    }
+    // biome-ignore lint/suspicious/noExplicitAny: Mock global Bun object
+    const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
+    global.Bun = mockBun
+
+    const result = await adapter.generateAltTextFromFile("/path/to/missing.jpg")
+
+    expect(result.ok).toBe(false)
+    expect(result.error).toBe("File not found: /path/to/missing.jpg")
+    expect(mockBun.file).toHaveBeenCalledWith("/path/to/missing.jpg")
+    expect(mockFile.exists).toHaveBeenCalled()
+    expect(mockFetch).not.toHaveBeenCalled()
+  })
 })
 
 describe("ImagesAdapter", () => {
@@ -364,6 +561,68 @@ describe("ImagesAdapter", () => {
       expect.stringContaining("quality=80"),
       expect.objectContaining({ method: "GET" })
     )
+  })
+
+  it("should optimize image from file", async () => {
+    // Mock Bun.file
+    const mockFile = {
+      exists: vi.fn().mockResolvedValue(true),
+      arrayBuffer: vi.fn().mockResolvedValue(Buffer.from("jpeg file content"))
+    }
+    // biome-ignore lint/suspicious/noExplicitAny: Mock global Bun object
+    const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
+    global.Bun = mockBun
+
+    const mockResponse = {
+      ok: true,
+      status: 200,
+      json: async () => ({
+        ok: true,
+        data: {
+          optimisedImage: "optimized-base64",
+          originalSize: 2000,
+          optimisedSize: 800,
+          compressionRatio: 0.6
+        }
+      })
+    }
+    mockFetch.mockResolvedValueOnce(mockResponse)
+
+    const result = await adapter.optimiseFromFile("/path/to/image.jpg", 90)
+
+    expect(result.ok).toBe(true)
+    expect(result.data?.compressionRatio).toBe(0.6)
+    expect(mockBun.file).toHaveBeenCalledWith("/path/to/image.jpg")
+    expect(mockFile.exists).toHaveBeenCalled()
+    expect(mockFile.arrayBuffer).toHaveBeenCalled()
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          image: Buffer.from("jpeg file content").toString("base64"),
+          quality: 90
+        })
+      })
+    )
+  })
+
+  it("should handle file not found in optimiseFromFile", async () => {
+    // Mock Bun.file for non-existent file
+    const mockFile = {
+      exists: vi.fn().mockResolvedValue(false)
+    }
+    // biome-ignore lint/suspicious/noExplicitAny: Mock global Bun object
+    const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
+    global.Bun = mockBun
+
+    const result = await adapter.optimiseFromFile("/path/to/nonexistent.jpg")
+
+    expect(result.ok).toBe(false)
+    expect(result.error).toBe("File not found: /path/to/nonexistent.jpg")
+    expect(mockBun.file).toHaveBeenCalledWith("/path/to/nonexistent.jpg")
+    expect(mockFile.exists).toHaveBeenCalled()
+    expect(mockFetch).not.toHaveBeenCalled()
   })
 
   it("should optimize image from base64", async () => {
