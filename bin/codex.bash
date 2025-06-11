@@ -18,4 +18,4 @@ mise install --yes
 
 bun install --trust
 
-bun run-s generate generate:nuxt
+bun run build
