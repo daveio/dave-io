@@ -135,8 +135,7 @@
   "kv_namespaces": [
     {
       "binding": "DATA", // Variable name in your Worker
-      "id": "184eca13ac05485d96de48c436a6f5e6",
-      "preview_id": "184eca13ac05485d96de48c436a6f5e6" // ID for wrangler dev --remote
+      "id": "184eca13ac05485d96de48c436a6f5e6"
     }
   ],
 
@@ -146,7 +145,6 @@
       "binding": "DB", // Variable name in your Worker
       "database_name": "next-api-auth-metadata",
       "database_id": "106894e2-1f5c-4979-a777-0b45febbb993",
-      "preview_database_id": "106894e2-1f5c-4979-a777-0b45febbb993", // Required for wrangler dev --remote
       "migrations_dir": "./migrations" // Directory containing migration files
     }
   ],
