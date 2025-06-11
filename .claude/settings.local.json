@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__fetch__fetch",
+      "mcp__cloudflareRendering__get_url_screenshot",
+      "mcp__cloudflareRendering__get_url_html_content",
+      "fetch",
+      "Bash",
+      "mcp__duckduckgo__fetch_content",
+      "mcp__duckduckgo__search",
+      "mcp__git__git_log",
+      "mcp__sequentialThinking__sequentialthinking",
+      "mcp__filesystem__directory_tree",
+      "mcp__filesystem__read_multiple_files",
+      "mcp__filesystem__read_file"
+    ],
+    "deny": []
+  }
+}

@@ -259,6 +259,187 @@
         },
         "required": ["slug", "url"]
       },
+      "EnhancedPingResponseSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "api_available": {
+                "type": "boolean"
+              },
+              "cf_connecting_ip": {
+                "type": "string"
+              },
+              "cf_country": {
+                "type": "string"
+              },
+              "cf_datacenter": {
+                "type": "string"
+              },
+              "cf_ipcountry": {
+                "type": "string"
+              },
+              "cf_ray": {
+                "type": "string"
+              },
+              "edge_functions": {
+                "type": "boolean"
+              },
+              "environment": {
+                "type": "string"
+              },
+              "preset": {
+                "type": "string"
+              },
+              "runtime": {
+                "type": "string"
+              },
+              "server_side_rendering": {
+                "type": "boolean"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["ok", "error"]
+              },
+              "timestamp": {
+                "type": "string"
+              },
+              "user_agent": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "worker_limits": {
+                "type": "object",
+                "properties": {
+                  "cpu_time": {
+                    "type": "string"
+                  },
+                  "memory": {
+                    "type": "string"
+                  },
+                  "request_timeout": {
+                    "type": "string"
+                  }
+                },
+                "required": ["cpu_time", "memory", "request_timeout"]
+              }
+            },
+            "required": [
+              "api_available",
+              "cf_connecting_ip",
+              "cf_country",
+              "cf_datacenter",
+              "cf_ipcountry",
+              "cf_ray",
+              "edge_functions",
+              "environment",
+              "preset",
+              "runtime",
+              "server_side_rendering",
+              "status",
+              "timestamp",
+              "user_agent",
+              "version",
+              "worker_limits"
+            ]
+          },
+          "auth": {
+            "type": "object",
+            "properties": {
+              "supplied": {
+                "type": "boolean"
+              },
+              "token": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string"
+                  },
+                  "valid": {
+                    "type": "boolean"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "properties": {
+                      "subject": {
+                        "type": "string"
+                      },
+                      "tokenId": {
+                        "type": ["string", "null"]
+                      },
+                      "issuedAt": {
+                        "type": "string"
+                      },
+                      "expiresAt": {
+                        "type": ["string", "null"]
+                      }
+                    },
+                    "required": ["subject", "tokenId", "issuedAt", "expiresAt"]
+                  }
+                },
+                "required": ["value", "valid"]
+              }
+            },
+            "required": ["supplied"]
+          },
+          "headers": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "number"
+              },
+              "request": {
+                "type": "object",
+                "properties": {
+                  "method": {
+                    "type": "string"
+                  },
+                  "host": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                },
+                "required": ["method", "host", "path", "version"]
+              },
+              "cloudflare": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "forwarding": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "other": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": ["count", "request", "cloudflare", "forwarding", "other"]
+          },
+          "success": {
+            "type": "boolean",
+            "enum": [true]
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": ["data", "auth", "headers", "success", "timestamp"]
+      },
       "HealthCheckSchema": {
         "type": "object",
         "properties": {
@@ -1268,6 +1449,90 @@
         },
         "required": ["human", "bot", "unknown"]
       },
+      "PingResponseSchema": {
+        "type": "object",
+        "properties": {
+          "api_available": {
+            "type": "boolean"
+          },
+          "cf_connecting_ip": {
+            "type": "string"
+          },
+          "cf_country": {
+            "type": "string"
+          },
+          "cf_datacenter": {
+            "type": "string"
+          },
+          "cf_ipcountry": {
+            "type": "string"
+          },
+          "cf_ray": {
+            "type": "string"
+          },
+          "edge_functions": {
+            "type": "boolean"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "preset": {
+            "type": "string"
+          },
+          "runtime": {
+            "type": "string"
+          },
+          "server_side_rendering": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ok", "error"]
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "user_agent": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "worker_limits": {
+            "type": "object",
+            "properties": {
+              "cpu_time": {
+                "type": "string"
+              },
+              "memory": {
+                "type": "string"
+              },
+              "request_timeout": {
+                "type": "string"
+              }
+            },
+            "required": ["cpu_time", "memory", "request_timeout"]
+          }
+        },
+        "required": [
+          "api_available",
+          "cf_connecting_ip",
+          "cf_country",
+          "cf_datacenter",
+          "cf_ipcountry",
+          "cf_ray",
+          "edge_functions",
+          "environment",
+          "preset",
+          "runtime",
+          "server_side_rendering",
+          "status",
+          "timestamp",
+          "user_agent",
+          "version",
+          "worker_limits"
+        ]
+      },
       "SystemMetricsSchema": {
         "type": "object",
         "properties": {
@@ -1504,19 +1769,52 @@
     "parameters": {}
   },
   "paths": {
-    "/api/internal/health": {
+    "/api/ping": {
       "get": {
-        "tags": ["Internal"],
-        "summary": "Health check endpoint",
-        "description": "Returns system health status and Cloudflare metadata",
+        "tags": ["System"],
+        "summary": "Ping endpoint with comprehensive system information",
+        "description": "Returns system health, worker info, and Cloudflare metadata (merged from previous health, ping, and worker endpoints)",
         "responses": {
           "200": {
-            "description": "Health check successful",
+            "description": "System information",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "api_available": {
+                      "type": "boolean"
+                    },
+                    "cf_connecting_ip": {
+                      "type": "string"
+                    },
+                    "cf_country": {
+                      "type": "string"
+                    },
+                    "cf_datacenter": {
+                      "type": "string"
+                    },
+                    "cf_ipcountry": {
+                      "type": "string"
+                    },
+                    "cf_ray": {
+                      "type": "string"
+                    },
+                    "edge_functions": {
+                      "type": "boolean"
+                    },
+                    "environment": {
+                      "type": "string"
+                    },
+                    "preset": {
+                      "type": "string"
+                    },
+                    "runtime": {
+                      "type": "string"
+                    },
+                    "server_side_rendering": {
+                      "type": "boolean"
+                    },
                     "status": {
                       "type": "string",
                       "enum": ["ok", "error"]
@@ -1524,85 +1822,10 @@
                     "timestamp": {
                       "type": "string"
                     },
+                    "user_agent": {
+                      "type": "string"
+                    },
                     "version": {
-                      "type": "string"
-                    },
-                    "environment": {
-                      "type": "string"
-                    },
-                    "runtime": {
-                      "type": "string"
-                    },
-                    "cf_ray": {
-                      "type": "string"
-                    },
-                    "cf_datacenter": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["status", "timestamp", "version", "environment"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/internal/ping": {
-      "get": {
-        "tags": ["Internal"],
-        "summary": "Ping endpoint",
-        "description": "Simple ping/pong for monitoring",
-        "responses": {
-          "200": {
-            "description": "Pong response",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string",
-                  "example": "pong"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/internal/worker": {
-      "get": {
-        "tags": ["Internal"],
-        "summary": "Worker information",
-        "description": "Returns Cloudflare Worker runtime details",
-        "responses": {
-          "200": {
-            "description": "Worker information",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "runtime": {
-                      "type": "string"
-                    },
-                    "preset": {
-                      "type": "string"
-                    },
-                    "api_available": {
-                      "type": "boolean"
-                    },
-                    "server_side_rendering": {
-                      "type": "boolean"
-                    },
-                    "edge_functions": {
-                      "type": "boolean"
-                    },
-                    "cf_ray": {
-                      "type": "string"
-                    },
-                    "cf_ipcountry": {
-                      "type": "string"
-                    },
-                    "cf_connecting_ip": {
                       "type": "string"
                     },
                     "worker_limits": {
@@ -1622,462 +1845,23 @@
                     }
                   },
                   "required": [
-                    "runtime",
-                    "preset",
                     "api_available",
-                    "server_side_rendering",
-                    "edge_functions",
-                    "cf_ray",
-                    "cf_ipcountry",
                     "cf_connecting_ip",
+                    "cf_country",
+                    "cf_datacenter",
+                    "cf_ipcountry",
+                    "cf_ray",
+                    "edge_functions",
+                    "environment",
+                    "preset",
+                    "runtime",
+                    "server_side_rendering",
+                    "status",
+                    "timestamp",
+                    "user_agent",
+                    "version",
                     "worker_limits"
                   ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/internal/auth": {
-      "get": {
-        "tags": ["Authentication"],
-        "summary": "Validate JWT token",
-        "description": "Validates and returns JWT token information",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Token validation successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "valid": {
-                          "type": "boolean"
-                        },
-                        "payload": {
-                          "type": "object",
-                          "properties": {
-                            "sub": {
-                              "type": "string"
-                            },
-                            "iat": {
-                              "type": "number"
-                            },
-                            "exp": {
-                              "type": "number"
-                            },
-                            "jti": {
-                              "type": "string"
-                            }
-                          },
-                          "required": ["sub", "iat"]
-                        },
-                        "user": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            },
-                            "issuedAt": {
-                              "type": "string"
-                            },
-                            "expiresAt": {
-                              "type": ["string", "null"]
-                            },
-                            "tokenId": {
-                              "type": "string"
-                            }
-                          },
-                          "required": ["id", "issuedAt", "expiresAt"]
-                        },
-                        "error": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["valid"]
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["success", "data", "timestamp"]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid or missing token",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "details": {},
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["success", "error", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/internal/metrics": {
-      "get": {
-        "tags": ["Metrics"],
-        "summary": "Get API metrics",
-        "description": "Returns comprehensive API usage metrics in various formats",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "format",
-            "in": "query",
-            "description": "Output format",
-            "schema": {
-              "type": "string",
-              "enum": ["json", "yaml", "prometheus"],
-              "default": "json"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Metrics data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "resources": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "ok": {
-                            "type": "number"
-                          },
-                          "error": {
-                            "type": "number"
-                          },
-                          "times": {
-                            "type": "object",
-                            "properties": {
-                              "last-hit": {
-                                "type": "number"
-                              },
-                              "last-error": {
-                                "type": "number"
-                              },
-                              "last-ok": {
-                                "type": "number"
-                              }
-                            },
-                            "required": ["last-hit", "last-error", "last-ok"]
-                          },
-                          "visitor": {
-                            "type": "object",
-                            "properties": {
-                              "human": {
-                                "type": "number"
-                              },
-                              "bot": {
-                                "type": "number"
-                              },
-                              "unknown": {
-                                "type": "number"
-                              }
-                            },
-                            "required": ["human", "bot", "unknown"]
-                          },
-                          "group": {
-                            "type": "object",
-                            "properties": {
-                              "1xx": {
-                                "type": "number"
-                              },
-                              "2xx": {
-                                "type": "number"
-                              },
-                              "3xx": {
-                                "type": "number"
-                              },
-                              "4xx": {
-                                "type": "number"
-                              },
-                              "5xx": {
-                                "type": "number"
-                              }
-                            },
-                            "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
-                          },
-                          "status": {
-                            "type": "object",
-                            "properties": {
-                              "304": {
-                                "type": "number"
-                              },
-                              "307": {
-                                "type": "number"
-                              },
-                              "404": {
-                                "type": "number"
-                              },
-                              "405": {
-                                "type": "number"
-                              },
-                              "500": {
-                                "type": "number"
-                              }
-                            }
-                          }
-                        },
-                        "required": ["ok", "error", "times", "visitor", "group", "status"]
-                      }
-                    },
-                    "redirect": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                          "ok": {
-                            "type": "number"
-                          },
-                          "error": {
-                            "type": "number"
-                          },
-                          "times": {
-                            "type": "object",
-                            "properties": {
-                              "last-hit": {
-                                "type": "number"
-                              },
-                              "last-error": {
-                                "type": "number"
-                              },
-                              "last-ok": {
-                                "type": "number"
-                              }
-                            },
-                            "required": ["last-hit", "last-error", "last-ok"]
-                          },
-                          "visitor": {
-                            "type": "object",
-                            "properties": {
-                              "human": {
-                                "type": "number"
-                              },
-                              "bot": {
-                                "type": "number"
-                              },
-                              "unknown": {
-                                "type": "number"
-                              }
-                            },
-                            "required": ["human", "bot", "unknown"]
-                          },
-                          "group": {
-                            "type": "object",
-                            "properties": {
-                              "1xx": {
-                                "type": "number"
-                              },
-                              "2xx": {
-                                "type": "number"
-                              },
-                              "3xx": {
-                                "type": "number"
-                              },
-                              "4xx": {
-                                "type": "number"
-                              },
-                              "5xx": {
-                                "type": "number"
-                              }
-                            },
-                            "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
-                          },
-                          "status": {
-                            "type": "object",
-                            "properties": {
-                              "304": {
-                                "type": "number"
-                              },
-                              "307": {
-                                "type": "number"
-                              },
-                              "404": {
-                                "type": "number"
-                              },
-                              "405": {
-                                "type": "number"
-                              },
-                              "500": {
-                                "type": "number"
-                              }
-                            }
-                          }
-                        },
-                        "required": ["ok", "error", "times", "visitor", "group", "status"]
-                      }
-                    },
-                    "ok": {
-                      "type": "number"
-                    },
-                    "error": {
-                      "type": "number"
-                    },
-                    "times": {
-                      "type": "object",
-                      "properties": {
-                        "last-hit": {
-                          "type": "number"
-                        },
-                        "last-error": {
-                          "type": "number"
-                        },
-                        "last-ok": {
-                          "type": "number"
-                        }
-                      },
-                      "required": ["last-hit", "last-error", "last-ok"]
-                    },
-                    "visitor": {
-                      "type": "object",
-                      "properties": {
-                        "human": {
-                          "type": "number"
-                        },
-                        "bot": {
-                          "type": "number"
-                        },
-                        "unknown": {
-                          "type": "number"
-                        }
-                      },
-                      "required": ["human", "bot", "unknown"]
-                    },
-                    "group": {
-                      "type": "object",
-                      "properties": {
-                        "1xx": {
-                          "type": "number"
-                        },
-                        "2xx": {
-                          "type": "number"
-                        },
-                        "3xx": {
-                          "type": "number"
-                        },
-                        "4xx": {
-                          "type": "number"
-                        },
-                        "5xx": {
-                          "type": "number"
-                        }
-                      },
-                      "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
-                    },
-                    "status": {
-                      "type": "object",
-                      "properties": {
-                        "304": {
-                          "type": "number"
-                        },
-                        "307": {
-                          "type": "number"
-                        },
-                        "404": {
-                          "type": "number"
-                        },
-                        "405": {
-                          "type": "number"
-                        },
-                        "500": {
-                          "type": "number"
-                        }
-                      }
-                    }
-                  },
-                  "required": ["resources", "redirect", "ok", "error", "times", "visitor", "group", "status"]
-                }
-              },
-              "application/yaml": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Insufficient permissions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "details": {},
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["success", "error", "timestamp"]
                 }
               }
             }

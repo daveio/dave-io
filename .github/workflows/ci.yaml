@@ -18,7 +18,7 @@ jobs:
       - name: build
         run: bun run build
       - name: biome
-        run: bun run biome check
+        run: bun run lint:biome
       - name: trunk
         uses: trunk-io/trunk-action@75699af9e26881e564e9d832ef7dc3af25ec031b
       - name: typecheck
