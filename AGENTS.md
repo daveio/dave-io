@@ -119,5 +119,4 @@ bun jwt init && bun run deploy
 
 ## Immediate Plans
 
-- Resolve TODOs in `test/try-adapters.test.ts`
-- Implement runtime validation for API responses using Zod schemas to ensure all responses conform to standardized structure
+- Implement runtime validation for API responses using Zod schemas, to ensure all responses conform to standardized structure with `createApiResponse()`.
