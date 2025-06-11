@@ -291,21 +291,6 @@ imagesOptimiseCommand
     await displayResult(result, options, "Image Optimisation")
   })
 
-// Internal Commands
-const internalCommand = program.command("internal").description("Internal system operations")
-
-internalCommand
-  .command("ping")
-  .description("Ping the server and get comprehensive status including auth and headers")
-  .action(async (_options, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
-    const config = await createConfig(options)
-
-    const adapter = new InternalAdapter(config)
-    const result = await withSpinner(adapter.ping(), "Getting comprehensive server status", options)
-
-    await displayResult(result, options, "Server Status")
-  })
 
 // Tokens Commands
 const tokensCommand = program.command("tokens").description("Token management operations")
@@ -384,6 +369,20 @@ tokensCommand
     await displayResult(result, options, "Token Operation")
   })
 
+// Ping Command (top-level)
+program
+  .command("ping")
+  .description("Ping the server and get comprehensive status including auth and headers")
+  .action(async (_options, command) => {
+    const options = command.parent?.opts() as GlobalOptions
+    const config = await createConfig(options)
+
+    const adapter = new InternalAdapter(config)
+    const result = await withSpinner(adapter.ping(), "Getting comprehensive server status", options)
+
+    await displayResult(result, options, "Server Status")
+  })
+
 // Dashboard Commands
 const dashboardCommand = program.command("dashboard").description("Dashboard data operations")
 
@@ -418,8 +417,8 @@ ${chalk.cyan("Image Optimisation:")}
   bun try images optimise url <imageUrl> [--quality N]    Optimise image from URL
   bun try images optimise file <filePath> [--quality N]   Optimise local image file
 
-${chalk.cyan("Internal System:")}
-  bun try internal ping                  Get comprehensive server status (health, auth, headers)
+${chalk.cyan("System Status:")}
+  bun try ping                           Get comprehensive server status (health, auth, headers)
 
 ${chalk.cyan("Token Management:")}
   bun try tokens info <uuid>             Get token information
@@ -433,7 +432,7 @@ ${chalk.cyan("Dashboard Data:")}
 
 ${chalk.bold("Examples:")}
   ${chalk.cyan("# Public endpoints (no authentication)")}
-  bun try internal ping
+  bun try ping
   bun try images optimise file "./image.png" --quality 75
   bun try images optimise url "https://example.com/image.jpg"
 
@@ -443,13 +442,13 @@ ${chalk.bold("Examples:")}
   bun try --auth dashboard hacker-news                         # Auto-generate token
 
   ${chalk.cyan("# Environment selection")}
-  bun try --local internal ping          # Local development
-  bun try --remote internal ping         # Remote production [default]
+  bun try --local ping                   # Local development
+  bun try --remote ping                  # Remote production [default]
 
   ${chalk.cyan("# Output control")}
-  bun try --script internal ping         # JSON output for scripting
-  bun try --quiet internal ping          # Minimal output
-  bun try --verbose internal ping        # Detailed output
+  bun try --script ping                  # JSON output for scripting
+  bun try --quiet ping                   # Minimal output
+  bun try --verbose ping                 # Detailed output
   bun try --dry-run ai alt url "..."     # Show what would be done
 
 ${chalk.bold("Authentication Options:")}

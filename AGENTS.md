@@ -135,6 +135,14 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 
 ## Breaking Changes
 
+### CLI Command Simplification (11 June 2025)
+
+- **Removed Command**: `bun try internal ping` command removed entirely
+- **Replacement**: Use `bun try ping` for all ping operations
+- **Rationale**: Simplified CLI interface, removes redundant command structure
+- **Impact**: All documentation and examples updated to use shorter form
+- **No Migration**: Breaking change with no backwards compatibility per pre-production policy
+
 ### Universal JSON Key Sorting Implementation (11 June 2025)
 
 - **Global Change**: All API endpoints now return JSON with recursively sorted object keys
@@ -367,15 +375,15 @@ bun run test:api --ai-only
 bun run test:api --url https://dave.io --token "eyJ..."
 
 # Interactive endpoint testing (try.ts)
-bun try internal ping                           # Test comprehensive status (health, auth, headers) - no auth required
+bun try ping                                    # Test comprehensive status (health, auth, headers) - no auth required
 bun try --auth ai alt url "https://example.com/image.jpg"  # Generate alt-text from URL (auto-generate token)
 bun try --token "eyJ..." ai alt file "./image.png"        # Generate alt-text from file (use provided token)
 bun try images optimise file "./image.png" --quality 75   # Optimise local image (public, no auth)
 bun try --auth tokens info <uuid>               # Get token information (auto-generate token)
 bun try --auth dashboard "hacker-news"          # Get dashboard data by name (auto-generate token)
-bun try --remote internal ping                  # Test against production [default]
-bun try --local internal ping                   # Test against local dev server
-bun try --script internal ping                  # JSON output for automation
+bun try --remote ping                           # Test against production [default]
+bun try --local ping                            # Test against local dev server
+bun try --script ping                           # JSON output for automation
 bun try --dry-run --auth ai alt url "..."       # Show what would be done without executing
 ```
 
