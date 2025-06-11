@@ -102,12 +102,6 @@
   // If true, Wrangler will traverse the file tree below base_dir for additional modules
   "find_additional_modules": false,
 
-  // Directory in which module "rules" should be evaluated for additional files
-  "base_dir": "./",
-
-  // Path to a custom tsconfig.json
-  "tsconfig": "./tsconfig.json",
-
   // Module loading rules for additional files
   // "rules": [
   //   // Example: Include WASM files as compiled WebAssembly
