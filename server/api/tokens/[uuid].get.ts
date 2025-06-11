@@ -71,7 +71,11 @@ export default defineEventHandler(async (event) => {
     // Record successful metrics
     recordAPIMetrics(event, 200)
 
-    return createApiResponse(validatedUsage, "Token usage retrieved successfully")
+    return createApiResponse({
+      result: validatedUsage,
+      message: "Token usage retrieved successfully",
+      error: null
+    })
   } catch (error: unknown) {
     console.error("Token management error:", error)
 

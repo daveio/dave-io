@@ -38,6 +38,8 @@ Format the response as a proper ticket description that a developer could work f
 
   // Use type assertion to ensure return type matches expected type
   return createApiResponse({
-    description
-  }, "Description generated successfully", null) as AiTicketDescriptionResponse
+    result: { description },
+    message: "Description generated successfully",
+    error: null
+  }) as AiTicketDescriptionResponse
 })

@@ -8,7 +8,7 @@ extendZodWithOpenApi(z)
 export const ApiSuccessResponseSchema = z.object({
   ok: z.literal(true),
   result: z.any(),
-  message: z.string().optional(),
+  message: z.string(),
   error: z.null(),
   status: z.object({ message: z.string() }).nullable(),
   meta: z
@@ -26,6 +26,7 @@ export const ApiSuccessResponseSchema = z.object({
 export const ApiErrorResponseSchema = z.object({
   ok: z.literal(false),
   error: z.string(),
+  message: z.string(),
   status: z.object({ message: z.string() }).nullable(),
   details: z.any().optional(),
   meta: z
@@ -360,7 +361,7 @@ export const AiTicketTitleRequestSchema = z
 export const AiTicketTitleResponseSchema = z.object({
   ok: z.literal(true),
   result: z.object({
-    title: z.string(),
+    title: z.string()
   }),
   status: z.object({ message: z.string() }).nullable(),
   error: z.null(),
@@ -374,7 +375,7 @@ export const AiTicketDescriptionRequestSchema = z.object({
 export const AiTicketDescriptionResponseSchema = z.object({
   ok: z.literal(true),
   result: z.object({
-    description: z.string(),
+    description: z.string()
   }),
   status: z.object({ message: z.string() }).nullable(),
   error: z.null(),
@@ -394,7 +395,7 @@ export const AiTicketEnrichRequestSchema = z
 export const AiTicketEnrichResponseSchema = z.object({
   ok: z.literal(true),
   result: z.object({
-    description: z.string(),
+    description: z.string()
   }),
   status: z.object({ message: z.string() }).nullable(),
   error: z.null(),

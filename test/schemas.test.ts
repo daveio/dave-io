@@ -24,8 +24,10 @@ describe("API Schemas", () => {
     it("should validate a complete success response", () => {
       const response = {
         ok: true,
-        data: { test: "data" },
+        result: { test: "data" },
         message: "Operation successful",
+        error: null,
+        status: { message: "Operation successful" },
         meta: {
           requestId: "req-123",
           timestamp: "2025-01-01T00:00:00.000Z",
@@ -47,6 +49,10 @@ describe("API Schemas", () => {
     it("should validate minimal success response", () => {
       const response = {
         ok: true,
+        result: {},
+        message: "Success",
+        error: null,
+        status: { message: "Success" },
         timestamp: "2025-01-01T00:00:00.000Z"
       }
 
@@ -70,6 +76,8 @@ describe("API Schemas", () => {
       const response = {
         ok: false,
         error: "Validation failed",
+        message: "Validation error occurred",
+        status: { message: "Validation error occurred" },
         details: 'Field "name" is required',
         meta: {
           requestId: "req-123",
@@ -90,6 +98,8 @@ describe("API Schemas", () => {
       const response = {
         ok: false,
         error: "Something went wrong",
+        message: "Error occurred",
+        status: { message: "Error occurred" },
         timestamp: "2025-01-01T00:00:00.000Z"
       }
 
@@ -600,6 +610,9 @@ describe("API Schemas", () => {
           result: {
             title: "Fix login authentication bug"
           },
+          message: "Title generated successfully",
+          error: null,
+          status: { message: "Title generated successfully" },
           timestamp: "2025-01-01T00:00:00.000Z"
         }
 
@@ -613,9 +626,10 @@ describe("API Schemas", () => {
       it("should reject response with ok: false", () => {
         const response = {
           ok: false,
-          result: {
-            title: "Fix login authentication bug"
-          },
+          result: null,
+          error: "Failed to generate title",
+          message: "An error occurred",
+          status: { message: "An error occurred" },
           timestamp: "2025-01-01T00:00:00.000Z"
         }
 
@@ -649,6 +663,9 @@ describe("API Schemas", () => {
           result: {
             description: "## Issue Description\n\nUsers are unable to authenticate properly..."
           },
+          message: "Description generated successfully",
+          error: null,
+          status: { message: "Description generated successfully" },
           timestamp: "2025-01-01T00:00:00.000Z"
         }
 
@@ -715,6 +732,9 @@ describe("API Schemas", () => {
           result: {
             description: "## Enhanced Description\n\nThis issue affects user authentication..."
           },
+          message: "Description enriched successfully",
+          error: null,
+          status: { message: "Description enriched successfully" },
           timestamp: "2025-01-01T00:00:00.000Z"
         }
 

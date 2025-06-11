@@ -3,6 +3,7 @@ description: Package and project managers to use, and any caveats.
 globs:
 alwaysApply: true
 ---
+
 # Package Managers
 
 ## JavaScript/TypeScript

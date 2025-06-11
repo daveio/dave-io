@@ -56,7 +56,7 @@ Respond with the complete enriched description only.`
   // Select appropriate model based on whether an image is supplied
   const model = validatedInput.image
     ? "@cf/meta/llama-3.2-90b-vision-instruct" // Use vision model when image is present
-    : "@cf/meta/llama-3.2-90b-instruct"        // Use cheaper text-only model when no image
+    : "@cf/meta/llama-3.2-90b-instruct" // Use cheaper text-only model when no image
 
   const aiResponse = await AI.run(model, {
     messages,
@@ -68,6 +68,8 @@ Respond with the complete enriched description only.`
 
   // Use type assertion to ensure return type matches expected type
   return createApiResponse({
-    description
-  }, "Ticket description enriched successfully", null) as AiTicketEnrichResponse
+    result: { description },
+    message: "Ticket description enriched successfully",
+    error: null
+  }) as AiTicketEnrichResponse
 })

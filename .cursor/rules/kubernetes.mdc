@@ -2,6 +2,7 @@
 description: This rule provides comprehensive best practices for developing and maintaining Kubernetes applications and infrastructure, covering coding standards, security, performance, testing, and deployment.
 globs: *.go,*.yaml,*.yml,*.sh,*.tf,*.tfvars,*.json
 ---
+
 # Kubernetes Development and Operations Best Practices
 
 This document outlines a collection of guidelines, style suggestions, and tips for writing code and managing infrastructure within the Kubernetes ecosystem. It emphasizes clarity, maintainability, security, and performance.
@@ -11,55 +12,53 @@ This document outlines a collection of guidelines, style suggestions, and tips f
 ### 1.1 Directory Structure
 
 - **Root Level:**
-  - `cmd/`:  Main application entry points. Each subdirectory represents a separate command-line tool or service.
-  - `pkg/`: Reusable libraries and components that can be imported by other projects.
-  - `internal/`: Private code that should not be imported by external projects.  Enforces encapsulation.
-  - `api/`:  API definitions, including protobuf files and OpenAPI specifications.
-  - `config/`: Configuration files, such as YAML manifests, Kustomize configurations, and Helm charts.
-  - `scripts/`: Utility scripts for building, testing, and deploying the application.
-  - `docs/`: Documentation for the project.
-  - `examples/`: Example usage of the library or application.
-  - `vendor/`: (If using `go modules` without external dependency management) Contains vendored dependencies.  Generally discouraged in modern Go with `go modules`.
+   - `cmd/`: Main application entry points. Each subdirectory represents a separate command-line tool or service.
+   - `pkg/`: Reusable libraries and components that can be imported by other projects.
+   - `internal/`: Private code that should not be imported by external projects. Enforces encapsulation.
+   - `api/`: API definitions, including protobuf files and OpenAPI specifications.
+   - `config/`: Configuration files, such as YAML manifests, Kustomize configurations, and Helm charts.
+   - `scripts/`: Utility scripts for building, testing, and deploying the application.
+   - `docs/`: Documentation for the project.
+   - `examples/`: Example usage of the library or application.
+   - `vendor/`: (If using `go modules` without external dependency management) Contains vendored dependencies. Generally discouraged in modern Go with `go modules`.
 - **Component-Specific Directories:** Inside `pkg/` or `internal/`, organize code by component or module. Each component should have its own directory with clear separation of concerns.
 
 Example:
 
-
 my-kubernetes-project/
 ├── cmd/
-│   └── controller/
-│       └── main.go
+│ └── controller/
+│ └── main.go
 ├── pkg/
-│   └── api/
-│       ├── types.go
-│   └── controller/
-│       ├── controller.go
-│       ├── reconciler.go
-│   └── util/
-│       └── util.go
+│ └── api/
+│ ├── types.go
+│ └── controller/
+│ ├── controller.go
+│ ├── reconciler.go
+│ └── util/
+│ └── util.go
 ├── internal/
-│   └── admission/
-│       └── webhook.go
+│ └── admission/
+│ └── webhook.go
 ├── config/
-│   ├── deploy/
-│   │   └── deployment.yaml
-│   └── kustomize/
-│       ├── base/
-│       │   ├── kustomization.yaml
-│       │   └── ...
-│       └── overlays/
-│           ├── dev/
-│           │   ├── kustomization.yaml
-│           │   └── ...
-│           └── prod/
-│               ├── kustomization.yaml
-│               └── ...
+│ ├── deploy/
+│ │ └── deployment.yaml
+│ └── kustomize/
+│ ├── base/
+│ │ ├── kustomization.yaml
+│ │ └── ...
+│ └── overlays/
+│ ├── dev/
+│ │ ├── kustomization.yaml
+│ │ └── ...
+│ └── prod/
+│ ├── kustomization.yaml
+│ └── ...
 ├── scripts/
-│   └── build.sh
+│ └── build.sh
 ├── docs/
-│   └── architecture.md
+│ └── architecture.md
 └── go.mod
-
 
 ### 1.2 File Naming Conventions
 
@@ -70,7 +69,7 @@ my-kubernetes-project/
 
 ### 1.3 Module Organization (Go)
 
-- **Packages:**  Organize code into meaningful packages that represent logical units of functionality.
+- **Packages:** Organize code into meaningful packages that represent logical units of functionality.
 - **Internal Packages:** Use `internal/` directories to create packages that are only visible within the project.
 - **Interfaces:** Define interfaces to abstract dependencies and promote testability.
 
@@ -94,7 +93,7 @@ my-kubernetes-project/
 - **Controller Pattern:** Implement controllers to reconcile the desired state of Kubernetes resources with the actual state.
 - **Operator Pattern:** Extend the Kubernetes API with custom resources and controllers to automate complex application management tasks.
 - **Sidecar Pattern:** Deploy a sidecar container alongside the main application container to provide supporting functionality, such as logging, monitoring, or security.
-- **Ambassador Pattern:**  Use an ambassador container to proxy network traffic to the main application container, providing features such as load balancing, routing, and authentication.
+- **Ambassador Pattern:** Use an ambassador container to proxy network traffic to the main application container, providing features such as load balancing, routing, and authentication.
 - **Adapter Pattern:** Translate requests from one interface to another, allowing different components to work together.
 - **Singleton Pattern:** Implement a singleton pattern for managing global resources, such as database connections or configuration settings. Be extremely cautious, as this can hurt testability and introduce implicit dependencies.
 
@@ -112,12 +111,12 @@ my-kubernetes-project/
 - **Naked Pods:** Avoid creating pods directly without a deployment or replica set, as they will not be automatically rescheduled if a node fails.
 - **Hardcoded Configuration:** Avoid hardcoding configuration data in the application code. Use ConfigMaps and Secrets instead.
 - **Ignoring Resource Limits:** Failing to set resource requests and limits can lead to resource contention and performance issues.
-- **Oversized Containers:**  Keep container images small and focused to improve startup time and reduce security risks.
+- **Oversized Containers:** Keep container images small and focused to improve startup time and reduce security risks.
 - **Privileged Containers:** Avoid running containers in privileged mode, as it can create security vulnerabilities.
 - **Long-Lived Branches:** Avoid creating long-lived branches, and prefer small, frequent merges to the main branch.
-- **God Classes:** Avoid creating classes that are too large and complex.  Break them down into smaller, more manageable classes.
-- **Shotgun Surgery:**  Avoid making changes to multiple classes when a single feature is modified. This suggests poor class design and coupling.
-- **Feature Envy:**  Avoid methods that access the data of another object more than their own.  This suggests that the method might be in the wrong class.
+- **God Classes:** Avoid creating classes that are too large and complex. Break them down into smaller, more manageable classes.
+- **Shotgun Surgery:** Avoid making changes to multiple classes when a single feature is modified. This suggests poor class design and coupling.
+- **Feature Envy:** Avoid methods that access the data of another object more than their own. This suggests that the method might be in the wrong class.
 
 ### 2.4 State Management Best Practices
 
@@ -230,14 +229,14 @@ my-kubernetes-project/
 - **Test Boundary Conditions:** Test boundary conditions and edge cases to ensure that the code handles them correctly.
 - **Test Error Conditions:** Test error conditions to ensure that the code handles errors gracefully.
 - **Code Coverage:** Aim for high code coverage to ensure that all parts of the code are tested.
-- **Table-Driven Tests:**  Use table-driven tests to easily test multiple inputs and outputs.
+- **Table-Driven Tests:** Use table-driven tests to easily test multiple inputs and outputs.
 
 ### 5.2 Integration Testing
 
 - **Test Interactions Between Components:** Test the interactions between different components of the application.
 - **Test with Real Dependencies:** Use real dependencies or integration mocks for integration tests.
 - **Test Data Flows:** Test the data flows through the application to ensure that data is processed correctly.
-- **Contract Tests:**  Use contract tests to ensure that services adhere to a defined contract.
+- **Contract Tests:** Use contract tests to ensure that services adhere to a defined contract.
 
 ### 5.3 End-to-End Testing
 
@@ -297,7 +296,7 @@ my-kubernetes-project/
 - **Logging:** Use detailed logging to help identify the root cause of issues.
 - **Debugging Tools:** Use debugging tools, such as debuggers and profilers, to analyze the code and identify performance bottlenecks.
 - **Remote Debugging:** Use remote debugging to debug applications running in Kubernetes.
-- **Log Aggregation:**  Use log aggregation tools (e.g., Elasticsearch, Loki) to centralize and analyze logs.
+- **Log Aggregation:** Use log aggregation tools (e.g., Elasticsearch, Loki) to centralize and analyze logs.
 - **Metrics Monitoring:** Use metrics monitoring tools (e.g., Prometheus, Grafana) to track application performance.
 - **Tracing:** Implement distributed tracing (e.g., Jaeger, Zipkin) to track requests across multiple services.
 

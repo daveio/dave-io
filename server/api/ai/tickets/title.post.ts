@@ -49,7 +49,7 @@ The title should be short, clear, and actionable. Use basic Markdown formatting 
   // Select appropriate model based on whether an image is supplied
   const model = validatedInput.image
     ? "@cf/meta/llama-3.2-90b-vision-instruct" // Use vision model when image is present
-    : "@cf/meta/llama-3.2-90b-instruct"        // Use cheaper text-only model when no image
+    : "@cf/meta/llama-3.2-90b-instruct" // Use cheaper text-only model when no image
 
   const aiResponse = await AI.run(model, {
     messages,
@@ -60,5 +60,9 @@ The title should be short, clear, and actionable. Use basic Markdown formatting 
   const title = aiResponse.response?.trim() || "Untitled Task"
 
   // Use type assertion to ensure return type matches expected type
-  return createApiResponse({ title }, "Title generated successfully", null) as AiTicketTitleResponse
+  return createApiResponse({
+    result: { title },
+    message: "Title generated successfully",
+    error: null
+  }) as AiTicketTitleResponse
 })

@@ -3,10 +3,18 @@ import { createApiError, createApiResponse } from "~/server/utils/response"
 
 // Mock implementations for functions that might not exist yet
 function sanitizeInput(input: unknown): string {
-  if (typeof input === "string") return input.length > 1000 ? `${input.slice(0, 997)}...` : input
-  if (typeof input === "number" || typeof input === "boolean") return String(input)
-  if (input === null) return "null"
-  if (input === undefined) return "undefined"
+  if (typeof input === "string") {
+    return input.length > 1000 ? `${input.slice(0, 997)}...` : input
+  }
+  if (typeof input === "number" || typeof input === "boolean") {
+    return String(input)
+  }
+  if (input === null) {
+    return "null"
+  }
+  if (input === undefined) {
+    return "undefined"
+  }
 
   try {
     return JSON.stringify(input).length > 1000 ? `${JSON.stringify(input).slice(0, 997)}...` : JSON.stringify(input)
@@ -19,7 +27,9 @@ describe("Response Utils", () => {
   describe("createApiResponse", () => {
     it("should create empty response", () => {
       // Now requires a result parameter
-      const response = createApiResponse({})
+      const response = createApiResponse({
+        result: {}
+      })
 
       expect(response.ok).toBe(true)
       expect(response.timestamp).toBeDefined()
@@ -29,27 +39,32 @@ describe("Response Utils", () => {
 
     it("should create response with data", () => {
       const testData = { test: "value" }
-      const response = createApiResponse(testData)
+      const response = createApiResponse({
+        result: testData
+      })
 
       expect(response.ok).toBe(true)
       expect(response.timestamp).toBeDefined()
-      
+
       // Use type guard with assertion
       if (response.ok) {
-        const successResponse = response as { ok: true, result: any }
+        const successResponse = response as { ok: true; result: any }
         expect(successResponse.result).toEqual(testData)
       } else {
         // This should not happen
         expect(response.ok).toBe(true)
       }
-      
+
       expect(response.error).toBeNull()
       expect(response.status).toBeNull()
     })
 
     it("should create response with message", () => {
       const message = "Test message"
-      const response = createApiResponse({}, message)
+      const response = createApiResponse({
+        result: {},
+        message
+      })
 
       expect(response.ok).toBe(true)
       expect(response.timestamp).toBeDefined()
@@ -60,7 +75,12 @@ describe("Response Utils", () => {
       const meta = {
         request_id: "req_123456"
       }
-      const response = createApiResponse({}, null, null, meta)
+      const response = createApiResponse({
+        result: {},
+        message: null,
+        error: null,
+        meta
+      })
 
       expect(response.ok).toBe(true)
       expect(response.timestamp).toBeDefined()
@@ -75,43 +95,50 @@ describe("Response Utils", () => {
       const meta = {
         request_id: "req_123456"
       }
-      const response = createApiResponse(data, message, null, meta)
+      const response = createApiResponse({
+        result: data,
+        message,
+        error: null,
+        meta
+      })
 
       expect(response.ok).toBe(true)
       expect(response.timestamp).toBeDefined()
-      
+
       // Use type guard with assertion
       if (response.ok) {
-        const successResponse = response as { ok: true, result: any }
+        const successResponse = response as { ok: true; result: any }
         expect(successResponse.result).toEqual(data)
       } else {
         // This should not happen
         expect(response.ok).toBe(true)
       }
-      
+
       expect(response.status).toEqual({ message })
       expect(response.meta).toEqual(meta)
     })
 
-    it("should create error response", () => {
+    it("should throw an error for error responses", () => {
       const errorMessage = "Test error"
-      const response = createApiResponse({}, null, errorMessage)
-
-      expect(response.ok).toBe(false)
-      expect(response.timestamp).toBeDefined()
-      expect(response.error).toEqual(errorMessage)
-      expect(response.status).toBeNull()
+      expect(() => {
+        createApiResponse({
+          result: {},
+          message: null,
+          error: errorMessage
+        })
+      }).toThrow(errorMessage)
     })
 
-    it("should create error response with status message", () => {
+    it("should throw an error for error responses with status message", () => {
       const statusMessage = "Additional info"
       const errorMessage = "Test error"
-      const response = createApiResponse({}, statusMessage, errorMessage)
-
-      expect(response.ok).toBe(false)
-      expect(response.timestamp).toBeDefined()
-      expect(response.error).toEqual(errorMessage)
-      expect(response.status).toEqual({ message: statusMessage })
+      expect(() => {
+        createApiResponse({
+          result: {},
+          message: statusMessage,
+          error: errorMessage
+        })
+      }).toThrow(errorMessage)
     })
   })
 

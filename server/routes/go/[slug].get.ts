@@ -1,7 +1,7 @@
-import { getHeader, setHeader, setResponseStatus } from "h3"
+import { getHeader } from "h3"
 import { getCloudflareEnv, getCloudflareRequestInfo, getKVNamespace } from "~/server/utils/cloudflare"
 import { updateRedirectMetrics, updateRedirectMetricsAsync } from "~/server/utils/kv-metrics"
-import { createApiError, isApiError, logRequest } from "~/server/utils/response"
+import { createApiError, isApiError, logRequest, createApiResponse } from "~/server/utils/response"
 import { UrlRedirectSchema } from "~/server/utils/schemas"
 
 interface RedirectData {
@@ -74,10 +74,17 @@ export default defineEventHandler(async (event) => {
       cached: "hit"
     })
 
-    // Perform redirect (302 Found)
-    setResponseStatus(event, 302)
-    setHeader(event, "Location", redirect.url)
-    return
+    // Perform redirect using createApiResponse with redirect parameter
+    return createApiResponse({
+      result: {
+        redirect: redirect.url,
+        slug,
+        clicks: redirect.clicks + 1
+      },
+      message: `Redirecting to ${redirect.url}`,
+      error: null,
+      redirect: redirect.url
+    })
   } catch (error: unknown) {
     // biome-ignore lint/suspicious/noExplicitAny: isApiError type guard ensures statusCode property exists
     const statusCode = isApiError(error) ? (error as any).statusCode || 500 : 500

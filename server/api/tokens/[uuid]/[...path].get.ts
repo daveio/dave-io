@@ -75,7 +75,11 @@ export default defineEventHandler(async (event) => {
       // Record successful metrics
       recordAPIMetrics(event, 200)
 
-      return createApiResponse(validatedUsage, "Token usage retrieved successfully")
+      return createApiResponse({
+        result: validatedUsage,
+        message: "Token usage retrieved successfully",
+        error: null
+      })
     }
     if (path === "revoke") {
       // GET /api/tokens/{uuid}/revoke - Revoke token (legacy endpoint)
@@ -99,7 +103,11 @@ export default defineEventHandler(async (event) => {
       // Record successful metrics
       recordAPIMetrics(event, 200)
 
-      return createApiResponse(revokeData, "Token revoked successfully")
+      return createApiResponse({
+        result: revokeData,
+        message: "Token revoked successfully",
+        error: null
+      })
     }
     if (path === "metrics") {
       // GET /api/tokens/{uuid}/metrics - Get token metrics using simple KV keys
@@ -126,7 +134,11 @@ export default defineEventHandler(async (event) => {
       // Record successful metrics
       recordAPIMetrics(event, 200)
 
-      return createApiResponse(metricsData, "Token metrics retrieved successfully")
+      return createApiResponse({
+        result: metricsData,
+        message: "Token metrics retrieved successfully",
+        error: null
+      })
     }
     throw createApiError(404, `Unknown token endpoint: ${path}`)
   } catch (error: unknown) {

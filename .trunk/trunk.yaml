@@ -74,10 +74,17 @@ lint:
         - nuxt.config.ts
         - server/middleware/shell-scripts.ts
         - data/kv/*.yaml
+        - .cursor/**
+        - .windsurf/**
     - linters:
         - gitleaks
       paths:
         - data/kv/*.yaml
+    - linters:
+        - markdownlint
+      paths:
+        - .cursor/**
+        - .windsurf/**
 plugins:
   # https://docs.trunk.io/plugins
   sources:

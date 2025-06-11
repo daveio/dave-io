@@ -106,10 +106,11 @@ export default defineEventHandler(async (event) => {
     // Record successful metrics
     recordAPIMetrics(event, 200)
 
-    return createApiResponse(
-      response,
-      body.revoked ? "Token revoked successfully" : "Token revocation removed successfully"
-    )
+    return createApiResponse({
+      result: response,
+      message: body.revoked ? "Token revoked successfully" : "Token revocation removed successfully",
+      error: null
+    })
   } catch (error: unknown) {
     console.error("Token revocation error:", error)
 

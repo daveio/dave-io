@@ -14,7 +14,9 @@ describe("Response Sorting Integration", () => {
       banana: "yellow"
     }
 
-    const response = createApiResponse(data)
+    const response = createApiResponse({
+      result: data
+    })
 
     // Check that top-level keys are sorted
     const topKeys = Object.keys(response)
@@ -23,8 +25,8 @@ describe("Response Sorting Integration", () => {
     // Type guard to ensure we're dealing with a success response
     if (response.ok) {
       // Use type assertion since we've verified the ok flag
-      const successResponse = response as { ok: true, result: any }
-      
+      const successResponse = response as { ok: true; result: any }
+
       // Check that data keys are sorted
       const dataKeys = Object.keys(successResponse.result)
       expect(dataKeys).toEqual(["apple", "banana", "nested", "zebra"])
@@ -67,16 +69,19 @@ describe("Response Sorting Integration", () => {
       }
     }
 
-    const response = createApiResponse(complexData, "Complex test")
+    const response = createApiResponse({
+      result: complexData,
+      message: "Complex test"
+    })
 
     // Verify top level sorting
-    expect(Object.keys(response)).toEqual(["error", "ok", "result", "status", "timestamp"])
+    expect(Object.keys(response)).toEqual(["error", "message", "ok", "result", "status", "timestamp"])
 
     // Type guard to ensure we're dealing with a success response
     if (response.ok) {
       // Use type assertion since we've verified the ok flag
-      const successResponse = response as { ok: true, result: any }
-      
+      const successResponse = response as { ok: true; result: any }
+
       // Verify nested structures have sorted keys
       expect(Object.keys(successResponse.result.worker.limits)).toEqual(["cpu_time", "memory", "request_timeout"])
       expect(Object.keys(successResponse.result.cloudflare.country)).toEqual(["ip", "primary"])
@@ -98,17 +103,20 @@ describe("Response Sorting Integration", () => {
       }
     }
 
-    const response = createApiResponse(dataWithArrays, "Array test")
+    const response = createApiResponse({
+      result: dataWithArrays,
+      message: "Array test"
+    })
 
     // Type guard to ensure we're dealing with a success response
     if (response.ok) {
       // Use type assertion since we've verified the ok flag
-      const successResponse = response as { ok: true, result: any }
-      
+      const successResponse = response as { ok: true; result: any }
+
       // Verify that objects inside arrays also have sorted keys
       expect(Object.keys(successResponse.result.items[0])).toEqual(["apple", "zebra"])
       expect(Object.keys(successResponse.result.items[1])).toEqual(["bravo", "charlie"])
-      
+
       // Verify that the rest of the response is still sorted
       expect(Object.keys(successResponse.result.metadata)).toEqual(["page", "total"])
     } else {
@@ -121,7 +129,12 @@ describe("Response Sorting Integration", () => {
     const data = { a: 1, b: 2 }
     const meta = { total: 100, page: 1 }
 
-    const response = createApiResponse(data, "Test message", null, meta)
+    const response = createApiResponse({
+      result: data,
+      message: "Test message",
+      error: null,
+      meta
+    })
 
     // Verify response still has required fields
     expect(response).toHaveProperty("ok", true)
@@ -133,6 +146,6 @@ describe("Response Sorting Integration", () => {
     expect(response.meta).toEqual(meta)
 
     // Keys should be alphabetically sorted
-    expect(Object.keys(response)).toEqual(["error", "meta", "ok", "result", "status", "timestamp"])
+    expect(Object.keys(response)).toEqual(["error", "message", "meta", "ok", "result", "status", "timestamp"])
   })
 })

@@ -36,7 +36,7 @@ interface TicketEnrichResponse {
  * Ticket operations are public (no authentication required)
  */
 export class AIAdapter extends BaseAdapter {
-  constructor(config: RequestConfig = { baseUrl: 'http://localhost:3000' }) {
+  constructor(config: RequestConfig = { baseUrl: "http://localhost:3000" }) {
     super(config)
   }
 
@@ -48,9 +48,9 @@ export class AIAdapter extends BaseAdapter {
   private async fileToBase64(filePath: string): Promise<string> {
     try {
       // Use Node.js fs module to read the file
-      const fs = await import('fs/promises')
+      const fs = await import("fs/promises")
       const data = await fs.readFile(filePath)
-      return Buffer.from(data).toString('base64')
+      return Buffer.from(data).toString("base64")
     } catch (error) {
       console.error(`Error reading file ${filePath}:`, error)
       throw new Error(`Failed to read file at ${filePath}`)

@@ -71,8 +71,8 @@ export default defineEventHandler(async (event) => {
       success: true
     })
 
-    return createApiResponse(
-      {
+    return createApiResponse({
+      result: {
         url: result.url,
         originalSizeBytes: result.originalSize,
         optimisedSizeBytes: result.optimisedSize,
@@ -82,8 +82,9 @@ export default defineEventHandler(async (event) => {
         imageSource,
         timestamp: new Date().toISOString()
       },
-      "Image optimised successfully"
-    )
+      message: "Image optimised successfully",
+      error: null
+    })
   } catch (error: unknown) {
     console.error("Image optimisation error:", error)
 

@@ -88,7 +88,11 @@ export default defineEventHandler(async (event) => {
     })
 
     // Return success with result and success message
-    return createApiResponse(usage, "Token usage retrieved successfully", null)
+    return createApiResponse({
+      result: usage,
+      message: "Token usage retrieved successfully",
+      error: null
+    })
   } catch (error: unknown) {
     console.error("Token usage error:", error)
 

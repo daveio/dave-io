@@ -1,5 +1,5 @@
 import type { H3Event } from "h3"
-import { createError } from "h3"
+import { createError, sendRedirect } from "h3"
 import { getCloudflareRequestInfo } from "./cloudflare"
 import { prepareSortedApiResponse } from "./json-utils"
 import type { ApiErrorResponse, ApiSuccessResponse } from "./schemas"
@@ -20,13 +20,39 @@ export interface ApiResponse<T = unknown> {
   timestamp: string
 }
 
-export function createApiResponse<T>(
-  result: T,
-  message?: string | null,
-  error?: string | null,
+export interface ApiResponseOptions<T> {
+  result: T
+  message?: string | null
+  error?: string | null
   meta?: ApiResponse<T>["meta"]
-): ApiSuccessResponse | ApiErrorResponse {
+  redirect?: string | null
+  code?: number
+}
+
+export function createApiResponse<T>(options: ApiResponseOptions<T>): ApiSuccessResponse | ApiErrorResponse {
+  // Handle redirects
+  if (options.redirect) {
+    // For redirects, we need to use h3's built-in redirect capabilities
+    // But we need to construct a proper response object first
+    const responseObj: ApiSuccessResponse = prepareSortedApiResponse({
+      ok: true,
+      result: {} as T, // Empty result for redirects
+      error: null,
+      status: { message: `Redirecting to ${options.redirect}` },
+      timestamp: new Date().toISOString()
+    });
+
+    // Then throw an error with the redirect status code
+    // This is how H3 expects redirects to be handled
+    throw createError({
+      statusCode: options.code || 302,
+      statusMessage: `Redirect to ${options.redirect}`,
+      data: responseObj
+    })
+  }
   const timestamp = new Date().toISOString()
+
+  const { result, message, error, meta, redirect, code } = options
 
   // If there's an error message, return an error response
   if (error) {
@@ -41,7 +67,21 @@ export function createApiResponse<T>(
       response.meta = meta
     }
 
-    return prepareSortedApiResponse(response)
+    // Handle custom status code for errors
+    if (code) {
+      throw createError({
+        statusCode: code,
+        statusMessage: error,
+        data: prepareSortedApiResponse(response)
+      })
+    }
+
+    // Default error response with 500 status code
+    throw createError({
+      statusCode: 500,
+      statusMessage: error,
+      data: prepareSortedApiResponse(response)
+    })
   } else {
     // Success response
     const response: ApiSuccessResponse = {
@@ -58,6 +98,15 @@ export function createApiResponse<T>(
 
     if (meta) {
       response.meta = meta
+    }
+
+    // Handle custom status code for success
+    if (code) {
+      throw createError({
+        statusCode: code,
+        statusMessage: message || "OK",
+        data: prepareSortedApiResponse(response)
+      })
     }
 
     return prepareSortedApiResponse(response)

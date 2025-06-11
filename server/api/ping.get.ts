@@ -167,16 +167,6 @@ export default defineEventHandler(async (event) => {
     }
   })
 
-  const response = prepareSortedApiResponse(
-    EnhancedPingResponseSchema.parse({
-      data: pingData,
-      auth: authInfo,
-      headers: headersInfo,
-      ok: true,
-      timestamp: new Date().toISOString()
-    })
-  )
-
   // Record standard API metrics
   recordAPIMetrics(event, 200)
 
@@ -193,5 +183,13 @@ export default defineEventHandler(async (event) => {
     headerCount: headersInfo.count
   })
 
-  return response
+  return createApiResponse({
+    result: {
+      pingData,
+      auth: authInfo,
+      headers: headersInfo
+    },
+    message: "Ping successful",
+    error: null
+  })
 })

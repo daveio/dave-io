@@ -91,15 +91,19 @@ export default defineEventHandler(async (event) => {
     })
 
     return createApiResponse({
-      altText,
-      imageSource: request.url || "uploaded-file",
-      model: aiModel,
-      processingTimeMs: processingTime,
-      originalImageSizeBytes: originalImageData.length,
-      optimisedImageSizeBytes: imageData.length,
-      compressionRatio,
-      optimisedImageUrl: optimisationResult.url
-    }, "Alt text generated successfully", null)
+      result: {
+        altText,
+        imageSource: request.url || "uploaded-file",
+        model: aiModel,
+        processingTimeMs: processingTime,
+        originalImageSizeBytes: originalImageData.length,
+        optimisedImageSizeBytes: imageData.length,
+        compressionRatio,
+        optimisedImageUrl: optimisationResult.url
+      },
+      message: "Alt text generated successfully",
+      error: null
+    })
   } catch (error: unknown) {
     console.error("AI alt-text error:", error)
 

@@ -162,7 +162,11 @@ export default defineEventHandler(async (event) => {
       itemCount: items.length
     })
 
-    return createApiResponse(response, `Dashboard '${name}' retrieved successfully`)
+    return createApiResponse({
+      result: response,
+      message: `Dashboard '${name}' retrieved successfully`,
+      error: null
+    })
   } catch (error: unknown) {
     console.error("Dashboard error:", error)
 
