@@ -553,6 +553,12 @@ const doc = generator.generateDocument({
     version: "1.0.0",
     description: "Automatically generated OpenAPI specification"
   },
+  servers: [
+    {
+      url: "https://next.dave.io",
+      description: "Production server"
+    }
+  ],
   security: [
     {
       bearerAuth: []
