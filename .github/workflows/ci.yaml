@@ -23,6 +23,6 @@ jobs:
         uses: trunk-io/trunk-action@75699af9e26881e564e9d832ef7dc3af25ec031b
         with:
           # trunk-ignore(trunk-toolbox)
-          arguments: --filter="-trunk-toolbox/todo"
+          arguments: --filter=-trunk-toolbox/todo
       - name: typecheck
         run: bun run lint:types
