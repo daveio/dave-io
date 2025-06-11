@@ -464,3 +464,141 @@ Cloudflare SDK warnings about `'this'` keyword are harmless.
 **Architecture**: Microservices, Queues, multi-tenancy, WebSockets
 
 **Completed**: ✅ D1 integration, ✅ Real AI, ✅ Custom domain, ✅ Image optimization, ✅ Cloudflare Images migration
+
+## NOTES: Linear shortcut
+
+This will need API support for the AI processing.
+
+```mermaid
+---
+# Flow chart for Linear shortcut implementation.
+config:
+  theme: neo-dark
+  layout: elk
+  look: neo
+---
+flowchart TD
+   n1("START") --> n3(["Invoked with a share?"])
+   n3 -- No --> n4(["Clipboard has content?"])
+   n3 -- Yes --> n6["Share to inputData"]
+   n4 -- No --> n2["Leave inputData empty"]
+   n4 -- Yes --> n5["Do you want to use the clipboard?"]
+   n5 -- Yes --> n8["Clipboard to inputData"]
+   n5 -- No --> n2
+   n10(["inputData has value?"]) -- Yes --> n7["presetTitle = AI(inputData to title)"]
+   n7 --> n11("Issue title? preset with presetTitle")
+   n10 -- No --> n11
+   n11 --> n14(["inputData has value?"])
+   n14 -- No --> n13["presetDescription = AI(Title to Description)"]
+   n14 -- Yes --> n12("Enrich description with AI?")
+   n12 -- Yes --> n15["presetDescription = AI(Enrich Description)"]
+   n12 -- No --> n16["presetDescription = inputDescription"]
+   n13 --> n17("Issue description? preset with presetDescription")
+   n15 --> n17
+   n16 --> n17
+   n8 --> n10
+   n2 --> n10
+   n6 --> n10
+   n17 --> n18("Create Linear ticket")
+   n18 --> n19("END")
+   n1:::endpoint
+   n3:::decision
+   n4:::decision
+   n6:::variable
+   n2:::variable
+   n5:::question
+   n8:::variable
+   n10:::decision
+   n7:::variable
+   n11:::question
+   n14:::decision
+   n13:::variable
+   n12:::question
+   n15:::variable
+   n16:::variable
+   n17:::question
+   n18:::action
+   n19:::endpoint
+   classDef question fill:#181926, stroke-width:1px, stroke-dasharray:none, stroke:#a6da95, color:#a6da95
+   classDef variable fill:#181926, stroke-width:1px, stroke-dasharray:none, stroke:#c6a0f6, color:#c6a0f6
+   classDef decision fill:#181926, stroke-width:1px, stroke-dasharray:none, stroke:#f5a97f, color:#f5a97f
+   classDef intermediate fill:#181926, stroke-width:1px, stroke-dasharray:none, stroke:#e64553, color:#e64553
+   classDef endpoint fill:#181926, stroke-width:1px, stroke-dasharray:none, stroke:#179299, color:#179299
+   classDef action fill:#181926, stroke-width:1px, stroke-dasharray:none, stroke:#df8e1d, color:#df8e1d
+   linkStyle 0 stroke:#FFD600,fill:none
+   linkStyle 1 stroke:#D50000,fill:none
+   linkStyle 2 stroke:#00C853,fill:none
+   linkStyle 3 stroke:#D50000,fill:none
+   linkStyle 4 stroke:#00C853,fill:none
+   linkStyle 5 stroke:#00C853,fill:none
+   linkStyle 6 stroke:#D50000,fill:none
+   linkStyle 7 stroke:#00C853,fill:none
+   linkStyle 8 stroke:#FFD600,fill:none
+   linkStyle 9 stroke:#D50000,fill:none
+   linkStyle 10 stroke:#FFD600,fill:none
+   linkStyle 11 stroke:#D50000,fill:none
+   linkStyle 12 stroke:#00C853,fill:none
+   linkStyle 13 stroke:#00C853,fill:none
+   linkStyle 14 stroke:#D50000,fill:none
+   linkStyle 15 stroke:#FFD600,fill:none
+   linkStyle 16 stroke:#FFD600,fill:none
+   linkStyle 17 stroke:#FFD600,fill:none
+   linkStyle 18 stroke:#FFD600,fill:none
+   linkStyle 19 stroke:#FFD600,fill:none
+   linkStyle 20 stroke:#FFD600,fill:none
+   linkStyle 21 stroke:#FFD600,fill:none
+   linkStyle 22 stroke:#FFD600,fill:none
+```
+
+### AI functions required
+
+**Context:** This is backend code to support a workflow for creating Linear tickets.
+
+- `title` (`/api/ai/tickets/title`): Generate a title from the existing description.
+   - **Input:** The existing description. This may just be an image or a URL, or may be any combination of URLs, Markdown, and Mermaid diagrams.
+   - **Output:** The generated title. Short plain text, basic Markdown allowed. One line.
+- `description` (`/api/ai/tickets/description`): Generate a description from the title.
+   - **Input:** The existing title. Short plain text, basic Markdown allowed. One line.
+   - **Output:** The generated and enriched (with `enrich`) description with any combination of URLs, Markdown, or Mermaid diagrams. Do not return images.
+- `enrich` (`/api/ai/tickets/enrich`): Enrich the description with additional context or details.
+   - **Input:** The existing title and description. This may just be an image or a URL. If an image, it will be a single image, supplied as raw base64 as per `/api/image/optimise`.
+   - **Output:** The enriched description with any combination of URLs, Markdown, or Mermaid diagrams. Do not return images.
+
+API endpoints should **not** require authentication. Output should be JSON even if it is with a single key. Add support to `bin/try.ts` for the endpoints you create. Ensure docs and tests are updated accordingly.
+
+Example inputs:
+
+#### `title`
+
+```json
+{
+   "description": "# Doing the thing\n\n- Do the thing.\n- Do the other thing.",
+   "image": {
+      "data": "iVBORw0KGgoAAAANSUhEUgAAAUQAAAFECAMAAABoNLf0AAAC/VBMVEVHcEwcFBUSDQ4CAgEDAQENBwja0NU1AwgDAwHu7+8SBwgDAgIXDw8bEBITCwwFBQQOCAkbEhTs6e8JBwhLRUYbDxMWDhArAgsFAgIDAwMLCgoeAgUbDhD49fgYERMSDQ4TCw4GAwMDAwIDAAAJAwUNCwsjIyPx7vQWCQsnJCQWCgsXExP29vgZEBEkDRARCw0pFBcMBgcaCAsODgwWDA37+fsKDgsmHB4hDxEFGTAHDQsNCgkTDg8nJSYaDQ8jDhF0DSMbDA8oAwYoExZNBRGPEin4+fkcFhdSCRM+REIXEBIAAwBhChsqJCUzNTQjIiIiFxpHSEgbFxkaAwQ9OjoxNTRQTlAtJioBDRgdCg2iFjM9MzU1MDEjISITFxdsbGwXA=",
+      "filename": "example.png"
+   }
+}
+```
+
+#### `description`
+
+```json
+{
+   "title": "Do the `thing`"
+}
+```
+
+#### `enrich`
+
+```json
+{
+   "title": "Do the `thing`",
+   "description": "# Doing the thing\n\n- Do the thing.\n- Do the other thing.",
+   "image": {
+      "data": "iVBORw0KGgoAAAANSUhEUgAAAUQAAAFECAMAAABoNLf0AAAC/VBMVEVHcEwcFBUSDQ4CAgEDAQENBwja0NU1AwgDAwHu7+8SBwgDAgIXDw8bEBITCwwFBQQOCAkbEhTs6e8JBwhLRUYbDxMWDhArAgsFAgIDAwMLCgoeAgUbDhD49fgYERMSDQ4TCw4GAwMDAwIDAAAJAwUNCwsjIyPx7vQWCQsnJCQWCgsXExP29vgZEBEkDRARCw0pFBcMBgcaCAsODgwWDA37+fsKDgsmHB4hDxEFGTAHDQsNCgkTDg8nJSYaDQ8jDhF0DSMbDA8oAwYoExZNBRGPEin4+fkcFhdSCRM+REIXEBIAAwBhChsqJCUzNTQjIiIiFxpHSEgbFxkaAwQ9OjoxNTRQTlAtJioBDRgdCg2iFjM9MzU1MDEjISITFxdsbGwXA=",
+      "filename": "example.png"
+   }
+}
+```
+
+⚠️ **IMPORTANT:** ⚠️ Follow ALL rules in @AGENTS.md RELIGIOUSLY. This is a critical part of the workflow, and MUST be borne in mind AT ALL TIMES. If you come across a conflict, ask me for resolution.
