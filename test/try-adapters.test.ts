@@ -423,31 +423,41 @@ describe("InternalAdapter", () => {
     mockFetch.mockClear()
   })
 
-  it("should check health", async () => {
+  it("should ping server and get comprehensive system info with auth and headers", async () => {
     const mockResponse = {
       ok: true,
       status: 200,
       json: async () => ({
         success: true,
-        data: { status: "ok", timestamp: "2023-01-01T00:00:00Z" }
-      })
-    }
-    mockFetch.mockResolvedValueOnce(mockResponse)
-
-    const result = await adapter.health()
-
-    expect(result.success).toBe(true)
-    expect(result.data?.status).toBe("ok")
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining("/api/internal/health"), expect.any(Object))
-  })
-
-  it("should ping server", async () => {
-    const mockResponse = {
-      ok: true,
-      status: 200,
-      json: async () => ({
-        success: true,
-        data: { message: "pong", timestamp: "2023-01-01T00:00:00Z" }
+        data: {
+          status: "ok",
+          timestamp: "2023-01-01T00:00:00Z",
+          api_available: true,
+          runtime: "cloudflare-workers",
+          cf_ray: "test-ray",
+          environment: "test",
+          worker_limits: {
+            cpu_time: "50ms (startup) + 50ms (request)",
+            memory: "128MB",
+            request_timeout: "30s"
+          }
+        },
+        auth: {
+          supplied: false
+        },
+        headers: {
+          count: 5,
+          request: {
+            method: "GET",
+            host: "test.example.com",
+            path: "/api/ping",
+            version: "1.1"
+          },
+          cloudflare: {},
+          forwarding: {},
+          other: {}
+        },
+        timestamp: "2023-01-01T00:00:00Z"
       })
     }
     mockFetch.mockResolvedValueOnce(mockResponse)
@@ -455,43 +465,11 @@ describe("InternalAdapter", () => {
     const result = await adapter.ping()
 
     expect(result.success).toBe(true)
-    expect(result.data?.message).toBe("pong")
-  })
-
-  it("should validate auth", async () => {
-    const mockResponse = {
-      ok: true,
-      status: 200,
-      json: async () => ({
-        success: true,
-        data: { valid: true, sub: "test-user" }
-      })
-    }
-    mockFetch.mockResolvedValueOnce(mockResponse)
-
-    const result = await adapter.auth()
-
-    expect(result.success).toBe(true)
-    expect(result.data?.valid).toBe(true)
-    expect(result.data?.sub).toBe("test-user")
-  })
-
-  it("should get metrics with format", async () => {
-    const mockResponse = {
-      ok: true,
-      status: 200,
-      json: async () => ({
-        success: true,
-        data: { metrics: { requests: 100 }, format: "yaml" }
-      })
-    }
-    mockFetch.mockResolvedValueOnce(mockResponse)
-
-    const result = await adapter.metrics("yaml")
-
-    expect(result.success).toBe(true)
-    expect(result.data?.format).toBe("yaml")
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining("format=yaml"), expect.any(Object))
+    expect(result.data?.data?.status).toBe("ok")
+    expect(result.data?.data?.api_available).toBe(true)
+    expect(result.data?.auth?.supplied).toBe(false)
+    expect(result.data?.headers?.count).toBe(5)
+    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining("/api/ping"), expect.any(Object))
   })
 })
 

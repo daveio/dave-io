@@ -26,124 +26,17 @@ registry.registerComponent("securitySchemes", "bearerAuth", {
 // Register API endpoints
 registry.registerPath({
   method: "get",
-  path: "/api/internal/health",
-  tags: ["Internal"],
-  summary: "Health check endpoint",
-  description: "Returns system health status and Cloudflare metadata",
+  path: "/api/ping",
+  tags: ["System"],
+  summary: "Ping endpoint with comprehensive system information",
+  description:
+    "Returns system health, worker info, and Cloudflare metadata (merged from previous health, ping, and worker endpoints)",
   responses: {
     200: {
-      description: "Health check successful",
+      description: "System information",
       content: {
         "application/json": {
-          schema: schemas.HealthCheckSchema
-        }
-      }
-    }
-  }
-})
-
-registry.registerPath({
-  method: "get",
-  path: "/api/internal/ping",
-  tags: ["Internal"],
-  summary: "Ping endpoint",
-  description: "Simple ping/pong for monitoring",
-  responses: {
-    200: {
-      description: "Pong response",
-      content: {
-        "text/plain": {
-          schema: { type: "string", example: "pong" }
-        }
-      }
-    }
-  }
-})
-
-registry.registerPath({
-  method: "get",
-  path: "/api/internal/worker",
-  tags: ["Internal"],
-  summary: "Worker information",
-  description: "Returns Cloudflare Worker runtime details",
-  responses: {
-    200: {
-      description: "Worker information",
-      content: {
-        "application/json": {
-          schema: schemas.WorkerInfoSchema
-        }
-      }
-    }
-  }
-})
-
-registry.registerPath({
-  method: "get",
-  path: "/api/internal/auth",
-  tags: ["Authentication"],
-  summary: "Validate JWT token",
-  description: "Validates and returns JWT token information",
-  security: [{ bearerAuth: [] }],
-  responses: {
-    200: {
-      description: "Token validation successful",
-      content: {
-        "application/json": {
-          schema: schemas.AuthIntrospectionSchema
-        }
-      }
-    },
-    401: {
-      description: "Invalid or missing token",
-      content: {
-        "application/json": {
-          schema: schemas.ApiErrorResponseSchema
-        }
-      }
-    }
-  }
-})
-
-registry.registerPath({
-  method: "get",
-  path: "/api/internal/metrics",
-  tags: ["Metrics"],
-  summary: "Get API metrics",
-  description: "Returns comprehensive API usage metrics in various formats",
-  security: [{ bearerAuth: [] }],
-  parameters: [
-    {
-      name: "format",
-      in: "query",
-      description: "Output format",
-      schema: {
-        type: "string",
-        enum: ["json", "yaml", "prometheus"],
-        default: "json"
-      }
-    }
-  ],
-  responses: {
-    200: {
-      description: "Metrics data",
-      content: {
-        "application/json": {
-          schema: schemas.KVMetricsSchema
-        },
-        "application/yaml": {
-          schema: { type: "string" }
-        },
-        "text/plain": {
-          schema: { type: "string" }
-        }
-      }
-    },
-    403: {
-      description: "Insufficient permissions",
-      content: {
-        "application/json": {
-          schema: schemas.ApiErrorResponseSchema
+          schema: schemas.PingResponseSchema
         }
       }
     }
@@ -221,10 +114,7 @@ registry.registerPath({
               description: "Base64-encoded image data (without data: prefix)"
             }
           },
-          oneOf: [
-            { required: ["url"] },
-            { required: ["image"] }
-          ]
+          oneOf: [{ required: ["url"] }, { required: ["image"] }]
         }
       }
     }

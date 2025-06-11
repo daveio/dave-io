@@ -154,8 +154,6 @@ class APITester {
       if (!this.scriptMode) {
         console.log("✅ Generated tokens for: admin, metrics, ai, limited")
         console.log("🔗 Token URLs for manual testing:")
-        console.log(`   Admin: ${this.baseUrl}/api/internal/auth?token=${this.tokens.get("admin")}`)
-        console.log(`   Metrics: ${this.baseUrl}/api/internal/metrics?token=${this.tokens.get("metrics")}`)
         console.log(
           `   AI: ${this.baseUrl}/api/ai/alt?token=${this.tokens.get("ai")}&url=https://example.com/image.jpg`
         )
@@ -239,91 +237,6 @@ class APITester {
         error: error instanceof Error ? error.message : String(error),
         duration
       }
-    }
-  }
-
-  // Test authentication endpoints
-  async testAuth(): Promise<TestSuite> {
-    const results: TestResult[] = []
-    const startTime = Date.now()
-
-    if (!this.scriptMode) {
-      console.log("\n🔐 Testing Authentication Endpoints...")
-    }
-
-    // Test auth endpoint without token (should return 401)
-    results.push(await this.makeRequest("/api/internal/auth", "GET", undefined, undefined, {}, 401))
-
-    // Test auth endpoint with valid token (should return 200)
-    results.push(await this.makeRequest("/api/internal/auth", "GET", this.tokens.get("admin"), undefined, {}, 200))
-
-    // Test auth endpoint with invalid token (should return 401)
-    results.push(await this.makeRequest("/api/internal/auth", "GET", "invalid.token.here", undefined, {}, 401))
-
-    // Test auth endpoint with query parameter token (should return 200)
-    const queryToken = this.tokens.get("metrics")
-    results.push(await this.makeRequest(`/api/internal/auth?token=${queryToken}`, "GET", undefined, undefined, {}, 200))
-
-    const passed = results.filter((r) => r.success).length
-    const failed = results.length - passed
-
-    return {
-      name: "Authentication",
-      results,
-      passed,
-      failed,
-      duration: Date.now() - startTime
-    }
-  }
-
-  // Test metrics endpoints
-  async testMetrics(): Promise<TestSuite> {
-    const results: TestResult[] = []
-    const startTime = Date.now()
-
-    if (!this.scriptMode) {
-      console.log("\n📊 Testing Metrics Endpoints...")
-    }
-
-    // Test metrics without auth (should return 401)
-    results.push(await this.makeRequest("/api/internal/metrics", "GET", undefined, undefined, {}, 401))
-
-    // Test metrics with valid token (should return 200)
-    results.push(await this.makeRequest("/api/internal/metrics", "GET", this.tokens.get("metrics"), undefined, {}, 200))
-
-    // Test metrics with admin token (should work - return 200)
-    results.push(await this.makeRequest("/api/internal/metrics", "GET", this.tokens.get("admin"), undefined, {}, 200))
-
-    // Test metrics with wrong permission token (should return 401)
-    results.push(await this.makeRequest("/api/internal/metrics", "GET", this.tokens.get("ai"), undefined, {}, 401))
-
-    // Test different response formats (should return 200)
-    results.push(
-      await this.makeRequest("/api/internal/metrics?format=json", "GET", this.tokens.get("metrics"), undefined, {}, 200)
-    )
-    results.push(
-      await this.makeRequest("/api/internal/metrics?format=yaml", "GET", this.tokens.get("metrics"), undefined, {}, 200)
-    )
-    results.push(
-      await this.makeRequest(
-        "/api/internal/metrics?format=prometheus",
-        "GET",
-        this.tokens.get("metrics"),
-        undefined,
-        {},
-        200
-      )
-    )
-
-    const passed = results.filter((r) => r.success).length
-    const failed = results.length - passed
-
-    return {
-      name: "Metrics",
-      results,
-      passed,
-      failed,
-      duration: Date.now() - startTime
     }
   }
 
@@ -499,7 +412,7 @@ class APITester {
       console.log("\n❤️ Testing Health Endpoint...")
     }
 
-    results.push(await this.makeRequest("/api/internal/health"))
+    results.push(await this.makeRequest("/api/ping"))
 
     const passed = results.filter((r) => r.success).length
     const failed = results.length - passed
@@ -513,23 +426,17 @@ class APITester {
     }
   }
 
-  // Test internal endpoints (ping, headers, worker)
+  // Test ping endpoint (merged from health, ping, worker)
   async testInternal(): Promise<TestSuite> {
     const results: TestResult[] = []
     const startTime = Date.now()
 
     if (!this.scriptMode) {
-      console.log("\n🔧 Testing Internal Endpoints...")
+      console.log("\n🔧 Testing Ping Endpoint...")
     }
 
-    // Test ping endpoint (should be public)
-    results.push(await this.makeRequest("/api/internal/ping"))
-
-    // Test headers endpoint (should be public)
-    results.push(await this.makeRequest("/api/internal/headers"))
-
-    // Test worker endpoint (should be public)
-    results.push(await this.makeRequest("/api/internal/worker"))
+    // Test ping endpoint (should be public and provide all system info)
+    results.push(await this.makeRequest("/api/ping"))
 
     const passed = results.filter((r) => r.success).length
     const failed = results.length - passed
@@ -649,45 +556,6 @@ class APITester {
     }
   }
 
-  // Test multiple metrics formats
-  async testMetricsFormats(): Promise<TestSuite> {
-    const results: TestResult[] = []
-    const startTime = Date.now()
-
-    if (!this.scriptMode) {
-      console.log("\n📈 Testing Metrics Format Endpoints...")
-    }
-
-    // Test all metrics format endpoints via query parameters (should return 200)
-    results.push(
-      await this.makeRequest("/api/internal/metrics?format=json", "GET", this.tokens.get("metrics"), undefined, {}, 200)
-    )
-    results.push(
-      await this.makeRequest("/api/internal/metrics?format=yaml", "GET", this.tokens.get("metrics"), undefined, {}, 200)
-    )
-    results.push(
-      await this.makeRequest(
-        "/api/internal/metrics?format=prometheus",
-        "GET",
-        this.tokens.get("metrics"),
-        undefined,
-        {},
-        200
-      )
-    )
-
-    const passed = results.filter((r) => r.success).length
-    const failed = results.length - passed
-
-    return {
-      name: "Metrics Formats",
-      results,
-      passed,
-      failed,
-      duration: Date.now() - startTime
-    }
-  }
-
   // Test enhanced token management
   async testTokenManagement(): Promise<TestSuite> {
     const results: TestResult[] = []
@@ -771,9 +639,6 @@ class APITester {
     try {
       suites.push(await this.testHealth())
       suites.push(await this.testInternal())
-      suites.push(await this.testAuth())
-      suites.push(await this.testMetrics())
-      suites.push(await this.testMetricsFormats())
       suites.push(await this.testDashboard())
       suites.push(await this.testAI())
       suites.push(await this.testRedirects())
@@ -805,15 +670,12 @@ program
   .option("-t, --token <token>", "Use existing token instead of generating new ones")
   .option("--local", "Test against local development server (http://localhost:3000)")
   .option("--remote", "Test against remote production server (https://next.dave.io) [default]")
-  .option("--auth-only", "Test only authentication endpoints")
-  .option("--metrics-only", "Test only metrics endpoints")
   .option("--ai-only", "Test only AI endpoints")
   .option("--redirects-only", "Test only redirect endpoints")
   .option("--tokens-only", "Test only token management endpoints")
   .option("--health-only", "Test only health endpoint")
   .option("--internal-only", "Test only internal endpoints")
   .option("--dashboard-only", "Test only dashboard endpoints")
-  .option("--metrics-formats-only", "Test only metrics format endpoints")
   .option("-d, --dry-run", "Show what would be tested without making actual requests")
   .action(async (options) => {
     const scriptMode = isScriptMode()
@@ -842,19 +704,7 @@ program
     let success = false
 
     try {
-      if (options.authOnly) {
-        if (!options.token && !options.dryRun) await tester.generateTokens(options.dryRun)
-        const suite = options.dryRun
-          ? { name: "Authentication", results: [], passed: 0, failed: 0, duration: 0 }
-          : await tester.testAuth()
-        success = tester.printResults([suite])
-      } else if (options.metricsOnly) {
-        if (!options.token && !options.dryRun) await tester.generateTokens(options.dryRun)
-        const suite = options.dryRun
-          ? { name: "Metrics", results: [], passed: 0, failed: 0, duration: 0 }
-          : await tester.testMetrics()
-        success = tester.printResults([suite])
-      } else if (options.aiOnly) {
+      if (options.aiOnly) {
         if (!options.token && !options.dryRun) await tester.generateTokens(options.dryRun)
         const suite = options.dryRun
           ? { name: "AI Endpoints", results: [], passed: 0, failed: 0, duration: 0 }
@@ -887,12 +737,6 @@ program
           ? { name: "Dashboard", results: [], passed: 0, failed: 0, duration: 0 }
           : await tester.testDashboard()
         success = tester.printResults([suite])
-      } else if (options.metricsFormatsOnly) {
-        if (!options.token && !options.dryRun) await tester.generateTokens(options.dryRun)
-        const suite = options.dryRun
-          ? { name: "Metrics Formats", results: [], passed: 0, failed: 0, duration: 0 }
-          : await tester.testMetricsFormats()
-        success = tester.printResults([suite])
       } else {
         success = await tester.runAllTests(options.dryRun)
       }
@@ -919,7 +763,7 @@ Examples:
   bun run test:api                          # Run all tests against next.dave.io (remote)
   bun run test:api --local                  # Test against localhost:3000
   bun run test:api --url https://custom.io # Test against custom URL
-  bun run test:api --auth-only              # Test only auth endpoints
+  bun run test:api --ai-only                # Test only AI endpoints
   bun run test:api --token "eyJhbGci..."    # Use existing token
   bun run test:api --secret "my-secret"     # Use custom JWT secret
   bun run test:api --dry-run                # Show what would be tested without running
@@ -929,7 +773,7 @@ Environment Variables:
 
 Notes:
   - Tests will generate temporary JWT tokens for testing different permissions
-  - Health endpoint tests don't require authentication
+  - Ping endpoint tests don't require authentication
   - Redirect tests check for proper redirect responses (3xx status codes)
   - Failed tests will show detailed error information
 `

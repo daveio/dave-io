@@ -6,7 +6,7 @@
 
 - **NO backwards compatibility** (pre-production only)
 - Remove fields, delete KV keys, change APIs without migration
-- Document breaking changes in CLAUDE.md
+- Document breaking changes in AGENTS.md
 - ❌ No migration code or legacy support
 
 ### Quality > Speed
@@ -116,14 +116,31 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 
 ## Key Endpoints
 
-**Public**: `/api/internal/health|ping|worker`, `/api/images/optimise`, `/go/{slug}`
+**Public**: `/api/ping`, `/api/images/optimise`, `/go/{slug}`
 **Protected** (require JWT + scope):
-- `/api/internal/auth` - Token validation (any token)
-- `/api/internal/metrics` - API metrics (`api:metrics`+)
 - `/api/ai/alt` - Alt-text generation (`ai:alt`+)
 - `/api/tokens/{uuid}/*` - Token management (`api:tokens`+)
 
 ## Breaking Changes
+
+### API Endpoint Consolidation (December 2024)
+
+- **Merged Endpoints**: `/api/internal/health`, `/api/internal/ping`, `/api/internal/worker`, `/api/internal/auth`, and `/api/internal/headers` → `/api/ping`
+- **Removed Endpoints**: All `/api/internal/*` endpoints (entire directory removed)
+- **Enhanced Response**: `/api/ping` now returns comprehensive system information including:
+  - System status (health + worker + runtime data)
+  - Optional JWT validation (when token provided)
+  - Request headers analysis (Cloudflare, forwarding, other)
+- **Public Access**: `/api/ping` requires no authentication but responds differently when JWT token is provided
+- **CLI Updates**: All bin/ scripts now use `/api/ping` instead of individual internal endpoints
+- **Response Format**: New structured response with `data`, `auth`, and `headers` sections
+
+### Unified Auth System for try.ts (December 2024)
+
+- **New Options**: `--auth` auto-generates temporary tokens, `--token <JWT>` uses provided tokens
+- **Scope Detection**: `--auth` automatically determines required scopes based on endpoint
+- **Simplified Workflow**: No need to manually create tokens for testing
+- **Environment Requirement**: `API_JWT_SECRET` must be set for `--auth` to work
 
 ### Development Workflow (December 2024)
 
@@ -173,7 +190,7 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 
 - **JWT** (`bin/jwt.ts`): `init|create|verify|list|show|search|revoke`
 - **API Test** (`bin/api-test.ts`): End-to-end testing, `--auth-only|--ai-only|etc`
-- **Try** (`bin/try.ts`): Interactive endpoint tester with pretty output, `ai|images|internal|tokens|dashboard`
+- **Try** (`bin/try.ts`): Interactive endpoint tester with unified auth support (`--auth|--token`)
 - **KV** (`bin/kv.ts`): `export|import|list|wipe`, local mode with `--local`
 - **Deploy** (`bin/env.ts`): Secure environment deployment
 
@@ -279,12 +296,9 @@ data/kv/           # KV exports/imports
 ## API Examples
 
 ```bash
-# Core endpoints
-curl http://localhost:3000/api/internal/health
-curl -H "Authorization: Bearer <token>" http://localhost:3000/api/internal/auth
-
-# Metrics (json/yaml/prometheus formats)
-curl -H "Authorization: Bearer <token>" http://localhost:3000/api/internal/metrics?format=yaml
+# Core endpoints - comprehensive status with optional auth
+curl http://localhost:3000/api/ping
+curl -H "Authorization: Bearer <token>" http://localhost:3000/api/ping
 
 # AI alt-text
 curl -H "Authorization: Bearer <token>" "http://localhost:3000/api/ai/alt?url=https://example.com/image.jpg"
@@ -308,22 +322,20 @@ bun run kv --local import backup.yaml  # Local import
 bun run kv list --pattern "metrics"
 
 # API testing
-bun run test:api --auth-only
+bun run test:api --ai-only
 bun run test:api --url https://dave.io --token "eyJ..."
 
 # Interactive endpoint testing (try.ts)
-bun try internal health              # Test system health (no auth required)
-bun try internal auth                # Validate JWT token
-bun try internal metrics --format yaml  # Get metrics in YAML format
-bun try ai alt url "https://example.com/image.jpg"  # Generate alt-text from URL
-bun try ai alt file "./image.png"    # Generate alt-text from local image file
-bun try images optimise file "./image.png" --quality 75  # Optimise local image (public)
-bun try tokens info <uuid>           # Get token information
-bun try dashboard "hacker-news"      # Get dashboard data by name
-bun try --remote internal health     # Test against production [default]
-bun try --local internal health      # Test against local dev server
-bun try --script internal health     # JSON output for automation
-bun try --dry-run ai alt url "..."   # Show what would be done without executing
+bun try internal ping                           # Test comprehensive status (health, auth, headers) - no auth required
+bun try --auth ai alt url "https://example.com/image.jpg"  # Generate alt-text from URL (auto-generate token)
+bun try --token "eyJ..." ai alt file "./image.png"        # Generate alt-text from file (use provided token)
+bun try images optimise file "./image.png" --quality 75   # Optimise local image (public, no auth)
+bun try --auth tokens info <uuid>               # Get token information (auto-generate token)
+bun try --auth dashboard "hacker-news"          # Get dashboard data by name (auto-generate token)
+bun try --remote internal ping                  # Test against production [default]
+bun try --local internal ping                   # Test against local dev server
+bun try --script internal ping                  # JSON output for automation
+bun try --dry-run --auth ai alt url "..."       # Show what would be done without executing
 ```
 
 ## KV Schema (YAML)

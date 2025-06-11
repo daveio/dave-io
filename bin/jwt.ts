@@ -393,8 +393,8 @@ program
         console.log(JSON.stringify(metadata, null, 2))
 
         console.log("\n💡 Usage Examples:")
-        console.log(`curl -H "Authorization: Bearer ${token}" http://localhost:3000/api/internal/auth`)
-        console.log(`curl "http://localhost:3000/api/internal/auth?token=${token}"`)
+        console.log(`curl -H "Authorization: Bearer ${token}" http://localhost:3000/api/ping`)
+        console.log(`curl "http://localhost:3000/api/ping?token=${token}"`)
 
         console.log("\n📋 Test with our API:")
         console.log(`bun run bin/api.ts --token "${token}"`)

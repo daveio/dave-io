@@ -186,6 +186,66 @@ export const WorkerInfoSchema = z.object({
   })
 })
 
+// Ping endpoint schema (merged from health, ping, and worker endpoints)
+export const PingResponseSchema = z.object({
+  api_available: z.boolean(),
+  cf_connecting_ip: z.string(),
+  cf_country: z.string(),
+  cf_datacenter: z.string(),
+  cf_ipcountry: z.string(),
+  cf_ray: z.string(),
+  edge_functions: z.boolean(),
+  environment: z.string(),
+  preset: z.string(),
+  runtime: z.string(),
+  server_side_rendering: z.boolean(),
+  status: z.enum(["ok", "error"]),
+  timestamp: z.string(),
+  user_agent: z.string(),
+  version: z.string(),
+  worker_limits: z.object({
+    cpu_time: z.string(),
+    memory: z.string(),
+    request_timeout: z.string()
+  })
+})
+
+// Enhanced ping endpoint schema (includes auth and headers)
+export const EnhancedPingResponseSchema = z.object({
+  data: PingResponseSchema,
+  auth: z.object({
+    supplied: z.boolean(),
+    token: z
+      .object({
+        value: z.string(),
+        valid: z.boolean(),
+        payload: z
+          .object({
+            subject: z.string(),
+            tokenId: z.string().nullable(),
+            issuedAt: z.string(),
+            expiresAt: z.string().nullable()
+          })
+          .optional()
+      })
+      .optional()
+  }),
+  headers: z.object({
+    count: z.number(),
+    request: z.object({
+      method: z.string(),
+      host: z.string(),
+      path: z.string(),
+      version: z.string()
+    }),
+    cloudflare: z.record(z.string(), z.string()),
+    forwarding: z.record(z.string(), z.string()),
+    other: z.record(z.string(), z.string())
+  }),
+  success: z.literal(true),
+  timestamp: z.string()
+})
+
 // URL redirect schemas (for /go endpoints)
 export const UrlRedirectSchema = z.object({
   slug: z
@@ -306,6 +366,8 @@ export type AuthIntrospection = z.infer<typeof AuthIntrospectionSchema>
 export type HealthCheck = z.infer<typeof HealthCheckSchema>
 export type SystemMetrics = z.infer<typeof SystemMetricsSchema>
 export type WorkerInfo = z.infer<typeof WorkerInfoSchema>
+export type PingResponse = z.infer<typeof PingResponseSchema>
+export type EnhancedPingResponse = z.infer<typeof EnhancedPingResponseSchema>
 export type UrlRedirect = z.infer<typeof UrlRedirectSchema>
 export type CreateRedirect = z.infer<typeof CreateRedirectSchema>
 export type AiAltTextRequest = z.infer<typeof AiAltTextRequestSchema>

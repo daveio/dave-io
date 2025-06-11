@@ -1,113 +1,76 @@
 import { type ApiResponse, BaseAdapter, type RequestConfig } from "./base"
 
 /**
- * Response format for health check endpoint
+ * Response format for ping endpoint (merged from health, ping, and worker)
  */
-interface HealthResponse {
-  status: "ok" | "degraded" | "down"
-  timestamp: string
-  version?: string
-  uptime?: number
-  checks?: Record<string, { status: string; message?: string }>
-}
-
-/**
- * Response format for auth validation endpoint
- */
-interface AuthResponse {
-  valid: boolean
-  sub?: string
-  exp?: number
-  iat?: number
-  jti?: string
-  permissions?: string[]
-}
-
-/**
- * Response format for metrics endpoint
- */
-interface MetricsResponse {
-  metrics: Record<string, unknown>
-  format: "json" | "yaml" | "prometheus"
-  timestamp: string
-  total?: number
-}
-
-/**
- * Response format for worker info endpoint
- */
-interface WorkerResponse {
+interface PingResponse {
+  api_available: boolean
+  cf_connecting_ip: string
+  cf_country: string
+  cf_datacenter: string
+  cf_ipcountry: string
+  cf_ray: string
+  edge_functions: boolean
+  environment: string
+  preset: string
   runtime: string
-  version?: string
-  region?: string
-  colo?: string
-  cf?: Record<string, unknown>
+  server_side_rendering: boolean
+  status: "ok" | "error"
+  timestamp: string
+  user_agent: string
+  version: string
+  worker_limits: {
+    cpu_time: string
+    memory: string
+    request_timeout: string
+  }
 }
 
 /**
- * Response format for headers debug endpoint
+ * Enhanced ping response (includes auth and headers)
  */
-interface HeadersResponse {
-  headers: Record<string, string>
-  ip?: string
-  userAgent?: string
-  country?: string
-  ray?: string
+interface EnhancedPingResponse {
+  data: PingResponse
+  auth: {
+    supplied: boolean
+    token?: {
+      value: string
+      valid: boolean
+      payload?: {
+        subject: string
+        tokenId: string | null
+        issuedAt: string
+        expiresAt: string | null
+      }
+    }
+  }
+  headers: {
+    count: number
+    request: {
+      method: string
+      host: string
+      path: string
+      version: string
+    }
+    cloudflare: Record<string, string>
+    forwarding: Record<string, string>
+    other: Record<string, string>
+  }
+  success: true
+  timestamp: string
 }
 
 /**
- * Adapter for internal system operations (/api/internal/*)
- * Most endpoints are public except auth and metrics which require tokens
+ * Adapter for ping operations
+ * Public endpoint that provides comprehensive service information
  */
 export class InternalAdapter extends BaseAdapter {
   /**
-   * Check system health status (public endpoint)
-   * @returns System health information
+   * Ping the server and get comprehensive service information (public endpoint)
+   * Includes system status, auth validation, and request headers
+   * @returns Complete service status including health, runtime, worker info, auth, and headers
    */
-  async health(): Promise<ApiResponse<HealthResponse>> {
-    return this.makeRequest("/api/internal/health")
-  }
-
-  /**
-   * Ping the server (public endpoint)
-   * @returns Pong response with timestamp
-   */
-  async ping(): Promise<ApiResponse<{ message: string; timestamp: string }>> {
-    return this.makeRequest("/api/internal/ping")
-  }
-
-  /**
-   * Get worker runtime information (public endpoint)
-   * @returns Cloudflare Workers runtime details
-   */
-  async worker(): Promise<ApiResponse<WorkerResponse>> {
-    return this.makeRequest("/api/internal/worker")
-  }
-
-  /**
-   * Debug request headers (public endpoint)
-   * @returns Request headers and client information
-   */
-  async headers(): Promise<ApiResponse<HeadersResponse>> {
-    return this.makeRequest("/api/internal/headers")
-  }
-
-  /**
-   * Validate JWT token (requires any valid token)
-   * @returns Token validation result and decoded claims
-   */
-  async auth(): Promise<ApiResponse<AuthResponse>> {
-    return this.makeRequest("/api/internal/auth")
-  }
-
-  /**
-   * Get API metrics (requires 'api:metrics' scope or higher)
-   * @param format Output format for metrics data
-   * @returns API usage metrics in specified format
-   */
-  async metrics(format: "json" | "yaml" | "prometheus" = "json"): Promise<ApiResponse<MetricsResponse>> {
-    return this.makeRequest("/api/internal/metrics", {
-      params: { format }
-    })
+  async ping(): Promise<ApiResponse<EnhancedPingResponse>> {
+    return this.makeRequest("/api/ping")
   }
 }

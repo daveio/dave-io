@@ -11,12 +11,14 @@ import {
   type RequestConfig,
   TokensAdapter
 } from "./endpoints"
+import { createToken } from "./jwt"
 import { getJWTSecret } from "./shared/cli-utils"
 
 const program = new Command()
 
 interface GlobalOptions {
   token?: string
+  auth?: boolean
   local?: boolean
   remote?: boolean
   version?: boolean
@@ -28,15 +30,57 @@ interface GlobalOptions {
   script?: boolean
 }
 
-function createConfig(options: GlobalOptions): RequestConfig {
+async function generateTokenForScope(scope: string, options: GlobalOptions): Promise<string> {
+  const secret = getJWTSecret()
+  if (!secret) {
+    console.error(chalk.red("❌ API_JWT_SECRET environment variable not set"))
+    console.error(chalk.yellow("💡 Set API_JWT_SECRET in your environment to use --auth"))
+    process.exit(1)
+  }
+
+  try {
+    if (!isScriptMode(options) && !isQuiet(options)) {
+      console.log(chalk.cyan(`🔐 Generating temporary token for scope: ${scope}`))
+    }
+
+    const { token } = await createToken(
+      {
+        sub: scope,
+        description: `Temporary token for try.ts (${scope})`,
+        expiresIn: "1h"
+      },
+      secret,
+      options.dryRun
+    )
+
+    if (!isScriptMode(options) && !isQuiet(options)) {
+      console.log(chalk.green("✅ Token generated successfully"))
+    }
+
+    return token
+  } catch (error) {
+    console.error(chalk.red("❌ Failed to generate token:"), error)
+    process.exit(1)
+  }
+}
+
+async function createConfig(options: GlobalOptions, scope?: string): Promise<RequestConfig> {
   const baseUrl = options.local
     ? "http://localhost:3000"
     : options.remote
       ? "https://next.dave.io"
       : "https://next.dave.io"
 
+  let token: string | undefined
+
+  if (options.auth && scope) {
+    token = await generateTokenForScope(scope, options)
+  } else {
+    token = options.token || undefined
+  }
+
   return {
-    token: options.token || getJWTSecret() || undefined,
+    token,
     baseUrl,
     timeout: 30000,
     verbose: options.verbose || false,
@@ -141,10 +185,15 @@ async function withSpinner<T>(promise: Promise<T>, text: string, options: Global
   }
 }
 
-function validateToken(config: RequestConfig, endpoint: string): void {
+function validateToken(config: RequestConfig, endpoint: string, hasAuth: boolean): void {
   if (!config.token) {
-    console.error(chalk.red("❌ No token provided. Set API_JWT_SECRET environment variable or use --token option"))
-    console.error(chalk.yellow(`💡 You can create a token with: bun jwt create --sub "${endpoint}"`))
+    console.error(chalk.red("❌ No token provided for protected endpoint"))
+    if (hasAuth) {
+      console.error(chalk.yellow("💡 Token generation failed. Check your API_JWT_SECRET environment variable"))
+    } else {
+      console.error(chalk.yellow("💡 Use --auth to auto-generate a token or --token <JWT> to provide one"))
+      console.error(chalk.yellow(`💡 You can create a token manually with: bun jwt create --sub "${endpoint}"`))
+    }
     process.exit(1)
   }
 }
@@ -153,6 +202,7 @@ program.name("try").description("Interactive API endpoint tester for dave-io-nux
 
 program
   .option("-t, --token <token>", "JWT token for authentication")
+  .option("-a, --auth", "Auto-generate temporary token with required scopes")
   .option("--local", "Use local development server (http://localhost:3000)")
   .option("--remote", "Use remote server (https://next.dave.io) [default]")
   .option("-d, --dry-run", "Show what would be done without making actual requests")
@@ -170,8 +220,8 @@ aiAltCommand
   .description("Generate alt-text from image URL")
   .action(async (imageUrl, _options, command) => {
     const options = command.parent?.parent?.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
-    validateToken(config, "ai:alt")
+    const config = await createConfig(options, "ai:alt")
+    validateToken(config, "ai:alt", options.auth || false)
 
     const adapter = new AIAdapter(config)
     const result = await withSpinner(
@@ -188,8 +238,8 @@ aiAltCommand
   .description("Generate alt-text from image file")
   .action(async (filePath, _options, command) => {
     const options = command.parent?.parent?.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
-    validateToken(config, "ai:alt")
+    const config = await createConfig(options, "ai:alt")
+    validateToken(config, "ai:alt", options.auth || false)
 
     const adapter = new AIAdapter(config)
     const result = await withSpinner(
@@ -211,7 +261,7 @@ imagesOptimiseCommand
   .option("-q, --quality <number>", "Image quality (0-100)", (value) => Number.parseInt(value), 80)
   .action(async (imageUrl, cmdOptions, command) => {
     const options = command.parent?.parent?.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
+    const config = await createConfig(options)
 
     const adapter = new ImagesAdapter(config)
     const result = await withSpinner(
@@ -229,7 +279,7 @@ imagesOptimiseCommand
   .option("-q, --quality <number>", "Image quality (0-100)", (value) => Number.parseInt(value), 80)
   .action(async (filePath, cmdOptions, command) => {
     const options = command.parent?.parent?.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
+    const config = await createConfig(options)
 
     const adapter = new ImagesAdapter(config)
     const result = await withSpinner(
@@ -245,84 +295,16 @@ imagesOptimiseCommand
 const internalCommand = program.command("internal").description("Internal system operations")
 
 internalCommand
-  .command("health")
-  .description("Check system health")
-  .action(async (_options, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
-
-    const adapter = new InternalAdapter(config)
-    const result = await withSpinner(adapter.health(), "Checking system health", options)
-
-    await displayResult(result, options, "Health Check")
-  })
-
-internalCommand
   .command("ping")
-  .description("Ping the server")
+  .description("Ping the server and get comprehensive status including auth and headers")
   .action(async (_options, command) => {
     const options = command.parent?.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
+    const config = await createConfig(options)
 
     const adapter = new InternalAdapter(config)
-    const result = await withSpinner(adapter.ping(), "Pinging server", options)
+    const result = await withSpinner(adapter.ping(), "Getting comprehensive server status", options)
 
-    await displayResult(result, options, "Ping")
-  })
-
-internalCommand
-  .command("worker")
-  .description("Get worker runtime information")
-  .action(async (_options, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
-
-    const adapter = new InternalAdapter(config)
-    const result = await withSpinner(adapter.worker(), "Getting worker info", options)
-
-    await displayResult(result, options, "Worker Info")
-  })
-
-internalCommand
-  .command("headers")
-  .description("Debug request headers")
-  .action(async (_options, command) => {
-    const options = command.parent?.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
-
-    const adapter = new InternalAdapter(config)
-    const result = await withSpinner(adapter.headers(), "Getting headers", options)
-
-    await displayResult(result, options, "Headers Debug")
-  })
-
-internalCommand
-  .command("auth")
-  .description("Validate JWT token")
-  .action(async (_options, command) => {
-    const options = command.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
-    validateToken(config, "any")
-
-    const adapter = new InternalAdapter(config)
-    const result = await withSpinner(adapter.auth(), "Validating token", options)
-
-    await displayResult(result, options, "Token Validation")
-  })
-
-internalCommand
-  .command("metrics")
-  .description("Get API metrics")
-  .option("-f, --format <format>", "Output format (json|yaml|prometheus)", "json")
-  .action(async (cmdOptions, command) => {
-    const options = command.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
-    validateToken(config, "api:metrics")
-
-    const adapter = new InternalAdapter(config)
-    const result = await withSpinner(adapter.metrics(cmdOptions.format), "Getting metrics", options)
-
-    await displayResult(result, options, "API Metrics")
+    await displayResult(result, options, "Server Status")
   })
 
 // Tokens Commands
@@ -333,8 +315,8 @@ tokensCommand
   .description("Get token information")
   .action(async (uuid, _options, command) => {
     const options = command.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
-    validateToken(config, "api:tokens")
+    const config = await createConfig(options, "api:tokens")
+    validateToken(config, "api:tokens", options.auth || false)
 
     const adapter = new TokensAdapter(config)
     const result = await withSpinner(adapter.getTokenInfo(uuid), `Getting token info for ${uuid}`, options)
@@ -347,8 +329,8 @@ tokensCommand
   .description("Get token usage statistics")
   .action(async (uuid, _options, command) => {
     const options = command.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
-    validateToken(config, "api:tokens")
+    const config = await createConfig(options, "api:tokens")
+    validateToken(config, "api:tokens", options.auth || false)
 
     const adapter = new TokensAdapter(config)
     const result = await withSpinner(adapter.getTokenUsage(uuid), `Getting token usage for ${uuid}`, options)
@@ -361,8 +343,8 @@ tokensCommand
   .description("Revoke a token")
   .action(async (uuid, _options, command) => {
     const options = command.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
-    validateToken(config, "api:tokens")
+    const config = await createConfig(options, "api:tokens")
+    validateToken(config, "api:tokens", options.auth || false)
 
     const adapter = new TokensAdapter(config)
     const result = await withSpinner(adapter.revokeToken(uuid), `Revoking token ${uuid}`, options)
@@ -375,8 +357,8 @@ tokensCommand
   .description("Unrevoke a token")
   .action(async (uuid, _options, command) => {
     const options = command.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
-    validateToken(config, "api:tokens")
+    const config = await createConfig(options, "api:tokens")
+    validateToken(config, "api:tokens", options.auth || false)
 
     const adapter = new TokensAdapter(config)
     const result = await withSpinner(adapter.unrevokeToken(uuid), `Unrevoking token ${uuid}`, options)
@@ -389,8 +371,8 @@ tokensCommand
   .description("Perform dynamic operation on token endpoint")
   .action(async (uuid, path, _options, command) => {
     const options = command.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
-    validateToken(config, "api:tokens")
+    const config = await createConfig(options, "api:tokens")
+    validateToken(config, "api:tokens", options.auth || false)
 
     const adapter = new TokensAdapter(config)
     const result = await withSpinner(
@@ -410,8 +392,8 @@ dashboardCommand
   .description("Get dashboard data by name")
   .action(async (name, _options, command) => {
     const options = command.parent?.opts() as GlobalOptions
-    const config = createConfig(options)
-    validateToken(config, "dashboard")
+    const config = await createConfig(options, "dashboard")
+    validateToken(config, "dashboard", options.auth || false)
 
     const adapter = new DashboardAdapter(config)
     const result = await withSpinner(adapter.getDashboardData(name), `Getting dashboard data for ${name}`, options)
@@ -437,12 +419,7 @@ ${chalk.cyan("Image Optimisation:")}
   bun try images optimise file <filePath> [--quality N]   Optimise local image file
 
 ${chalk.cyan("Internal System:")}
-  bun try internal health                Check system health status
-  bun try internal ping                  Ping the server
-  bun try internal worker                Get worker runtime information
-  bun try internal headers               Debug request headers
-  bun try internal auth                  Validate JWT token
-  bun try internal metrics [--format]   Get API metrics (json|yaml|prometheus)
+  bun try internal ping                  Get comprehensive server status (health, auth, headers)
 
 ${chalk.cyan("Token Management:")}
   bun try tokens info <uuid>             Get token information
@@ -456,35 +433,35 @@ ${chalk.cyan("Dashboard Data:")}
 
 ${chalk.bold("Examples:")}
   ${chalk.cyan("# Public endpoints (no authentication)")}
-  bun try internal health
   bun try internal ping
-  bun try internal worker
   bun try images optimise file "./image.png" --quality 75
   bun try images optimise url "https://example.com/image.jpg"
 
   ${chalk.cyan("# Authenticated endpoints (requires token)")}
-  bun try --token "eyJ..." internal auth
-  bun try internal metrics
-  bun try ai alt url "https://example.com/image.jpg"
-  bun try ai alt file "./image.png"
-  bun try dashboard hacker-news
+  bun try --auth ai alt url "https://example.com/image.jpg"     # Auto-generate token
+  bun try --token "eyJ..." ai alt file "./image.png"           # Use provided token
+  bun try --auth dashboard hacker-news                         # Auto-generate token
 
   ${chalk.cyan("# Environment selection")}
-  bun try --local internal health        # Local development
-  bun try --remote internal health       # Remote production [default]
+  bun try --local internal ping          # Local development
+  bun try --remote internal ping         # Remote production [default]
 
   ${chalk.cyan("# Output control")}
-  bun try --script internal health       # JSON output for scripting
-  bun try --quiet internal health        # Minimal output
-  bun try --verbose internal health      # Detailed output
+  bun try --script internal ping         # JSON output for scripting
+  bun try --quiet internal ping          # Minimal output
+  bun try --verbose internal ping        # Detailed output
   bun try --dry-run ai alt url "..."     # Show what would be done
 
-${chalk.bold("Environment Variables:")}
-  ${chalk.yellow("API_JWT_SECRET")}      JWT secret for authentication
+${chalk.bold("Authentication Options:")}
+  ${chalk.yellow("-t, --token <JWT>")}   Use specific JWT token for authentication
+  ${chalk.yellow("-a, --auth")}          Auto-generate temporary token with required scopes
 
-${chalk.bold("Token Creation:")}
+${chalk.bold("Environment Variables:")}
+  ${chalk.yellow("API_JWT_SECRET")}      JWT secret for authentication (required for --auth)
+
+${chalk.bold("Manual Token Creation:")}
   ${chalk.green("bun jwt create --sub 'ai:alt' --description 'AI testing'")}
-  ${chalk.green("bun jwt create --sub 'api:metrics' --description 'Metrics access'")}
+  ${chalk.green("bun jwt create --sub 'api:tokens' --description 'Token management'")}
 `
 )
 
@@ -496,4 +473,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   main()
 }
 
-export { createConfig }
+export { createConfig, generateTokenForScope, validateToken }
