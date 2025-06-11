@@ -2,6 +2,11 @@ import { blake3 } from "@noble/hashes/blake3"
 import { fileTypeFromBuffer } from "file-type"
 import { createApiError } from "./response"
 
+// Import the global Env type for TypeScript compatibility
+declare global {
+  interface Env extends Cloudflare.Env {}
+}
+
 /**
  * Valid image MIME types supported by Cloudflare Images
  */
@@ -107,7 +112,8 @@ export async function uploadToCloudflareImages(
 
   // Upload via Cloudflare Images API
   const formData = new FormData()
-  formData.append("file", new File([buffer], "image", { type: originalMimeType }))
+  // Convert Buffer to Uint8Array for File constructor compatibility
+  formData.append("file", new File([new Uint8Array(buffer)], "image", { type: originalMimeType }))
   formData.append("id", id)
   formData.append("metadata", JSON.stringify(metadata))
   formData.append("requireSignedURLs", "false")
