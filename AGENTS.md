@@ -116,3 +116,8 @@ bun jwt init && bun run deploy
 **KV YAML**: `metrics: {ok: 0}` → `metrics:ok = "0"`
 **Linting**: `// biome-ignore lint/suspicious/noExplicitAny: [reason]`
 **Images**: Cloudflare service, BLAKE3 IDs, 4MB limit, global CDN
+
+## Immediate Plans
+
+- Resolve TODOs in `test/try-adapters.test.ts`
+- Implement runtime validation for API responses using Zod schemas to ensure all responses conform to standardized structure
