@@ -76,14 +76,32 @@
             "type": "boolean",
             "enum": [true]
           },
-          "description": {
-            "type": "string"
+          "result": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string"
+              }
+            },
+            "required": ["description"]
+          },
+          "status": {
+            "type": ["object", "null"],
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": ["message"]
+          },
+          "error": {
+            "type": "null"
           },
           "timestamp": {
             "type": "string"
           }
         },
-        "required": ["ok", "description", "timestamp"]
+        "required": ["ok", "result", "status", "error", "timestamp"]
       },
       "AiTicketEnrichRequestSchema": {
         "type": "object",
@@ -116,14 +134,32 @@
             "type": "boolean",
             "enum": [true]
           },
-          "description": {
-            "type": "string"
+          "result": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string"
+              }
+            },
+            "required": ["description"]
+          },
+          "status": {
+            "type": ["object", "null"],
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": ["message"]
+          },
+          "error": {
+            "type": "null"
           },
           "timestamp": {
             "type": "string"
           }
         },
-        "required": ["ok", "description", "timestamp"]
+        "required": ["ok", "result", "status", "error", "timestamp"]
       },
       "AiTicketImageDataSchema": {
         "type": "object",
@@ -164,14 +200,32 @@
             "type": "boolean",
             "enum": [true]
           },
-          "title": {
-            "type": "string"
+          "result": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": ["title"]
+          },
+          "status": {
+            "type": ["object", "null"],
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": ["message"]
+          },
+          "error": {
+            "type": "null"
           },
           "timestamp": {
             "type": "string"
           }
         },
-        "required": ["ok", "title", "timestamp"]
+        "required": ["ok", "result", "status", "error", "timestamp"]
       },
       "ApiErrorResponseSchema": {
         "type": "object",
@@ -182,6 +236,18 @@
           },
           "error": {
             "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "type": ["object", "null"],
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": ["message"]
           },
           "details": {},
           "meta": {
@@ -196,7 +262,7 @@
             "type": "string"
           }
         },
-        "required": ["ok", "error", "timestamp"]
+        "required": ["ok", "error", "message", "status", "timestamp"]
       },
       "ApiSuccessResponseSchema": {
         "type": "object",
@@ -205,9 +271,21 @@
             "type": "boolean",
             "enum": [true]
           },
-          "data": {},
+          "result": {},
           "message": {
             "type": "string"
+          },
+          "error": {
+            "type": "null"
+          },
+          "status": {
+            "type": ["object", "null"],
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": ["message"]
           },
           "meta": {
             "type": "object",
@@ -233,7 +311,7 @@
             "type": "string"
           }
         },
-        "required": ["ok", "timestamp"]
+        "required": ["ok", "message", "error", "status", "timestamp"]
       },
       "AuthIntrospectionSchema": {
         "type": "object",
@@ -2048,6 +2126,18 @@
                     "error": {
                       "type": "string"
                     },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
                     "details": {},
                     "meta": {
                       "type": "object",
@@ -2061,7 +2151,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "timestamp"]
+                  "required": ["ok", "error", "message", "status", "timestamp"]
                 }
               }
             }
@@ -2080,6 +2170,18 @@
                     "error": {
                       "type": "string"
                     },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
                     "details": {},
                     "meta": {
                       "type": "object",
@@ -2093,7 +2195,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "timestamp"]
+                  "required": ["ok", "error", "message", "status", "timestamp"]
                 }
               }
             }
@@ -2182,6 +2284,18 @@
                     "error": {
                       "type": "string"
                     },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
                     "details": {},
                     "meta": {
                       "type": "object",
@@ -2195,7 +2309,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "timestamp"]
+                  "required": ["ok", "error", "message", "status", "timestamp"]
                 }
               }
             }
@@ -2214,6 +2328,18 @@
                     "error": {
                       "type": "string"
                     },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
                     "details": {},
                     "meta": {
                       "type": "object",
@@ -2227,7 +2353,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "timestamp"]
+                  "required": ["ok", "error", "message", "status", "timestamp"]
                 }
               }
             }
@@ -2361,6 +2487,18 @@
                     "error": {
                       "type": "string"
                     },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
                     "details": {},
                     "meta": {
                       "type": "object",
@@ -2374,7 +2512,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "timestamp"]
+                  "required": ["ok", "error", "message", "status", "timestamp"]
                 }
               }
             }
@@ -2416,9 +2554,21 @@
                       "type": "boolean",
                       "enum": [true]
                     },
-                    "data": {},
+                    "result": {},
                     "message": {
                       "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
                     },
                     "meta": {
                       "type": "object",
@@ -2444,7 +2594,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "timestamp"]
+                  "required": ["ok", "message", "error", "status", "timestamp"]
                 }
               }
             }
@@ -2463,6 +2613,18 @@
                     "error": {
                       "type": "string"
                     },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
                     "details": {},
                     "meta": {
                       "type": "object",
@@ -2476,7 +2638,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "timestamp"]
+                  "required": ["ok", "error", "message", "status", "timestamp"]
                 }
               }
             }
@@ -2495,6 +2657,18 @@
                     "error": {
                       "type": "string"
                     },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
                     "details": {},
                     "meta": {
                       "type": "object",
@@ -2508,7 +2682,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "timestamp"]
+                  "required": ["ok", "error", "message", "status", "timestamp"]
                 }
               }
             }
@@ -2597,6 +2771,18 @@
                     "error": {
                       "type": "string"
                     },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
                     "details": {},
                     "meta": {
                       "type": "object",
@@ -2610,7 +2796,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "timestamp"]
+                  "required": ["ok", "error", "message", "status", "timestamp"]
                 }
               }
             }
@@ -2629,6 +2815,18 @@
                     "error": {
                       "type": "string"
                     },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
                     "details": {},
                     "meta": {
                       "type": "object",
@@ -2642,7 +2840,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "timestamp"]
+                  "required": ["ok", "error", "message", "status", "timestamp"]
                 }
               }
             }
@@ -2684,9 +2882,21 @@
                       "type": "boolean",
                       "enum": [true]
                     },
-                    "data": {},
+                    "result": {},
                     "message": {
                       "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
                     },
                     "meta": {
                       "type": "object",
@@ -2712,7 +2922,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "timestamp"]
+                  "required": ["ok", "message", "error", "status", "timestamp"]
                 }
               }
             }
@@ -2731,6 +2941,18 @@
                     "error": {
                       "type": "string"
                     },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
                     "details": {},
                     "meta": {
                       "type": "object",
@@ -2744,7 +2966,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "timestamp"]
+                  "required": ["ok", "error", "message", "status", "timestamp"]
                 }
               }
             }
@@ -2763,6 +2985,18 @@
                     "error": {
                       "type": "string"
                     },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
                     "details": {},
                     "meta": {
                       "type": "object",
@@ -2776,7 +3010,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "timestamp"]
+                  "required": ["ok", "error", "message", "status", "timestamp"]
                 }
               }
             }
@@ -2828,6 +3062,18 @@
                     "error": {
                       "type": "string"
                     },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
                     "details": {},
                     "meta": {
                       "type": "object",
@@ -2841,7 +3087,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "timestamp"]
+                  "required": ["ok", "error", "message", "status", "timestamp"]
                 }
               }
             }
@@ -2877,9 +3123,21 @@
                       "type": "boolean",
                       "enum": [true]
                     },
-                    "data": {},
+                    "result": {},
                     "message": {
                       "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
                     },
                     "meta": {
                       "type": "object",
@@ -2905,7 +3163,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "timestamp"]
+                  "required": ["ok", "message", "error", "status", "timestamp"]
                 }
               }
             }
@@ -2924,6 +3182,18 @@
                     "error": {
                       "type": "string"
                     },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
                     "details": {},
                     "meta": {
                       "type": "object",
@@ -2937,7 +3207,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "timestamp"]
+                  "required": ["ok", "error", "message", "status", "timestamp"]
                 }
               }
             }

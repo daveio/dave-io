@@ -2,7 +2,7 @@
 
 ## 🚨 CRITICAL DEVELOPMENT RULES - MANDATORY FOR EVERY REQUEST
 
-<!-- trunk-ignore(markdownlint/MD036) -->
+<!-- trunk-ignore-all(markdownlint/MD036) -->
 
 **⚠️ THESE RULES MUST BE FOLLOWED AT ALL TIMES, IN EVERY REQUEST ⚠️**
 
@@ -50,8 +50,7 @@
 ## Breaking Changes
 
 - **CLI**: Removed `bun try internal ping` → use `bun try ping`
-- **JSON**: All endpoints return sorted object keys via `prepareSortedApiResponse()`
-- **Ping API**: Restructured schema - `success` → `ok`, nested `data.cloudflare/worker` objects
+- **API Responses**: Standardized structure with `{ok, result, error, status, timestamp}`, sorted object keys
 - **Endpoints**: Merged `/api/internal/*` → `/api/ping`
 - **Auth**: `--auth` auto-generates tokens, `--token <JWT>` for provided tokens
 - **Dev**: No reset cycle, starts in seconds, `test:all` for full suite
@@ -61,7 +60,7 @@
 
 ## Core
 
-- **Response**: Success `{ok: true, data?, message?, meta?}` | Error `{ok: false, error, details?, meta?}`
+- **Response**: Success `{ok: true, result, error: null, status: {message}, timestamp}` | Error `{ok: false, error, status: {message}?, timestamp}`
 - **Environment**: `API_JWT_SECRET`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Bindings: KV(DATA), D1(DB), AI, Images
 - **CLI**: JWT(`init|create|verify|list|revoke`) | API-Test(`--auth-only|--ai-only`) | Try(`--auth|--token`) | KV(`export|import|list|wipe --local`)
 - **Testing**: Unit(`bun run test|test:ui`) | HTTP(`bun run test:api`) | Remote(`--url https://example.com`)

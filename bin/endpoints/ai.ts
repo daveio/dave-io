@@ -52,7 +52,7 @@ export class AIAdapter extends BaseAdapter {
       const data = await fs.readFile(filePath)
       return Buffer.from(data).toString("base64")
     } catch (error) {
-      console.error(`Error reading file ${filePath}:`, error)
+      console.error("Error reading file:", filePath, error)
       throw new Error(`Failed to read file at ${filePath}`)
     }
   }

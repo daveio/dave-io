@@ -111,6 +111,9 @@
     "// === HOOKS ===": "",
     "postinstall": "bun run generate"
   },
+  "resolutions": {
+    "brace-expansion": "4.0.1"
+  },
   "trustedDependencies": [
     "@anthropic-ai/claude-code",
     "@biomejs/biome",

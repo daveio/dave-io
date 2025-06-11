@@ -40,7 +40,7 @@ export function createApiResponse<T>(options: ApiResponseOptions<T>): ApiSuccess
       error: null,
       status: { message: `Redirecting to ${options.redirect}` },
       timestamp: new Date().toISOString()
-    });
+    })
 
     // Then throw an error with the redirect status code
     // This is how H3 expects redirects to be handled
