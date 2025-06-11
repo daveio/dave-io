@@ -87,7 +87,8 @@ export default defineEventHandler(async (event) => {
       isRevoked: usage.isRevoked
     })
 
-    return createApiResponse(usage, "Token usage retrieved successfully")
+    // Return success with result and success message
+    return createApiResponse(usage, "Token usage retrieved successfully", null)
   } catch (error: unknown) {
     console.error("Token usage error:", error)
 

@@ -2,7 +2,8 @@ import { createApiResponse } from "~/server/utils/response"
 import { AiTicketEnrichRequestSchema, type AiTicketEnrichResponse } from "~/server/utils/schemas"
 
 export default defineEventHandler(async (event): Promise<AiTicketEnrichResponse> => {
-  const { AI } = event.context.cloudflare.env
+  // Use type assertion to fix the unknown type
+  const { AI } = event.context.cloudflare.env as { AI: any }
 
   const body = await readBody(event)
   const validatedInput = AiTicketEnrichRequestSchema.parse(body)
@@ -52,19 +53,21 @@ Respond with the complete enriched description only.`
     }
   ]
 
-  const aiResponse = await AI.run("@cf/meta/llama-3.2-90b-vision-instruct", {
+  // Select appropriate model based on whether an image is supplied
+  const model = validatedInput.image
+    ? "@cf/meta/llama-3.2-90b-vision-instruct" // Use vision model when image is present
+    : "@cf/meta/llama-3.2-90b-instruct"        // Use cheaper text-only model when no image
+
+  const aiResponse = await AI.run(model, {
     messages,
     max_tokens: 1500,
     temperature: 0.4
   })
 
-// TODO: Use a cheaper model if an image is not supplied.
-
   const description = aiResponse.response?.trim() || "No enriched description generated"
 
+  // Use type assertion to ensure return type matches expected type
   return createApiResponse({
-    ok: true,
-    description,
-    timestamp: new Date().toISOString()
-  })
+    description
+  }, "Ticket description enriched successfully", null) as AiTicketEnrichResponse
 })

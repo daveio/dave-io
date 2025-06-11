@@ -7,8 +7,10 @@ extendZodWithOpenApi(z)
 // Common response schemas
 export const ApiSuccessResponseSchema = z.object({
   ok: z.literal(true),
-  data: z.any().optional(),
+  result: z.any(),
   message: z.string().optional(),
+  error: z.null(),
+  status: z.object({ message: z.string() }).nullable(),
   meta: z
     .object({
       total: z.number().optional(),
@@ -24,6 +26,7 @@ export const ApiSuccessResponseSchema = z.object({
 export const ApiErrorResponseSchema = z.object({
   ok: z.literal(false),
   error: z.string(),
+  status: z.object({ message: z.string() }).nullable(),
   details: z.any().optional(),
   meta: z
     .object({
@@ -356,7 +359,11 @@ export const AiTicketTitleRequestSchema = z
 
 export const AiTicketTitleResponseSchema = z.object({
   ok: z.literal(true),
-  title: z.string(),
+  result: z.object({
+    title: z.string(),
+  }),
+  status: z.object({ message: z.string() }).nullable(),
+  error: z.null(),
   timestamp: z.string()
 })
 
@@ -366,7 +373,11 @@ export const AiTicketDescriptionRequestSchema = z.object({
 
 export const AiTicketDescriptionResponseSchema = z.object({
   ok: z.literal(true),
-  description: z.string(),
+  result: z.object({
+    description: z.string(),
+  }),
+  status: z.object({ message: z.string() }).nullable(),
+  error: z.null(),
   timestamp: z.string()
 })
 
@@ -382,7 +393,11 @@ export const AiTicketEnrichRequestSchema = z
 
 export const AiTicketEnrichResponseSchema = z.object({
   ok: z.literal(true),
-  description: z.string(),
+  result: z.object({
+    description: z.string(),
+  }),
+  status: z.object({ message: z.string() }).nullable(),
+  error: z.null(),
   timestamp: z.string()
 })
 

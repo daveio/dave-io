@@ -2,7 +2,8 @@ import { createApiResponse } from "~/server/utils/response"
 import { AiTicketDescriptionRequestSchema, type AiTicketDescriptionResponse } from "~/server/utils/schemas"
 
 export default defineEventHandler(async (event): Promise<AiTicketDescriptionResponse> => {
-  const { AI } = event.context.cloudflare.env
+  // Use type assertion to fix the unknown type
+  const { AI } = event.context.cloudflare.env as { AI: any }
 
   const body = await readBody(event)
   const validatedInput = AiTicketDescriptionRequestSchema.parse(body)
@@ -26,19 +27,17 @@ Format the response as a proper ticket description that a developer could work f
     }
   ]
 
-  const aiResponse = await AI.run("@cf/meta/llama-3.2-90b-vision-instruct", {
+  // Use a cheaper text-only model since this endpoint never needs vision capabilities
+  const aiResponse = await AI.run("@cf/meta/llama-3.2-90b-instruct", {
     messages,
     max_tokens: 1000,
     temperature: 0.4
   })
 
-// TODO: This endpoint only accepts text. Use a cheaper model.
-
   const description = aiResponse.response?.trim() || "No description generated"
 
+  // Use type assertion to ensure return type matches expected type
   return createApiResponse({
-    ok: true,
-    description,
-    timestamp: new Date().toISOString()
-  })
+    description
+  }, "Description generated successfully", null) as AiTicketDescriptionResponse
 })

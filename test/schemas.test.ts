@@ -40,7 +40,7 @@ describe("API Schemas", () => {
       expect(result.success).toBe(true)
       if (result.success) {
         expect(result.data.ok).toBe(true)
-        expect(result.data.data).toEqual({ test: "data" })
+        expect(result.data.result).toEqual({ test: "data" })
       }
     })
 
@@ -597,21 +597,25 @@ describe("API Schemas", () => {
       it("should validate title response", () => {
         const response = {
           ok: true,
-          title: "Fix login authentication bug",
+          result: {
+            title: "Fix login authentication bug"
+          },
           timestamp: "2025-01-01T00:00:00.000Z"
         }
 
         const result = AiTicketTitleResponseSchema.safeParse(response)
         expect(result.success).toBe(true)
         if (result.success) {
-          expect(result.data.title).toBe("Fix login authentication bug")
+          expect(result.data.result.title).toBe("Fix login authentication bug")
         }
       })
 
       it("should reject response with ok: false", () => {
         const response = {
           ok: false,
-          title: "Fix login authentication bug",
+          result: {
+            title: "Fix login authentication bug"
+          },
           timestamp: "2025-01-01T00:00:00.000Z"
         }
 
@@ -642,14 +646,16 @@ describe("API Schemas", () => {
       it("should validate description response", () => {
         const response = {
           ok: true,
-          description: "## Issue Description\n\nUsers are unable to authenticate properly...",
+          result: {
+            description: "## Issue Description\n\nUsers are unable to authenticate properly..."
+          },
           timestamp: "2025-01-01T00:00:00.000Z"
         }
 
         const result = AiTicketDescriptionResponseSchema.safeParse(response)
         expect(result.success).toBe(true)
         if (result.success) {
-          expect(result.data.description).toContain("Issue Description")
+          expect(result.data.result.description).toContain("Issue Description")
         }
       })
     })
@@ -706,14 +712,16 @@ describe("API Schemas", () => {
       it("should validate enrich response", () => {
         const response = {
           ok: true,
-          description: "## Enhanced Description\n\nThis issue affects user authentication...",
+          result: {
+            description: "## Enhanced Description\n\nThis issue affects user authentication..."
+          },
           timestamp: "2025-01-01T00:00:00.000Z"
         }
 
         const result = AiTicketEnrichResponseSchema.safeParse(response)
         expect(result.success).toBe(true)
         if (result.success) {
-          expect(result.data.description).toContain("Enhanced Description")
+          expect(result.data.result.description).toContain("Enhanced Description")
         }
       })
     })

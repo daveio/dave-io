@@ -6,9 +6,10 @@ import type { ApiErrorResponse, ApiSuccessResponse } from "./schemas"
 
 export interface ApiResponse<T = unknown> {
   ok: boolean
-  data?: T
+  result?: T
   message?: string
   error?: string
+  status?: { message?: string }
   meta?: {
     total?: number
     page?: number
@@ -19,32 +20,55 @@ export interface ApiResponse<T = unknown> {
   timestamp: string
 }
 
-export function createApiResponse<T>(data?: T, message?: string, meta?: ApiResponse<T>["meta"]): ApiSuccessResponse {
-  const response: ApiSuccessResponse = {
-    ok: true,
-    timestamp: new Date().toISOString()
-  }
+export function createApiResponse<T>(
+  result: T,
+  message?: string | null,
+  error?: string | null,
+  meta?: ApiResponse<T>["meta"]
+): ApiSuccessResponse | ApiErrorResponse {
+  const timestamp = new Date().toISOString()
 
-  if (data !== undefined) {
-    response.data = data
-  }
+  // If there's an error message, return an error response
+  if (error) {
+    const response: ApiErrorResponse = {
+      ok: false,
+      error,
+      status: message ? { message } : null,
+      timestamp
+    }
 
-  if (message) {
-    response.message = message
-  }
+    if (meta) {
+      response.meta = meta
+    }
 
-  if (meta) {
-    response.meta = meta
-  }
+    return prepareSortedApiResponse(response)
+  } else {
+    // Success response
+    const response: ApiSuccessResponse = {
+      ok: true,
+      result: result ?? {}, // Ensure result is never undefined
+      error: null,
+      status: message ? { message } : null,
+      timestamp
+    }
 
-  // Automatically sort all response keys for consistent output
-  return prepareSortedApiResponse(response)
+    if (message) {
+      response.message = message
+    }
+
+    if (meta) {
+      response.meta = meta
+    }
+
+    return prepareSortedApiResponse(response)
+  }
 }
 
 export function createApiError(statusCode: number, message: string, details?: unknown): never {
   const errorData: ApiErrorResponse = {
     ok: false,
     error: message,
+    status: null,
     details: process.env.NODE_ENV === "development" ? details : undefined,
     meta: {
       request_id: generateRequestId()
