@@ -617,5 +617,4 @@ describe("DashboardAdapter", () => {
     expect(result.data?.name).toBe("test-dashboard")
     expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining("/api/dashboard/test-dashboard"), expect.any(Object))
   })
-
 })

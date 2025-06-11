@@ -52,13 +52,17 @@ export class ImagesAdapter extends BaseAdapter {
    * @param options Request options
    * @returns API response
    */
-  protected async makePublicRequest<T = unknown>(path: string, options: PublicRequestOptions = {}): Promise<ApiResponse<T>> {
+  protected async makePublicRequest<T = unknown>(
+    path: string,
+    options: PublicRequestOptions = {}
+  ): Promise<ApiResponse<T>> {
     const { method = "GET", headers: additionalHeaders, body, params } = options
 
     const url = this.buildPublicUrl(path, params)
     const headers = this.buildHeaders(additionalHeaders)
 
     // Remove Authorization header for public requests
+    // biome-ignore lint/performance/noDelete: known scope
     delete headers.Authorization
 
     if (this.config.dryRun) {

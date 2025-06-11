@@ -419,7 +419,6 @@ dashboardCommand
     await displayResult(result, options, "Dashboard Data")
   })
 
-
 // Help text
 program.addHelpText(
   "after",

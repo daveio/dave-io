@@ -11,7 +11,6 @@ interface DashboardDataResponse {
   ttl?: number
 }
 
-
 /**
  * Adapter for dashboard data operations (/api/dashboard/*)
  * Requires 'dashboard' scope or higher for authentication
@@ -25,5 +24,4 @@ export class DashboardAdapter extends BaseAdapter {
   async getDashboardData(name: string): Promise<ApiResponse<DashboardDataResponse>> {
     return this.makeRequest(`/api/dashboard/${name}`)
   }
-
 }

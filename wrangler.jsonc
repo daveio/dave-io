@@ -21,8 +21,8 @@
 
   // List of flags that enable features from upcoming versions of the Workers runtime
   "compatibility_flags": [
-    "nodejs_compat",                      // Enable Node.js compatibility
-    "nodejs_compat_populate_process_env"  // Populate process.env
+    "nodejs_compat", // Enable Node.js compatibility
+    "nodejs_compat_populate_process_env" // Populate process.env
   ],
 
   // Account ID associated with your zone (can also be set via CLOUDFLARE_ACCOUNT_ID env var)
@@ -48,7 +48,7 @@
   "routes": [
     {
       "pattern": "next.dave.io",
-      "custom_domain": true             // Use Custom Domain (no DNS changes required)
+      "custom_domain": true // Use Custom Domain (no DNS changes required)
     }
   ],
 
@@ -58,8 +58,8 @@
 
   // Automatic observability settings for telemetry data emitted from your Worker
   "observability": {
-    "enabled": true,                    // Persist logs for the Worker
-    "head_sampling_rate": 1.0           // Sample rate: 0.0 = 0%, 1.0 = 100%
+    "enabled": true, // Persist logs for the Worker
+    "head_sampling_rate": 1.0 // Sample rate: 0.0 = 0%, 1.0 = 100%
   },
 
   // Enable Workers Trace Events Logpush (automatically picked up by Logpush job)
@@ -74,7 +74,7 @@
 
   // Worker placement configuration
   "placement": {
-    "mode": "smart"                     // Cloudflare automatically places Workers optimally
+    "mode": "smart" // Cloudflare automatically places Workers optimally
   },
 
   // Runtime limits (only enforced in production, not local development)
@@ -123,36 +123,36 @@
 
   // Cloudflare AI binding for machine learning models
   "ai": {
-    "binding": "AI"                     // Available in your Worker as env.AI
+    "binding": "AI" // Available in your Worker as env.AI
   },
 
   // Cloudflare Images binding for image transformations
   "images": {
-    "binding": "IMAGES"                 // Available in your Worker as env.IMAGES
+    "binding": "IMAGES" // Available in your Worker as env.IMAGES
   },
 
   // KV namespace bindings for key-value storage
   "kv_namespaces": [
     {
-      "binding": "DATA",                // Variable name in your Worker
+      "binding": "DATA", // Variable name in your Worker
       "id": "184eca13ac05485d96de48c436a6f5e6",
-      "preview_id": "184eca13ac05485d96de48c436a6f5e6"  // ID for wrangler dev --remote
+      "preview_id": "184eca13ac05485d96de48c436a6f5e6" // ID for wrangler dev --remote
     }
   ],
 
   // D1 database bindings for SQL databases
   "d1_databases": [
     {
-      "binding": "DB",                  // Variable name in your Worker
+      "binding": "DB", // Variable name in your Worker
       "database_name": "next-api-auth-metadata",
       "database_id": "106894e2-1f5c-4979-a777-0b45febbb993",
-      "preview_database_id": "106894e2-1f5c-4979-a777-0b45febbb993",  // Required for wrangler dev --remote
-      "migrations_dir": "./migrations"  // Directory containing migration files
+      "preview_database_id": "106894e2-1f5c-4979-a777-0b45febbb993", // Required for wrangler dev --remote
+      "migrations_dir": "./migrations" // Directory containing migration files
     }
   ],
 
   // Browser rendering bindings for headless browser automation
   "browser": {
-    "binding": "BROWSER"             // Variable name in your Worker
+    "binding": "BROWSER" // Variable name in your Worker
   }
 }

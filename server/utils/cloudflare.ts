@@ -52,8 +52,9 @@ export interface CloudflareEnv {
   /** D1 Database for relational data */
   DB?: D1Database
   /** Cloudflare Images binding for image processing */
-  // biome-ignore lint/suspicious/noExplicitAny: Images binding type not available in @cloudflare/workers-types
-  IMAGES?: any
+  IMAGES?: ImagesBinding
+  /** Browser binding for headless browsing */
+  BROWSER?: Fetcher
   /** Cloudflare API token for Images API */
   CLOUDFLARE_API_TOKEN?: string
   /** Cloudflare account ID */
