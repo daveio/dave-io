@@ -337,6 +337,55 @@ export const ImageOptimisationResponseSchema = z.object({
   timestamp: z.string()
 })
 
+// AI Tickets schemas
+export const AiTicketImageDataSchema = z.object({
+  data: z.string().refine((val) => !val.startsWith("data:"), {
+    message: "Image must be raw base64 without data URL"
+  }),
+  filename: z.string()
+})
+
+export const AiTicketTitleRequestSchema = z
+  .object({
+    description: z.string().optional(),
+    image: AiTicketImageDataSchema.optional()
+  })
+  .refine((data) => data.description || data.image, {
+    message: "Either description or image must be provided"
+  })
+
+export const AiTicketTitleResponseSchema = z.object({
+  ok: z.literal(true),
+  title: z.string(),
+  timestamp: z.string()
+})
+
+export const AiTicketDescriptionRequestSchema = z.object({
+  title: z.string()
+})
+
+export const AiTicketDescriptionResponseSchema = z.object({
+  ok: z.literal(true),
+  description: z.string(),
+  timestamp: z.string()
+})
+
+export const AiTicketEnrichRequestSchema = z
+  .object({
+    title: z.string(),
+    description: z.string().optional(),
+    image: AiTicketImageDataSchema.optional()
+  })
+  .refine((data) => data.description || data.image, {
+    message: "Either description or image must be provided in addition to title"
+  })
+
+export const AiTicketEnrichResponseSchema = z.object({
+  ok: z.literal(true),
+  description: z.string(),
+  timestamp: z.string()
+})
+
 // Export commonly used types
 export type ApiSuccessResponse = z.infer<typeof ApiSuccessResponseSchema>
 export type ApiErrorResponse = z.infer<typeof ApiErrorResponseSchema>
@@ -357,6 +406,13 @@ export type TokenUsage = z.infer<typeof TokenUsageSchema>
 export type TokenMetrics = z.infer<typeof TokenMetricsSchema>
 export type ImageOptimisationRequest = z.infer<typeof ImageOptimisationRequestSchema>
 export type ImageOptimisationResponse = z.infer<typeof ImageOptimisationResponseSchema>
+export type AiTicketImageData = z.infer<typeof AiTicketImageDataSchema>
+export type AiTicketTitleRequest = z.infer<typeof AiTicketTitleRequestSchema>
+export type AiTicketTitleResponse = z.infer<typeof AiTicketTitleResponseSchema>
+export type AiTicketDescriptionRequest = z.infer<typeof AiTicketDescriptionRequestSchema>
+export type AiTicketDescriptionResponse = z.infer<typeof AiTicketDescriptionResponseSchema>
+export type AiTicketEnrichRequest = z.infer<typeof AiTicketEnrichRequestSchema>
+export type AiTicketEnrichResponse = z.infer<typeof AiTicketEnrichResponseSchema>
 
 // New KV schema types
 export type KVTimeMetrics = z.infer<typeof KVTimeMetricsSchema>

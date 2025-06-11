@@ -60,6 +60,119 @@
         },
         "required": ["ok", "alt_text", "timestamp"]
       },
+      "AiTicketDescriptionRequestSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": ["title"]
+      },
+      "AiTicketDescriptionResponseSchema": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "enum": [true]
+          },
+          "description": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": ["ok", "description", "timestamp"]
+      },
+      "AiTicketEnrichRequestSchema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "image": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "string"
+              },
+              "filename": {
+                "type": "string"
+              }
+            },
+            "required": ["data", "filename"]
+          }
+        },
+        "required": ["title"]
+      },
+      "AiTicketEnrichResponseSchema": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "enum": [true]
+          },
+          "description": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": ["ok", "description", "timestamp"]
+      },
+      "AiTicketImageDataSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "string"
+          },
+          "filename": {
+            "type": "string"
+          }
+        },
+        "required": ["data", "filename"]
+      },
+      "AiTicketTitleRequestSchema": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "image": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "string"
+              },
+              "filename": {
+                "type": "string"
+              }
+            },
+            "required": ["data", "filename"]
+          }
+        }
+      },
+      "AiTicketTitleResponseSchema": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "enum": [true]
+          },
+          "title": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": ["ok", "title", "timestamp"]
+      },
       "ApiErrorResponseSchema": {
         "type": "object",
         "properties": {

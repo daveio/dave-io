@@ -251,6 +251,74 @@ aiAltCommand
     await displayResult(result, options, "AI Alt-Text Generation")
   })
 
+// AI Tickets Commands
+const aiTicketsCommand = aiCommand.command("tickets").description("AI-powered Linear ticket operations")
+
+aiTicketsCommand
+  .command("title")
+  .description("Generate a ticket title from description and/or image")
+  .option("--description <text>", "Description text to generate title from")
+  .option("--image <filePath>", "Image file to analyze for title generation")
+  .action(async (cmdOptions, command) => {
+    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
+    const config = await createConfig(options)
+
+    if (!cmdOptions.description && !cmdOptions.image) {
+      console.error(chalk.red("❌ Either --description or --image must be provided"))
+      process.exit(1)
+    }
+
+    const adapter = new AIAdapter(config)
+    const result = await withSpinner(
+      adapter.generateTicketTitle(cmdOptions.description, cmdOptions.image),
+      "Generating ticket title",
+      options
+    )
+
+    await displayResult(result, options, "AI Ticket Title Generation")
+  })
+
+aiTicketsCommand
+  .command("description <title>")
+  .description("Generate a ticket description from title")
+  .action(async (title, _cmdOptions, command) => {
+    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
+    const config = await createConfig(options)
+
+    const adapter = new AIAdapter(config)
+    const result = await withSpinner(
+      adapter.generateTicketDescription(title),
+      `Generating description for "${title}"`,
+      options
+    )
+
+    await displayResult(result, options, "AI Ticket Description Generation")
+  })
+
+aiTicketsCommand
+  .command("enrich <title>")
+  .description("Enrich a ticket description with additional context")
+  .option("--description <text>", "Existing description to enrich")
+  .option("--image <filePath>", "Image file for additional context")
+  .action(async (title, cmdOptions, command) => {
+    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
+    const config = await createConfig(options)
+
+    if (!cmdOptions.description && !cmdOptions.image) {
+      console.error(chalk.red("❌ Either --description or --image must be provided in addition to title"))
+      process.exit(1)
+    }
+
+    const adapter = new AIAdapter(config)
+    const result = await withSpinner(
+      adapter.enrichTicketDescription(title, cmdOptions.description, cmdOptions.image),
+      `Enriching description for "${title}"`,
+      options
+    )
+
+    await displayResult(result, options, "AI Ticket Description Enrichment")
+  })
+
 // Images Commands
 const imagesCommand = program.command("images").description("Image optimisation operations")
 const imagesOptimiseCommand = imagesCommand.command("optimise").description("Optimise images for web")
@@ -290,7 +358,6 @@ imagesOptimiseCommand
 
     await displayResult(result, options, "Image Optimisation")
   })
-
 
 // Tokens Commands
 const tokensCommand = program.command("tokens").description("Token management operations")
@@ -412,6 +479,9 @@ ${chalk.bold("Available Commands:")}
 ${chalk.cyan("AI Operations:")}
   bun try ai alt url <imageUrl>          Generate alt-text from image URL
   bun try ai alt file <filePath>         Generate alt-text from local image file
+  bun try ai tickets title --description "text" [--image file.png]    Generate ticket title
+  bun try ai tickets description "title"          Generate ticket description from title
+  bun try ai tickets enrich "title" --description "text" [--image file.png]    Enrich ticket description
 
 ${chalk.cyan("Image Optimisation:")}
   bun try images optimise url <imageUrl> [--quality N]    Optimise image from URL
@@ -440,6 +510,12 @@ ${chalk.bold("Examples:")}
   bun try --auth ai alt url "https://example.com/image.jpg"     # Auto-generate token
   bun try --token "eyJ..." ai alt file "./image.png"           # Use provided token
   bun try --auth dashboard hacker-news                         # Auto-generate token
+
+  ${chalk.cyan("# AI Tickets (public, no authentication)")}
+  bun try ai tickets title --description "Fix the login bug"
+  bun try ai tickets title --image "./screenshot.png"
+  bun try ai tickets description "Fix login authentication"
+  bun try ai tickets enrich "Fix login" --description "Users can't log in" --image "./error.png"
 
   ${chalk.cyan("# Environment selection")}
   bun try --local ping                   # Local development

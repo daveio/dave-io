@@ -10,8 +10,30 @@ interface AltTextResponse {
 }
 
 /**
+ * Response format for AI ticket title generation
+ */
+interface TicketTitleResponse {
+  title: string
+}
+
+/**
+ * Response format for AI ticket description generation
+ */
+interface TicketDescriptionResponse {
+  description: string
+}
+
+/**
+ * Response format for AI ticket enrichment
+ */
+interface TicketEnrichResponse {
+  description: string
+}
+
+/**
  * Adapter for AI-powered operations (/api/ai/*)
- * Requires 'ai:alt' scope or higher for authentication
+ * Alt-text operations require 'ai:alt' scope or higher for authentication
+ * Ticket operations are public (no authentication required)
  */
 export class AIAdapter extends BaseAdapter {
   /**
@@ -41,6 +63,81 @@ export class AIAdapter extends BaseAdapter {
     return this.makeRequest("/api/ai/alt", {
       method: "POST",
       body: { image: base64Data }
+    })
+  }
+
+  /**
+   * Generate a title for a Linear ticket from description and/or image
+   * @param description Optional description text
+   * @param imageFilePath Optional path to image file
+   * @returns AI-generated ticket title
+   */
+  async generateTicketTitle(description?: string, imageFilePath?: string): Promise<ApiResponse<TicketTitleResponse>> {
+    // biome-ignore lint/suspicious/noExplicitAny: Dynamic request body structure
+    const body: any = {}
+
+    if (description) {
+      body.description = description
+    }
+
+    if (imageFilePath) {
+      const imageData = await this.fileToBase64(imageFilePath)
+      const filename = imageFilePath.split("/").pop() || "image"
+      body.image = {
+        data: imageData,
+        filename
+      }
+    }
+
+    return this.makeRequest("/api/ai/tickets/title", {
+      method: "POST",
+      body
+    })
+  }
+
+  /**
+   * Generate a description for a Linear ticket from title
+   * @param title The ticket title
+   * @returns AI-generated ticket description
+   */
+  async generateTicketDescription(title: string): Promise<ApiResponse<TicketDescriptionResponse>> {
+    return this.makeRequest("/api/ai/tickets/description", {
+      method: "POST",
+      body: { title }
+    })
+  }
+
+  /**
+   * Enrich a Linear ticket description with additional context
+   * @param title The ticket title
+   * @param description Optional existing description
+   * @param imageFilePath Optional path to image file for additional context
+   * @returns AI-enriched ticket description
+   */
+  async enrichTicketDescription(
+    title: string,
+    description?: string,
+    imageFilePath?: string
+  ): Promise<ApiResponse<TicketEnrichResponse>> {
+    // biome-ignore lint/suspicious/noExplicitAny: Dynamic request body structure
+    const body: any = { title }
+
+    if (description) {
+      body.description = description
+    }
+
+    if (imageFilePath) {
+      const imageData = await this.fileToBase64(imageFilePath)
+      const filename = imageFilePath.split("/").pop() || "image"
+      body.image = {
+        data: imageData,
+        filename
+      }
+    }
+
+    return this.makeRequest("/api/ai/tickets/enrich", {
+      method: "POST",
+      body
     })
   }
 }

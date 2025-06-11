@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest"
 import {
+  AiTicketDescriptionRequestSchema,
+  AiTicketDescriptionResponseSchema,
+  AiTicketEnrichRequestSchema,
+  AiTicketEnrichResponseSchema,
+  AiTicketImageDataSchema,
+  AiTicketTitleRequestSchema,
+  AiTicketTitleResponseSchema,
   ApiErrorResponseSchema,
   ApiSuccessResponseSchema,
   AuthIntrospectionSchema,
@@ -512,6 +519,201 @@ describe("API Schemas", () => {
         if (result.success) {
           expect(result.data.metrics.ok).toBe(1000)
           expect(result.data.redirect.gh).toBe("https://github.com/daveio")
+        }
+      })
+    })
+  })
+
+  describe("AI Tickets Schemas", () => {
+    describe("AiTicketImageDataSchema", () => {
+      it("should validate image data with base64 and filename", () => {
+        const imageData = {
+          data: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAI9jU77hwAAAABJRU5ErkJggg==",
+          filename: "test.png"
+        }
+
+        const result = AiTicketImageDataSchema.safeParse(imageData)
+        expect(result.success).toBe(true)
+        if (result.success) {
+          expect(result.data.filename).toBe("test.png")
+        }
+      })
+
+      it("should reject data URL format", () => {
+        const imageData = {
+          data: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAI9jU77hwAAAABJRU5ErkJggg==",
+          filename: "test.png"
+        }
+
+        const result = AiTicketImageDataSchema.safeParse(imageData)
+        expect(result.success).toBe(false)
+      })
+    })
+
+    describe("AiTicketTitleRequestSchema", () => {
+      it("should validate request with description only", () => {
+        const request = {
+          description: "Fix the login bug that prevents users from accessing the dashboard"
+        }
+
+        const result = AiTicketTitleRequestSchema.safeParse(request)
+        expect(result.success).toBe(true)
+      })
+
+      it("should validate request with image only", () => {
+        const request = {
+          image: {
+            data: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAI9jU77hwAAAABJRU5ErkJggg==",
+            filename: "screenshot.png"
+          }
+        }
+
+        const result = AiTicketTitleRequestSchema.safeParse(request)
+        expect(result.success).toBe(true)
+      })
+
+      it("should validate request with both description and image", () => {
+        const request = {
+          description: "User reported error",
+          image: {
+            data: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAI9jU77hwAAAABJRU5ErkJggg==",
+            filename: "error.png"
+          }
+        }
+
+        const result = AiTicketTitleRequestSchema.safeParse(request)
+        expect(result.success).toBe(true)
+      })
+
+      it("should reject request with neither description nor image", () => {
+        const request = {}
+
+        const result = AiTicketTitleRequestSchema.safeParse(request)
+        expect(result.success).toBe(false)
+      })
+    })
+
+    describe("AiTicketTitleResponseSchema", () => {
+      it("should validate title response", () => {
+        const response = {
+          ok: true,
+          title: "Fix login authentication bug",
+          timestamp: "2025-01-01T00:00:00.000Z"
+        }
+
+        const result = AiTicketTitleResponseSchema.safeParse(response)
+        expect(result.success).toBe(true)
+        if (result.success) {
+          expect(result.data.title).toBe("Fix login authentication bug")
+        }
+      })
+
+      it("should reject response with ok: false", () => {
+        const response = {
+          ok: false,
+          title: "Fix login authentication bug",
+          timestamp: "2025-01-01T00:00:00.000Z"
+        }
+
+        const result = AiTicketTitleResponseSchema.safeParse(response)
+        expect(result.success).toBe(false)
+      })
+    })
+
+    describe("AiTicketDescriptionRequestSchema", () => {
+      it("should validate description request", () => {
+        const request = {
+          title: "Fix login authentication bug"
+        }
+
+        const result = AiTicketDescriptionRequestSchema.safeParse(request)
+        expect(result.success).toBe(true)
+      })
+
+      it("should reject request without title", () => {
+        const request = {}
+
+        const result = AiTicketDescriptionRequestSchema.safeParse(request)
+        expect(result.success).toBe(false)
+      })
+    })
+
+    describe("AiTicketDescriptionResponseSchema", () => {
+      it("should validate description response", () => {
+        const response = {
+          ok: true,
+          description: "## Issue Description\n\nUsers are unable to authenticate properly...",
+          timestamp: "2025-01-01T00:00:00.000Z"
+        }
+
+        const result = AiTicketDescriptionResponseSchema.safeParse(response)
+        expect(result.success).toBe(true)
+        if (result.success) {
+          expect(result.data.description).toContain("Issue Description")
+        }
+      })
+    })
+
+    describe("AiTicketEnrichRequestSchema", () => {
+      it("should validate enrich request with description", () => {
+        const request = {
+          title: "Fix login bug",
+          description: "Users can't log in"
+        }
+
+        const result = AiTicketEnrichRequestSchema.safeParse(request)
+        expect(result.success).toBe(true)
+      })
+
+      it("should validate enrich request with image", () => {
+        const request = {
+          title: "Fix login bug",
+          image: {
+            data: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAI9jU77hwAAAABJRU5ErkJggg==",
+            filename: "error.png"
+          }
+        }
+
+        const result = AiTicketEnrichRequestSchema.safeParse(request)
+        expect(result.success).toBe(true)
+      })
+
+      it("should validate enrich request with both description and image", () => {
+        const request = {
+          title: "Fix login bug",
+          description: "Users can't log in",
+          image: {
+            data: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAI9jU77hwAAAABJRU5ErkJggg==",
+            filename: "error.png"
+          }
+        }
+
+        const result = AiTicketEnrichRequestSchema.safeParse(request)
+        expect(result.success).toBe(true)
+      })
+
+      it("should reject request with only title", () => {
+        const request = {
+          title: "Fix login bug"
+        }
+
+        const result = AiTicketEnrichRequestSchema.safeParse(request)
+        expect(result.success).toBe(false)
+      })
+    })
+
+    describe("AiTicketEnrichResponseSchema", () => {
+      it("should validate enrich response", () => {
+        const response = {
+          ok: true,
+          description: "## Enhanced Description\n\nThis issue affects user authentication...",
+          timestamp: "2025-01-01T00:00:00.000Z"
+        }
+
+        const result = AiTicketEnrichResponseSchema.safeParse(response)
+        expect(result.success).toBe(true)
+        if (result.success) {
+          expect(result.data.description).toContain("Enhanced Description")
         }
       })
     })

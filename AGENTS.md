@@ -127,7 +127,7 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 
 ## Key Endpoints
 
-**Public**: `/api/ping`, `/api/images/optimise`, `/go/{slug}`
+**Public**: `/api/ping`, `/api/images/optimise`, `/go/{slug}`, `/api/ai/tickets/*` - AI ticket operations
 **Protected** (require JWT + scope):
 
 - `/api/ai/alt` - Alt-text generation (`ai:alt`+)
@@ -351,6 +351,11 @@ curl -H "Authorization: Bearer <token>" http://localhost:3000/api/ping
 # AI alt-text
 curl -H "Authorization: Bearer <token>" "http://localhost:3000/api/ai/alt?url=https://example.com/image.jpg"
 curl -X POST -H "Authorization: Bearer <token>" -d '{"image": "<base64>"}' http://localhost:3000/api/ai/alt
+
+# AI tickets (public, no authentication)
+curl -X POST -d '{"description": "Fix the login bug"}' http://localhost:3000/api/ai/tickets/title
+curl -X POST -d '{"title": "Fix login authentication"}' http://localhost:3000/api/ai/tickets/description
+curl -X POST -d '{"title": "Fix login", "description": "Users cant log in"}' http://localhost:3000/api/ai/tickets/enrich
 
 # Image optimisation
 curl -X POST -d '{"image": "<base64>", "quality": 80}' http://localhost:3000/api/images/optimise
