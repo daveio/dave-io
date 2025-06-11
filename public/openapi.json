@@ -41,7 +41,7 @@
       "AiAltTextResponseSchema": {
         "type": "object",
         "properties": {
-          "success": {
+          "ok": {
             "type": "boolean",
             "enum": [true]
           },
@@ -58,12 +58,12 @@
             "type": "string"
           }
         },
-        "required": ["success", "alt_text", "timestamp"]
+        "required": ["ok", "alt_text", "timestamp"]
       },
       "ApiErrorResponseSchema": {
         "type": "object",
         "properties": {
-          "success": {
+          "ok": {
             "type": "boolean",
             "enum": [false]
           },
@@ -83,12 +83,12 @@
             "type": "string"
           }
         },
-        "required": ["success", "error", "timestamp"]
+        "required": ["ok", "error", "timestamp"]
       },
       "ApiSuccessResponseSchema": {
         "type": "object",
         "properties": {
-          "success": {
+          "ok": {
             "type": "boolean",
             "enum": [true]
           },
@@ -120,12 +120,12 @@
             "type": "string"
           }
         },
-        "required": ["success", "timestamp"]
+        "required": ["ok", "timestamp"]
       },
       "AuthIntrospectionSchema": {
         "type": "object",
         "properties": {
-          "success": {
+          "ok": {
             "type": "boolean"
           },
           "data": {
@@ -183,12 +183,12 @@
             "type": "string"
           }
         },
-        "required": ["success", "data", "timestamp"]
+        "required": ["ok", "data", "timestamp"]
       },
       "AuthSuccessResponseSchema": {
         "type": "object",
         "properties": {
-          "success": {
+          "ok": {
             "type": "boolean",
             "enum": [true]
           },
@@ -235,7 +235,7 @@
             "type": "string"
           }
         },
-        "required": ["success", "message", "jwt", "user", "timestamp"]
+        "required": ["ok", "message", "jwt", "user", "timestamp"]
       },
       "CreateRedirectSchema": {
         "type": "object",
@@ -495,7 +495,7 @@
       "ImageOptimisationResponseSchema": {
         "type": "object",
         "properties": {
-          "success": {
+          "ok": {
             "type": "boolean",
             "enum": [true]
           },
@@ -566,7 +566,7 @@
             "type": "string"
           }
         },
-        "required": ["success", "data", "message", "timestamp"]
+        "required": ["ok", "data", "message", "timestamp"]
       },
       "JWTDetailsSchema": {
         "type": "object",
@@ -1573,79 +1573,10 @@
         },
         "required": ["cloudflare", "worker"]
       },
-      "SystemMetricsSchema": {
-        "type": "object",
-        "properties": {
-          "users": {
-            "type": "object",
-            "properties": {
-              "total": {
-                "type": "number"
-              },
-              "active": {
-                "type": "number"
-              },
-              "new_today": {
-                "type": "number"
-              }
-            },
-            "required": ["total", "active", "new_today"]
-          },
-          "posts": {
-            "type": "object",
-            "properties": {
-              "total": {
-                "type": "number"
-              },
-              "published": {
-                "type": "number"
-              },
-              "drafts": {
-                "type": "number"
-              }
-            },
-            "required": ["total", "published", "drafts"]
-          },
-          "system": {
-            "type": "object",
-            "properties": {
-              "runtime": {
-                "type": "string"
-              },
-              "timestamp": {
-                "type": "string"
-              },
-              "cf_ray": {
-                "type": "string"
-              },
-              "cf_datacenter": {
-                "type": "string"
-              },
-              "cf_country": {
-                "type": "string"
-              }
-            },
-            "required": ["runtime", "timestamp"]
-          },
-          "api": {
-            "type": "object",
-            "properties": {
-              "version": {
-                "type": "string"
-              },
-              "endpoints_available": {
-                "type": "number"
-              }
-            },
-            "required": ["version", "endpoints_available"]
-          }
-        },
-        "required": ["users", "posts", "system", "api"]
-      },
       "TokenMetricsSchema": {
         "type": "object",
         "properties": {
-          "success": {
+          "ok": {
             "type": "boolean",
             "enum": [true]
           },
@@ -1677,7 +1608,7 @@
             "type": "string"
           }
         },
-        "required": ["success", "data", "timestamp"]
+        "required": ["ok", "data", "timestamp"]
       },
       "TokenUsageSchema": {
         "type": "object",
@@ -1968,7 +1899,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [true]
                     },
@@ -1985,7 +1916,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "alt_text", "timestamp"]
+                  "required": ["ok", "alt_text", "timestamp"]
                 }
               }
             }
@@ -1997,7 +1928,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [false]
                     },
@@ -2017,7 +1948,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "error", "timestamp"]
+                  "required": ["ok", "error", "timestamp"]
                 }
               }
             }
@@ -2029,7 +1960,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [false]
                     },
@@ -2049,7 +1980,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "error", "timestamp"]
+                  "required": ["ok", "error", "timestamp"]
                 }
               }
             }
@@ -2102,7 +2033,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [true]
                     },
@@ -2119,7 +2050,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "alt_text", "timestamp"]
+                  "required": ["ok", "alt_text", "timestamp"]
                 }
               }
             }
@@ -2131,7 +2062,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [false]
                     },
@@ -2151,7 +2082,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "error", "timestamp"]
+                  "required": ["ok", "error", "timestamp"]
                 }
               }
             }
@@ -2163,7 +2094,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [false]
                     },
@@ -2183,7 +2114,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "error", "timestamp"]
+                  "required": ["ok", "error", "timestamp"]
                 }
               }
             }
@@ -2227,7 +2158,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [true]
                     },
@@ -2298,7 +2229,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "data", "message", "timestamp"]
+                  "required": ["ok", "data", "message", "timestamp"]
                 }
               }
             }
@@ -2310,7 +2241,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [false]
                     },
@@ -2330,7 +2261,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "error", "timestamp"]
+                  "required": ["ok", "error", "timestamp"]
                 }
               }
             }
@@ -2368,7 +2299,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [true]
                     },
@@ -2400,7 +2331,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "timestamp"]
+                  "required": ["ok", "timestamp"]
                 }
               }
             }
@@ -2412,7 +2343,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [false]
                     },
@@ -2432,7 +2363,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "error", "timestamp"]
+                  "required": ["ok", "error", "timestamp"]
                 }
               }
             }
@@ -2444,7 +2375,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [false]
                     },
@@ -2464,7 +2395,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "error", "timestamp"]
+                  "required": ["ok", "error", "timestamp"]
                 }
               }
             }
@@ -2502,7 +2433,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [true]
                     },
@@ -2534,7 +2465,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "data", "timestamp"]
+                  "required": ["ok", "data", "timestamp"]
                 }
               }
             }
@@ -2546,7 +2477,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [false]
                     },
@@ -2566,7 +2497,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "error", "timestamp"]
+                  "required": ["ok", "error", "timestamp"]
                 }
               }
             }
@@ -2578,7 +2509,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [false]
                     },
@@ -2598,7 +2529,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "error", "timestamp"]
+                  "required": ["ok", "error", "timestamp"]
                 }
               }
             }
@@ -2636,7 +2567,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [true]
                     },
@@ -2668,7 +2599,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "timestamp"]
+                  "required": ["ok", "timestamp"]
                 }
               }
             }
@@ -2680,7 +2611,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [false]
                     },
@@ -2700,7 +2631,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "error", "timestamp"]
+                  "required": ["ok", "error", "timestamp"]
                 }
               }
             }
@@ -2712,7 +2643,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [false]
                     },
@@ -2732,7 +2663,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "error", "timestamp"]
+                  "required": ["ok", "error", "timestamp"]
                 }
               }
             }
@@ -2777,7 +2708,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [false]
                     },
@@ -2797,7 +2728,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "error", "timestamp"]
+                  "required": ["ok", "error", "timestamp"]
                 }
               }
             }
@@ -2829,7 +2760,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [true]
                     },
@@ -2861,7 +2792,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "timestamp"]
+                  "required": ["ok", "timestamp"]
                 }
               }
             }
@@ -2873,7 +2804,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
+                    "ok": {
                       "type": "boolean",
                       "enum": [false]
                     },
@@ -2893,7 +2824,7 @@
                       "type": "string"
                     }
                   },
-                  "required": ["success", "error", "timestamp"]
+                  "required": ["ok", "error", "timestamp"]
                 }
               }
             }

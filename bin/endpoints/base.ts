@@ -4,7 +4,7 @@
  * Standard API response format used across all endpoints
  */
 export interface ApiResponse<T = unknown> {
-  success: boolean
+  ok: boolean
   data?: T
   message?: string
   meta?: {
@@ -122,7 +122,7 @@ export abstract class BaseAdapter {
 
     if (this.config.dryRun) {
       return {
-        success: true,
+        ok: true,
         message: `DRY RUN: Would ${method} ${url}`,
         data: { url, headers, body } as T
       }
@@ -147,26 +147,19 @@ export abstract class BaseAdapter {
       }
 
       const response = await fetch(url, requestInit)
-      // biome-ignore lint/suspicious/noExplicitAny: Need to handle both 'ok' and 'success' response formats for backward compatibility
-      const rawData = (await response.json()) as any
+      const data = (await response.json()) as ApiResponse<T>
 
       if (this.config.verbose) {
-        console.log("📥 Response (%d):", response.status, JSON.stringify(rawData, null, 2))
+        console.log("📥 Response (%d):", response.status, JSON.stringify(data, null, 2))
       }
 
       if (!response.ok) {
         return {
-          success: false,
+          ok: false,
           error: `HTTP ${response.status}: ${response.statusText}`,
-          details: rawData,
-          meta: rawData.meta
+          details: data,
+          meta: data.meta
         }
-      }
-
-      // Convert 'ok' field to 'success' for backward compatibility
-      const data: ApiResponse<T> = {
-        ...rawData,
-        success: rawData.ok !== undefined ? rawData.ok : rawData.success
       }
 
       return data
@@ -178,7 +171,7 @@ export abstract class BaseAdapter {
       }
 
       return {
-        success: false,
+        ok: false,
         error: errorMessage,
         details: error
       }
@@ -201,7 +194,7 @@ export abstract class BaseAdapter {
 
     if (!(await file.exists())) {
       return {
-        success: false,
+        ok: false,
         error: `File not found: ${filePath}`
       }
     }

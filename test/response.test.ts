@@ -20,7 +20,7 @@ describe("Response Utils", () => {
     it("should create a basic success response", () => {
       const response = createApiResponse()
 
-      expect(response.success).toBe(true)
+      expect(response.ok).toBe(true)
       expect(response.timestamp).toBeDefined()
       expect(new Date(response.timestamp)).toBeInstanceOf(Date)
     })
@@ -29,7 +29,7 @@ describe("Response Utils", () => {
       const testData = { id: 1, name: "Test" }
       const response = createApiResponse(testData)
 
-      expect(response.success).toBe(true)
+      expect(response.ok).toBe(true)
       expect(response.data).toEqual(testData)
     })
 
@@ -37,7 +37,7 @@ describe("Response Utils", () => {
       const message = "Operation completed successfully"
       const response = createApiResponse(undefined, message)
 
-      expect(response.success).toBe(true)
+      expect(response.ok).toBe(true)
       expect(response.message).toBe(message)
     })
 
@@ -47,7 +47,7 @@ describe("Response Utils", () => {
       }
       const response = createApiResponse(undefined, undefined, meta)
 
-      expect(response.success).toBe(true)
+      expect(response.ok).toBe(true)
       expect(response.meta).toEqual(meta)
     })
 
@@ -58,7 +58,7 @@ describe("Response Utils", () => {
 
       const response = createApiResponse(data, message, meta)
 
-      expect(response.success).toBe(true)
+      expect(response.ok).toBe(true)
       expect(response.data).toEqual(data)
       expect(response.message).toBe(message)
       expect(response.meta).toEqual(meta)

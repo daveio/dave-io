@@ -6,7 +6,7 @@ extendZodWithOpenApi(z)
 
 // Common response schemas
 export const ApiSuccessResponseSchema = z.object({
-  success: z.literal(true),
+  ok: z.literal(true),
   data: z.any().optional(),
   message: z.string().optional(),
   meta: z
@@ -22,7 +22,7 @@ export const ApiSuccessResponseSchema = z.object({
 })
 
 export const ApiErrorResponseSchema = z.object({
-  success: z.literal(false),
+  ok: z.literal(false),
   error: z.string(),
   details: z.any().optional(),
   meta: z
@@ -56,7 +56,7 @@ export const UserSchema = z.object({
 })
 
 export const AuthSuccessResponseSchema = z.object({
-  success: z.literal(true),
+  ok: z.literal(true),
   message: z.string(),
   jwt: JWTDetailsSchema,
   user: UserSchema,
@@ -64,7 +64,7 @@ export const AuthSuccessResponseSchema = z.object({
 })
 
 export const AuthIntrospectionSchema = z.object({
-  success: z.boolean(),
+  ok: z.boolean(),
   data: z.object({
     valid: z.boolean(),
     payload: JWTDetailsSchema.optional(),
@@ -142,31 +142,6 @@ export const KVRedirectMappingSchema = z.record(z.string(), z.string().url())
 export const KVDataSchema = z.object({
   metrics: KVMetricsSchema,
   redirect: KVRedirectMappingSchema
-})
-
-// Legacy SystemMetrics for backward compatibility
-export const SystemMetricsSchema = z.object({
-  users: z.object({
-    total: z.number(),
-    active: z.number(),
-    new_today: z.number()
-  }),
-  posts: z.object({
-    total: z.number(),
-    published: z.number(),
-    drafts: z.number()
-  }),
-  system: z.object({
-    runtime: z.string(),
-    timestamp: z.string(),
-    cf_ray: z.string().optional(),
-    cf_datacenter: z.string().optional(),
-    cf_country: z.string().optional()
-  }),
-  api: z.object({
-    version: z.string(),
-    endpoints_available: z.number()
-  })
 })
 
 // Worker info schemas
@@ -295,7 +270,7 @@ export const AiAltTextRequestSchema = z
   })
 
 export const AiAltTextResponseSchema = z.object({
-  success: z.literal(true),
+  ok: z.literal(true),
   alt_text: z.string(),
   confidence: z.number().optional(),
   processing_time_ms: z.number().optional(),
@@ -312,7 +287,7 @@ export const TokenUsageSchema = z.object({
 })
 
 export const TokenMetricsSchema = z.object({
-  success: z.literal(true),
+  ok: z.literal(true),
   data: z.object({
     total_requests: z.number(),
     successful_requests: z.number(),
@@ -339,7 +314,7 @@ export const ImageOptimisationRequestSchema = z
   })
 
 export const ImageOptimisationResponseSchema = z.object({
-  success: z.literal(true),
+  ok: z.literal(true),
   data: z.object({
     url: z.string().url(),
     originalSizeBytes: z.number(),
@@ -371,7 +346,6 @@ export type User = z.infer<typeof UserSchema>
 export type AuthSuccessResponse = z.infer<typeof AuthSuccessResponseSchema>
 export type AuthIntrospection = z.infer<typeof AuthIntrospectionSchema>
 export type HealthCheck = z.infer<typeof HealthCheckSchema>
-export type SystemMetrics = z.infer<typeof SystemMetricsSchema>
 export type WorkerInfo = z.infer<typeof WorkerInfoSchema>
 export type PingResponse = z.infer<typeof PingResponseSchema>
 export type EnhancedPingResponse = z.infer<typeof EnhancedPingResponseSchema>

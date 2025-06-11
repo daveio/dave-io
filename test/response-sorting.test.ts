@@ -18,7 +18,7 @@ describe("Response Sorting Integration", () => {
 
     // Check that top-level keys are sorted
     const topKeys = Object.keys(response)
-    expect(topKeys).toEqual(["data", "message", "success", "timestamp"])
+    expect(topKeys).toEqual(["data", "message", "ok", "timestamp"])
 
     // Check that data keys are sorted
     const dataKeys = Object.keys(response.data)
@@ -88,13 +88,14 @@ describe("Response Sorting Integration", () => {
     })
 
     // Verify response still has required fields
-    expect(response).toHaveProperty("success", true)
+    expect(response).toHaveProperty("ok", true)
     expect(response).toHaveProperty("data")
     expect(response).toHaveProperty("message", "Test message")
     expect(response).toHaveProperty("timestamp")
     expect(response).toHaveProperty("meta")
 
     // Verify meta object is also sorted
-    expect(Object.keys(response.meta)).toEqual(["page", "total"])
+    expect(response.meta).toBeDefined()
+    expect(Object.keys(response.meta || {})).toEqual(["page", "total"])
   })
 })

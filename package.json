@@ -68,9 +68,7 @@
     "init": "bun run-s reset generate",
     "// === BUILD TASKS ===": "",
     "build": "bun run-s init build:nuxt",
-    "build:static": "bun run-s init build:nuxt:static",
     "build:nuxt": "bun run nuxt build",
-    "build:nuxt:static": "bun run nuxt generate",
     "// === DEVELOPMENT ===": "",
     "dev": "bun run-s init dev:nuxt",
     "dev:nuxt": "bun run nuxt dev",
@@ -79,9 +77,10 @@
     "deploy:env": "bun run bin/env.ts",
     "deploy:wrangler": "bun run wrangler deploy",
     "// === GENERATION ===": "",
-    "generate": "bun run-s generate:types generate:openapi",
+    "generate": "bun run-s generate:prepare generate:types generate:openapi",
     "generate:openapi": "bun run bin/openapi.ts && biome format --write public/openapi.json",
     "generate:types": "bun run wrangler types",
+    "generate:prepare": "bun run nuxt prepare",
     "// === LINTING ===": "",
     "lint": "bun run-s lint:biome lint:trunk lint:types",
     "lint:biome": "bun run biome check --write",
@@ -110,7 +109,7 @@
     "kv": "bun run bin/kv.ts",
     "try": "bun run bin/try.ts",
     "// === HOOKS ===": "",
-    "postinstall": "bun run-s generate"
+    "postinstall": "bun run generate"
   },
   "trustedDependencies": [
     "@anthropic-ai/claude-code",

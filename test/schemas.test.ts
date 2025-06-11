@@ -16,7 +16,7 @@ describe("API Schemas", () => {
   describe("ApiSuccessResponseSchema", () => {
     it("should validate a complete success response", () => {
       const response = {
-        success: true,
+        ok: true,
         data: { test: "data" },
         message: "Operation successful",
         meta: {
@@ -32,14 +32,14 @@ describe("API Schemas", () => {
       const result = ApiSuccessResponseSchema.safeParse(response)
       expect(result.success).toBe(true)
       if (result.success) {
-        expect(result.data.success).toBe(true)
+        expect(result.data.ok).toBe(true)
         expect(result.data.data).toEqual({ test: "data" })
       }
     })
 
     it("should validate minimal success response", () => {
       const response = {
-        success: true,
+        ok: true,
         timestamp: "2025-01-01T00:00:00.000Z"
       }
 
@@ -47,9 +47,9 @@ describe("API Schemas", () => {
       expect(result.success).toBe(true)
     })
 
-    it("should reject response with success: false", () => {
+    it("should reject response with ok: false", () => {
       const response = {
-        success: false,
+        ok: false,
         timestamp: "2025-01-01T00:00:00.000Z"
       }
 
@@ -61,7 +61,7 @@ describe("API Schemas", () => {
   describe("ApiErrorResponseSchema", () => {
     it("should validate a complete error response", () => {
       const response = {
-        success: false,
+        ok: false,
         error: "Validation failed",
         details: 'Field "name" is required',
         meta: {
@@ -74,14 +74,14 @@ describe("API Schemas", () => {
       const result = ApiErrorResponseSchema.safeParse(response)
       expect(result.success).toBe(true)
       if (result.success) {
-        expect(result.data.success).toBe(false)
+        expect(result.data.ok).toBe(false)
         expect(result.data.error).toBe("Validation failed")
       }
     })
 
     it("should validate minimal error response", () => {
       const response = {
-        success: false,
+        ok: false,
         error: "Something went wrong",
         timestamp: "2025-01-01T00:00:00.000Z"
       }
@@ -90,9 +90,9 @@ describe("API Schemas", () => {
       expect(result.success).toBe(true)
     })
 
-    it("should reject response with success: true", () => {
+    it("should reject response with ok: true", () => {
       const response = {
-        success: true,
+        ok: true,
         error: "This should not work",
         timestamp: "2025-01-01T00:00:00.000Z"
       }
@@ -177,7 +177,7 @@ describe("API Schemas", () => {
   describe("TokenMetricsSchema", () => {
     it("should validate token metrics response", () => {
       const metrics = {
-        success: true,
+        ok: true,
         data: {
           total_requests: 1000,
           successful_requests: 950,
@@ -199,7 +199,7 @@ describe("API Schemas", () => {
   describe("AuthIntrospectionSchema", () => {
     it("should validate auth introspection response", () => {
       const introspection = {
-        success: true,
+        ok: true,
         data: {
           valid: true,
           payload: {
@@ -229,7 +229,7 @@ describe("API Schemas", () => {
 
     it("should validate invalid token response", () => {
       const introspection = {
-        success: false,
+        ok: false,
         data: {
           valid: false,
           error: "Token expired"

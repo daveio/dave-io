@@ -5,7 +5,7 @@ import { prepareSortedApiResponse } from "./json-utils"
 import type { ApiErrorResponse, ApiSuccessResponse } from "./schemas"
 
 export interface ApiResponse<T = unknown> {
-  success: boolean
+  ok: boolean
   data?: T
   message?: string
   error?: string
@@ -21,7 +21,7 @@ export interface ApiResponse<T = unknown> {
 
 export function createApiResponse<T>(data?: T, message?: string, meta?: ApiResponse<T>["meta"]): ApiSuccessResponse {
   const response: ApiSuccessResponse = {
-    success: true,
+    ok: true,
     timestamp: new Date().toISOString()
   }
 
@@ -43,7 +43,7 @@ export function createApiResponse<T>(data?: T, message?: string, meta?: ApiRespo
 
 export function createApiError(statusCode: number, message: string, details?: unknown): never {
   const errorData: ApiErrorResponse = {
-    success: false,
+    ok: false,
     error: message,
     details: process.env.NODE_ENV === "development" ? details : undefined,
     meta: {

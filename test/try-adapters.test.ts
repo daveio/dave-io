@@ -117,7 +117,7 @@ describe("BaseAdapter", () => {
       // biome-ignore lint/suspicious/noExplicitAny: cast for test access
       const result = await (dryRunAdapter as any).testMethod()
 
-      expect(result.success).toBe(true)
+      expect(result.ok).toBe(true)
       expect(result.message).toContain("DRY RUN: Would GET")
       expect(mockFetch).not.toHaveBeenCalled()
     })
@@ -126,7 +126,7 @@ describe("BaseAdapter", () => {
       const mockResponse = {
         ok: true,
         status: 200,
-        json: async () => ({ success: true, data: { test: "value" } })
+        json: async () => ({ ok: true, data: { test: "value" } })
       }
       mockFetch.mockResolvedValueOnce(mockResponse)
 
@@ -139,7 +139,7 @@ describe("BaseAdapter", () => {
       // biome-ignore lint/suspicious/noExplicitAny: Testing private method
       const result = await (testAdapter as any).testMethod()
 
-      expect(result.success).toBe(true)
+      expect(result.ok).toBe(true)
       expect(result.data).toEqual({ test: "value" })
       expect(mockFetch).toHaveBeenCalledWith(
         "https://test.example.com/test?token=test-token",
@@ -170,7 +170,7 @@ describe("BaseAdapter", () => {
       // biome-ignore lint/suspicious/noExplicitAny: Testing private method
       const result = await (testAdapter as any).testMethod()
 
-      expect(result.success).toBe(false)
+      expect(result.ok).toBe(false)
       expect(result.error).toBe("HTTP 400: Bad Request")
     })
 
@@ -186,7 +186,7 @@ describe("BaseAdapter", () => {
       // biome-ignore lint/suspicious/noExplicitAny: Testing private method
       const result = await (testAdapter as any).testMethod()
 
-      expect(result.success).toBe(false)
+      expect(result.ok).toBe(false)
       expect(result.error).toBe("Network error")
     })
 
@@ -194,7 +194,7 @@ describe("BaseAdapter", () => {
       const mockResponse = {
         ok: true,
         status: 200,
-        json: async () => ({ success: true })
+        json: async () => ({ ok: true })
       }
       mockFetch.mockResolvedValueOnce(mockResponse)
 
@@ -210,7 +210,7 @@ describe("BaseAdapter", () => {
       // biome-ignore lint/suspicious/noExplicitAny: Testing private method
       const result = await (testAdapter as any).testMethod()
 
-      expect(result.success).toBe(true)
+      expect(result.ok).toBe(true)
       expect(mockFetch).toHaveBeenCalledWith(
         "https://test.example.com/test?token=test-token",
         expect.objectContaining({
@@ -229,14 +229,14 @@ describe("BaseAdapter", () => {
       const mockResponse = {
         ok: true,
         status: 200,
-        json: async () => ({ success: true, data: { processed: true } })
+        json: async () => ({ ok: true, data: { processed: true } })
       }
       mockFetch.mockResolvedValueOnce(mockResponse)
 
       // biome-ignore lint/suspicious/noExplicitAny: Testing private method
       const result = await (adapter as any).uploadImageFromUrl("/process", "https://example.com/image.jpg")
 
-      expect(result.success).toBe(true)
+      expect(result.ok).toBe(true)
       expect(result.data).toEqual({ processed: true })
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining("url=https%3A%2F%2Fexample.com%2Fimage.jpg"),
@@ -250,7 +250,7 @@ describe("BaseAdapter", () => {
       const mockResponse = {
         ok: true,
         status: 200,
-        json: async () => ({ success: true })
+        json: async () => ({ ok: true })
       }
       mockFetch.mockResolvedValueOnce(mockResponse)
 
@@ -283,7 +283,7 @@ describe("AIAdapter", () => {
       ok: true,
       status: 200,
       json: async () => ({
-        success: true,
+        ok: true,
         data: { altText: "A beautiful landscape", confidence: 0.95 }
       })
     }
@@ -291,7 +291,7 @@ describe("AIAdapter", () => {
 
     const result = await adapter.generateAltTextFromUrl("https://example.com/image.jpg")
 
-    expect(result.success).toBe(true)
+    expect(result.ok).toBe(true)
     expect(result.data?.altText).toBe("A beautiful landscape")
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining("/api/ai/alt"),
@@ -304,7 +304,7 @@ describe("AIAdapter", () => {
       ok: true,
       status: 200,
       json: async () => ({
-        success: true,
+        ok: true,
         data: { altText: "A test image" }
       })
     }
@@ -312,7 +312,7 @@ describe("AIAdapter", () => {
 
     const result = await adapter.generateAltTextFromBase64("base64data")
 
-    expect(result.success).toBe(true)
+    expect(result.ok).toBe(true)
     expect(result.data?.altText).toBe("A test image")
     expect(mockFetch).toHaveBeenCalledWith(
       expect.any(String),
@@ -345,7 +345,7 @@ describe("ImagesAdapter", () => {
       ok: true,
       status: 200,
       json: async () => ({
-        success: true,
+        ok: true,
         data: {
           optimisedImage: "optimized-base64",
           originalSize: 1000,
@@ -358,7 +358,7 @@ describe("ImagesAdapter", () => {
 
     const result = await adapter.optimiseFromUrl("https://example.com/image.jpg", 80)
 
-    expect(result.success).toBe(true)
+    expect(result.ok).toBe(true)
     expect(result.data?.compressionRatio).toBe(0.5)
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining("quality=80"),
@@ -371,7 +371,7 @@ describe("ImagesAdapter", () => {
       ok: true,
       status: 200,
       json: async () => ({
-        success: true,
+        ok: true,
         data: { optimisedImage: "optimized-base64" }
       })
     }
@@ -379,7 +379,7 @@ describe("ImagesAdapter", () => {
 
     const result = await adapter.optimiseFromBase64("base64data", 75)
 
-    expect(result.success).toBe(true)
+    expect(result.ok).toBe(true)
     expect(mockFetch).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
@@ -396,7 +396,7 @@ describe("ImagesAdapter", () => {
     const mockResponse = {
       ok: true,
       status: 200,
-      json: async () => ({ success: true })
+      json: async () => ({ ok: true })
     }
     mockFetch.mockResolvedValueOnce(mockResponse)
 
@@ -480,7 +480,7 @@ describe("InternalAdapter", () => {
 
     const result = await adapter.ping()
 
-    expect(result.success).toBe(true)
+    expect(result.ok).toBe(true)
     expect(result.data?.worker?.environment).toBe("test")
     expect(result.data?.worker?.edge_functions).toBe(true)
     expect(result.data?.cloudflare?.ray).toBe("test-ray")
@@ -511,7 +511,7 @@ describe("TokensAdapter", () => {
       ok: true,
       status: 200,
       json: async () => ({
-        success: true,
+        ok: true,
         data: {
           uuid: "test-uuid",
           usage: { total: 100, success: 95, error: 5 }
@@ -522,7 +522,7 @@ describe("TokensAdapter", () => {
 
     const result = await adapter.getTokenInfo("test-uuid")
 
-    expect(result.success).toBe(true)
+    expect(result.ok).toBe(true)
     expect(result.data?.uuid).toBe("test-uuid")
     expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining("/api/tokens/test-uuid"), expect.any(Object))
   })
@@ -532,7 +532,7 @@ describe("TokensAdapter", () => {
       ok: true,
       status: 200,
       json: async () => ({
-        success: true,
+        ok: true,
         data: { revoked: true, uuid: "test-uuid" }
       })
     }
@@ -540,7 +540,7 @@ describe("TokensAdapter", () => {
 
     const result = await adapter.revokeToken("test-uuid")
 
-    expect(result.success).toBe(true)
+    expect(result.ok).toBe(true)
     expect(result.data?.revoked).toBe(true)
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining("/api/tokens/test-uuid/revoke"),
@@ -556,7 +556,7 @@ describe("TokensAdapter", () => {
       ok: true,
       status: 200,
       json: async () => ({
-        success: true,
+        ok: true,
         data: { revoked: false, uuid: "test-uuid" }
       })
     }
@@ -564,7 +564,7 @@ describe("TokensAdapter", () => {
 
     const result = await adapter.unrevokeToken("test-uuid")
 
-    expect(result.success).toBe(true)
+    expect(result.ok).toBe(true)
     expect(result.data?.revoked).toBe(false)
     expect(mockFetch).toHaveBeenCalledWith(
       expect.any(String),
@@ -596,7 +596,7 @@ describe("DashboardAdapter", () => {
       ok: true,
       status: 200,
       json: async () => ({
-        success: true,
+        ok: true,
         data: {
           name: "test-dashboard",
           data: { metrics: 123 },
@@ -608,7 +608,7 @@ describe("DashboardAdapter", () => {
 
     const result = await adapter.getDashboardData("test-dashboard")
 
-    expect(result.success).toBe(true)
+    expect(result.ok).toBe(true)
     expect(result.data?.name).toBe("test-dashboard")
     expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining("/api/dashboard/test-dashboard"), expect.any(Object))
   })

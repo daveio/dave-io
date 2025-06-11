@@ -67,7 +67,7 @@ export class ImagesAdapter extends BaseAdapter {
 
     if (this.config.dryRun) {
       return {
-        success: true,
+        ok: true,
         message: `DRY RUN: Would ${method} ${url}`,
         data: { url, headers, body } as T
       }
@@ -100,7 +100,7 @@ export class ImagesAdapter extends BaseAdapter {
 
       if (!response.ok) {
         return {
-          success: false,
+          ok: false,
           error: `HTTP ${response.status}: ${response.statusText}`,
           details: data,
           meta: data.meta
@@ -116,7 +116,7 @@ export class ImagesAdapter extends BaseAdapter {
       }
 
       return {
-        success: false,
+        ok: false,
         error: errorMessage,
         details: error
       }
@@ -152,7 +152,7 @@ export class ImagesAdapter extends BaseAdapter {
 
     if (!(await file.exists())) {
       return {
-        success: false,
+        ok: false,
         error: `File not found: ${filePath}`
       }
     }

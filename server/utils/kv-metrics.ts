@@ -384,56 +384,6 @@ export async function getKVAggregatedTimings(kv: KVNamespace): Promise<Record<st
 }
 
 /**
- * Legacy helper functions for backward compatibility - now call new functions
- */
-export function createAPIRequestKVCounters(
-  _endpoint: string,
-  _method: string,
-  _statusCode: number,
-  _cfInfo: { country: string; datacenter: string },
-  _userAgent?: string,
-  extraCounters?: KVCounterEntry[]
-): KVCounterEntry[] {
-  // Return empty array - actual work done by updateAPIRequestMetrics
-  return [...(extraCounters || [])]
-}
-
-export function createAuthKVCounters(
-  _endpoint: string,
-  _success: boolean,
-  _tokenSubject: string | undefined,
-  _cfInfo: { country: string },
-  extraCounters?: KVCounterEntry[]
-): KVCounterEntry[] {
-  // Return empty array - auth metrics now tracked via updateAPIRequestMetrics
-  return [...(extraCounters || [])]
-}
-
-export function createRedirectKVCounters(
-  _slug: string,
-  _destinationUrl: string,
-  _clickCount: number,
-  _cfInfo: { country: string },
-  extraCounters?: KVCounterEntry[]
-): KVCounterEntry[] {
-  // Return empty array - actual work done by updateRedirectMetrics
-  return [...(extraCounters || [])]
-}
-
-export function createAIKVCounters(
-  _operation: string,
-  _success: boolean,
-  _processingTimeMs: number,
-  _imageSizeBytes: number | undefined,
-  _userId: string | undefined,
-  _cfInfo: { country: string },
-  extraCounters?: KVCounterEntry[]
-): KVCounterEntry[] {
-  // Return empty array - AI metrics now tracked via updateAPIRequestMetrics
-  return [...(extraCounters || [])]
-}
-
-/**
  * Helper to detect bot user agents
  */
 export function isBot(userAgent: string): boolean {

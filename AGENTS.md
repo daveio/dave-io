@@ -4,7 +4,8 @@
 
 ### Pre-Production Breaking Changes Policy
 
-- **NO backwards compatibility** (pre-production only)
+- **NO backwards compatibility** (pre-production only).
+- If you must add backwards compatibility or migration code, add a TODO to remove it.
 - Remove fields, delete KV keys, change APIs without migration
 - Document breaking changes in AGENTS.md
 - ❌ No migration code or legacy support
@@ -14,12 +15,14 @@
 - Unlimited time for correct implementations
 - Use as many AI calls needed for research
 - Choose robust solutions, refactor ruthlessly
+- If you must favour speed, add a TODO to return to it later
 - ❌ No "good enough" implementations
 
 ### Mandatory Testing
 
 - **EVERYTHING** with logic/side effects requires tests
 - Cover edge cases and error conditions
+- If you can't add tests, add a TODO to implement them later
 - Commands: `bun run test`, `bun run test:ui`, `bun run test:api`
 - ❌ Skip: trivial getters, frontend components, config objects
 
@@ -29,13 +32,15 @@
 - **README.md and CLAUDE.md are symbolic links** to AGENTS.md for functional purposes
 - **Make all documentation changes to AGENTS.md only**
 - Update after: API changes, features, architecture, auth changes
+- If you can't update documentation, add a TODO to return to it later
 
 ### Quality Verification Workflow
 
 **Mandatory sequence**:
 
-1. `bun run lint:biome`, `bun run lint:trunk`, `bun run lint:types `, `bun run test`
-2. Only then: `bun run check` (full build)
+1. `bun run build` to generate all supporting artifacts
+2. `bun run lint:biome`, `bun run lint:trunk`, `bun run lint:types`, `bun run test`
+3. Only then: `bun run check` (full build)
 
 - ❌ Never commit broken code
 
@@ -51,6 +56,7 @@
 - Crash loudly when services fail
 - ❌ Forbidden: `Math.random()`, hardcoded percentages, fake delays, fallback values
 - Exception: Test files only
+- If you must add mock data, add a TODO to remove it later
 
 ### No Incomplete Implementations
 
@@ -89,6 +95,7 @@ Examples:
 - Store simple values only: strings, numbers, booleans, simple JSON
 - Use hierarchical keys: `metrics:api:internal:ok`
 - Lowercase kebab-case: `auth:revocation:token-uuid`
+- If you have to violate this, add a TODO to return to it later
 - ❌ No metadata wrappers or complex nested objects
 - Update `data/kv/_init.yaml` for new key definitions
 
@@ -96,6 +103,7 @@ Examples:
 
 - Extract duplicated logic immediately
 - Create in `server/utils/`, add JSDoc, tests, TypeScript types
+- If you can't make something shared, add a TODO to return to it later
 - ❌ No copy-pasting between endpoints
 
 ## Overview
@@ -206,8 +214,8 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 
 ## Response Format
 
-- **Success**: `{success: true, data?, message?, meta?, timestamp}`
-- **Error**: `{success: false, error, details?, meta?, timestamp}`
+- **Success**: `{ok: true, data?, message?, meta?, timestamp}`
+- **Error**: `{ok: false, error, details?, meta?, timestamp}`
 - **Meta**: requestId, timestamp, cfRay, datacenter, country
 
 ## Environment

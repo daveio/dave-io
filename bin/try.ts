@@ -105,7 +105,7 @@ async function displayResult<T>(result: ApiResponse<T>, options: GlobalOptions, 
     return
   }
 
-  if (quiet && result.success) {
+  if (quiet && result.ok) {
     if (result.data && typeof result.data === "object") {
       console.log(JSON.stringify(result.data, null, 2))
     } else if (result.message) {
@@ -114,13 +114,13 @@ async function displayResult<T>(result: ApiResponse<T>, options: GlobalOptions, 
     return
   }
 
-  const statusIcon = result.success ? "✅" : "❌"
-  const statusColor = result.success ? chalk.green : chalk.red
+  const statusIcon = result.ok ? "✅" : "❌"
+  const statusColor = result.ok ? chalk.green : chalk.red
   const boxTitle = title ? `${statusIcon} ${title}` : `${statusIcon} API Response`
 
   const content = []
 
-  if (result.success) {
+  if (result.ok) {
     content.push(statusColor("Success: true"))
     if (result.message) {
       content.push(`Message: ${result.message}`)
@@ -158,8 +158,8 @@ async function displayResult<T>(result: ApiResponse<T>, options: GlobalOptions, 
   const box = boxen(content.join("\n"), {
     padding: 1,
     margin: 1,
-    borderStyle: result.success ? "round" : "double",
-    borderColor: result.success ? "green" : "red",
+    borderStyle: result.ok ? "round" : "double",
+    borderColor: result.ok ? "green" : "red",
     title: boxTitle,
     titleAlignment: "center"
   })
