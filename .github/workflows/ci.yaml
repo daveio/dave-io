@@ -15,8 +15,6 @@ jobs:
           bun-version: 1.2.15
       - name: install
         run: bun install
-      - name: types
-        run: bun run types
       - name: build
         run: bun run build
       - name: biome
@@ -24,4 +22,5 @@ jobs:
       - name: trunk
         uses: trunk-io/trunk-action@75699af9e26881e564e9d832ef7dc3af25ec031b
       - name: typecheck
-        run: bun run typecheck
+        run: bun run lint:types
+
