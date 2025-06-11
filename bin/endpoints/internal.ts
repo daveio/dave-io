@@ -1,28 +1,41 @@
 import { type ApiResponse, BaseAdapter, type RequestConfig } from "./base"
 
 /**
- * Response format for ping endpoint (merged from health, ping, and worker)
+ * Response format for ping endpoint (new restructured format)
  */
 interface PingResponse {
-  api_available: boolean
-  cf_connecting_ip: string
-  cf_country: string
-  cf_datacenter: string
-  cf_ipcountry: string
-  cf_ray: string
-  edge_functions: boolean
-  environment: string
-  preset: string
-  runtime: string
-  server_side_rendering: boolean
-  status: "ok" | "error"
-  timestamp: string
-  user_agent: string
-  version: string
-  worker_limits: {
-    cpu_time: string
-    memory: string
-    request_timeout: string
+  cloudflare: {
+    connectingIP: string
+    country: {
+      ip: string
+      primary: string
+    }
+    datacentre: string
+    ray: string
+    request: {
+      agent: string
+      host: string
+      method: string
+      path: string
+      proto: {
+        forward: string
+        request: string
+      }
+      version: string
+    }
+  }
+  worker: {
+    edge_functions: boolean
+    environment: string
+    limits: {
+      cpu_time: string
+      memory: string
+      request_timeout: string
+    }
+    preset: string
+    runtime: string
+    server_side_rendering: boolean
+    version: string
   }
 }
 
@@ -46,17 +59,11 @@ interface EnhancedPingResponse {
   }
   headers: {
     count: number
-    request: {
-      method: string
-      host: string
-      path: string
-      version: string
-    }
     cloudflare: Record<string, string>
     forwarding: Record<string, string>
     other: Record<string, string>
   }
-  success: true
+  ok: true
   timestamp: string
 }
 
@@ -70,7 +77,7 @@ export class InternalAdapter extends BaseAdapter {
    * Includes system status, auth validation, and request headers
    * @returns Complete service status including health, runtime, worker info, auth, and headers
    */
-  async ping(): Promise<ApiResponse<EnhancedPingResponse>> {
-    return this.makeRequest("/api/ping")
+  async ping(): Promise<ApiResponse & EnhancedPingResponse> {
+    return this.makeRequest("/api/ping") as Promise<ApiResponse & EnhancedPingResponse>
   }
 }

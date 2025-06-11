@@ -2,7 +2,7 @@ import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/met
 import { authorizeEndpoint } from "~/server/utils/auth"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
 import { createApiError, createApiResponse, isApiError } from "~/server/utils/response"
-import { TokenMetricsSchema, TokenUsageSchema } from "~/server/utils/schemas"
+import { TokenUsageSchema } from "~/server/utils/schemas"
 
 interface TokenUsageData {
   token_id: string
@@ -116,21 +116,17 @@ export default defineEventHandler(async (event) => {
         env.DATA.get(`metrics:tokens:${uuid}:requests:failed`).then((v) => Number.parseInt(v || "0"))
       ])
 
-      const metrics = TokenMetricsSchema.parse({
-        success: true,
-        data: {
-          total_requests: totalRequests,
-          successful_requests: successfulRequests,
-          failed_requests: failedRequests,
-          redirect_clicks: 0
-        },
-        timestamp: new Date().toISOString()
-      })
+      const metricsData = {
+        total_requests: totalRequests,
+        successful_requests: successfulRequests,
+        failed_requests: failedRequests,
+        redirect_clicks: 0
+      }
 
       // Record successful metrics
       recordAPIMetrics(event, 200)
 
-      return metrics
+      return createApiResponse(metricsData, "Token metrics retrieved successfully")
     }
     throw createApiError(404, `Unknown token endpoint: ${path}`)
   } catch (error: unknown) {

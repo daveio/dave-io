@@ -147,19 +147,26 @@ export abstract class BaseAdapter {
       }
 
       const response = await fetch(url, requestInit)
-      const data = (await response.json()) as ApiResponse<T>
+      // biome-ignore lint/suspicious/noExplicitAny: Need to handle both 'ok' and 'success' response formats for backward compatibility
+      const rawData = (await response.json()) as any
 
       if (this.config.verbose) {
-        console.log("📥 Response (%d):", response.status, JSON.stringify(data, null, 2))
+        console.log("📥 Response (%d):", response.status, JSON.stringify(rawData, null, 2))
       }
 
       if (!response.ok) {
         return {
           success: false,
           error: `HTTP ${response.status}: ${response.statusText}`,
-          details: data,
-          meta: data.meta
+          details: rawData,
+          meta: rawData.meta
         }
+      }
+
+      // Convert 'ok' field to 'success' for backward compatibility
+      const data: ApiResponse<T> = {
+        ...rawData,
+        success: rawData.ok !== undefined ? rawData.ok : rawData.success
       }
 
       return data

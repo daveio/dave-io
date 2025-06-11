@@ -428,18 +428,40 @@ describe("InternalAdapter", () => {
       ok: true,
       status: 200,
       json: async () => ({
-        success: true,
+        ok: true,
         data: {
-          status: "ok",
-          timestamp: "2023-01-01T00:00:00Z",
-          api_available: true,
-          runtime: "cloudflare-workers",
-          cf_ray: "test-ray",
-          environment: "test",
-          worker_limits: {
-            cpu_time: "50ms (startup) + 50ms (request)",
-            memory: "128MB",
-            request_timeout: "30s"
+          cloudflare: {
+            connectingIP: "86.19.83.9",
+            country: {
+              ip: "GB",
+              primary: "GB"
+            },
+            datacentre: "94e",
+            ray: "test-ray",
+            request: {
+              agent: "test-agent",
+              host: "test.example.com",
+              method: "GET",
+              path: "/api/ping",
+              proto: {
+                forward: "https",
+                request: "https"
+              },
+              version: "1.1"
+            }
+          },
+          worker: {
+            edge_functions: true,
+            environment: "test",
+            limits: {
+              cpu_time: "50ms (startup) + 50ms (request)",
+              memory: "128MB",
+              request_timeout: "30s"
+            },
+            preset: "cloudflare_module",
+            runtime: "cloudflare-workers",
+            server_side_rendering: true,
+            version: "1.0.0"
           }
         },
         auth: {
@@ -447,12 +469,6 @@ describe("InternalAdapter", () => {
         },
         headers: {
           count: 5,
-          request: {
-            method: "GET",
-            host: "test.example.com",
-            path: "/api/ping",
-            version: "1.1"
-          },
           cloudflare: {},
           forwarding: {},
           other: {}
@@ -465,10 +481,11 @@ describe("InternalAdapter", () => {
     const result = await adapter.ping()
 
     expect(result.success).toBe(true)
-    expect(result.data?.data?.status).toBe("ok")
-    expect(result.data?.data?.api_available).toBe(true)
-    expect(result.data?.auth?.supplied).toBe(false)
-    expect(result.data?.headers?.count).toBe(5)
+    expect(result.data?.worker?.environment).toBe("test")
+    expect(result.data?.worker?.edge_functions).toBe(true)
+    expect(result.data?.cloudflare?.ray).toBe("test-ray")
+    expect(result.auth?.supplied).toBe(false)
+    expect(result.headers?.count).toBe(5)
     expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining("/api/ping"), expect.any(Object))
   })
 })

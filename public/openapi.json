@@ -265,86 +265,115 @@
           "data": {
             "type": "object",
             "properties": {
-              "api_available": {
-                "type": "boolean"
-              },
-              "cf_connecting_ip": {
-                "type": "string"
-              },
-              "cf_country": {
-                "type": "string"
-              },
-              "cf_datacenter": {
-                "type": "string"
-              },
-              "cf_ipcountry": {
-                "type": "string"
-              },
-              "cf_ray": {
-                "type": "string"
-              },
-              "edge_functions": {
-                "type": "boolean"
-              },
-              "environment": {
-                "type": "string"
-              },
-              "preset": {
-                "type": "string"
-              },
-              "runtime": {
-                "type": "string"
-              },
-              "server_side_rendering": {
-                "type": "boolean"
-              },
-              "status": {
-                "type": "string",
-                "enum": ["ok", "error"]
-              },
-              "timestamp": {
-                "type": "string"
-              },
-              "user_agent": {
-                "type": "string"
-              },
-              "version": {
-                "type": "string"
-              },
-              "worker_limits": {
+              "cloudflare": {
                 "type": "object",
                 "properties": {
-                  "cpu_time": {
+                  "connectingIP": {
                     "type": "string"
                   },
-                  "memory": {
+                  "country": {
+                    "type": "object",
+                    "properties": {
+                      "ip": {
+                        "type": "string"
+                      },
+                      "primary": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["ip", "primary"]
+                  },
+                  "datacentre": {
                     "type": "string"
                   },
-                  "request_timeout": {
+                  "ray": {
+                    "type": "string"
+                  },
+                  "request": {
+                    "type": "object",
+                    "properties": {
+                      "agent": {
+                        "type": "string"
+                      },
+                      "host": {
+                        "type": "string"
+                      },
+                      "method": {
+                        "type": "string"
+                      },
+                      "path": {
+                        "type": "string"
+                      },
+                      "proto": {
+                        "type": "object",
+                        "properties": {
+                          "forward": {
+                            "type": "string"
+                          },
+                          "request": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["forward", "request"]
+                      },
+                      "version": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["agent", "host", "method", "path", "proto", "version"]
+                  }
+                },
+                "required": ["connectingIP", "country", "datacentre", "ray", "request"]
+              },
+              "worker": {
+                "type": "object",
+                "properties": {
+                  "edge_functions": {
+                    "type": "boolean"
+                  },
+                  "environment": {
+                    "type": "string"
+                  },
+                  "limits": {
+                    "type": "object",
+                    "properties": {
+                      "cpu_time": {
+                        "type": "string"
+                      },
+                      "memory": {
+                        "type": "string"
+                      },
+                      "request_timeout": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["cpu_time", "memory", "request_timeout"]
+                  },
+                  "preset": {
+                    "type": "string"
+                  },
+                  "runtime": {
+                    "type": "string"
+                  },
+                  "server_side_rendering": {
+                    "type": "boolean"
+                  },
+                  "version": {
                     "type": "string"
                   }
                 },
-                "required": ["cpu_time", "memory", "request_timeout"]
+                "required": [
+                  "edge_functions",
+                  "environment",
+                  "limits",
+                  "preset",
+                  "runtime",
+                  "server_side_rendering",
+                  "version"
+                ]
               }
             },
-            "required": [
-              "api_available",
-              "cf_connecting_ip",
-              "cf_country",
-              "cf_datacenter",
-              "cf_ipcountry",
-              "cf_ray",
-              "edge_functions",
-              "environment",
-              "preset",
-              "runtime",
-              "server_side_rendering",
-              "status",
-              "timestamp",
-              "user_agent",
-              "version",
-              "worker_limits"
-            ]
+            "required": ["cloudflare", "worker"]
           },
           "auth": {
             "type": "object",
@@ -391,24 +420,6 @@
               "count": {
                 "type": "number"
               },
-              "request": {
-                "type": "object",
-                "properties": {
-                  "method": {
-                    "type": "string"
-                  },
-                  "host": {
-                    "type": "string"
-                  },
-                  "path": {
-                    "type": "string"
-                  },
-                  "version": {
-                    "type": "string"
-                  }
-                },
-                "required": ["method", "host", "path", "version"]
-              },
               "cloudflare": {
                 "type": "object",
                 "additionalProperties": {
@@ -428,9 +439,9 @@
                 }
               }
             },
-            "required": ["count", "request", "cloudflare", "forwarding", "other"]
+            "required": ["count", "cloudflare", "forwarding", "other"]
           },
-          "success": {
+          "ok": {
             "type": "boolean",
             "enum": [true]
           },
@@ -438,7 +449,7 @@
             "type": "string"
           }
         },
-        "required": ["data", "auth", "headers", "success", "timestamp"]
+        "required": ["data", "auth", "headers", "ok", "timestamp"]
       },
       "HealthCheckSchema": {
         "type": "object",
@@ -1452,86 +1463,115 @@
       "PingResponseSchema": {
         "type": "object",
         "properties": {
-          "api_available": {
-            "type": "boolean"
-          },
-          "cf_connecting_ip": {
-            "type": "string"
-          },
-          "cf_country": {
-            "type": "string"
-          },
-          "cf_datacenter": {
-            "type": "string"
-          },
-          "cf_ipcountry": {
-            "type": "string"
-          },
-          "cf_ray": {
-            "type": "string"
-          },
-          "edge_functions": {
-            "type": "boolean"
-          },
-          "environment": {
-            "type": "string"
-          },
-          "preset": {
-            "type": "string"
-          },
-          "runtime": {
-            "type": "string"
-          },
-          "server_side_rendering": {
-            "type": "boolean"
-          },
-          "status": {
-            "type": "string",
-            "enum": ["ok", "error"]
-          },
-          "timestamp": {
-            "type": "string"
-          },
-          "user_agent": {
-            "type": "string"
-          },
-          "version": {
-            "type": "string"
-          },
-          "worker_limits": {
+          "cloudflare": {
             "type": "object",
             "properties": {
-              "cpu_time": {
+              "connectingIP": {
                 "type": "string"
               },
-              "memory": {
+              "country": {
+                "type": "object",
+                "properties": {
+                  "ip": {
+                    "type": "string"
+                  },
+                  "primary": {
+                    "type": "string"
+                  }
+                },
+                "required": ["ip", "primary"]
+              },
+              "datacentre": {
                 "type": "string"
               },
-              "request_timeout": {
+              "ray": {
+                "type": "string"
+              },
+              "request": {
+                "type": "object",
+                "properties": {
+                  "agent": {
+                    "type": "string"
+                  },
+                  "host": {
+                    "type": "string"
+                  },
+                  "method": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "proto": {
+                    "type": "object",
+                    "properties": {
+                      "forward": {
+                        "type": "string"
+                      },
+                      "request": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["forward", "request"]
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                },
+                "required": ["agent", "host", "method", "path", "proto", "version"]
+              }
+            },
+            "required": ["connectingIP", "country", "datacentre", "ray", "request"]
+          },
+          "worker": {
+            "type": "object",
+            "properties": {
+              "edge_functions": {
+                "type": "boolean"
+              },
+              "environment": {
+                "type": "string"
+              },
+              "limits": {
+                "type": "object",
+                "properties": {
+                  "cpu_time": {
+                    "type": "string"
+                  },
+                  "memory": {
+                    "type": "string"
+                  },
+                  "request_timeout": {
+                    "type": "string"
+                  }
+                },
+                "required": ["cpu_time", "memory", "request_timeout"]
+              },
+              "preset": {
+                "type": "string"
+              },
+              "runtime": {
+                "type": "string"
+              },
+              "server_side_rendering": {
+                "type": "boolean"
+              },
+              "version": {
                 "type": "string"
               }
             },
-            "required": ["cpu_time", "memory", "request_timeout"]
+            "required": [
+              "edge_functions",
+              "environment",
+              "limits",
+              "preset",
+              "runtime",
+              "server_side_rendering",
+              "version"
+            ]
           }
         },
-        "required": [
-          "api_available",
-          "cf_connecting_ip",
-          "cf_country",
-          "cf_datacenter",
-          "cf_ipcountry",
-          "cf_ray",
-          "edge_functions",
-          "environment",
-          "preset",
-          "runtime",
-          "server_side_rendering",
-          "status",
-          "timestamp",
-          "user_agent",
-          "version",
-          "worker_limits"
-        ]
+        "required": ["cloudflare", "worker"]
       },
       "SystemMetricsSchema": {
         "type": "object",
@@ -1782,86 +1822,115 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "api_available": {
-                      "type": "boolean"
-                    },
-                    "cf_connecting_ip": {
-                      "type": "string"
-                    },
-                    "cf_country": {
-                      "type": "string"
-                    },
-                    "cf_datacenter": {
-                      "type": "string"
-                    },
-                    "cf_ipcountry": {
-                      "type": "string"
-                    },
-                    "cf_ray": {
-                      "type": "string"
-                    },
-                    "edge_functions": {
-                      "type": "boolean"
-                    },
-                    "environment": {
-                      "type": "string"
-                    },
-                    "preset": {
-                      "type": "string"
-                    },
-                    "runtime": {
-                      "type": "string"
-                    },
-                    "server_side_rendering": {
-                      "type": "boolean"
-                    },
-                    "status": {
-                      "type": "string",
-                      "enum": ["ok", "error"]
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    },
-                    "user_agent": {
-                      "type": "string"
-                    },
-                    "version": {
-                      "type": "string"
-                    },
-                    "worker_limits": {
+                    "cloudflare": {
                       "type": "object",
                       "properties": {
-                        "cpu_time": {
+                        "connectingIP": {
                           "type": "string"
                         },
-                        "memory": {
+                        "country": {
+                          "type": "object",
+                          "properties": {
+                            "ip": {
+                              "type": "string"
+                            },
+                            "primary": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["ip", "primary"]
+                        },
+                        "datacentre": {
                           "type": "string"
                         },
-                        "request_timeout": {
+                        "ray": {
+                          "type": "string"
+                        },
+                        "request": {
+                          "type": "object",
+                          "properties": {
+                            "agent": {
+                              "type": "string"
+                            },
+                            "host": {
+                              "type": "string"
+                            },
+                            "method": {
+                              "type": "string"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "proto": {
+                              "type": "object",
+                              "properties": {
+                                "forward": {
+                                  "type": "string"
+                                },
+                                "request": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": ["forward", "request"]
+                            },
+                            "version": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["agent", "host", "method", "path", "proto", "version"]
+                        }
+                      },
+                      "required": ["connectingIP", "country", "datacentre", "ray", "request"]
+                    },
+                    "worker": {
+                      "type": "object",
+                      "properties": {
+                        "edge_functions": {
+                          "type": "boolean"
+                        },
+                        "environment": {
+                          "type": "string"
+                        },
+                        "limits": {
+                          "type": "object",
+                          "properties": {
+                            "cpu_time": {
+                              "type": "string"
+                            },
+                            "memory": {
+                              "type": "string"
+                            },
+                            "request_timeout": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["cpu_time", "memory", "request_timeout"]
+                        },
+                        "preset": {
+                          "type": "string"
+                        },
+                        "runtime": {
+                          "type": "string"
+                        },
+                        "server_side_rendering": {
+                          "type": "boolean"
+                        },
+                        "version": {
                           "type": "string"
                         }
                       },
-                      "required": ["cpu_time", "memory", "request_timeout"]
+                      "required": [
+                        "edge_functions",
+                        "environment",
+                        "limits",
+                        "preset",
+                        "runtime",
+                        "server_side_rendering",
+                        "version"
+                      ]
                     }
                   },
-                  "required": [
-                    "api_available",
-                    "cf_connecting_ip",
-                    "cf_country",
-                    "cf_datacenter",
-                    "cf_ipcountry",
-                    "cf_ray",
-                    "edge_functions",
-                    "environment",
-                    "preset",
-                    "runtime",
-                    "server_side_rendering",
-                    "status",
-                    "timestamp",
-                    "user_agent",
-                    "version",
-                    "worker_limits"
-                  ]
+                  "required": ["cloudflare", "worker"]
                 }
               }
             }

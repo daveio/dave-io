@@ -2,6 +2,7 @@ import { getHeaders } from "h3"
 import { recordAPIMetrics } from "~/server/middleware/metrics"
 import { extractToken, getUserFromPayload, verifyJWT } from "~/server/utils/auth"
 import { getCloudflareRequestInfo } from "~/server/utils/cloudflare"
+import { prepareSortedApiResponse } from "~/server/utils/json-utils"
 import { createApiResponse, logRequest } from "~/server/utils/response"
 import { EnhancedPingResponseSchema, PingResponseSchema } from "~/server/utils/schemas"
 
@@ -112,66 +113,69 @@ export default defineEventHandler(async (event) => {
 
   const headersInfo = {
     count: Object.keys(headers).length,
-    request: {
-      method: event.node.req.method || "GET",
-      host: headers.host || "unknown",
-      path: event.node.req.url || "/api/ping",
-      version: event.node.req.httpVersion || "1.1"
-    },
     cloudflare: cloudflareHeaders,
     forwarding: forwardingHeaders,
     other: otherHeaders
   }
 
-  // Merge all the data from health, ping, and worker endpoints
-  const pingData = PingResponseSchema.parse({
-    // From health endpoint
-    status: "ok" as const,
-    timestamp: new Date().toISOString(),
-    version: "1.0.0",
-    environment: process.env.NODE_ENV || "development",
-
-    // From worker endpoint
-    runtime: "cloudflare-workers",
-    preset: "cloudflare_module",
-    api_available: true,
-    server_side_rendering: true,
-    edge_functions: true,
-    worker_limits: {
-      cpu_time: "50ms (startup) + 50ms (request)",
-      memory: "128MB",
-      request_timeout: "30s"
-    },
-
-    // From ping endpoint + cloudflare info
-    cf_ray: cfInfo.ray,
-    cf_datacenter: cfInfo.datacenter,
-    cf_country: cfInfo.country,
-    cf_ipcountry: cfInfo.country,
-    cf_connecting_ip: cfInfo.ip,
-    user_agent: cfInfo.userAgent
-  })
-
-  // Sort the keys for consistent output
-  // biome-ignore lint/suspicious/noExplicitAny: Generic object sorting function handles multiple types
-  const sortObject = (obj: any): any => {
-    if (obj === null || typeof obj !== "object" || Array.isArray(obj)) return obj
-
-    // biome-ignore lint/suspicious/noExplicitAny: Accumulator object type varies based on input
-    const sorted: any = {}
-    for (const key of Object.keys(obj).sort()) {
-      sorted[key] = sortObject(obj[key])
+  // Parse cf-visitor header to extract scheme
+  let cfVisitorScheme = "https"
+  try {
+    const cfVisitor = headers["cf-visitor"]
+    if (cfVisitor) {
+      const parsed = JSON.parse(cfVisitor)
+      cfVisitorScheme = parsed.scheme || "https"
     }
-    return sorted
+  } catch {
+    // Default to https if parsing fails
   }
 
-  const response = EnhancedPingResponseSchema.parse({
-    data: sortObject(pingData),
-    auth: sortObject(authInfo),
-    headers: sortObject(headersInfo),
-    success: true,
-    timestamp: new Date().toISOString()
+  // Create the new restructured response data
+  const pingData = PingResponseSchema.parse({
+    cloudflare: {
+      connectingIP: cfInfo.ip,
+      country: {
+        ip: cfInfo.country,
+        primary: cfInfo.country
+      },
+      datacentre: cfInfo.datacenter,
+      ray: cfInfo.ray,
+      request: {
+        agent: cfInfo.userAgent,
+        host: headers.host || "unknown",
+        method: event.node.req.method || "GET",
+        path: event.node.req.url || "/api/ping",
+        proto: {
+          forward: forwardingHeaders["x-forwarded-proto"] || "https",
+          request: cfVisitorScheme
+        },
+        version: event.node.req.httpVersion || "1.1"
+      }
+    },
+    worker: {
+      edge_functions: true,
+      environment: process.env.NODE_ENV || "development",
+      limits: {
+        cpu_time: "50ms (startup) + 50ms (request)",
+        memory: "128MB",
+        request_timeout: "30s"
+      },
+      preset: "cloudflare_module",
+      runtime: "cloudflare-workers",
+      server_side_rendering: true,
+      version: "1.0.0"
+    }
   })
+
+  const response = prepareSortedApiResponse(
+    EnhancedPingResponseSchema.parse({
+      data: pingData,
+      auth: authInfo,
+      headers: headersInfo,
+      ok: true,
+      timestamp: new Date().toISOString()
+    })
+  )
 
   // Record standard API metrics
   recordAPIMetrics(event, 200)
@@ -179,11 +183,11 @@ export default defineEventHandler(async (event) => {
   // Log successful request
   const responseTime = Date.now() - startTime
   logRequest(event, "ping", "GET", 200, {
-    environment: pingData.environment,
-    runtime: pingData.runtime,
-    datacenter: cfInfo.datacenter,
+    environment: pingData.worker.environment,
+    runtime: pingData.worker.runtime,
+    datacenter: pingData.cloudflare.datacentre,
     responseTime: `${responseTime}ms`,
-    cfRay: cfInfo.ray,
+    cfRay: pingData.cloudflare.ray,
     authSupplied: authInfo.supplied ? "true" : "false",
     authValid: authInfo.token?.valid ? "true" : "false",
     headerCount: headersInfo.count

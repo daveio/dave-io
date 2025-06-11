@@ -1,6 +1,7 @@
 import type { H3Event } from "h3"
 import { createError } from "h3"
 import { getCloudflareRequestInfo } from "./cloudflare"
+import { prepareSortedApiResponse } from "./json-utils"
 import type { ApiErrorResponse, ApiSuccessResponse } from "./schemas"
 
 export interface ApiResponse<T = unknown> {
@@ -36,22 +37,25 @@ export function createApiResponse<T>(data?: T, message?: string, meta?: ApiRespo
     response.meta = meta
   }
 
-  return response
+  // Automatically sort all response keys for consistent output
+  return prepareSortedApiResponse(response)
 }
 
 export function createApiError(statusCode: number, message: string, details?: unknown): never {
+  const errorData: ApiErrorResponse = {
+    success: false,
+    error: message,
+    details: process.env.NODE_ENV === "development" ? details : undefined,
+    meta: {
+      request_id: generateRequestId()
+    },
+    timestamp: new Date().toISOString()
+  }
+
   throw createError({
     statusCode,
     statusMessage: message,
-    data: {
-      success: false,
-      error: message,
-      details: process.env.NODE_ENV === "development" ? details : undefined,
-      meta: {
-        request_id: generateRequestId()
-      },
-      timestamp: new Date().toISOString()
-    } as ApiErrorResponse
+    data: prepareSortedApiResponse(errorData)
   })
 }
 

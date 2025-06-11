@@ -186,27 +186,40 @@ export const WorkerInfoSchema = z.object({
   })
 })
 
-// Ping endpoint schema (merged from health, ping, and worker endpoints)
+// Ping endpoint schema (new restructured format)
 export const PingResponseSchema = z.object({
-  api_available: z.boolean(),
-  cf_connecting_ip: z.string(),
-  cf_country: z.string(),
-  cf_datacenter: z.string(),
-  cf_ipcountry: z.string(),
-  cf_ray: z.string(),
-  edge_functions: z.boolean(),
-  environment: z.string(),
-  preset: z.string(),
-  runtime: z.string(),
-  server_side_rendering: z.boolean(),
-  status: z.enum(["ok", "error"]),
-  timestamp: z.string(),
-  user_agent: z.string(),
-  version: z.string(),
-  worker_limits: z.object({
-    cpu_time: z.string(),
-    memory: z.string(),
-    request_timeout: z.string()
+  cloudflare: z.object({
+    connectingIP: z.string(),
+    country: z.object({
+      ip: z.string(),
+      primary: z.string()
+    }),
+    datacentre: z.string(),
+    ray: z.string(),
+    request: z.object({
+      agent: z.string(),
+      host: z.string(),
+      method: z.string(),
+      path: z.string(),
+      proto: z.object({
+        forward: z.string(),
+        request: z.string()
+      }),
+      version: z.string()
+    })
+  }),
+  worker: z.object({
+    edge_functions: z.boolean(),
+    environment: z.string(),
+    limits: z.object({
+      cpu_time: z.string(),
+      memory: z.string(),
+      request_timeout: z.string()
+    }),
+    preset: z.string(),
+    runtime: z.string(),
+    server_side_rendering: z.boolean(),
+    version: z.string()
   })
 })
 
@@ -232,17 +245,11 @@ export const EnhancedPingResponseSchema = z.object({
   }),
   headers: z.object({
     count: z.number(),
-    request: z.object({
-      method: z.string(),
-      host: z.string(),
-      path: z.string(),
-      version: z.string()
-    }),
     cloudflare: z.record(z.string(), z.string()),
     forwarding: z.record(z.string(), z.string()),
     other: z.record(z.string(), z.string())
   }),
-  success: z.literal(true),
+  ok: z.literal(true),
   timestamp: z.string()
 })
 

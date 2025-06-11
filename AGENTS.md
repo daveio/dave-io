@@ -33,8 +33,10 @@
 ### Quality Verification Workflow
 
 **Mandatory sequence**:
-1. `bun run lint:check`, `bun run lint:types`, `bun run test`
+
+1. `bun run lint:biome`, `bun run lint:trunk`, `bun run lint:types `, `bun run test`
 2. Only then: `bun run check` (full build)
+
 - ❌ Never commit broken code
 
 ### Commit Hygiene
@@ -54,6 +56,7 @@
 
 - Mark incomplete work: `// TODO: [specific description]`
 - Prefer explicit errors over silent failures
+
 ```typescript
 // TODO: Implement user preference caching with Redis
 throw new Error("User preferences not implemented yet")
@@ -118,12 +121,39 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 
 **Public**: `/api/ping`, `/api/images/optimise`, `/go/{slug}`
 **Protected** (require JWT + scope):
+
 - `/api/ai/alt` - Alt-text generation (`ai:alt`+)
 - `/api/tokens/{uuid}/*` - Token management (`api:tokens`+)
 
 ## Breaking Changes
 
-### API Endpoint Consolidation (December 2024)
+### Universal JSON Key Sorting Implementation (11 June 2025)
+
+- **Global Change**: All API endpoints now return JSON with recursively sorted object keys
+- **Implementation**: Added `prepareSortedApiResponse()` utility and integrated with `createApiResponse()`
+- **Coverage**: Automatic sorting for all successful responses, error responses, and custom response formats
+- **Benefits**: Consistent API output, improved diffing, and predictable response structure
+- **Testing**: Comprehensive test coverage for sorting utilities and response integration
+
+### API Ping Response Schema Restructuring (11 June 2025)
+
+- **Response Format**: Complete restructuring of `/api/ping` response schema
+- **Field Changes**:
+  - Replaced `success: true` with `ok: true`
+  - Removed top-level fields from `data`: `api_available`, `cf_connecting_ip`, `cf_country`, `cf_datacenter`, `cf_ipcountry`, `cf_ray`, `edge_functions`, `environment`, `preset`, `runtime`, `server_side_rendering`, `status`, `user_agent`, `version`, `worker_limits`
+  - Added nested `data.cloudflare` object with: `connectingIP`, `country.ip/primary`, `datacentre`, `ray`, `request.agent/host/method/path/proto/version`
+  - Added nested `data.worker` object with: `edge_functions`, `environment`, `limits`, `preset`, `runtime`, `server_side_rendering`, `version`
+  - Removed `headers.request` section (moved to `data.cloudflare.request`)
+- **Key Mappings**:
+  - `cf_connecting_ip` → `data.cloudflare.connectingIP`
+  - `cf_country` → `data.cloudflare.country.primary`
+  - `cf_ray` → `data.cloudflare.ray`
+  - `cf_datacenter` → `data.cloudflare.datacentre`
+  - `user_agent` → `data.cloudflare.request.agent`
+  - `worker_limits` → `data.worker.limits`
+- **Impact**: CLI scripts and tests updated to match new schema
+
+### API Endpoint Consolidation (10 June 2025)
 
 - **Merged Endpoints**: `/api/internal/health`, `/api/internal/ping`, `/api/internal/worker`, `/api/internal/auth`, and `/api/internal/headers` → `/api/ping`
 - **Removed Endpoints**: All `/api/internal/*` endpoints (entire directory removed)
@@ -135,14 +165,14 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 - **CLI Updates**: All bin/ scripts now use `/api/ping` instead of individual internal endpoints
 - **Response Format**: New structured response with `data`, `auth`, and `headers` sections
 
-### Unified Auth System for try.ts (December 2024)
+### Unified Auth System for try.ts (9 June 2025)
 
 - **New Options**: `--auth` auto-generates temporary tokens, `--token <JWT>` uses provided tokens
 - **Scope Detection**: `--auth` automatically determines required scopes based on endpoint
 - **Simplified Workflow**: No need to manually create tokens for testing
 - **Environment Requirement**: `API_JWT_SECRET` must be set for `--auth` to work
 
-### Development Workflow (December 2024)
+### Development Workflow (8 June 2025)
 
 - **Script Architecture**: Complete refactor eliminating circular dependencies
 - **Dev Command**: No longer runs reset - starts in seconds instead of minutes
@@ -202,9 +232,10 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 
 ## Development Commands
 
-### Optimized Script Architecture (December 2024)
+### Optimized Script Architecture (8 June 2025)
 
 **Major Performance Improvements** 🚀
+
 - **Dev startup**: ~3 seconds (previously ~30+ seconds)
 - **Build process**: No unnecessary resets or circular dependencies
 - **Testing**: Quick unit tests by default, comprehensive suite on demand
@@ -235,6 +266,7 @@ Nuxt 3 + Cloudflare Workers REST API. JWT auth, Zod validation, comprehensive te
 ### Script Organization
 
 All scripts now follow a clear hierarchical structure:
+
 - Main workflows (dev, build, deploy)
 - Task-specific commands (lint, test, generate)
 - Utility scripts (jwt, kv, try)
@@ -247,7 +279,7 @@ All scripts now follow a clear hierarchical structure:
 ### Prerequisites
 
 - **Node.js**: Version 18 or higher
-- **Bun**: Package manager (<https://bun.sh/>)
+- **Bun**: Package manager ([https://bun.sh/](https://bun.sh/))
 - **Cloudflare Images**: Subscription required for image processing service
 
 ### Steps
@@ -309,6 +341,7 @@ curl -X POST -d '{"image": "<base64>", "quality": 80}' http://localhost:3000/api
 ```
 
 ## CLI Usage
+
 ```bash
 # JWT management
 bun jwt init
@@ -339,6 +372,7 @@ bun try --dry-run --auth ai alt url "..."       # Show what would be done withou
 ```
 
 ## KV Schema (YAML)
+
 ```yaml
 _anchors:  # Excluded from import
   sample_metrics: &sample_metrics
