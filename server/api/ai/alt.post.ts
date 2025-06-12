@@ -15,10 +15,7 @@ export default defineEventHandler(async (event) => {
 
     const startTime = Date.now()
 
-    const { buffer: originalImageData, source: imageSource } = await parseImageUpload(
-      event,
-      { allowUrl: true }
-    )
+    const { buffer: originalImageData, source: imageSource } = await parseImageUpload(event, { allowUrl: true })
 
     // Optimise the image using the 'alt' preset (≤ 4MB)
     const optimisationResult = await optimiseImageForAI(originalImageData, env as Env)

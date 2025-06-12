@@ -48,6 +48,7 @@ describe("Response Utils", () => {
 
       // Use type guard with assertion
       if (response.ok) {
+        // biome-ignore lint/suspicious/noExplicitAny: test response can have any structure
         const successResponse = response as { ok: true; result: any }
         expect(successResponse.result).toEqual(testData)
       } else {
@@ -107,6 +108,7 @@ describe("Response Utils", () => {
 
       // Use type guard with assertion
       if (response.ok) {
+        // biome-ignore lint/suspicious/noExplicitAny: test response can have any structure
         const successResponse = response as { ok: true; result: any }
         expect(successResponse.result).toEqual(data)
       } else {

@@ -1,9 +1,10 @@
+import { getAIBinding, getCloudflareEnv } from "~/server/utils/cloudflare"
 import { createApiResponse } from "~/server/utils/response"
 import { AiTicketTitleRequestSchema, type AiTicketTitleResponse } from "~/server/utils/schemas"
 
 export default defineEventHandler(async (event): Promise<AiTicketTitleResponse> => {
-  // Use type assertion to fix the unknown type
-  const { AI } = event.context.cloudflare.env as { AI: any }
+  const env = getCloudflareEnv(event)
+  const AI = getAIBinding(env)
 
   const body = await readBody(event)
   const validatedInput = AiTicketTitleRequestSchema.parse(body)
@@ -48,16 +49,19 @@ The title should be short, clear, and actionable. Use basic Markdown formatting 
 
   // Select appropriate model based on whether an image is supplied
   const model = validatedInput.image
-    ? "@cf/meta/llama-3.2-90b-vision-instruct" // Use vision model when image is present
-    : "@cf/meta/llama-3.2-90b-instruct" // Use cheaper text-only model when no image
+    ? "@cf/meta/llama-3.2-11b-vision-instruct" // Use vision model when image is present
+    : "@cf/meta/llama-3.2-3b-instruct" // Use cheaper text-only model when no image
 
-  const aiResponse = await AI.run(model, {
-    messages,
+  // biome-ignore lint/suspicious/noExplicitAny: AI models have varying message formats
+  const aiResponse = await AI.run(model as any, {
+    // biome-ignore lint/suspicious/noExplicitAny: AI models accept various message formats
+    messages: messages as any,
     max_tokens: 100,
     temperature: 0.3
   })
 
-  const title = aiResponse.response?.trim() || "Untitled Task"
+  // biome-ignore lint/suspicious/noExplicitAny: AI response has dynamic structure
+  const title = (aiResponse as any).response?.trim() || "Untitled Task"
 
   // Use type assertion to ensure return type matches expected type
   return createApiResponse({

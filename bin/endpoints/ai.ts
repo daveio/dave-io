@@ -48,7 +48,7 @@ export class AIAdapter extends BaseAdapter {
   private async fileToBase64(filePath: string): Promise<string> {
     try {
       // Use Node.js fs module to read the file
-      const fs = await import("fs/promises")
+      const fs = await import("node:fs/promises")
       const data = await fs.readFile(filePath)
       return Buffer.from(data).toString("base64")
     } catch (error) {

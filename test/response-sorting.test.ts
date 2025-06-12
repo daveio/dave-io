@@ -20,11 +20,12 @@ describe("Response Sorting Integration", () => {
 
     // Check that top-level keys are sorted
     const topKeys = Object.keys(response)
-    expect(topKeys).toEqual(["error", "ok", "result", "status", "timestamp"])
+    expect(topKeys).toEqual(["error", "message", "ok", "result", "status", "timestamp"])
 
     // Type guard to ensure we're dealing with a success response
     if (response.ok) {
       // Use type assertion since we've verified the ok flag
+      // biome-ignore lint/suspicious/noExplicitAny: test response can have any structure
       const successResponse = response as { ok: true; result: any }
 
       // Check that data keys are sorted
@@ -80,6 +81,7 @@ describe("Response Sorting Integration", () => {
     // Type guard to ensure we're dealing with a success response
     if (response.ok) {
       // Use type assertion since we've verified the ok flag
+      // biome-ignore lint/suspicious/noExplicitAny: test response can have any structure
       const successResponse = response as { ok: true; result: any }
 
       // Verify nested structures have sorted keys
@@ -111,6 +113,7 @@ describe("Response Sorting Integration", () => {
     // Type guard to ensure we're dealing with a success response
     if (response.ok) {
       // Use type assertion since we've verified the ok flag
+      // biome-ignore lint/suspicious/noExplicitAny: test response can have any structure
       const successResponse = response as { ok: true; result: any }
 
       // Verify that objects inside arrays also have sorted keys

@@ -37,6 +37,7 @@ export function createApiResponse<T>(options: ApiResponseOptions<T>): ApiSuccess
     const responseObj: ApiSuccessResponse = prepareSortedApiResponse({
       ok: true,
       result: {} as T, // Empty result for redirects
+      message: `Redirecting to ${options.redirect}`,
       error: null,
       status: { message: `Redirecting to ${options.redirect}` },
       timestamp: new Date().toISOString()
@@ -52,13 +53,14 @@ export function createApiResponse<T>(options: ApiResponseOptions<T>): ApiSuccess
   }
   const timestamp = new Date().toISOString()
 
-  const { result, message, error, meta, redirect, code } = options
+  const { result, message, error, meta, code } = options
 
   // If there's an error message, return an error response
   if (error) {
     const response: ApiErrorResponse = {
       ok: false,
       error,
+      message: message || error,
       status: message ? { message } : null,
       timestamp
     }
@@ -82,41 +84,38 @@ export function createApiResponse<T>(options: ApiResponseOptions<T>): ApiSuccess
       statusMessage: error,
       data: prepareSortedApiResponse(response)
     })
-  } else {
-    // Success response
-    const response: ApiSuccessResponse = {
-      ok: true,
-      result: result ?? {}, // Ensure result is never undefined
-      error: null,
-      status: message ? { message } : null,
-      timestamp
-    }
-
-    if (message) {
-      response.message = message
-    }
-
-    if (meta) {
-      response.meta = meta
-    }
-
-    // Handle custom status code for success
-    if (code) {
-      throw createError({
-        statusCode: code,
-        statusMessage: message || "OK",
-        data: prepareSortedApiResponse(response)
-      })
-    }
-
-    return prepareSortedApiResponse(response)
   }
+  // Success response
+  const response: ApiSuccessResponse = {
+    ok: true,
+    result: result ?? {}, // Ensure result is never undefined
+    message: message || "Success",
+    error: null,
+    status: message ? { message } : null,
+    timestamp
+  }
+
+  if (meta) {
+    response.meta = meta
+  }
+
+  // Handle custom status code for success
+  if (code) {
+    throw createError({
+      statusCode: code,
+      statusMessage: message || "OK",
+      data: prepareSortedApiResponse(response)
+    })
+  }
+
+  return prepareSortedApiResponse(response)
 }
 
 export function createApiError(statusCode: number, message: string, details?: unknown): never {
   const errorData: ApiErrorResponse = {
     ok: false,
     error: message,
+    message,
     status: null,
     details: process.env.NODE_ENV === "development" ? details : undefined,
     meta: {

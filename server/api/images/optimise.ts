@@ -2,11 +2,7 @@ import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/met
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
 import { processImageWithCloudflareImages } from "~/server/utils/cloudflare-images"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
-import {
-  validateImageQuality,
-  validateImageURL,
-  parseImageUpload
-} from "~/server/utils/validation"
+import { parseImageUpload, validateImageQuality, validateImageURL } from "~/server/utils/validation"
 
 interface OptimisationOptions {
   quality?: number

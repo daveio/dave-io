@@ -176,6 +176,7 @@ export async function parseImageUpload(
         buffer = await validateBase64Image(body.image)
       }
       if (options.includeQuality) {
+        // biome-ignore lint/suspicious/noExplicitAny: JSON body can have dynamic shape
         quality = validateImageQuality((body as any).quality)
       }
     } else {

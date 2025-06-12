@@ -1,9 +1,10 @@
+import { getAIBinding, getCloudflareEnv } from "~/server/utils/cloudflare"
 import { createApiResponse } from "~/server/utils/response"
 import { AiTicketEnrichRequestSchema, type AiTicketEnrichResponse } from "~/server/utils/schemas"
 
 export default defineEventHandler(async (event): Promise<AiTicketEnrichResponse> => {
-  // Use type assertion to fix the unknown type
-  const { AI } = event.context.cloudflare.env as { AI: any }
+  const env = getCloudflareEnv(event)
+  const AI = getAIBinding(env)
 
   const body = await readBody(event)
   const validatedInput = AiTicketEnrichRequestSchema.parse(body)
@@ -55,16 +56,19 @@ Respond with the complete enriched description only.`
 
   // Select appropriate model based on whether an image is supplied
   const model = validatedInput.image
-    ? "@cf/meta/llama-3.2-90b-vision-instruct" // Use vision model when image is present
-    : "@cf/meta/llama-3.2-90b-instruct" // Use cheaper text-only model when no image
+    ? "@cf/meta/llama-3.2-11b-vision-instruct" // Use vision model when image is present
+    : "@cf/meta/llama-3.2-3b-instruct" // Use cheaper text-only model when no image
 
-  const aiResponse = await AI.run(model, {
-    messages,
+  // biome-ignore lint/suspicious/noExplicitAny: AI models have varying message formats
+  const aiResponse = await AI.run(model as any, {
+    // biome-ignore lint/suspicious/noExplicitAny: AI models accept various message formats
+    messages: messages as any,
     max_tokens: 1500,
     temperature: 0.4
   })
 
-  const description = aiResponse.response?.trim() || "No enriched description generated"
+  // biome-ignore lint/suspicious/noExplicitAny: AI response has dynamic structure
+  const description = (aiResponse as any).response?.trim() || "No enriched description generated"
 
   // Use type assertion to ensure return type matches expected type
   return createApiResponse({
