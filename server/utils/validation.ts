@@ -132,7 +132,7 @@ export async function validateFormDataImage(file: File): Promise<Buffer> {
  */
 export async function parseImageUpload(
   event: H3Event,
-  options: { includeQuality?: boolean } = {}
+  options: { includeQuality?: boolean; allowUrl?: boolean } = {}
 ): Promise<{ buffer: Buffer; source: string; quality?: number }> {
   const contentType = getHeader(event, "content-type") || ""
 
@@ -140,8 +140,17 @@ export async function parseImageUpload(
   let source = "uploaded-file"
   let buffer: Buffer
 
-  if (contentType.includes("multipart/form-data")) {
+  if (contentType.toLowerCase().includes("multipart/form-data")) {
     const formData = await readFormData(event)
+    if (options.allowUrl) {
+      const url = formData.get("url")
+      if (typeof url === "string" && url.length > 0) {
+        const arrayBuffer = await validateImageURL(url)
+        buffer = Buffer.from(arrayBuffer)
+        source = url
+        return { buffer, source, quality }
+      }
+    }
     const file = formData.get("image")
     if (!file || !(file instanceof File)) {
       throw createApiError(400, "Image file is required (image field)")
@@ -156,18 +165,23 @@ export async function parseImageUpload(
     if (typeof body === "string") {
       buffer = await validateBase64Image(body)
     } else if (body && typeof body === "object") {
-      if (!body.image) {
-        throw createApiError(400, "Base64 image data is required (image field)")
+      if (options.allowUrl && body.url) {
+        const arrayBuffer = await validateImageURL(body.url)
+        buffer = Buffer.from(arrayBuffer)
+        source = body.url
+      } else {
+        if (!body.image) {
+          throw createApiError(400, "Base64 image data is required (image field)")
+        }
+        buffer = await validateBase64Image(body.image)
       }
-      buffer = await validateBase64Image(body.image)
       if (options.includeQuality) {
-        quality = validateImageQuality(body.quality)
+        quality = validateImageQuality((body as any).quality)
       }
     } else {
       throw createApiError(400, "Invalid request body format")
     }
   }
-
   return { buffer, source, quality }
 }
 
