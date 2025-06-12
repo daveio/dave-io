@@ -1,5 +1,6 @@
 import { fileTypeFromBuffer } from "file-type"
 import type { H3Event } from "h3"
+import { getHeader, readBody, readFormData } from "h3"
 import { validate as validateUUID } from "uuid"
 import { createApiError } from "./response"
 
@@ -107,6 +108,67 @@ export async function validateBase64Image(base64: string): Promise<Buffer> {
   }
 
   return buffer
+}
+
+/**
+ * Validate an uploaded File from multipart form data
+ */
+export async function validateFormDataImage(file: File): Promise<Buffer> {
+  const arrayBuffer = await file.arrayBuffer()
+  const buffer = Buffer.from(arrayBuffer)
+
+  validateFileSize(buffer, 4 * 1024 * 1024, "Image")
+
+  const type = await fileTypeFromBuffer(buffer)
+  if (type === null || type === undefined || !type.mime.startsWith("image/")) {
+    throw createApiError(400, "Uploaded data is not a valid image")
+  }
+
+  return buffer
+}
+
+/**
+ * Parse an image upload from a POST request supporting JSON or multipart forms
+ */
+export async function parseImageUpload(
+  event: H3Event,
+  options: { includeQuality?: boolean } = {}
+): Promise<{ buffer: Buffer; source: string; quality?: number }> {
+  const contentType = getHeader(event, "content-type") || ""
+
+  let quality: number | undefined
+  let source = "uploaded-file"
+  let buffer: Buffer
+
+  if (contentType.includes("multipart/form-data")) {
+    const formData = await readFormData(event)
+    const file = formData.get("image")
+    if (!file || !(file instanceof File)) {
+      throw createApiError(400, "Image file is required (image field)")
+    }
+    buffer = await validateFormDataImage(file)
+    if (options.includeQuality) {
+      quality = validateImageQuality(formData.get("quality") as unknown)
+    }
+    source = file.name || source
+  } else {
+    const body = await readBody(event)
+    if (typeof body === "string") {
+      buffer = await validateBase64Image(body)
+    } else if (body && typeof body === "object") {
+      if (!body.image) {
+        throw createApiError(400, "Base64 image data is required (image field)")
+      }
+      buffer = await validateBase64Image(body.image)
+      if (options.includeQuality) {
+        quality = validateImageQuality(body.quality)
+      }
+    } else {
+      throw createApiError(400, "Invalid request body format")
+    }
+  }
+
+  return { buffer, source, quality }
 }
 
 /**

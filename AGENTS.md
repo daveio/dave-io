@@ -54,7 +54,7 @@
 - **Endpoints**: Merged `/api/internal/*` → `/api/ping`
 - **Auth**: `--auth` auto-generates tokens, `--token <JWT>` for provided tokens
 - **Dev**: No reset cycle, starts in seconds, `test:all` for full suite
-- **AI Alt**: Raw base64 POST, 4MB limit with auto-optimization
+- **AI Alt**: Raw base64 POST or multipart form upload, 4MB limit with auto-optimization
 - **Images**: Cloudflare Images service, BLAKE3 IDs, global CDN
 - **KV**: Individual keys vs JSON blob, hierarchical colon-separated, YAML anchors
 
@@ -92,9 +92,11 @@ bun install && bun run dev  # Starts in ~3s
 
 ```bash
 curl http://localhost:3000/api/ping  # Status
-curl -H "Authorization: Bearer <token>" "/api/ai/alt?url=https://example.com/image.jpg"  # Alt-text
+curl -H "Authorization: Bearer <token>" "/api/ai/alt?url=https://example.com/image.jpg"  # Alt-text via URL
+curl -X POST -F "image=@path/to/image.jpg" -H "Authorization: Bearer <token>" http://localhost:3000/api/ai/alt  # Alt-text via form
 curl -X POST -d '{"description": "Fix bug"}' /api/ai/tickets/title  # AI title (public)
-curl -X POST -d '{"image": "<base64>", "quality": 80}' /api/images/optimise  # Optimize
+curl -X POST -d '{"image": "<base64>", "quality": 80}' /api/images/optimise  # Optimize via JSON
+curl -F "image=@path/to/image.jpg" -F "quality=80" http://localhost:3000/api/images/optimise  # Optimize via form
 ```
 
 ## CLI Usage

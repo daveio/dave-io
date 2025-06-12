@@ -4,7 +4,11 @@ import { getCloudflareEnv } from "~/server/utils/cloudflare"
 import { optimiseImageForAI } from "~/server/utils/image-presets"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
 import { AiAltTextRequestSchema } from "~/server/utils/schemas"
-import { validateBase64Image, validateImageURL } from "~/server/utils/validation"
+import {
+  validateBase64Image,
+  validateImageURL,
+  validateFormDataImage
+} from "~/server/utils/validation"
 
 export default defineEventHandler(async (event) => {
   try {
@@ -14,23 +18,47 @@ export default defineEventHandler(async (event) => {
     // Get environment bindings using helper
     const env = getCloudflareEnv(event)
 
-    // Parse and validate request body
-    const body = await readBody(event)
-    const request = AiAltTextRequestSchema.parse(body)
+    const contentType = getHeader(event, "content-type") || ""
 
     const startTime = Date.now()
 
     // Process the image data and optimise for AI
     let originalImageData: Buffer
+    let imageSource = "uploaded-file"
 
-    if (request.url) {
-      // Fetch and validate image from URL
-      const buffer = await validateImageURL(request.url)
-      originalImageData = Buffer.from(buffer)
-    } else if (request.image) {
-      originalImageData = await validateBase64Image(request.image)
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await readFormData(event)
+      const url = formData.get("url")
+      const file = formData.get("image")
+
+      if (typeof url === "string" && url.length > 0) {
+        const buffer = await validateImageURL(url)
+        originalImageData = Buffer.from(buffer)
+        imageSource = url
+      } else if (file && file instanceof File) {
+        originalImageData = await validateFormDataImage(file)
+        imageSource = file.name || imageSource
+      } else {
+        throw createApiError(400, "Either url or image must be provided")
+      }
     } else {
-      throw createApiError(400, "Either url or image must be provided")
+      const body = await readBody(event)
+
+      if (typeof body === "string") {
+        originalImageData = await validateBase64Image(body)
+      } else {
+        const request = AiAltTextRequestSchema.parse(body)
+
+        if (request.url) {
+          const buffer = await validateImageURL(request.url)
+          originalImageData = Buffer.from(buffer)
+          imageSource = request.url
+        } else if (request.image) {
+          originalImageData = await validateBase64Image(request.image)
+        } else {
+          throw createApiError(400, "Either url or image must be provided")
+        }
+      }
     }
 
     // Optimise the image using the 'alt' preset (≤ 4MB)
@@ -93,7 +121,7 @@ export default defineEventHandler(async (event) => {
     return createApiResponse({
       result: {
         altText,
-        imageSource: request.url || "uploaded-file",
+        imageSource,
         model: aiModel,
         processingTimeMs: processingTime,
         originalImageSizeBytes: originalImageData.length,
