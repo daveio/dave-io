@@ -317,6 +317,11 @@ export const ImageOptimisationRequestSchema = z
     message: "Image field is required for POST requests"
   })
 
+export const ImageOptimisationQuerySchema = z.object({
+  url: z.string().url("Image URL must be a valid URL"),
+  quality: z.number().min(0).max(100).optional()
+})
+
 export const ImageOptimisationResponseSchema = z.object({
   ok: z.literal(true),
   data: z.object({
@@ -421,6 +426,7 @@ export type AiAltTextResponse = z.infer<typeof AiAltTextResponseSchema>
 export type TokenUsage = z.infer<typeof TokenUsageSchema>
 export type TokenMetrics = z.infer<typeof TokenMetricsSchema>
 export type ImageOptimisationRequest = z.infer<typeof ImageOptimisationRequestSchema>
+export type ImageOptimisationQuery = z.infer<typeof ImageOptimisationQuerySchema>
 export type ImageOptimisationResponse = z.infer<typeof ImageOptimisationResponseSchema>
 export type AiTicketImageData = z.infer<typeof AiTicketImageDataSchema>
 export type AiTicketTitleRequest = z.infer<typeof AiTicketTitleRequestSchema>

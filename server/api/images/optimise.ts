@@ -1,8 +1,10 @@
+import { getHeader, readBody } from "h3"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
 import { processImageWithCloudflareImages } from "~/server/utils/cloudflare-images"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
-import { parseImageUpload, validateImageQuality, validateImageURL } from "~/server/utils/validation"
+import { ImageOptimisationQuerySchema, ImageOptimisationRequestSchema } from "~/server/utils/schemas"
+import { parseImageUpload, validateImageURL } from "~/server/utils/validation"
 
 interface OptimisationOptions {
   quality?: number
@@ -19,25 +21,36 @@ export default defineEventHandler(async (event) => {
     const options: OptimisationOptions = {}
 
     if (method === "GET") {
-      // Handle URL-based image processing
+      // Handle URL-based image processing with Zod validation
       const query = getQuery(event)
-      const imageUrl = query.url as string
+      const validatedQuery = ImageOptimisationQuerySchema.parse(query)
 
-      if (!imageUrl) {
-        throw createApiError(400, "Image URL is required (url parameter)")
-      }
-
-      // Parse optimisation options from query parameters
-      options.quality = validateImageQuality(query.quality)
-
-      const arrayBuffer = await validateImageURL(imageUrl)
+      const arrayBuffer = await validateImageURL(validatedQuery.url)
       imageBuffer = Buffer.from(arrayBuffer)
-      imageSource = imageUrl
+      imageSource = validatedQuery.url
+      options.quality = validatedQuery.quality
     } else if (method === "POST") {
-      const parsed = await parseImageUpload(event, { includeQuality: true })
-      imageBuffer = parsed.buffer
-      imageSource = parsed.source
-      options.quality = parsed.quality
+      // For POST, we still use parseImageUpload since it handles multipart forms
+      // but we can validate JSON requests with Zod
+      const contentType = getHeader(event, "content-type") || ""
+
+      if (!contentType.toLowerCase().includes("multipart/form-data")) {
+        // JSON request - use Zod validation
+        const body = await readBody(event)
+        const validatedBody = ImageOptimisationRequestSchema.parse(body)
+
+        // Use existing parseImageUpload with validated body data
+        const parsed = await parseImageUpload(event, { includeQuality: true })
+        imageBuffer = parsed.buffer
+        imageSource = parsed.source
+        options.quality = validatedBody.quality || parsed.quality
+      } else {
+        // Multipart form - use existing parseImageUpload
+        const parsed = await parseImageUpload(event, { includeQuality: true })
+        imageBuffer = parsed.buffer
+        imageSource = parsed.source
+        options.quality = parsed.quality
+      }
     } else {
       throw createApiError(405, `Method ${method} not allowed`)
     }

@@ -12,7 +12,10 @@
       "mcp__sequentialThinking__sequentialthinking",
       "mcp__filesystem__directory_tree",
       "mcp__filesystem__read_multiple_files",
-      "mcp__filesystem__read_file"
+      "mcp__filesystem__read_file",
+      "mcp__claudeCode__Read",
+      "mcp__claudeCode__Glob",
+      "mcp__claudeCode__LS"
     ],
     "deny": []
   }
