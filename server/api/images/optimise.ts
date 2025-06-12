@@ -2,7 +2,11 @@ import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/met
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
 import { processImageWithCloudflareImages } from "~/server/utils/cloudflare-images"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
-import { validateBase64Image, validateImageQuality, validateImageURL } from "~/server/utils/validation"
+import {
+  validateImageQuality,
+  validateImageURL,
+  parseImageUpload
+} from "~/server/utils/validation"
 
 interface OptimisationOptions {
   quality?: number
@@ -34,25 +38,10 @@ export default defineEventHandler(async (event) => {
       imageBuffer = Buffer.from(arrayBuffer)
       imageSource = imageUrl
     } else if (method === "POST") {
-      // Handle base64 image processing
-      const body = await readBody(event)
-
-      if (typeof body === "string") {
-        // Raw base64 string
-        imageBuffer = await validateBase64Image(body)
-      } else if (body && typeof body === "object") {
-        // JSON object with options
-        if (!body.image) {
-          throw createApiError(400, "Base64 image data is required (image field)")
-        }
-
-        imageBuffer = await validateBase64Image(body.image)
-        options.quality = validateImageQuality(body.quality)
-      } else {
-        throw createApiError(400, "Invalid request body format")
-      }
-
-      imageSource = "uploaded-file"
+      const parsed = await parseImageUpload(event, { includeQuality: true })
+      imageBuffer = parsed.buffer
+      imageSource = parsed.source
+      options.quality = parsed.quality
     } else {
       throw createApiError(405, `Method ${method} not allowed`)
     }
