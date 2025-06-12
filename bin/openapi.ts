@@ -149,6 +149,107 @@ registry.registerPath({
 
 registry.registerPath({
   method: "post",
+  path: "/api/ai/tickets/title",
+  tags: ["AI"],
+  summary: "Generate ticket title",
+  description: "Generate a concise title for a Linear ticket",
+  requestBody: {
+    required: true,
+    content: {
+      "application/json": {
+        schema: schemas.AiTicketTitleRequestSchema
+      }
+    }
+  },
+  responses: {
+    200: {
+      description: "Title generated successfully",
+      content: {
+        "application/json": {
+          schema: schemas.AiTicketTitleResponseSchema
+        }
+      }
+    },
+    400: {
+      description: "Invalid request",
+      content: {
+        "application/json": {
+          schema: schemas.ApiErrorResponseSchema
+        }
+      }
+    }
+  }
+})
+
+registry.registerPath({
+  method: "post",
+  path: "/api/ai/tickets/description",
+  tags: ["AI"],
+  summary: "Generate ticket description",
+  description: "Generate a detailed ticket description from a title",
+  requestBody: {
+    required: true,
+    content: {
+      "application/json": {
+        schema: schemas.AiTicketDescriptionRequestSchema
+      }
+    }
+  },
+  responses: {
+    200: {
+      description: "Description generated successfully",
+      content: {
+        "application/json": {
+          schema: schemas.AiTicketDescriptionResponseSchema
+        }
+      }
+    },
+    400: {
+      description: "Invalid request",
+      content: {
+        "application/json": {
+          schema: schemas.ApiErrorResponseSchema
+        }
+      }
+    }
+  }
+})
+
+registry.registerPath({
+  method: "post",
+  path: "/api/ai/tickets/enrich",
+  tags: ["AI"],
+  summary: "Enrich ticket description",
+  description: "Enrich an existing ticket description with additional context",
+  requestBody: {
+    required: true,
+    content: {
+      "application/json": {
+        schema: schemas.AiTicketEnrichRequestSchema
+      }
+    }
+  },
+  responses: {
+    200: {
+      description: "Ticket description enriched successfully",
+      content: {
+        "application/json": {
+          schema: schemas.AiTicketEnrichResponseSchema
+        }
+      }
+    },
+    400: {
+      description: "Invalid request",
+      content: {
+        "application/json": {
+          schema: schemas.ApiErrorResponseSchema
+        }
+      }
+    }
+  }
+})
+registry.registerPath({
+  method: "post",
   path: "/api/images/optimise",
   tags: ["Images"],
   summary: "Optimize image",
