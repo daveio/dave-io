@@ -13,37 +13,12 @@ jobs:
         uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76
         with:
           bun-version: 1.2.15
+      - name: setup-ci-env
+        run: cp .dev.vars.ci .dev.vars
       - name: install
         run: bun install
-        env:
-          CLOUDFLARE_API_TOKEN: dummy
       - name: build
         run: bun run build
-        env:
-          CLOUDFLARE_API_TOKEN: dummy
-      - name: debug-types
-        run: |
-          echo "=== Checking generated types ==="
-          if [ -f "worker-configuration.d.ts" ]; then
-            echo "worker-configuration.d.ts exists"
-            echo "=== Content of worker-configuration.d.ts ==="
-            cat worker-configuration.d.ts
-            echo ""
-            echo "=== Checking for CLOUDFLARE_API_TOKEN in types ==="
-            if grep -q "CLOUDFLARE_API_TOKEN" worker-configuration.d.ts; then
-              echo "✓ CLOUDFLARE_API_TOKEN found in generated types"
-            else
-              echo "✗ CLOUDFLARE_API_TOKEN NOT found in generated types"
-            fi
-          else
-            echo "✗ worker-configuration.d.ts does not exist"
-          fi
-          echo ""
-          echo "=== Environment variables during build ==="
-          echo "CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}"
-          echo "CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID}"
-        env:
-          CLOUDFLARE_API_TOKEN: dummy
       - name: biome
         run: bun run lint:biome
       - name: trunk

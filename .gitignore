@@ -48,6 +48,7 @@ Thumbs.db
 # Cloudflare Workers
 .dev.vars*
 !.dev.vars.example
+!.dev.vars.ci
 
 # ====================================================================
 # Node.js & JavaScript/TypeScript
