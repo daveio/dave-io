@@ -2,11 +2,6 @@ import { blake3 } from "@noble/hashes/blake3"
 import { fileTypeFromBuffer } from "file-type"
 import { createApiError } from "./response"
 
-// Import the global Env type for TypeScript compatibility
-declare global {
-  interface Env extends Cloudflare.Env {}
-}
-
 /**
  * Valid image MIME types supported by Cloudflare Images
  */
