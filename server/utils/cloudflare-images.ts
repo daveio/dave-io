@@ -94,7 +94,8 @@ export async function uploadToCloudflareImages(
   id: string,
   metadata: Record<string, string> = {}
 ): Promise<CloudflareImagesResult> {
-  if (!env.CLOUDFLARE_API_TOKEN) {
+  const envWithSecrets = env as Env & { CLOUDFLARE_API_TOKEN?: string }
+  if (!envWithSecrets.CLOUDFLARE_API_TOKEN) {
     throw createApiError(503, "Cloudflare API token not configured")
   }
 
@@ -118,7 +119,7 @@ export async function uploadToCloudflareImages(
   const response = await fetch(uploadUrl, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`
+      Authorization: `Bearer ${envWithSecrets.CLOUDFLARE_API_TOKEN}`
     },
     body: formData
   })
@@ -200,7 +201,8 @@ export async function optimizeWithCloudflareImages(
  * @returns Promise<CloudflareImagesResult | null>
  */
 export async function getCloudflareImage(env: Env, id: string): Promise<CloudflareImagesResult | null> {
-  if (!env.CLOUDFLARE_API_TOKEN || !env.CLOUDFLARE_ACCOUNT_ID) {
+  const envWithSecrets = env as Env & { CLOUDFLARE_API_TOKEN?: string }
+  if (!envWithSecrets.CLOUDFLARE_API_TOKEN || !env.CLOUDFLARE_ACCOUNT_ID) {
     return null
   }
 
@@ -209,7 +211,7 @@ export async function getCloudflareImage(env: Env, id: string): Promise<Cloudfla
 
     const response = await fetch(url, {
       headers: {
-        Authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`
+        Authorization: `Bearer ${envWithSecrets.CLOUDFLARE_API_TOKEN}`
       }
     })
 
