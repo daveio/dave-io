@@ -1,6 +1,5 @@
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAIAuth } from "~/server/utils/auth-helpers"
-import { getCloudflareEnv } from "~/server/utils/cloudflare"
 import { optimiseImageForAI } from "~/server/utils/image-presets"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
 import { parseImageUpload } from "~/server/utils/validation"

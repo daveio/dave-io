@@ -1,6 +1,5 @@
 import { getHeader, readBody } from "h3"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
-import { getCloudflareEnv } from "~/server/utils/cloudflare"
 import { processImageWithCloudflareImages } from "~/server/utils/cloudflare-images"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
 import { ImageOptimisationQuerySchema, ImageOptimisationRequestSchema } from "~/server/utils/schemas"
