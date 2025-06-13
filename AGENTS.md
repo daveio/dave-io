@@ -16,7 +16,7 @@
 
 **3. TEST**: Test everything with logic/side effects. Commands: `bun run test`, `bun run test:ui`, `bun run test:api`. Skip only: trivial getters, UI components, config.
 
-**4. SYNC**: `AGENTS.md` = truth. Update after API/feature/auth changes. `CLAUDE.md` & `README.md` = symlinks to `AGENTS.md`.
+**4. SYNC**: `AGENTS.md` = truth. Update after API/feature/auth changes. `CLAUDE.md` & `README.md` derive from `AGENTS.md`.
 
 **5. VERIFY**: `bun run build` → `bun run lint:biome`, `bun run lint:trunk`, `bun run lint:types`, `bun run test` → `bun run check`. Never continue with errors.
 
@@ -48,6 +48,73 @@
 ## Tech Stack
 
 - **Runtime**: Nuxt 3 + Cloudflare Workers | **Auth**: JWT + JOSE hierarchical | **Validation**: Zod + TypeScript | **Testing**: Vitest + HTTP API | **Tools**: Bun, Biome
+
+## File Naming Conventions
+
+### API Endpoints
+```bash
+server/api/example.get.ts          # GET /api/example
+server/api/example.post.ts         # POST /api/example
+server/api/users/[uuid].get.ts     # GET /api/users/{uuid}
+server/api/users/[uuid]/[...path].get.ts # GET /api/users/{uuid}/{path}
+server/routes/go/[slug].get.ts     # GET /go/{slug}
+```
+
+### Utilities & Tests
+```bash
+server/utils/feature-name.ts      # Utility functions
+server/utils/feature-helpers.ts   # Helper functions
+test/feature-name.test.ts         # Unit tests
+test/api-feature.test.ts          # API integration tests
+```
+
+### Schema & Type Files
+```bash
+server/utils/schemas.ts           # All Zod schemas + OpenAPI
+types/api.ts                      # Shared type definitions
+worker-configuration.d.ts        # Cloudflare bindings
+```
+
+## Development Patterns
+
+### Schema-First Development
+```typescript
+1. Define Zod schema in schemas.ts with .openapi() metadata
+2. Use schema.parse() in endpoint for validation
+3. Export schema type: `export type Example = z.infer<typeof ExampleSchema>`
+4. Run: bun run generate:openapi
+5. Verify public/openapi.json updated
+```
+
+### Error Handling Standards
+```typescript
+// Always use createApiError for consistent format
+throw createApiError(400, "Validation failed", validationDetails)
+
+// Always use createApiResponse for success
+return createApiResponse({
+  result: data,
+  message: "Operation successful",
+  error: null
+})
+
+// Log errors before throwing
+console.error("Endpoint error:", error)
+recordAPIErrorMetrics(event, error)
+throw error
+```
+
+### Authentication Flow
+```typescript
+// Use auth helpers for consistent patterns
+const auth = await requireAPIAuth(event, "resource")  // api:resource
+const auth = await requireAIAuth(event, "alt")        // ai:alt
+const auth = await requireAdminAuth(event)            // admin
+
+// Access user info from auth.payload
+const userId = auth.payload?.sub
+const tokenId = auth.payload?.jti
+```
 
 ## Auth & Endpoints
 
@@ -127,6 +194,164 @@ bun jwt init && bun run deploy
 **KV YAML**: `metrics: {ok: 0}` → `metrics:ok = "0"`
 **Linting**: `// biome-ignore lint/suspicious/noExplicitAny: [reason]`
 **Images**: Cloudflare service, BLAKE3 IDs, 4MB limit, global CDN
+
+## Performance Guidelines
+
+### KV Storage Optimization
+```typescript
+// Use hierarchical keys for efficient querying
+"metrics:api:ok"              // Good: hierarchical
+"metrics:api:tokens:usage"    // Good: specific scope
+"user_data_12345"            // Bad: flat structure
+
+// Simple values only, no complex objects
+await kv.put("metrics:api:ok", "42")        // Good: simple value
+await kv.put("user:123", JSON.stringify(userObject)) // Bad: complex object
+```
+
+### Async Operation Patterns
+```typescript
+// Non-blocking metrics (fire and forget)
+recordAPIMetricsAsync(event, statusCode)   // Good: doesn't block response
+await recordAPIMetrics(event, statusCode)  // Bad: blocks response
+
+// Real service calls (no mocks except tests)
+const result = await env.AI.run(model, prompt)  // Good: real AI call
+const result = mockAI.generate()               // Bad: mock data
+```
+
+## Security Standards
+
+### Input Validation (MANDATORY)
+```typescript
+// Always validate at API boundaries
+const validated = RequestSchema.parse(await readBody(event))
+
+// Use validation helpers
+const uuid = getValidatedUUID(event, "uuid")
+validateURL(imageUrl, "image URL")
+
+// Never trust external data
+const userInput = sanitizeInput(rawInput)
+```
+
+### Secret Management
+```typescript
+// Environment variables only
+const secret = process.env.API_JWT_SECRET  // Good
+const secret = "hardcoded-secret"          // Bad: never commit secrets
+
+// Check for default secrets in development
+if (secret === "dev-secret-change-in-production") {
+  console.warn("Using default JWT secret - insecure for production!")
+}
+```
+
+### Output Sanitization
+```typescript
+// Never expose internal errors in production
+catch (error) {
+  console.error("Internal error:", error)  // Log for debugging
+  throw createApiError(500, "Internal server error")  // Safe public message
+}
+
+// Don't include sensitive fields in responses
+const publicUser = { id: user.id, name: user.name }  // Good: filtered
+return createApiResponse({ result: user })           // Bad: might expose secrets
+```
+
+## Anti-Patterns (DO NOT DO)
+
+### ❌ Code Quality
+```typescript
+// Don't copy-paste code
+if (condition1) { /* same logic */ }
+if (condition2) { /* same logic */ }
+
+// Extract to shared utility instead
+const sharedLogic = (condition) => { /* logic */ }
+```
+
+### ❌ Error Handling
+```typescript
+// Don't fail silently
+try { riskyOperation() } catch { /* ignored */ }
+
+// Always handle errors explicitly
+try { riskyOperation() } catch (error) {
+  console.error("Operation failed:", error)
+  throw createApiError(500, "Operation failed")
+}
+```
+
+### ❌ Response Format
+```typescript
+// Don't return inconsistent formats
+return { success: true, data: result }           // Bad: non-standard
+return { ok: true, result, error: null, ... }   // Good: standard format
+```
+
+### ❌ Testing
+```typescript
+// Don't skip tests for business logic
+function calculateTotal(items) { /* complex logic */ }  // Needs tests
+
+// Don't test trivial code  
+function getName() { return this.name }  // Skip testing
+```
+
+## Documentation Requirements
+
+### JSDoc Standards
+```typescript
+/**
+ * Generate alt-text for images using AI
+ * @param imageBuffer - Raw image data
+ * @param options - Processing options
+ * @returns Promise<string> Generated alt-text
+ * @throws {Error} When AI service is unavailable
+ */
+export async function generateAltText(
+  imageBuffer: Buffer, 
+  options: AltTextOptions
+): Promise<string>
+```
+
+### Inline Comments
+```typescript
+// Use comments for business logic, not obvious code
+const tax = subtotal * 0.1  // 10% tax rate for region
+
+// Don't comment obvious code
+const name = user.name  // Gets the user name ← unnecessary
+```
+
+## Troubleshooting Checklist
+
+### Build Failures
+```bash
+1. bun run lint:biome    # Fix code style issues
+2. bun run lint:types    # Fix TypeScript errors
+3. bun run test          # Fix failing tests
+4. Check imports/exports # Resolve module issues
+```
+
+### Runtime Errors
+```bash
+1. Check environment variables (API_JWT_SECRET, etc.)
+2. Verify Cloudflare bindings (KV, AI, Images)
+3. Check schema validation errors
+4. Review auth token permissions
+```
+
+### Common Issues
+```bash
+"Cannot read file" → Use absolute paths
+"Schema not found" → Check imports in schemas.ts  
+"Auth required" → Add requireAuth() call
+"Invalid UUID" → Use getValidatedUUID()
+"AI service unavailable" → Check env.AI binding
+```
 
 ## Immediate Plans
 
