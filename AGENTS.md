@@ -1,28 +1,32 @@
 # `next.dave.io`
 
-## 🚨 CRITICAL DEVELOPMENT RULES - MANDATORY FOR EVERY REQUEST
+## 🛑 MANDATORY RULES - CHECK BEFORE EVERY ACTION
 
-<!-- trunk-ignore-all(markdownlint/MD036) -->
+### PRE-TASK CHECKLIST (Mental Review Required)
 
-**⚠️ THESE RULES MUST BE FOLLOWED AT ALL TIMES, IN EVERY REQUEST ⚠️**
+□ Am I following ALL 11 rules below?
+□ Have I checked `AGENTS.md` for latest specs?
+□ Will my code be production-ready?
 
-**1. Breaking Changes**: NO backwards compatibility. Document in AGENTS.md. ❌ No migration code.
+### THE 11 COMMANDMENTS
 
-**2. Quality > Speed**: Unlimited time/calls for correct implementations. Refactor ruthlessly. ❌ No "good enough".
+**1. BREAK**: Ship breaking changes freely. Document in `AGENTS.md`. Never add migration code.
 
-**3. Mandatory Testing**: EVERYTHING with logic/side effects needs tests. Commands: `bun run test`, `bun run test:ui`, `bun run test:api`. ❌ Skip trivial getters, frontend components, config.
+**2. PERFECT**: Take unlimited time/calls for correctness. Refactor aggressively. No "good enough".
 
-**4. Documentation Sync**: AGENTS.md = source of truth. Update after API/feature/auth changes.
+**3. TEST**: Test everything with logic/side effects. Commands: `bun run test`, `bun run test:ui`, `bun run test:api`. Skip only: trivial getters, UI components, config.
 
-**5. Quality Verification**: `bun run build` → `bun run lint:biome`, `bun run lint:trunk`, `bun run lint:types`, `bun run test` → `bun run check`. ❌ Never commit broken code.
+**4. SYNC**: `AGENTS.md` = truth. Update after API/feature/auth changes. `CLAUDE.md` & `README.md` = symlinks to `AGENTS.md`.
 
-**6. Commit Hygiene**: `git add -A . && oco --fgm --yes` or `git add -A . && git commit -am "[emoji] [description]"`. Commit after features/bugs/refactoring.
+**5. VERIFY**: `bun run build` → `bun run lint:biome`, `bun run lint:trunk`, `bun run lint:types`, `bun run test` → `bun run check`. Never continue with errors.
 
-**7. Zero Mock Data**: Only real service calls (`env.AI.run()`, `env.DATA.get/put()`). Crash loudly on failure. ❌ No `Math.random()`, hardcoded values, fake delays. Exception: test files.
+**6. COMMIT**: `git add -A . && oco --fgm --yes` after each feature/fix/refactor.
 
-**8. No Incomplete Code**: Mark with `// TODO: [description]`. Prefer explicit errors over silent failures.
+**7. REAL**: Use actual service calls only (`env.AI.run()`, `env.DATA.get/put()`). Crash on failure. No mocks/randoms/delays (except tests).
 
-**9. TODO Management**: Use 6-hex IDs per logical issue. Update TODO.md. Examples:
+**8. COMPLETE**: Finish all code or mark `TODO: [description]`. Fail explicitly, never silently.
+
+**9. TRACK**: TODOs use 6-hex IDs. Update TODO.md:
 
 ```typescript
 // TODO: (37c7b2) Skip Bun mocking - test separately
@@ -32,9 +36,14 @@
 - **TODO:** _37c7b2_ `test/file.ts:18` Description
 ```
 
-**10. KV Data**: Simple values only. Hierarchical keys: `metrics:api:ok`. Kebab-case: `auth:token-uuid`. Update `data/kv/_init.yaml`.
+**10. KV**: Simple values only. Hierarchical keys: `metrics:api:ok`. Kebab-case: `auth:token-uuid`. Update `data/kv/_init.yaml`.
 
-**11. Shared Code**: Extract duplicated logic to `server/utils/` immediately. Add JSDoc, tests, types. ❌ No copy-pasting.
+**11. SHARE**: Extract duplicated logic to `server/utils/` immediately. Add JSDoc+tests+types.
+
+### ⚡ QUICK REFERENCE
+
+**ALWAYS**: Break compatibility • Test everything • Real data only • Complete code • Extract duplicates • KV hierarchical keys
+**NEVER**: Migration code • Mock data • Silent failures • Copy-paste • Outdated docs • Complex KV values
 
 ## Tech Stack
 

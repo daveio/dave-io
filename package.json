@@ -60,6 +60,11 @@
     "vitest": "3.2.3",
     "wrangler": "4.20.0"
   },
+  "packageManager": "bun@1.2.16",
+  "engines": {
+    "bun": "1.2.16",
+    "node": "22.16.0"
+  },
   "private": true,
   "scripts": {
     "// === FULL CHECK ===": "",
@@ -125,5 +130,8 @@
     "vue-demi",
     "workerd"
   ],
-  "type": "module"
+  "type": "module",
+  "peerDependencies": {
+    "typescript": "^5"
+  }
 }
