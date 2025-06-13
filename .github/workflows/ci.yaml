@@ -17,6 +17,8 @@ jobs:
         run: bun install
       - name: build
         run: bun run build
+        env:
+          CLOUDFLARE_API_TOKEN: dummy
       - name: biome
         run: bun run lint:biome
       - name: trunk
