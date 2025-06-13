@@ -10,7 +10,8 @@
   "name": "next-dave-io",
 
   // The path to the entrypoint of your Worker that will be executed
-  "main": "./dist/index.js",
+  // Set by the build process
+  // "main": "./dist/index.js",
 
   // Compatibility date - determines which version of the Workers runtime is used
   "compatibility_date": "2025-06-10",
