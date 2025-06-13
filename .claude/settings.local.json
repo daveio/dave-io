@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash",
+      "claudeCode",
+      "cloudflareDocumentation",
+      "cloudflareRendering",
+      "context7",
+      "docker",
+      "duckduckgo",
+      "fetch",
+      "filesystem",
+      "git",
+      "github",
+      "linear",
+      "pdfReader",
+      "sequentialThinking",
+      "sharedMemory",
+      "tavily",
+      "time",
+      "vscode",
+      "WebFetch",
+      "WebSearch",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs"
+    ],
+    "deny": []
+  }
+}
