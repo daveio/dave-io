@@ -296,7 +296,7 @@ return { ok: true, result, error: null, ... }   // Good: standard format
 // Don't skip tests for business logic
 function calculateTotal(items) { /* complex logic */ }  // Needs tests
 
-// Don't test trivial code  
+// Don't test trivial code
 function getName() { return this.name }  // Skip testing
 ```
 
@@ -312,7 +312,7 @@ function getName() { return this.name }  // Skip testing
  * @throws {Error} When AI service is unavailable
  */
 export async function generateAltText(
-  imageBuffer: Buffer, 
+  imageBuffer: Buffer,
   options: AltTextOptions
 ): Promise<string>
 ```
@@ -347,7 +347,7 @@ const name = user.name  // Gets the user name ← unnecessary
 ### Common Issues
 ```bash
 "Cannot read file" → Use absolute paths
-"Schema not found" → Check imports in schemas.ts  
+"Schema not found" → Check imports in schemas.ts
 "Auth required" → Add requireAuth() call
 "Invalid UUID" → Use getValidatedUUID()
 "AI service unavailable" → Check env.AI binding

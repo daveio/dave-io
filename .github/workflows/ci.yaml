@@ -12,9 +12,9 @@ jobs:
       - name: bun
         uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76
         with:
-          bun-version: 1.2.15
-      - name: setup-ci-env
-        run: cp .dev.vars.ci .dev.vars
+          bun-version: 1.2.16
+      - name: vars
+        run: cp .env.example .dev.vars
       - name: install
         run: bun install
       - name: build
@@ -22,7 +22,7 @@ jobs:
       - name: biome
         run: bun run lint:biome
       - name: trunk
-        uses: trunk-io/trunk-action@75699af9e26881e564e9d832ef7dc3af25ec031b
+        uses: trunk-io/trunk-action@1c401dfb3626be3d242d50537e2f020e12424329
         with:
           # trunk-ignore(trunk-toolbox)
           arguments: --filter=-trunk-toolbox/todo

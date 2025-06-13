@@ -38,7 +38,7 @@ lint:
     - golangci-lint2
     - actionlint@1.7.7
     - biome@1.9.4
-    - checkov@3.2.440
+    - checkov@3.2.441
     - dustilock@1.2.0
     - git-diff-check
     - gitleaks@8.27.2
