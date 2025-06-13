@@ -43,10 +43,10 @@
     "uuid": "^11.1.0",
     "vue": "^3.5.16",
     "vue-router": "^4.5.1",
-    "zod": "^3.25.62"
+    "zod": "^3.25.63"
   },
   "devDependencies": {
-    "@anthropic-ai/claude-code": "^1.0.21",
+    "@anthropic-ai/claude-code": "^1.0.22",
     "@biomejs/biome": "^1.9.4",
     "@iconify/json": "^2.2.348",
     "@openai/codex": "0.1.2505291658",
@@ -72,7 +72,7 @@
     "vite": "^6.3.5",
     "vite-plugin-vue-devtools": "^7.7.6",
     "vue-tsc": "^2.2.10",
-    "wrangler": "^4.19.2"
+    "wrangler": "^4.20.0"
   },
   "packageManager": "bun@1.2.15",
   "engines": {
