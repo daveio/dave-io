@@ -13,7 +13,7 @@ import { updateAPIRequestMetricsAsync } from "~/server/utils/kv-metrics"
 export function recordAPIMetrics(event: H3Event, statusCode = 200): void {
   try {
     const env = getCloudflareEnv(event)
-    if (!env?.DATA) {
+    if (!env?.KV) {
       return // Skip metrics if KV is not available
     }
 
@@ -23,7 +23,7 @@ export function recordAPIMetrics(event: H3Event, statusCode = 200): void {
     const userAgent = getHeader(event, "user-agent") || ""
 
     // Fire and forget using the async version
-    updateAPIRequestMetricsAsync(env.DATA, url.pathname, method, statusCode, cfInfo, userAgent)
+    updateAPIRequestMetricsAsync(env.KV, url.pathname, method, statusCode, cfInfo, userAgent)
   } catch (error) {
     console.error("Failed to record API metrics:", error)
     // Never let metrics errors break the request

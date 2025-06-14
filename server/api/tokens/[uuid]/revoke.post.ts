@@ -59,7 +59,7 @@ export default defineEventHandler(async (event) => {
 
     // Get environment bindings using helper
     const env = getCloudflareEnv(event)
-    if (!env?.DATA) {
+    if (!env?.KV) {
       throw createApiError(500, "KV storage not available")
     }
 
@@ -67,18 +67,18 @@ export default defineEventHandler(async (event) => {
       if (body.revoked) {
         // Add token to revocation using simple KV keys with 30-day expiration
         await Promise.all([
-          env.DATA.put(`token:${uuid}:revoked`, "true", { expirationTtl: 86400 * 30 }),
-          env.DATA.put(`token:${uuid}:revoked-at`, now, { expirationTtl: 86400 * 30 }),
-          env.DATA.put(`token:${uuid}:revoked-by`, auth.payload?.sub || "unknown", { expirationTtl: 86400 * 30 }),
-          env.DATA.put(`token:${uuid}:revoke-reason`, "Manual revocation via API", { expirationTtl: 86400 * 30 })
+          env.KV.put(`token:${uuid}:revoked`, "true", { expirationTtl: 86400 * 30 }),
+          env.KV.put(`token:${uuid}:revoked-at`, now, { expirationTtl: 86400 * 30 }),
+          env.KV.put(`token:${uuid}:revoked-by`, auth.payload?.sub || "unknown", { expirationTtl: 86400 * 30 }),
+          env.KV.put(`token:${uuid}:revoke-reason`, "Manual revocation via API", { expirationTtl: 86400 * 30 })
         ])
       } else {
         // Remove token from revocation using simple KV keys
         await Promise.all([
-          env.DATA.delete(`token:${uuid}:revoked`),
-          env.DATA.delete(`token:${uuid}:revoked-at`),
-          env.DATA.delete(`token:${uuid}:revoked-by`),
-          env.DATA.delete(`token:${uuid}:revoke-reason`)
+          env.KV.delete(`token:${uuid}:revoked`),
+          env.KV.delete(`token:${uuid}:revoked-at`),
+          env.KV.delete(`token:${uuid}:revoked-by`),
+          env.KV.delete(`token:${uuid}:revoke-reason`)
         ])
       }
     } catch (error) {

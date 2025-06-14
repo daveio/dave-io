@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
 
     // Get environment bindings using helper
     const env = getCloudflareEnv(event)
-    if (!env?.DATA) {
+    if (!env?.KV) {
       throw createApiError(503, "Token service not available")
     }
 
@@ -47,10 +47,10 @@ export default defineEventHandler(async (event) => {
 
     // GET /api/tokens/{uuid} - Get token usage using simple KV keys
     const [usageCountStr, maxRequestsStr, createdAtStr, lastUsedStr] = await Promise.all([
-      env.DATA.get(`token:${uuid}:usage-count`),
-      env.DATA.get(`token:${uuid}:max-requests`),
-      env.DATA.get(`token:${uuid}:created-at`),
-      env.DATA.get(`token:${uuid}:last-used`)
+      env.KV.get(`token:${uuid}:usage-count`),
+      env.KV.get(`token:${uuid}:max-requests`),
+      env.KV.get(`token:${uuid}:created-at`),
+      env.KV.get(`token:${uuid}:last-used`)
     ])
 
     // Check if token exists

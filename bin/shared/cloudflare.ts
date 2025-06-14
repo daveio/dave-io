@@ -55,7 +55,7 @@ export function getWranglerConfig(): WranglerConfig {
     // Extract KV namespace ID
     let kvNamespaceId: string | undefined
     if (wranglerConfig.kv_namespaces && Array.isArray(wranglerConfig.kv_namespaces)) {
-      const kvBinding = (wranglerConfig.kv_namespaces as KVNamespace[]).find((kv) => kv.binding === "DATA")
+      const kvBinding = (wranglerConfig.kv_namespaces as KVNamespace[]).find((kv) => kv.binding === "KV")
       if (kvBinding?.id) {
         kvNamespaceId = kvBinding.id
       }
@@ -194,9 +194,9 @@ export function getKVBindingName(): string {
       }
     }
   } catch (_error) {
-    console.warn("⚠️  Could not read KV binding from wrangler.jsonc, using default 'DATA'")
+    console.warn("⚠️  Could not read KV binding from wrangler.jsonc, using default 'KV'")
   }
-  return "DATA"
+  return "KV"
 }
 
 /**

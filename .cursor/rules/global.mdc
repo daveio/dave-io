@@ -22,7 +22,7 @@ alwaysApply: true
 
 **6. Commit Hygiene**: `git add -A . && oco --fgm --yes` or `git add -A . && git commit -am "[emoji] [description]"`. Commit after features/bugs/refactoring.
 
-**7. Zero Mock Data**: Only real service calls (`env.AI.run()`, `env.DATA.get/put()`). Crash loudly on failure. ❌ No `Math.random()`, hardcoded values, fake delays. Exception: test files.
+**7. Zero Mock Data**: Only real service calls (`env.AI.run()`, `env.KV.get/put()`). Crash loudly on failure. ❌ No `Math.random()`, hardcoded values, fake delays. Exception: test files.
 
 **8. No Incomplete Code**: Mark with `// TODO: [description]`. Prefer explicit errors over silent failures.
 

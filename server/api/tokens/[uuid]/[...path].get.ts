@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
 
     // Get environment bindings using helper
     const env = getCloudflareEnv(event)
-    if (!env?.DATA) {
+    if (!env?.KV) {
       throw createApiError(503, "Token service not available")
     }
 
@@ -51,10 +51,10 @@ export default defineEventHandler(async (event) => {
     if (!path) {
       // GET /api/tokens/{uuid} - Get token usage using simple KV keys
       const [usageCountStr, maxRequestsStr, createdAtStr, lastUsedStr] = await Promise.all([
-        env.DATA.get(`token:${uuid}:usage-count`),
-        env.DATA.get(`token:${uuid}:max-requests`),
-        env.DATA.get(`token:${uuid}:created-at`),
-        env.DATA.get(`token:${uuid}:last-used`)
+        env.KV.get(`token:${uuid}:usage-count`),
+        env.KV.get(`token:${uuid}:max-requests`),
+        env.KV.get(`token:${uuid}:created-at`),
+        env.KV.get(`token:${uuid}:last-used`)
       ])
 
       // Check if token exists
@@ -83,14 +83,14 @@ export default defineEventHandler(async (event) => {
     }
     if (path === "revoke") {
       // GET /api/tokens/{uuid}/revoke - Revoke token (legacy endpoint)
-      const createdAtStr = await env.DATA.get(`token:${uuid}:created-at`)
+      const createdAtStr = await env.KV.get(`token:${uuid}:created-at`)
 
       if (!createdAtStr) {
         throw createApiError(404, `Token not found: ${uuid}`)
       }
 
       // Add the token to revocation using simple KV key
-      await env.DATA.put(`token:${uuid}:revoked`, "true", { expirationTtl: 86400 * 30 })
+      await env.KV.put(`token:${uuid}:revoked`, "true", { expirationTtl: 86400 * 30 })
 
       console.log(`Token revoked: ${uuid}`)
 
@@ -111,7 +111,7 @@ export default defineEventHandler(async (event) => {
     }
     if (path === "metrics") {
       // GET /api/tokens/{uuid}/metrics - Get token metrics using simple KV keys
-      const createdAtStr = await env.DATA.get(`token:${uuid}:created-at`)
+      const createdAtStr = await env.KV.get(`token:${uuid}:created-at`)
 
       if (!createdAtStr) {
         throw createApiError(404, `Token not found: ${uuid}`)
@@ -119,9 +119,9 @@ export default defineEventHandler(async (event) => {
 
       // Get real metrics data from KV counters for this specific token
       const [totalRequests, successfulRequests, failedRequests] = await Promise.all([
-        env.DATA.get(`metrics:tokens:${uuid}:requests:total`).then((v) => Number.parseInt(v || "0")),
-        env.DATA.get(`metrics:tokens:${uuid}:requests:successful`).then((v) => Number.parseInt(v || "0")),
-        env.DATA.get(`metrics:tokens:${uuid}:requests:failed`).then((v) => Number.parseInt(v || "0"))
+        env.KV.get(`metrics:tokens:${uuid}:requests:total`).then((v) => Number.parseInt(v || "0")),
+        env.KV.get(`metrics:tokens:${uuid}:requests:successful`).then((v) => Number.parseInt(v || "0")),
+        env.KV.get(`metrics:tokens:${uuid}:requests:failed`).then((v) => Number.parseInt(v || "0"))
       ])
 
       const metricsData = {

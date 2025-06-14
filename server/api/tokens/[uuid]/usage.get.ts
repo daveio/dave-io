@@ -70,12 +70,12 @@ export default defineEventHandler(async (event) => {
 
     // Get environment bindings using helper
     const env = getCloudflareEnv(event)
-    if (!env.DATA) {
+    if (!env.KV) {
       throw createApiError(503, "Token service not available")
     }
 
     // Get token usage from KV storage
-    const usage = await getTokenUsageFromKV(uuid, env.DATA)
+    const usage = await getTokenUsageFromKV(uuid, env.KV)
 
     // Record successful token usage request
     recordAPIMetrics(event, 200)

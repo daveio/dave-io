@@ -46,7 +46,7 @@ export function getCloudflareRequestInfo(event: H3Event): CloudflareRequestInfo 
  */
 export interface CloudflareEnv {
   /** KV Namespace for general data storage */
-  DATA?: KVNamespace
+  KV?: KVNamespace
   /** Cloudflare AI for machine learning tasks */
   AI?: Ai
   /** D1 Database for relational data */
@@ -91,10 +91,10 @@ export function validateCloudflareBindings(env: CloudflareEnv, required: (keyof 
  * Safe getter for KV namespace with proper error handling
  */
 export function getKVNamespace(env: CloudflareEnv): KVNamespace {
-  if (!env.DATA) {
+  if (!env.KV) {
     throw createApiError(503, "Storage service not available")
   }
-  return env.DATA
+  return env.KV
 }
 
 /**

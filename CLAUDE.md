@@ -24,7 +24,7 @@
 
 **6. COMMIT**: `git add -A . && oco --fgm --yes` after each feature/fix/refactor.
 
-**7. REAL**: Use actual service calls only (`env.AI.run()`, `env.DATA.get/put()`). Crash on failure. No mocks/randoms/delays (except tests).
+**7. REAL**: Use actual service calls only (`env.AI.run()`, `env.KV.get/put()`). Crash on failure. No mocks/randoms/delays (except tests).
 
 **8. COMPLETE**: Finish all code or mark `TODO: [description]`. Fail explicitly, never silently.
 
@@ -347,7 +347,7 @@ build fails → check imports/syntax
 ## Core
 
 - **Response**: Success `{ok: true, result, error: null, status: {message}, timestamp}` | Error `{ok: false, error, status: {message}?, timestamp}`
-- **Environment**: `API_JWT_SECRET`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Bindings: KV(DATA), D1(DB), AI, Images
+- **Environment**: `API_JWT_SECRET`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Bindings: KV(KV), D1(DB), AI, Images
 - **CLI**: JWT(`init|create|verify|list|revoke`) | API-Test(`--auth-only|--ai-only`) | Try(`--auth|--token`) | KV(`export|import|list|wipe --local`)
 - **Testing**: Unit(`bun run test|test:ui`) | HTTP(`bun run test:api`) | Remote(`--url https://example.com`)
 
@@ -397,7 +397,7 @@ bun run test:api --ai-only --url https://dave.io  # Test
 ## Deployment & Config
 
 ```bash
-wrangler kv:namespace create DATA && wrangler d1 create NEXT_API_AUTH_METADATA
+wrangler kv:namespace create KV && wrangler d1 create NEXT_API_AUTH_METADATA
 bun jwt init && bun run deploy
 ```
 

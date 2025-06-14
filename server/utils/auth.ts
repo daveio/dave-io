@@ -125,14 +125,14 @@ export async function isTokenRevoked(event: H3Event, jti: string): Promise<boole
 
   try {
     // Get KV binding from event context
-    const env = event.context.cloudflare?.env as { DATA?: KVNamespace }
-    if (!env?.DATA) {
+    const env = event.context.cloudflare?.env as { KV?: KVNamespace }
+    if (!env?.KV) {
       console.warn("KV binding not available, assuming token not revoked")
       return false
     }
 
     // Check KV store for revoked tokens using simple key format
-    const revoked = await env.DATA.get(`token:${jti}:revoked`)
+    const revoked = await env.KV.get(`token:${jti}:revoked`)
     return revoked === "true"
   } catch (error) {
     console.error("Failed to check token revocation:", error)
