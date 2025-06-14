@@ -1,5 +1,7 @@
 # next.dave.io
 
+<!-- trunk-ignore-all(trunk-toolbox/todo) -->
+
 > A modern Nuxt 3 + Cloudflare Workers API platform with JWT authentication, AI integration, and automated OpenAPI documentation.
 
 ## 🛑 MANDATORY RULES - CHECK BEFORE EVERY ACTION

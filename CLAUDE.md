@@ -1,5 +1,7 @@
 # `next.dave.io`
 
+<!-- trunk-ignore-all(trunk-toolbox/todo) -->
+
 ## 🛑 MANDATORY RULES - CHECK BEFORE EVERY ACTION
 
 ### PRE-TASK CHECKLIST (Mental Review Required)
