@@ -55,7 +55,7 @@ const doc = generator.generateDocument({
   },
   servers: [
     {
-      url: "https://next.dave.io",
+      url: "https://dave.io",
       description: "Production server"
     }
   ],

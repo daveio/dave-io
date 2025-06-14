@@ -29,7 +29,7 @@ class APITester {
   private scriptMode: boolean
   private isLocal: boolean
 
-  constructor(baseUrl = "https://next.dave.io", secret?: string, scriptMode = false) {
+  constructor(baseUrl = "https://dave.io", secret?: string, scriptMode = false) {
     this.baseUrl = baseUrl.replace(/\/$/, "") // Remove trailing slash
     this.secret = secret || getJWTSecret() || "dev-secret-change-in-production"
     this.scriptMode = scriptMode
@@ -669,7 +669,7 @@ program
   .option("-s, --secret <secret>", "JWT secret for token generation")
   .option("-t, --token <token>", "Use existing token instead of generating new ones")
   .option("--local", "Test against local development server (http://localhost:3000)")
-  .option("--remote", "Test against remote production server (https://next.dave.io) [default]")
+  .option("--remote", "Test against remote production server (https://dave.io) [default]")
   .option("--ai-only", "Test only AI endpoints")
   .option("--redirects-only", "Test only redirect endpoints")
   .option("--tokens-only", "Test only token management endpoints")
@@ -687,7 +687,7 @@ program
         testUrl = "http://localhost:3000"
       } else {
         // Default to remote (--remote is default)
-        testUrl = "https://next.dave.io"
+        testUrl = "https://dave.io"
       }
     }
 
@@ -760,7 +760,7 @@ program.addHelpText(
   "after",
   `
 Examples:
-  bun run test:api                          # Run all tests against next.dave.io (remote)
+  bun run test:api                          # Run all tests against dave.io (remote)
   bun run test:api --local                  # Test against localhost:3000
   bun run test:api --url https://custom.io # Test against custom URL
   bun run test:api --ai-only                # Test only AI endpoints

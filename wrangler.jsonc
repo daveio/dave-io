@@ -7,14 +7,14 @@
   // ===============================
 
   // Worker name - alphanumeric characters and dashes only (no underscores)
-  "name": "next-dave-io",
+  "name": "dave-io",
 
   // The path to the entrypoint of your Worker that will be executed
   // Set by the build process
   // "main": "./dist/index.js",
 
   // Compatibility date - determines which version of the Workers runtime is used
-  "compatibility_date": "2025-06-10",
+  "compatibility_date": "2025-06-13",
 
   // ===============================
   // RUNTIME CONFIGURATION
@@ -48,7 +48,7 @@
   // Routes that your Worker should be deployed to
   "routes": [
     {
-      "pattern": "next.dave.io",
+      "pattern": "dave.io",
       "custom_domain": true // Use Custom Domain (no DNS changes required)
     }
   ],
@@ -116,7 +116,6 @@
   // Environment variables (non-encrypted, visible in dashboard)
   "vars": {
     "CLOUDFLARE_ACCOUNT_ID": "def50674a738cee409235f71819973cf",
-    "IMAGES_BASE_URL": "https://images.dave.io",
     "NUXT_PUBLIC_API_BASE_URL": "/api"
     // Secrets (encrypted) should be managed via `wrangler secret put` command
     // or .dev.vars file for local development
@@ -135,17 +134,17 @@
   // KV namespace bindings for key-value storage
   "kv_namespaces": [
     {
-      "binding": "DATA", // Variable name in your Worker
-      "id": "184eca13ac05485d96de48c436a6f5e6"
+      "binding": "KV", // Variable name in your Worker
+      "id": "e3e72ca981224309a3306e50b8226bf3"
     }
   ],
 
   // D1 database bindings for SQL databases
   "d1_databases": [
     {
-      "binding": "DB", // Variable name in your Worker
-      "database_name": "next-api-auth-metadata",
-      "database_id": "106894e2-1f5c-4979-a777-0b45febbb993",
+      "binding": "D1", // Variable name in your Worker
+      "database_name": "dave-io",
+      "database_id": "308650a8-2263-426c-9ff8-746e743ffcb2",
       "migrations_dir": "./migrations" // Directory containing migration files
     }
   ],

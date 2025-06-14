@@ -1,4 +1,4 @@
-# next.dave.io
+# dave.io
 
 <!-- trunk-ignore-all(trunk-toolbox/todo) -->
 

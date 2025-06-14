@@ -1,4 +1,4 @@
-# `next.dave.io`
+# `dave.io`
 
 ## 🛑 MANDATORY RULES - CHECK BEFORE EVERY ACTION
 

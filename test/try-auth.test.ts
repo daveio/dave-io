@@ -115,7 +115,7 @@ describe("try.ts Auth Integration", () => {
       const config = await createConfig(options, "dashboard")
 
       expect(config.token).toBe("auto-generated-token")
-      expect(config.baseUrl).toBe("https://next.dave.io")
+      expect(config.baseUrl).toBe("https://dave.io")
     })
 
     it("should create config with provided token when --token is used", async () => {
@@ -135,7 +135,7 @@ describe("try.ts Auth Integration", () => {
       const config = await createConfig(options)
 
       expect(config.token).toBeUndefined()
-      expect(config.baseUrl).toBe("https://next.dave.io")
+      expect(config.baseUrl).toBe("https://dave.io")
     })
   })
 

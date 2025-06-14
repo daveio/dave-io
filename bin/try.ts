@@ -68,8 +68,8 @@ async function createConfig(options: GlobalOptions, scope?: string): Promise<Req
   const baseUrl = options.local
     ? "http://localhost:3000"
     : options.remote
-      ? "https://next.dave.io"
-      : "https://next.dave.io"
+      ? "https://dave.io"
+      : "https://dave.io"
 
   let token: string | undefined
 
@@ -204,7 +204,7 @@ program
   .option("-t, --token <token>", "JWT token for authentication")
   .option("-a, --auth", "Auto-generate temporary token with required scopes")
   .option("--local", "Use local development server (http://localhost:3000)")
-  .option("--remote", "Use remote server (https://next.dave.io) [default]")
+  .option("--remote", "Use remote server (https://dave.io) [default]")
   .option("-d, --dry-run", "Show what would be done without making actual requests")
   .option("-v, --verbose", "Maximize output (show request/response details)")
   .option("-q, --quiet", "Minimize output (show only essential data)")
