@@ -8,6 +8,7 @@ authenticationType: null
 description: ''
 headers: []
 name: dave.io
+# trunk-ignore(gitleaks/generic-api-key)
 encryptionKeyChallenge: eUE0azNuQwHJozxKEyboQTMBVevwWEcVVdSQQtedOtz4r5A5Cm3ElmjPOwTw7aB6AUUJwLvtapu126wDBGWXQAQ4W9i4BYS4CwuyaKF21hu7vsZ7j/4PG+UvisP8l284g2o=
 settingValidateCertificates: true
 settingFollowRedirects: false
