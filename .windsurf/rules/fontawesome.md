@@ -15,7 +15,7 @@ This document outlines best practices for using Font Awesome in web development 
    - Add the Kit's embed code ( `<script>` tag) to the `<head>` of your HTML document.
    - Example:
      html
-       <script src="https://kit.fontawesome.com/<your_kit_code>.js" crossorigin="anonymous"></script>
+        <script src="https://kit.fontawesome.com/<your_kit_code>.js" crossorigin="anonymous"></script>
 - **Package Manager (npm, yarn):**
    - Install Font Awesome as a dependency:
      bash
@@ -27,7 +27,7 @@ This document outlines best practices for using Font Awesome in web development 
    - Use a CDN for quick setup, but be aware of potential performance implications and dependency on external services.
    - Include the CDN link in your HTML:
      html
-       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="..." crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="..." crossorigin="anonymous" />
 - **Icon Usage:**
    - Use CSS classes to insert icons into your project.
      html
@@ -123,7 +123,7 @@ This document outlines best practices for using Font Awesome in web development 
 - **Subresource Integrity (SRI):**
    - When using a CDN, use SRI hashes to verify the integrity of the Font Awesome files.
      html
-       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
 
 ## 7. Testing Approaches
 
