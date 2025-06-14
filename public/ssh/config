@@ -1,0 +1,146 @@
+# -*- mode: go-template; tab_size: 4; hard_tabs: false -*-
+
+Host tilde
+  HostName tilde.club
+  User daveio
+  Port 22
+
+Host github.com gist.github.com
+  Port 22
+
+Host tilde-pink
+  HostName tilde.pink
+  Port 22
+
+Host fw fw-7t54
+  HostName 10.0.101.1
+  HostName 192.168.204.167
+  HostName fd8b:d512:4fd6:3a0d:4799:93b0:a153:a2ce
+  HostName fc5d:ef1f:08b0:a153:a2ce:0000:0000:0001
+
+Host fw-16c
+  HostName 10.0.99.1
+  HostName 192.168.204.192
+  HostName fd8b:d512:4fd6:3a0d:4799:93ea:678c:f242
+  HostName fc5d:ef1f:08b0:a153:a2ce:0000:0000:0001
+
+Host nas nas-7t54
+  HostName nas-7t54.manticore-minor.ts.net
+  HostName 100.80.254.9
+  HostName fd7a:115c:a1e0::1301:fe09
+
+Host nas-16c
+  HostName nas-16c.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0:ab12:4843:cd96:625e:b23
+  HostName 100.94.11.35
+
+Host basilisk
+  # HostName 161.35.35.39
+  # HostName 2a03:b0c0:1:d0::10bd:6001
+  HostName basilisk.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::1501:532
+  HostName 100.87.5.50
+  LocalForward 9443 localhost:9443
+
+Host cbp
+  HostName dave-cbp.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::e101:cf79
+  HostName 100.102.207.118
+
+Host homeassistant
+  # HostName 2001:8b0:65d3:47a0:942b:d9a4:7bca:184e
+  # HostName 10.0.101.2
+  HostName homeassistant.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::7701:695b
+  HostName 100.85.105.91
+
+Host i5mbp
+  HostName dave-i5mbp.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::9a01:f580
+  HostName 100.88.245.127
+
+Host i9mbp
+  HostName dave-i9mbp.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::ab01:2850
+  HostName 100.76.40.79
+
+Host ipad
+  HostName dave-ipad.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::ac98:d509
+  HostName 100.88.213.9
+
+Host ipad10
+  HostName dave-ipad10.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::74f9:2b37
+  HostName 100.121.43.55
+
+Host iphone
+  HostName dave-iphone.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::c1e6:6818
+  HostName 100.102.104.24
+
+Host kosh
+  HostName kosh.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::a301:e270
+  HostName 100.65.226.112
+
+Host mba
+  HostName dave-mba.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::5601:ac40
+  HostName 100.96.172.64
+
+Host mbp
+  HostName dave-mbp.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::d801:f21d
+  HostName 100.84.242.28
+
+Host mog-barometer
+  HostName mog-barometer.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::6701:e580
+  HostName 100.96.229.128
+
+Host office-chromecast
+  HostName office-chromecast.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::c901:d82c
+  HostName 100.104.216.44
+
+Host officetv
+  HostName officetv.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::7601:ce19
+  HostName 100.109.206.25
+
+Host pi5
+  HostName pi5.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::8501:d27e
+  HostName 100.83.210.126
+
+Host shadow
+  HostName dave-shadow.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::9801:eb70
+  HostName 100.101.235.112
+
+Host surface
+  HostName dave-surface.manticore-minor.ts.net
+  HostName fd7a:115c:a1e0::8e01:b83c
+  HostName 100.121.184.60
+
+Host wlwi-primary
+  HostName 10.0.100.13
+  HostName 192.168.204.187
+  HostName fd8b:d512:4fd6:3a0d:4799:93b2:de3b:d6b4
+  HostName fc5d:ef1f:08b2:de3b:d6b4:0000:0000:0001
+
+Host wlwi-secondary
+  HostName 10.0.100.14
+  HostName 192.168.204.168
+  HostName fd8b:d512:4fd6:3a0d:4799:93c0:a171:6f9c
+  HostName fc5d:ef1f:08c0:a171:6f9c:0000:0000:0001
+
+# Global settings unless overridden
+Host *
+  Compression yes
+  
+    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+
+  ForwardAgent yes
+  Port 212
