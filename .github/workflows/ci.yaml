@@ -1,6 +1,6 @@
 name: ci
 permissions: read-all
-"on":
+on:
   push: null
   pull_request: null
 jobs:
@@ -12,12 +12,19 @@ jobs:
       - name: bun
         uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76
         with:
-          bun-version: 1.2.13
+          bun-version: 1.2.16
+      - name: vars
+        run: cp .env.example .dev.vars
       - name: install
         run: bun install
-      - name: typecheck
-        run: bun run typecheck
+      - name: build
+        run: bun run build
       - name: biome
-        run: bun run biome check
+        run: bun run lint:biome
       - name: trunk
-        uses: trunk-io/trunk-action@75699af9e26881e564e9d832ef7dc3af25ec031b
+        uses: trunk-io/trunk-action@1c401dfb3626be3d242d50537e2f020e12424329
+        with:
+          # trunk-ignore(trunk-toolbox)
+          arguments: --filter=-trunk-toolbox/todo
+      - name: typecheck
+        run: bun run lint:types

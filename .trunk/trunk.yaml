@@ -14,8 +14,8 @@ actions:
         - git_hooks:
             - pre-commit
   enabled:
-    - lint
-    - typecheck
+    #    - lint
+    #    - typecheck
     - trunk-announce
     - trunk-check-pre-push
     - trunk-fmt-pre-commit
@@ -25,52 +25,66 @@ cli:
 lint:
   # https://docs.trunk.io/check/configuration
   disabled:
-    - vale
-    - stylelint
     - codespell
+    - eslint
     - markdown-link-check
     - prettier
+    - stylelint
+    - vale
   enabled:
-    - djlint@1.36.4
+    - clippy
+    - rustfmt
+    - gofmt@1.20.4
+    - golangci-lint2
+    - actionlint@1.7.7
+    - biome@1.9.4
+    - checkov@3.2.441
+    - dustilock@1.2.0
+    - git-diff-check
+    - gitleaks@8.27.2
     - hadolint@2.12.1-beta
+    - markdownlint@0.45.0
+    - osv-scanner@2.0.2
+    - oxipng@9.1.5
+    - semgrep@1.125.0
     - shellcheck@0.10.0
     - shfmt@3.6.0
-    - svgo@3.3.2
-    - oxipng@9.1.5
     - sourcery@1.37.0
-    - semgrep@1.123.0
-    - biome@1.9.4
-    - dustilock@1.2.0
-    - gitleaks@8.27.0
-    - osv-scanner@2.0.2
+    - svgo@3.3.2
     - taplo@0.9.3
+    - trufflehog@3.89.1
     - trunk-toolbox@0.5.4
-    - actionlint@1.7.7
-    - checkov@3.2.436
-    - git-diff-check
-    - markdownlint@0.45.0
-    - trufflehog@3.88.35
     - yamllint@1.37.1
   ignore:
     - linters:
-        - ALL
+        - biome
       paths:
-        - worker-configuration.d.ts
-        - dist/**
+        - "**/.claude/settings.local.json"
     - linters:
         - trunk-toolbox
       paths:
-        - src/scripts/hello.ts
-        - src/index.ts
+        - .cursor/rules/bash.mdc
+        - .github/copilot-instructions.md
+        - "**/*.gif"
+        - "**/*.ico"
         - "**/*.jpg"
         - "**/*.png"
-        - "**/*.ico"
-        - "**/*.sh"
-        - "**/_redirects"
+        - AGENTS.md
+        - components/ExtraLinks.vue
+        - nuxt.config.ts
+        - server/middleware/shell-scripts.ts
+        - data/kv/*.yaml
+        - .cursor/**
+        - .windsurf/**
     - linters:
         - gitleaks
       paths:
-        - README.md
+        - data/kv/*.yaml
+    - linters:
+        - markdownlint
+      paths:
+        - .cursor/**
+        - .windsurf/**
 plugins:
   # https://docs.trunk.io/plugins
   sources:

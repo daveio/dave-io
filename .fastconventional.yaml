@@ -3,6 +3,10 @@ require_scope: true
 types:
   - experiment
 scopes:
-  - logic
-  - admin
+  - backend
+  - bothends
+  - ci
+  - docs
+  - frontend
   - ops
+  - tests
