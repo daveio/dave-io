@@ -37,7 +37,7 @@
     "zod": "3.25.64"
   },
   "devDependencies": {
-    "@anthropic-ai/claude-code": "1.0.22",
+    "@anthropic-ai/claude-code": "1.0.24",
     "@biomejs/biome": "1.9.4",
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/simple-icons": "^1.2.38",
