@@ -90,6 +90,7 @@
     "deploy": "bun run-s init build deploy:env deploy:wrangler",
     "deploy:env": "bun run bin/env.ts",
     "deploy:wrangler": "bun run wrangler deploy",
+    "deploy:nonprod": "bun run wrangler versions upload",
     "dev": "bun run-s init dev:nuxt",
     "dev:nuxt": "bun run nuxt dev",
     "generate": "bun run-s generate:prepare generate:types generate:openapi",
