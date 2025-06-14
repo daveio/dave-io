@@ -50,7 +50,7 @@ export interface CloudflareEnv {
   /** Cloudflare AI for machine learning tasks */
   AI?: Ai
   /** D1 Database for relational data */
-  DB?: D1Database
+  D1?: D1Database
   /** Cloudflare Images binding for image processing */
   IMAGES?: ImagesBinding
   /** Browser binding for headless browsing */
@@ -111,10 +111,10 @@ export function getAIBinding(env: CloudflareEnv): Ai {
  * Safe getter for D1 database with proper error handling
  */
 export function getD1Database(env: CloudflareEnv): D1Database {
-  if (!env.DB) {
+  if (!env.D1) {
     throw createApiError(503, "Database service not available")
   }
-  return env.DB
+  return env.D1
 }
 
 export async function batchKVGet(kv: KVNamespace, keys: string[], defaultValue = "0"): Promise<number[]> {
