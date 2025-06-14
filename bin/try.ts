@@ -65,11 +65,7 @@ async function generateTokenForScope(scope: string, options: GlobalOptions): Pro
 }
 
 async function createConfig(options: GlobalOptions, scope?: string): Promise<RequestConfig> {
-  const baseUrl = options.local
-    ? "http://localhost:3000"
-    : options.remote
-      ? "https://dave.io"
-      : "https://dave.io"
+  const baseUrl = options.local ? "http://localhost:3000" : options.remote ? "https://dave.io" : "https://dave.io"
 
   let token: string | undefined
 
