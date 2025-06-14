@@ -1,19 +1,24 @@
 <template>
   <div class="space-y-4">
-    <p class="text-gray-300 leading-relaxed mb-4">
-      Let me link a few resources - they might answer your question:
-    </p>
+    <p class="text-gray-300 leading-relaxed mb-4">Let me link a few resources - they might answer your question:</p>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <UButton v-for="resource in resources" :key="resource.title" :to="resource.url" target="_blank" variant="outline"
-        color="cyan" class="justify-start">
+      <UButton
+        v-for="resource in resources"
+        :key="resource.title"
+        :to="resource.url"
+        target="_blank"
+        variant="outline"
+        color="cyan"
+        class="justify-start"
+      >
         <UIcon :name="resource.icon" class="mr-2" />
         <strong>{{ resource.title }}</strong>
       </UButton>
     </div>
     <div class="bg-cyan-900/20 p-4 rounded-lg border border-cyan-400/30 mt-6">
       <p class="text-cyan-200">
-        💌 If you can't find answers from this piece or any of the above, that's okay! Ask me.
-        There are plenty of ways to get in touch with me on the main page. Expect a delay in my reply.
+        💌 If you can't find answers from this piece or any of the above, that's okay! Ask me. There are plenty of ways
+        to get in touch with me on the main page. Expect a delay in my reply.
       </p>
     </div>
   </div>

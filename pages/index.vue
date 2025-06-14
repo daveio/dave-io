@@ -1,6 +1,7 @@
 <template>
   <div
-    class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex flex-col justify-center py-12 px-4 relative overflow-hidden">
+    class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex flex-col justify-center py-12 px-4 relative overflow-hidden"
+  >
     <Background />
     <IndexUI :handleServiceClick="handleServiceClick" />
   </div>

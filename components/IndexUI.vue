@@ -17,4 +17,3 @@ defineProps<{
 
 // Animation removed per user request
 </script>
-

@@ -52,6 +52,7 @@
 ## File Naming Conventions
 
 ### API Endpoints
+
 ```bash
 server/api/example.get.ts          # GET /api/example
 server/api/example.post.ts         # POST /api/example
@@ -61,6 +62,7 @@ server/routes/go/[slug].get.ts     # GET /go/{slug}
 ```
 
 ### Utilities & Tests
+
 ```bash
 server/utils/feature-name.ts      # Utility functions
 server/utils/feature-helpers.ts   # Helper functions
@@ -69,6 +71,7 @@ test/api-feature.test.ts          # API integration tests
 ```
 
 ### Schema & Type Files
+
 ```bash
 server/utils/schemas.ts           # All Zod schemas + OpenAPI
 types/api.ts                      # Shared type definitions
@@ -78,6 +81,7 @@ worker-configuration.d.ts        # Cloudflare bindings
 ## Development Patterns
 
 ### Schema-First Development
+
 ```typescript
 1. Define Zod schema in schemas.ts with .openapi() metadata
 2. Use schema.parse() in endpoint for validation
@@ -87,33 +91,35 @@ worker-configuration.d.ts        # Cloudflare bindings
 ```
 
 ### Error Handling Standards
+
 ```typescript
 // Always use createApiError for consistent format
-throw createApiError(400, "Validation failed", validationDetails)
+throw createApiError(400, "Validation failed", validationDetails);
 
 // Always use createApiResponse for success
 return createApiResponse({
-  result: data,
-  message: "Operation successful",
-  error: null
-})
+   result: data,
+   message: "Operation successful",
+   error: null,
+});
 
 // Log errors before throwing
-console.error("Endpoint error:", error)
-recordAPIErrorMetrics(event, error)
-throw error
+console.error("Endpoint error:", error);
+recordAPIErrorMetrics(event, error);
+throw error;
 ```
 
 ### Authentication Flow
+
 ```typescript
 // Use auth helpers for consistent patterns
-const auth = await requireAPIAuth(event, "resource")  // api:resource
-const auth = await requireAIAuth(event, "alt")        // ai:alt
-const auth = await requireAdminAuth(event)            // admin
+const auth = await requireAPIAuth(event, "resource"); // api:resource
+const auth = await requireAIAuth(event, "alt"); // ai:alt
+const auth = await requireAdminAuth(event); // admin
 
 // Access user info from auth.payload
-const userId = auth.payload?.sub
-const tokenId = auth.payload?.jti
+const userId = auth.payload?.sub;
+const tokenId = auth.payload?.jti;
 ```
 
 ## Auth & Endpoints
@@ -198,56 +204,61 @@ bun jwt init && bun run deploy
 ## Performance Guidelines
 
 ### KV Storage Optimization
+
 ```typescript
 // Use hierarchical keys for efficient querying
-"metrics:api:ok"              // Good: hierarchical
-"metrics:api:tokens:usage"    // Good: specific scope
-"user_data_12345"            // Bad: flat structure
+"metrics:api:ok"; // Good: hierarchical
+"metrics:api:tokens:usage"; // Good: specific scope
+"user_data_12345"; // Bad: flat structure
 
 // Simple values only, no complex objects
-await kv.put("metrics:api:ok", "42")        // Good: simple value
-await kv.put("user:123", JSON.stringify(userObject)) // Bad: complex object
+await kv.put("metrics:api:ok", "42"); // Good: simple value
+await kv.put("user:123", JSON.stringify(userObject)); // Bad: complex object
 ```
 
 ### Async Operation Patterns
+
 ```typescript
 // Non-blocking metrics (fire and forget)
-recordAPIMetricsAsync(event, statusCode)   // Good: doesn't block response
-await recordAPIMetrics(event, statusCode)  // Bad: blocks response
+recordAPIMetricsAsync(event, statusCode); // Good: doesn't block response
+await recordAPIMetrics(event, statusCode); // Bad: blocks response
 
 // Real service calls (no mocks except tests)
-const result = await env.AI.run(model, prompt)  // Good: real AI call
-const result = mockAI.generate()               // Bad: mock data
+const result = await env.AI.run(model, prompt); // Good: real AI call
+const result = mockAI.generate(); // Bad: mock data
 ```
 
 ## Security Standards
 
 ### Input Validation (MANDATORY)
+
 ```typescript
 // Always validate at API boundaries
-const validated = RequestSchema.parse(await readBody(event))
+const validated = RequestSchema.parse(await readBody(event));
 
 // Use validation helpers
-const uuid = getValidatedUUID(event, "uuid")
-validateURL(imageUrl, "image URL")
+const uuid = getValidatedUUID(event, "uuid");
+validateURL(imageUrl, "image URL");
 
 // Never trust external data
-const userInput = sanitizeInput(rawInput)
+const userInput = sanitizeInput(rawInput);
 ```
 
 ### Secret Management
+
 ```typescript
 // Environment variables only
-const secret = process.env.API_JWT_SECRET  // Good
-const secret = "hardcoded-secret"          // Bad: never commit secrets
+const secret = process.env.API_JWT_SECRET; // Good
+const secret = "hardcoded-secret"; // Bad: never commit secrets
 
 // Check for default secrets in development
 if (secret === "dev-secret-change-in-production") {
-  console.warn("Using default JWT secret - insecure for production!")
+   console.warn("Using default JWT secret - insecure for production!");
 }
 ```
 
 ### Output Sanitization
+
 ```typescript
 // Never expose internal errors in production
 catch (error) {
@@ -263,28 +274,43 @@ return createApiResponse({ result: user })           // Bad: might expose secret
 ## Anti-Patterns (DO NOT DO)
 
 ### ❌ Code Quality
+
 ```typescript
 // Don't copy-paste code
-if (condition1) { /* same logic */ }
-if (condition2) { /* same logic */ }
+if (condition1) {
+   /* same logic */
+}
+if (condition2) {
+   /* same logic */
+}
 
 // Extract to shared utility instead
-const sharedLogic = (condition) => { /* logic */ }
+const sharedLogic = (condition) => {
+   /* logic */
+};
 ```
 
 ### ❌ Error Handling
+
 ```typescript
 // Don't fail silently
-try { riskyOperation() } catch { /* ignored */ }
+try {
+   riskyOperation();
+} catch {
+   /* ignored */
+}
 
 // Always handle errors explicitly
-try { riskyOperation() } catch (error) {
-  console.error("Operation failed:", error)
-  throw createApiError(500, "Operation failed")
+try {
+   riskyOperation();
+} catch (error) {
+   console.error("Operation failed:", error);
+   throw createApiError(500, "Operation failed");
 }
 ```
 
 ### ❌ Response Format
+
 ```typescript
 // Don't return inconsistent formats
 return { success: true, data: result }           // Bad: non-standard
@@ -292,17 +318,23 @@ return { ok: true, result, error: null, ... }   // Good: standard format
 ```
 
 ### ❌ Testing
+
 ```typescript
 // Don't skip tests for business logic
-function calculateTotal(items) { /* complex logic */ }  // Needs tests
+function calculateTotal(items) {
+   /* complex logic */
+} // Needs tests
 
 // Don't test trivial code
-function getName() { return this.name }  // Skip testing
+function getName() {
+   return this.name;
+} // Skip testing
 ```
 
 ## Documentation Requirements
 
 ### JSDoc Standards
+
 ```typescript
 /**
  * Generate alt-text for images using AI
@@ -311,24 +343,23 @@ function getName() { return this.name }  // Skip testing
  * @returns Promise<string> Generated alt-text
  * @throws {Error} When AI service is unavailable
  */
-export async function generateAltText(
-  imageBuffer: Buffer,
-  options: AltTextOptions
-): Promise<string>
+export async function generateAltText(imageBuffer: Buffer, options: AltTextOptions): Promise<string>;
 ```
 
 ### Inline Comments
+
 ```typescript
 // Use comments for business logic, not obvious code
-const tax = subtotal * 0.1  // 10% tax rate for region
+const tax = subtotal * 0.1; // 10% tax rate for region
 
 // Don't comment obvious code
-const name = user.name  // Gets the user name ← unnecessary
+const name = user.name; // Gets the user name ← unnecessary
 ```
 
 ## Troubleshooting Checklist
 
 ### Build Failures
+
 ```bash
 1. bun run lint:biome    # Fix code style issues
 2. bun run lint:types    # Fix TypeScript errors
@@ -337,6 +368,7 @@ const name = user.name  // Gets the user name ← unnecessary
 ```
 
 ### Runtime Errors
+
 ```bash
 1. Check environment variables (API_JWT_SECRET, etc.)
 2. Verify Cloudflare bindings (KV, AI, Images)
@@ -345,6 +377,7 @@ const name = user.name  // Gets the user name ← unnecessary
 ```
 
 ### Common Issues
+
 ```bash
 "Cannot read file" → Use absolute paths
 "Schema not found" → Check imports in schemas.ts

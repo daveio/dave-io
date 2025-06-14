@@ -59,16 +59,16 @@ lint:
     - linters:
         - biome
       paths:
-        - '**/.claude/settings.local.json'
+        - "**/.claude/settings.local.json"
     - linters:
         - trunk-toolbox
       paths:
         - .cursor/rules/bash.mdc
         - .github/copilot-instructions.md
-        - '**/*.gif'
-        - '**/*.ico'
-        - '**/*.jpg'
-        - '**/*.png'
+        - "**/*.gif"
+        - "**/*.ico"
+        - "**/*.jpg"
+        - "**/*.png"
         - AGENTS.md
         - components/ExtraLinks.vue
         - nuxt.config.ts

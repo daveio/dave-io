@@ -6,8 +6,12 @@
           <UIcon name="i-simple-icons-bluesky" class="mr-2 text-sky-400 font-bold" />
           Bluesky
         </span>
-        <ULink to="https://dave.io/go/bluesky" target="_blank" class="link-url"
-          @click="handleLinkClick('Bluesky', 'https://dave.io/go/bluesky')">
+        <ULink
+          to="https://dave.io/go/bluesky"
+          target="_blank"
+          class="link-url"
+          @click="handleLinkClick('Bluesky', 'https://dave.io/go/bluesky')"
+        >
           dave.io/go/bluesky
         </ULink>
       </div>
@@ -16,8 +20,12 @@
           <UIcon name="i-heroicons-book-open" class="mr-2 text-green-400 font-bold" />
           Dreamwidth
         </span>
-        <ULink to="https://dave.io/go/dreamwidth" target="_blank" class="link-url"
-          @click="handleLinkClick('Dreamwidth', 'https://dave.io/go/dreamwidth')">
+        <ULink
+          to="https://dave.io/go/dreamwidth"
+          target="_blank"
+          class="link-url"
+          @click="handleLinkClick('Dreamwidth', 'https://dave.io/go/dreamwidth')"
+        >
           dave.io/go/dreamwidth
         </ULink>
       </div>
@@ -26,8 +34,12 @@
           <UIcon name="i-simple-icons-facebook" class="mr-2 text-blue-500 font-bold" />
           Facebook
         </span>
-        <ULink to="https://dave.io/go/facebook" target="_blank" class="link-url"
-          @click="handleLinkClick('Facebook', 'https://dave.io/go/facebook')">
+        <ULink
+          to="https://dave.io/go/facebook"
+          target="_blank"
+          class="link-url"
+          @click="handleLinkClick('Facebook', 'https://dave.io/go/facebook')"
+        >
           dave.io/go/facebook
         </ULink>
       </div>
@@ -36,8 +48,12 @@
           <UIcon name="i-simple-icons-github" class="mr-2 text-gray-300 font-bold" />
           GitHub
         </span>
-        <ULink to="https://dave.io/go/github" target="_blank" class="link-url"
-          @click="handleLinkClick('GitHub', 'https://dave.io/go/github')">
+        <ULink
+          to="https://dave.io/go/github"
+          target="_blank"
+          class="link-url"
+          @click="handleLinkClick('GitHub', 'https://dave.io/go/github')"
+        >
           dave.io/go/github
         </ULink>
       </div>
@@ -46,8 +62,12 @@
           <UIcon name="i-simple-icons-instagram" class="mr-2 text-pink-400 font-bold" />
           Instagram
         </span>
-        <ULink to="https://dave.io/go/instagram" target="_blank" class="link-url"
-          @click="handleLinkClick('Instagram', 'https://dave.io/go/instagram')">
+        <ULink
+          to="https://dave.io/go/instagram"
+          target="_blank"
+          class="link-url"
+          @click="handleLinkClick('Instagram', 'https://dave.io/go/instagram')"
+        >
           dave.io/go/instagram
         </ULink>
       </div>
@@ -56,8 +76,12 @@
           <UIcon name="i-simple-icons-linkedin" class="mr-2 text-blue-600 font-bold" />
           LinkedIn
         </span>
-        <ULink to="https://dave.io/go/linkedin" target="_blank" class="link-url"
-          @click="handleLinkClick('LinkedIn', 'https://dave.io/go/linkedin')">
+        <ULink
+          to="https://dave.io/go/linkedin"
+          target="_blank"
+          class="link-url"
+          @click="handleLinkClick('LinkedIn', 'https://dave.io/go/linkedin')"
+        >
           dave.io/go/linkedin
         </ULink>
       </div>
@@ -66,8 +90,12 @@
           <UIcon name="i-simple-icons-mastodon" class="mr-2 text-purple-400 font-bold" />
           Mastodon
         </span>
-        <ULink to="https://dave.io/go/mastodon" target="_blank" class="link-url"
-          @click="handleLinkClick('Mastodon', 'https://dave.io/go/mastodon')">
+        <ULink
+          to="https://dave.io/go/mastodon"
+          target="_blank"
+          class="link-url"
+          @click="handleLinkClick('Mastodon', 'https://dave.io/go/mastodon')"
+        >
           dave.io/go/mastodon
         </ULink>
       </div>
@@ -76,8 +104,12 @@
           <UIcon name="i-heroicons-chat-bubble-left-ellipsis" class="mr-2 text-indigo-400 font-bold" />
           Pillowfort
         </span>
-        <ULink to="https://dave.io/go/pillowfort" target="_blank" class="link-url"
-          @click="handleLinkClick('Pillowfort', 'https://dave.io/go/pillowfort')">
+        <ULink
+          to="https://dave.io/go/pillowfort"
+          target="_blank"
+          class="link-url"
+          @click="handleLinkClick('Pillowfort', 'https://dave.io/go/pillowfort')"
+        >
           dave.io/go/pillowfort
         </ULink>
       </div>
@@ -86,8 +118,12 @@
           <UIcon name="i-simple-icons-threads" class="mr-2 text-gray-300 font-bold" />
           Threads
         </span>
-        <ULink to="https://dave.io/go/threads" target="_blank" class="link-url"
-          @click="handleLinkClick('Threads', 'https://dave.io/go/threads')">
+        <ULink
+          to="https://dave.io/go/threads"
+          target="_blank"
+          class="link-url"
+          @click="handleLinkClick('Threads', 'https://dave.io/go/threads')"
+        >
           dave.io/go/threads
         </ULink>
       </div>
@@ -96,8 +132,12 @@
           <UIcon name="i-simple-icons-tumblr" class="mr-2 text-blue-400 font-bold" />
           Tumblr
         </span>
-        <ULink to="https://dave.io/go/tumblr" target="_blank" class="link-url"
-          @click="handleLinkClick('Tumblr', 'https://dave.io/go/tumblr')">
+        <ULink
+          to="https://dave.io/go/tumblr"
+          target="_blank"
+          class="link-url"
+          @click="handleLinkClick('Tumblr', 'https://dave.io/go/tumblr')"
+        >
           dave.io/go/tumblr
         </ULink>
       </div>
@@ -106,8 +146,12 @@
           <UIcon name="i-simple-icons-youtube" class="mr-2 text-red-500 font-bold" />
           YouTube
         </span>
-        <ULink to="https://dave.io/go/youtube" target="_blank" class="link-url"
-          @click="handleLinkClick('YouTube', 'https://dave.io/go/youtube')">
+        <ULink
+          to="https://dave.io/go/youtube"
+          target="_blank"
+          class="link-url"
+          @click="handleLinkClick('YouTube', 'https://dave.io/go/youtube')"
+        >
           dave.io/go/youtube
         </ULink>
       </div>

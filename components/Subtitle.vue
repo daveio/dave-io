@@ -6,10 +6,10 @@
       </div>
     </div>
     <div
-      class="text-center text-xl font-extrabold rainbow-gradient-text mb-4 flex items-center justify-center gap-2 pt-4">
+      class="text-center text-xl font-extrabold rainbow-gradient-text mb-4 flex items-center justify-center gap-2 pt-4"
+    >
       <UIcon name="i-heroicons-rocket-launch" class="text-orange-400" />
-      <span class="tagline-text">Weapons-grade DevOps engineer,
-        developer, and tinkerer</span>
+      <span class="tagline-text">Weapons-grade DevOps engineer, developer, and tinkerer</span>
       <UIcon name="i-heroicons-rocket-launch" class="text-orange-400" />
     </div>
   </div>
@@ -36,7 +36,6 @@
   align-items: center;
   justify-content: center;
 }
-
 
 @media (max-width: 800px) {
   .gradient-border-box {

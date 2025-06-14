@@ -64,9 +64,9 @@ This document outlines best practices for using Vitest to create reliable, maint
    expect(add(2, 3)).toBe(5);
    });
 
-       it('should handle negative numbers', () => {
-         expect(add(-1, 1)).toBe(0);
-       });
+        it('should handle negative numbers', () => {
+          expect(add(-1, 1)).toBe(0);
+        });
 
    });
    });
@@ -93,8 +93,8 @@ This document outlines best practices for using Vitest to create reliable, maint
    default: mockModule,
    }));
 
-       const dynamicModule = await import('./dynamic-module');
-       expect(dynamicModule.default).toBe(mockModule);
+        const dynamicModule = await import('./dynamic-module');
+        expect(dynamicModule.default).toBe(mockModule);
 
    });
    });
@@ -161,8 +161,8 @@ This document outlines best practices for using Vitest to create reliable, maint
    const mockAction = vi.fn();
    store.dispatch = mockAction;
 
-       store.commit('increment');
-       expect(mockAction).toHaveBeenCalledWith('increment');
+        store.commit('increment');
+        expect(mockAction).toHaveBeenCalledWith('increment');
 
    });
    });

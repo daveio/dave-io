@@ -126,22 +126,22 @@ This document outlines best practices for developing applications using the Fire
       const [currentUser, setCurrentUser] = useState(null);
       const [loading, setLoading] = useState(true);
 
-          useEffect(() => {
-            const unsubscribe = auth.onAuthStateChanged(user => {
-              setCurrentUser(user);
-              setLoading(false);
-            });
+           useEffect(() => {
+             const unsubscribe = auth.onAuthStateChanged(user => {
+               setCurrentUser(user);
+               setLoading(false);
+             });
 
-            return unsubscribe;
-          }, []);
+             return unsubscribe;
+           }, []);
 
-          const value = { currentUser, loading };
+           const value = { currentUser, loading };
 
-          return (
-            <AuthContext.Provider value={value}>
-              {!loading && children}
-            </AuthContext.Provider>
-          );
+           return (
+             <AuthContext.Provider value={value}>
+               {!loading && children}
+             </AuthContext.Provider>
+           );
 
       };
 

@@ -52,6 +52,7 @@
 ## Tool Usage Strategy
 
 ### Read Before Edit (MANDATORY)
+
 ```bash
 # ALWAYS read files before editing
 Read file.ts → understand context → Edit/MultiEdit
@@ -61,44 +62,49 @@ Read file.ts → understand context → Edit/MultiEdit
 
 ### Tool Selection Matrix
 
-| Task Type | Tool Choice | Reasoning |
-|-----------|-------------|-----------|
-| **Find files by name** | `Glob` | Fast pattern matching |
-| **Find code patterns** | `Grep` | Content-based search |
-| **Complex/multi-step search** | `Task` | When uncertain about search scope |
-| **Single file change** | `Edit` | Simple find/replace |
-| **Multiple changes in file** | `MultiEdit` | Atomic operations |
-| **New file creation** | `Write` | Clean slate |
-| **Command execution** | `Bash` | System operations |
+| Task Type                     | Tool Choice | Reasoning                         |
+| ----------------------------- | ----------- | --------------------------------- |
+| **Find files by name**        | `Glob`      | Fast pattern matching             |
+| **Find code patterns**        | `Grep`      | Content-based search              |
+| **Complex/multi-step search** | `Task`      | When uncertain about search scope |
+| **Single file change**        | `Edit`      | Simple find/replace               |
+| **Multiple changes in file**  | `MultiEdit` | Atomic operations                 |
+| **New file creation**         | `Write`     | Clean slate                       |
+| **Command execution**         | `Bash`      | System operations                 |
 
 ### Batching for Performance
+
 ```bash
 # Good: Batch independent operations
 Read + Read + Read (parallel)
 Bash + Bash + Bash (parallel)
 
-# Bad: Sequential when unnecessary  
+# Bad: Sequential when unnecessary
 Read → Read → Read (sequential)
 ```
 
 ## Development Workflow
 
 ### 1. Task Planning (Use TodoWrite PROACTIVELY)
+
 ```markdown
 # For any non-trivial task:
+
 TodoWrite → plan subtasks → mark in_progress → complete as you go
 ```
 
 **Always use TodoWrite for:**
+
 - Multi-step features
 - Bug fixes with multiple files
 - Refactoring tasks
 - When user provides multiple requirements
 
 ### 2. File Operations Pattern
+
 ```bash
 1. Glob/Grep → find relevant files
-2. Read → understand current state  
+2. Read → understand current state
 3. TodoWrite → plan changes
 4. Edit/MultiEdit/Write → implement
 5. Bash → test/lint/verify
@@ -106,10 +112,11 @@ TodoWrite → plan subtasks → mark in_progress → complete as you go
 ```
 
 ### 3. Schema-First Development
+
 ```bash
 1. Read schemas.ts → understand patterns
 2. Add new schemas → with .openapi() metadata
-3. Edit endpoint → use schema.parse()  
+3. Edit endpoint → use schema.parse()
 4. Bash → run generate:openapi
 5. Verify public/openapi.json updated
 ```
@@ -117,6 +124,7 @@ TodoWrite → plan subtasks → mark in_progress → complete as you go
 ## Error Handling & Validation
 
 ### Tool Error Recovery
+
 ```typescript
 // If Read fails - file might not exist
 try { Read } catch { assume new file, use Write }
@@ -129,9 +137,10 @@ Bash "bun run test" not Bash "test"
 ```
 
 ### Validation Flow
+
 ```bash
 1. Schema validation FIRST (zod.parse())
-2. Business logic validation  
+2. Business logic validation
 3. createApiResponse() for output
 4. Never return raw objects
 ```
@@ -139,10 +148,11 @@ Bash "bun run test" not Bash "test"
 ## Testing Integration
 
 ### Test Command Patterns
+
 ```bash
 # Run tests during development
 Bash "bun run test"           # Unit tests
-Bash "bun run test:api"       # HTTP API tests  
+Bash "bun run test:api"       # HTTP API tests
 Bash "bun run test:ui"        # UI tests
 Bash "bun run test:all"       # Full suite
 
@@ -151,6 +161,7 @@ Bash "bun run check"          # Full validation
 ```
 
 ### Test File Patterns
+
 ```bash
 # Test file naming
 feature.test.ts               # Unit tests
@@ -165,6 +176,7 @@ Real data validation with Zod
 ## Git & Commit Workflow
 
 ### Commit Pattern (MANDATORY)
+
 ```bash
 # After completing any feature/fix
 Bash "git add -A . && oco --fgm --yes"
@@ -174,6 +186,7 @@ Bash "bun run check" → MUST pass before commit
 ```
 
 ### Branch Management
+
 ```bash
 # Work on main branch (as per project rules)
 # Breaking changes are allowed and encouraged
@@ -182,17 +195,19 @@ Bash "bun run check" → MUST pass before commit
 ## Response Standards for CLI
 
 ### Concise Communication
+
 ```bash
 # Good: Direct answers
 "4"
 "src/auth.ts:42"
 "npm install missing"
 
-# Bad: Verbose explanations  
+# Bad: Verbose explanations
 "The answer to your question is 4 because..."
 ```
 
 ### Code References
+
 ```bash
 # Always include file:line references
 "Error in server/api/auth.ts:156"
@@ -200,6 +215,7 @@ Bash "bun run check" → MUST pass before commit
 ```
 
 ### Progress Communication
+
 ```bash
 # Use TodoWrite to show progress
 # Keep text responses minimal unless asked for detail
@@ -208,14 +224,16 @@ Bash "bun run check" → MUST pass before commit
 ## File Structure Awareness
 
 ### Endpoint Patterns
+
 ```bash
 server/api/example.get.ts     # GET /api/example
-server/api/example.post.ts    # POST /api/example  
+server/api/example.post.ts    # POST /api/example
 server/api/users/[uuid].get.ts # GET /api/users/{uuid}
 server/routes/go/[slug].get.ts # GET /go/{slug}
 ```
 
 ### Utility Organization
+
 ```bash
 server/utils/                 # Shared logic
 ├── auth.ts                   # Authentication
@@ -226,6 +244,7 @@ server/utils/                 # Shared logic
 ```
 
 ### Test Organization
+
 ```bash
 test/                         # Test files
 ├── *.test.ts                 # Unit tests
@@ -235,11 +254,12 @@ test/                         # Test files
 ## Common Anti-Patterns to Avoid
 
 ### ❌ Never Do This
+
 ```typescript
 // Don't edit without reading
 Edit file.ts → ERROR
 
-// Don't create files unless necessary  
+// Don't create files unless necessary
 Write new-file.ts → prefer editing existing
 
 // Don't use manual responses
@@ -253,6 +273,7 @@ test fails → fix before continuing
 ```
 
 ### ✅ Always Do This
+
 ```typescript
 // Read then edit
 Read file.ts → Edit file.ts
@@ -273,14 +294,16 @@ Bash "bun run check"
 ## Troubleshooting Guide
 
 ### Tool Failures
+
 ```bash
 Read fails → file doesn't exist → use Write
-Edit fails → didn't Read first → Read then Edit  
+Edit fails → didn't Read first → Read then Edit
 Bash fails → check command syntax → use quotes
 Grep no results → try different pattern → use Task
 ```
 
 ### Build/Test Failures
+
 ```bash
 lint:biome fails → fix code style
 lint:types fails → fix TypeScript errors
@@ -289,6 +312,7 @@ build fails → check imports/syntax
 ```
 
 ### Common Issues
+
 ```bash
 "Cannot read file" → use absolute paths
 "Schema not found" → check imports in schemas.ts

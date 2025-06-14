@@ -2,12 +2,16 @@
   <div class="curl-section mb-8">
     <UCard class="bg-black/50 border-gray-700 shadow-2xl overflow-hidden">
       <div class="text-center p-4 font-mono text-white text-sm">
-        <div class="text-lg font-extrabold mb-4 rainbow-gradient-text">
-          Want to see this animated?
-        </div>
+        <div class="text-lg font-extrabold mb-4 rainbow-gradient-text">Want to see this animated?</div>
         <div class="text-gray-300">
-          <UButton variant="ghost" size="sm" class="font-mono bg-gray-800 hover:bg-gray-700 cursor-pointer"
-            @click="copyCurlCommand" title="Click to copy to clipboard" icon="i-heroicons-clipboard">
+          <UButton
+            variant="ghost"
+            size="sm"
+            class="font-mono bg-gray-800 hover:bg-gray-700 cursor-pointer"
+            @click="copyCurlCommand"
+            title="Click to copy to clipboard"
+            icon="i-heroicons-clipboard"
+          >
             curl https://dave.io | sh
           </UButton>
         </div>

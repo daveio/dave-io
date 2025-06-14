@@ -2,8 +2,8 @@
   <div>
     <div
       class="pb-6 terminal-container w-full bg-black/50 border border-gray-700 rounded-lg overflow-hidden shadow-2xl backdrop-blur-sm"
-      ref="terminalContainer">
-
+      ref="terminalContainer"
+    >
       <!-- Terminal header -->
       <div class="terminal-header flex items-center justify-start px-4 py-2 bg-gray-800 border-b border-gray-700">
         <div class="flex space-x-2">

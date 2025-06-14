@@ -53,10 +53,10 @@ _anchors: # _anchors is for YAML anchor definitions only. Excluded from direct o
     status: {}
 
   resource_metrics: &resource_metrics # Common resources with zero counters
-    go: *zero_metrics       # /go (redirects)
+    go: *zero_metrics # /go (redirects)
     internal: *zero_metrics # /api/internal
-    ai: *zero_metrics       # /api/ai
-    tokens: *zero_metrics   # /api/tokens
+    ai: *zero_metrics # /api/ai
+    tokens: *zero_metrics # /api/tokens
     dashboard: *zero_metrics # /api/dashboard
 
   redirect_metrics: &redirect_metrics # All redirects with zero counters
