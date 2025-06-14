@@ -5,4 +5,4 @@ ADIO_MISE_ACTIVE = 'true'
 env_file = '.env'
 
 [tools]
-bun = { version = '1.2.15' }
+bun = { version = '1.2.16' }
