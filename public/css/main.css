@@ -30,3 +30,10 @@
     color: var(--color-blue-200);
   }
 }
+
+.link-gender {
+  color: var(--color-green-200);
+  &:hover {
+    color: var(--color-green-200);
+  }
+}

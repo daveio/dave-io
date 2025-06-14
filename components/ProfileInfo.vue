@@ -2,16 +2,12 @@
   <div class="mb-4">
     <div class="profile-info-table pb-4">
       <div class="links-row">
-        <span class="link-name text-blue-300 font-bold">
-          <UIcon name="i-mdi-light-gender-transgender" class="mr-2 text-blue-300" />
+        <span class="link-name text-white font-bold">
+          <UIcon name="i-mdi-light-gender-transgender" class="mr-2 text-green-200" />
           Pronouns
         </span>
-        <ULink
-          to="/gender"
-          target="_blank"
-          class="link-url"
-          @click="handleLinkClick('gender', 'https://dave.io/gender')"
-        >
+        <ULink to="/gender" target="_blank" class="link-gender"
+          @click="handleLinkClick('gender', 'https://dave.io/gender')">
           they/them (learn more)
         </ULink>
       </div>
