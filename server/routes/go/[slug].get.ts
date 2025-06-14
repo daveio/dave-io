@@ -1,6 +1,6 @@
 import { getHeader } from "h3"
-import { getCloudflareEnv, getCloudflareRequestInfo, getKVNamespace } from "~/server/utils/cloudflare"
-import { updateRedirectMetrics, updateRedirectMetricsAsync } from "~/server/utils/kv-metrics"
+import { getCloudflareEnv, getKVNamespace } from "~/server/utils/cloudflare"
+import { updateRedirectMetricsAsync } from "~/server/utils/kv-metrics"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
 import { UrlRedirectSchema } from "~/server/utils/schemas"
 
@@ -74,7 +74,7 @@ export default defineEventHandler(async (event) => {
       cached: "hit"
     })
 
-    // Perform redirect using createApiResponse with redirect parameter
+    // Perform redirect using standard API response
     return createApiResponse({
       result: {
         redirect: redirect.url,
@@ -82,8 +82,10 @@ export default defineEventHandler(async (event) => {
         clicks: redirect.clicks + 1
       },
       message: `Redirecting to ${redirect.url}`,
-      error: null,
-      redirect: redirect.url
+      redirect: redirect.url,
+      event,
+      code: 302,
+      error: null
     })
   } catch (error: unknown) {
     // biome-ignore lint/suspicious/noExplicitAny: isApiError type guard ensures statusCode property exists

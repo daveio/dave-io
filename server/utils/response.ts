@@ -27,24 +27,28 @@ export interface ApiResponseOptions<T> {
   meta?: ApiResponse<T>["meta"]
   redirect?: string | null
   code?: number
+  event?: H3Event
 }
 
 export function createApiResponse<T>(options: ApiResponseOptions<T>): ApiSuccessResponse | ApiErrorResponse {
   // Handle redirects
   if (options.redirect) {
-    // For redirects, we need to use h3's built-in redirect capabilities
-    // But we need to construct a proper response object first
     const responseObj: ApiSuccessResponse = prepareSortedApiResponse({
       ok: true,
-      result: {} as T, // Empty result for redirects
+      result: {} as T,
       message: `Redirecting to ${options.redirect}`,
       error: null,
       status: { message: `Redirecting to ${options.redirect}` },
       timestamp: new Date().toISOString()
     })
 
-    // Then throw an error with the redirect status code
-    // This is how H3 expects redirects to be handled
+    if (options.event) {
+      // Use sendRedirect when event is available
+      void sendRedirect(options.event, options.redirect, options.code || 302)
+      return responseObj
+    }
+
+    // Fallback to throwing an error for legacy callers
     throw createError({
       statusCode: options.code || 302,
       statusMessage: `Redirect to ${options.redirect}`,
