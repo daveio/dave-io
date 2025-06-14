@@ -33,7 +33,7 @@
   "workers_dev": false,
 
   // Enable Preview URLs to test your Worker
-  "preview_urls": false,
+  "preview_urls": true,
 
   // Whether Wrangler should keep variables configured in the dashboard on deploy
   "keep_vars": false,

@@ -1,0 +1,14 @@
+type: workspace
+model: workspace
+id: wk_WnhptkEwDH
+createdAt: 2025-06-14T22:47:58.186988
+updatedAt: 2025-06-14T22:47:58.186989
+authentication: {}
+authenticationType: null
+description: ''
+headers: []
+name: dave.io
+encryptionKeyChallenge: null
+settingValidateCertificates: true
+settingFollowRedirects: true
+settingRequestTimeout: 0
