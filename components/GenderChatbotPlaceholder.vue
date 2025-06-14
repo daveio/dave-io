@@ -1,6 +1,5 @@
 <template>
-  <UCard
-    class="mb-8 border-2 border-dashed border-purple-400/50 bg-gradient-to-r from-purple-900/20 to-pink-900/20">
+  <UCard class="mb-8 border-2 border-dashed border-purple-400/50 bg-gradient-to-r from-purple-900/20 to-pink-900/20">
     <div class="text-center py-6">
       <h3 class="text-2xl font-bold text-purple-300 mb-2">Ask A Robot. Robots Don't Judge.</h3>
       <p class="text-gray-300 mb-4">
