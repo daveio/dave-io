@@ -10,7 +10,7 @@
 
 ### THE 11 COMMANDMENTS
 
-**1. BREAK**: Ship breaking changes freely. Document in `AGENTS.md`. Never add migration code.
+**1. BREAK**: Ship breaking changes freely. Document in `AGENTS.md`. Never add migration code. THIS DOES NOT APPLY TO DATABASE MIGRATIONS.
 
 **2. PERFECT**: Take unlimited time/calls for correctness. Refactor aggressively. No "good enough".
 
@@ -43,7 +43,7 @@
 ### ⚡ QUICK REFERENCE
 
 **ALWAYS**: Break compatibility • Test everything • Real data only • Complete code • Extract duplicates • KV hierarchical keys
-**NEVER**: Migration code • Mock data • Silent failures • Copy-paste • Outdated docs • Complex KV values
+**NEVER**: Migration code (except database migrations) • Mock data • Silent failures • Copy-paste • Outdated docs • Complex KV values
 
 ## Tech Stack
 
