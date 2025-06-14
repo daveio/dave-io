@@ -1,0 +1,104 @@
+# KV initialization file
+# This file should be updated as new keys are defined.
+# This file can be imported with: bun run kv import data/kv/base-new.yaml --wipe
+
+_anchors: # _anchors is for YAML anchor definitions only. Excluded from direct output.
+  redirects: &redirects
+    blog: https://blog.dave.io
+    bluesky: https://bsky.app/profile/dave.io
+    blit: https://notes.dave.io/blit
+    bsky: https://dave.io/go/bluesky
+    github: https://github.com/daveio
+    fetlife: https://fetlife.com/users/22725
+    facebook: https://facebook.com/dave.io
+    cv: https://notes.dave.io/cv
+    dreamwidth: https://daveio.dreamwidth.org
+    gnupg: https://dave.io/go/key
+    journal: https://dave.io/go/dreamwidth
+    gpg: https://dave.io/go/key
+    key: https://keyoxide.org/729A7FAAB95A78A7AAB70E06B22EFAE146E2BB7E
+    instagram: https://instagram.com/daveio
+    pillowfort: https://pillowfort.social/daveio
+    linkedin: https://linkedin.com/in/dcwilliams
+    mastodon: https://basilisk.gallery/@dave
+    nerd-fonts: https://files.dave.io/nerd-fonts.zip
+    pgp: https://dave.io/go/key
+    sexmap: https://humansexmap.com/showmap.php?mapid=map521a7bd04ec217.96418626
+    public-key: https://dave.io/go/key
+    these-days: https://customer-scrk7cl14o51h5z9.cloudflarestream.com/80928e82f8196982e8fa4e83a509e622/watch
+    soundcloud: https://soundcloud.com/davedotio
+    radio: https://qrz.com/db/M6LNS
+    threads: https://threads.com/@daveio
+    wat: https://destroyallsoftware.com/talks/wat
+    tumblr: https://tumblr.com/blog/daveio
+    todo: https://daveio.notion.site/185b7795690c80399615eb0f5d5033c0
+
+  zero_metrics: &zero_metrics # Empty metrics template for initialization
+    ok: 0
+    error: 0
+    times:
+      last-hit: 0
+      last-error: 0
+      last-ok: 0
+    visitor:
+      human: 0
+      bot: 0
+      unknown: 0
+    group:
+      1xx: 0
+      2xx: 0
+      3xx: 0
+      4xx: 0
+      5xx: 0
+    status: {}
+
+  resource_metrics: &resource_metrics # Common resources with zero counters
+    go: *zero_metrics # /go (redirects)
+    internal: *zero_metrics # /api/internal
+    ai: *zero_metrics # /api/ai
+    tokens: *zero_metrics # /api/tokens
+    dashboard: *zero_metrics # /api/dashboard
+
+  redirect_metrics: &redirect_metrics # All redirects with zero counters
+    blog: *zero_metrics
+    bluesky: *zero_metrics
+    blit: *zero_metrics
+    bsky: *zero_metrics
+    github: *zero_metrics
+    fetlife: *zero_metrics
+    facebook: *zero_metrics
+    cv: *zero_metrics
+    dreamwidth: *zero_metrics
+    gnupg: *zero_metrics
+    journal: *zero_metrics
+    gpg: *zero_metrics
+    key: *zero_metrics
+    instagram: *zero_metrics
+    pillowfort: *zero_metrics
+    linkedin: *zero_metrics
+    mastodon: *zero_metrics
+    nerd-fonts: *zero_metrics
+    pgp: *zero_metrics
+    sexmap: *zero_metrics
+    public-key: *zero_metrics
+    these-days: *zero_metrics
+    soundcloud: *zero_metrics
+    radio: *zero_metrics
+    threads: *zero_metrics
+    wat: *zero_metrics
+    tumblr: *zero_metrics
+    todo: *zero_metrics
+
+# KV data structure
+metrics:
+  # Top-level metrics (entire worker)
+  <<: *zero_metrics
+
+  # Resource-specific metrics
+  resources: *resource_metrics
+
+  # Redirect-specific metrics
+  redirect: *redirect_metrics
+
+# Redirect mappings (slug -> URL)
+redirect: *redirects

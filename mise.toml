@@ -1,8 +1,17 @@
 [env]
-ADIO_MISE_ACTIVE = 'true'
+NEXT_DAVE_IO_MISE_ACTIVE = 'true'
 
 [settings]
 env_file = '.env'
+idiomatic_version_file = false
+idiomatic_version_file_enable_tools = []
+
 
 [tools]
+node = { version = '22.16.0' }
 bun = { version = '1.2.16' }
+rust = { version = '1.87.0' }
+
+[tasks]
+'hello' = { run = "echo 'Hello, world!'" }
+'claude' = { run = "bun run claude", description = "Run the claude CLI command via bun" }

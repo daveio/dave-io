@@ -9,7 +9,10 @@
       "../../.history",
       "../../.wrangler",
       "../../components.d.ts",
-      "../../auto-imports.d.ts"
+      "../../auto-imports.d.ts",
+      "../../.nuxt",
+      "../../.codacy",
+      "../../.output"
     ]
   },
   "css": {
