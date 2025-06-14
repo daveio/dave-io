@@ -47,8 +47,6 @@
 
 ---
 
-# 🤖 Claude Code Specific Patterns
-
 ## Tool Usage Strategy
 
 ### Read Before Edit (MANDATORY)
@@ -322,7 +320,7 @@ build fails → check imports/syntax
 
 ---
 
-# Tech Stack & Core (inherited from AGENTS.md)
+> The following inherits from `AGENTS.md`.
 
 - **Runtime**: Nuxt 3 + Cloudflare Workers | **Auth**: JWT + JOSE hierarchical | **Validation**: Zod + TypeScript | **Testing**: Vitest + HTTP API | **Tools**: Bun, Biome
 
