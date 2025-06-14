@@ -1,0 +1,19 @@
+type: environment
+model: environment
+id: ev_TY5mBGsRiY
+workspaceId: wk_WnhptkEwDH
+createdAt: 2025-06-14T22:47:58.212137
+updatedAt: 2025-06-14T23:11:15.066058
+name: Global Variables
+public: true
+base: true
+variables:
+- enabled: true
+  name: baseURL
+  value: ${[ secure(value=b64'WUVOQ19lVUUwYXpOdVF3RWRsNzFQbkFsazZCK3pTb1NRellxSnFzTnZMVmFXZnVJVGxUK3VWQkl0VXhob3hSU0MrZnFJa2cxSERXMmIyd01zekVEbm5QdzQ') ]}
+  id: wftrvuqv6x
+- enabled: true
+  name: apiBaseURL
+  value: ${[ secure(value=b64'WUVOQ19lVUUwYXpOdVF3RmE2b2FKclovb2kxd2xrZllCODhISkNmOXN4MVUwUHRJbDJucjdSMzNpZWw4bVZZTUdaQ1hjUUtXNGRES05wY3RwdmhtRzF5MG94L0Fi') ]}
+  id: 0Skxe7zN6w
+color: null

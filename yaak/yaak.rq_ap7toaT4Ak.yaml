@@ -1,8 +1,8 @@
 type: http_request
 model: http_request
-id: rq_RPVaUqHzRG
-createdAt: 2025-06-14T22:48:05.329993
-updatedAt: 2025-06-14T22:48:13.135078
+id: rq_ap7toaT4Ak
+createdAt: 2025-06-14T23:11:31.615993
+updatedAt: 2025-06-14T23:11:42.245275
 workspaceId: wk_WnhptkEwDH
 folderId: null
 authentication: {}
@@ -12,7 +12,7 @@ bodyType: null
 description: ''
 headers: []
 method: GET
-name: ''
-sortPriority: -1749941285328.0
-url: https://dave.io/go/blit
+name: /go/mastodon
+sortPriority: -1749942691614.0
+url: ${[ baseURL ]}/go/mastodon
 urlParameters: []
