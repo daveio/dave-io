@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_pNiLMH5kU3
+createdAt: 2025-06-14T23:14:03.404097
+updatedAt: 2025-06-14T23:14:16.951620
+workspaceId: wk_WnhptkEwDH
+folderId: null
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: /go/blit
+sortPriority: -1749942691614.0
+url: ${[ baseURL ]}/go/blit
+urlParameters: []
