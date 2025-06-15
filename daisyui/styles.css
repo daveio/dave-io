@@ -1,7 +1,7 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "daisyui" {
   themes: cyberpunk --default, dark --prefersdark, light;
-  root: ":root";
+  root: ':root';
   include: ;
   exclude: ;
   prefix: ;
@@ -17,13 +17,13 @@
   --font-display: 'Sixtyfour Convergence', cursive;
   --font-subtitle: 'Sono', sans-serif;
   --font-mono: 'Victor Mono', monospace;
-  
+
   /* Animation durations */
   --pulse-duration: 6s;
 }
 
 /* Custom theme - cyberpunk enhanced */
-[data-theme="cyberpunk"] {
+[data-theme='cyberpunk'] {
   --color-base-100: oklch(15% 0.02 240);
   --color-base-200: oklch(12% 0.03 240);
   --color-base-300: oklch(10% 0.04 240);
@@ -72,7 +72,8 @@
 }
 
 @keyframes rainbow-flow {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -82,14 +83,7 @@
 
 /* Trans Pride Colors */
 .trans-gradient {
-  background: linear-gradient(
-    90deg,
-    #5bcefa 0%,
-    #f5a9b8 25%,
-    #ffffff 50%,
-    #f5a9b8 75%,
-    #5bcefa 100%
-  );
+  background: linear-gradient(90deg, #5bcefa 0%, #f5a9b8 25%, #ffffff 50%, #f5a9b8 75%, #5bcefa 100%);
 }
 
 /* Custom Animation Classes */
@@ -98,7 +92,8 @@
 }
 
 @keyframes pulse-slow {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.3;
     transform: scale(1);
   }
@@ -113,10 +108,8 @@
   background: rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), inset 0 1px 0
+    rgba(255, 255, 255, 0.1);
 }
 
 /* Custom Card Styling */
@@ -135,17 +128,11 @@
 
 /* Neon glow effects */
 .neon-glow {
-  text-shadow: 
-    0 0 5px currentColor,
-    0 0 10px currentColor,
-    0 0 15px currentColor,
-    0 0 20px currentColor;
+  text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor, 0 0 20px currentColor;
 }
 
 .neon-border {
-  box-shadow: 
-    0 0 5px currentColor,
-    inset 0 0 5px currentColor;
+  box-shadow: 0 0 5px currentColor, inset 0 0 5px currentColor;
 }
 
 /* Glitch effect for special elements */
@@ -206,12 +193,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: left 0.5s ease;
 }
 
@@ -224,20 +206,20 @@
   .mobile-hide {
     display: none;
   }
-  
+
   .mobile-text::after {
     content: attr(data-mobile);
   }
-  
+
   .mobile-text .desktop-text {
     display: none;
   }
-  
+
   /* Adjust font sizes for mobile */
   .rainbow-gradient {
     font-size: 3rem;
   }
-  
+
   /* Stack terminal grid on mobile */
   .terminal-grid {
     grid-template-columns: 1fr;
@@ -249,7 +231,7 @@
   .desktop-show {
     display: block;
   }
-  
+
   .terminal-grid {
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
@@ -283,7 +265,7 @@
   .rainbow-gradient {
     animation: none;
   }
-  
+
   .glitch {
     animation: none;
   }
@@ -318,12 +300,12 @@
   .no-print {
     display: none;
   }
-  
+
   body {
     background: white;
     color: black;
   }
-  
+
   .rainbow-gradient {
     background: black;
     -webkit-background-clip: text;
