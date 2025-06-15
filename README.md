@@ -902,4 +902,378 @@ bun jwt init && bun run deploy
 
 ## Immediate Plans
 
-- Implement runtime validation for API responses using Zod schemas, to ensure all responses conform to standardized structure with `createApiResponse()`.
+### Runtime Validation
+
+Implement runtime validation for API responses using Zod schemas, to ensure all responses conform to standardized structure with `createApiResponse()`.
+
+### Cloudflare Zero Trust
+
+Explore complete replacement of current custom JWT authentication system with Cloudflare Zero Trust for enhanced security, reduced maintenance, and better audit capabilities while maintaining stateless operation.
+
+#### Option 1: Complete Zero Trust Replacement (Recommended)
+
+Replace the entire custom JWT system with Cloudflare Access authentication, using service tokens for API-to-API communication and Access application tokens for user authentication.
+
+**Current Implementation:**
+```typescript
+// server/utils/auth.ts - Custom JWT verification
+export async function verifyJWT(token: string, secret: string): Promise<AuthResult> {
+  const encoder = new TextEncoder()
+  const secretKey = encoder.encode(secret)
+  const { payload } = await jwtVerify(token, secretKey)
+  // Custom validation logic...
+}
+
+// server/utils/auth-helpers.ts - Permission checking
+export async function requireAPIAuth(event: H3Event, resource?: string) {
+  const authFunc = await authorizeEndpoint("api", resource)
+  const auth = await authFunc(event)
+  // Custom hierarchical permission validation...
+}
+```
+
+**Zero Trust Replacement:**
+```typescript
+// server/utils/zero-trust-auth.ts - New implementation
+import { jwtVerify, createRemoteJWKSet } from 'jose'
+
+const CLOUDFLARE_JWKS = createRemoteJWKSet(
+  new URL('https://your-team.cloudflareaccess.com/cdn-cgi/access/certs')
+)
+
+export async function verifyAccessToken(token: string): Promise<AccessAuthResult> {
+  const { payload } = await jwtVerify(token, CLOUDFLARE_JWKS, {
+    issuer: 'https://your-team.cloudflareaccess.com',
+    audience: 'your-application-aud-tag'
+  })
+  
+  return {
+    success: true,
+    email: payload.email as string,
+    sub: payload.sub as string,
+    groups: payload.groups as string[] || []
+  }
+}
+
+// Service token authentication for API-to-API
+export function extractServiceToken(event: H3Event): { clientId: string; clientSecret: string } | null {
+  const clientId = getHeader(event, 'cf-access-client-id')
+  const clientSecret = getHeader(event, 'cf-access-client-secret')
+  
+  if (!clientId || !clientSecret) return null
+  return { clientId, clientSecret }
+}
+
+// Replace hierarchical permissions with Zero Trust policies
+export async function requireAccessAuth(event: H3Event, requiredGroup?: string): Promise<AccessAuthResult> {
+  const token = extractToken(event) || extractAccessCookie(event)
+  if (!token) {
+    throw createApiError(401, "Access token required")
+  }
+  
+  const auth = await verifyAccessToken(token)
+  
+  if (requiredGroup && !auth.groups.includes(requiredGroup)) {
+    throw createApiError(403, `Group ${requiredGroup} required`)
+  }
+  
+  return auth
+}
+
+function extractAccessCookie(event: H3Event): string | null {
+  const cookies = parseCookies(event)
+  return cookies.CF_Authorization || null
+}
+```
+
+**Breaking Changes Required:**
+- Remove `server/utils/auth.ts` completely
+- Replace `server/utils/auth-helpers.ts` with Zero Trust equivalents
+- Update all protected endpoints to use `requireAccessAuth()`
+- Remove JWT generation CLI commands
+- Replace permission strings with Zero Trust groups
+
+**Zero Trust Configuration:**
+```yaml
+# Zero Trust Application Setup
+application:
+  name: "dave.io API"
+  domain: "api.dave.io"
+  type: "self_hosted"
+  
+policies:
+  - name: "API Access"
+    decision: "allow"
+    rules:
+      - email_domain: "dave.io"
+      - groups: ["api-users", "developers"]
+      
+  - name: "Admin Access"  
+    decision: "allow"
+    rules:
+      - groups: ["admins"]
+
+service_tokens:
+  - name: "Internal API"
+    duration: "1y"
+    # Use for server-to-server communication
+```
+
+#### Option 2: Zero Trust + Remote JWKS Verification
+
+Keep JWT-style authentication but replace custom signing with Cloudflare Access RS256 JWTs verified against Cloudflare's public JWKS endpoint.
+
+**Implementation:**
+```typescript
+// server/utils/access-jwt-auth.ts
+import { jwtVerify, createRemoteJWKSet } from 'jose'
+
+const TEAM_DOMAIN = process.env.CLOUDFLARE_TEAM_DOMAIN // "your-team.cloudflareaccess.com"
+const JWKS = createRemoteJWKSet(new URL(`https://${TEAM_DOMAIN}/cdn-cgi/access/certs`))
+
+export async function verifyCloudflareJWT(token: string, audience: string): Promise<CloudflareAuthResult> {
+  try {
+    const { payload, protectedHeader } = await jwtVerify(token, JWKS, {
+      issuer: `https://${TEAM_DOMAIN}`,
+      audience,
+      algorithms: ['RS256']
+    })
+
+    return {
+      success: true,
+      payload: {
+        sub: payload.sub as string,
+        email: payload.email as string,
+        groups: payload.groups as string[] || [],
+        aud: payload.aud,
+        iat: payload.iat as number,
+        exp: payload.exp as number
+      },
+      kid: protectedHeader.kid as string
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'JWT verification failed'
+    }
+  }
+}
+
+// Updated auth helpers
+export async function requireCloudflareAuth(event: H3Event, appAudience: string, requiredGroup?: string) {
+  const token = extractToken(event) || getHeader(event, 'cf-access-jwt-assertion')
+  if (!token) {
+    throw createApiError(401, "Cloudflare Access token required")
+  }
+
+  const verification = await verifyCloudflareJWT(token, appAudience)
+  if (!verification.success) {
+    throw createApiError(401, verification.error)
+  }
+
+  if (requiredGroup && !verification.payload.groups.includes(requiredGroup)) {
+    throw createApiError(403, `Group membership required: ${requiredGroup}`)
+  }
+
+  return verification
+}
+```
+
+**Application Configuration:**
+```typescript
+// server/utils/access-config.ts
+export const ACCESS_APPLICATIONS = {
+  API: {
+    audience: 'your-api-aud-tag-here',
+    requiredGroups: ['api-users']
+  },
+  AI: {
+    audience: 'your-ai-aud-tag-here', 
+    requiredGroups: ['ai-users']
+  },
+  ADMIN: {
+    audience: 'your-admin-aud-tag-here',
+    requiredGroups: ['admins']
+  }
+} as const
+
+// Usage in endpoints
+export async function requireAPIAccess(event: H3Event) {
+  return requireCloudflareAuth(event, ACCESS_APPLICATIONS.API.audience, 'api-users')
+}
+```
+
+#### Option 3: Access-First with Workers Enhancement
+
+Pure Cloudflare Access authentication with Workers to inject custom headers and enhanced claims before reaching the origin.
+
+**Worker Implementation:**
+```javascript
+// cloudflare-worker.js - Deployed to your domain
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url)
+    
+    // Skip worker processing for non-API routes
+    if (!url.pathname.startsWith('/api/')) {
+      return fetch(request)
+    }
+
+    const accessToken = request.headers.get('cf-access-jwt-assertion')
+    if (!accessToken) {
+      return new Response('Access token required', { status: 401 })
+    }
+
+    try {
+      // Decode token to extract user info (already verified by Access)
+      const payload = JSON.parse(atob(accessToken.split('.')[1]))
+      
+      // Add custom headers based on user attributes
+      const modifiedRequest = new Request(request)
+      modifiedRequest.headers.set('x-user-email', payload.email)
+      modifiedRequest.headers.set('x-user-groups', JSON.stringify(payload.groups || []))
+      modifiedRequest.headers.set('x-access-verified', 'true')
+      
+      // Add device posture if available (requires device enrollment)
+      if (payload.device_posture) {
+        modifiedRequest.headers.set('x-device-compliant', 
+          payload.device_posture.firewall && payload.device_posture.disk_encrypted ? 'true' : 'false'
+        )
+      }
+
+      return fetch(modifiedRequest)
+    } catch (error) {
+      return new Response('Token processing failed', { status: 500 })
+    }
+  }
+}
+```
+
+**Simplified Origin Authentication:**
+```typescript
+// server/utils/worker-auth.ts - Origin only validates headers from Worker
+export interface WorkerAuthResult {
+  success: true
+  email: string
+  groups: string[]
+  deviceCompliant?: boolean
+}
+
+export function extractWorkerAuth(event: H3Event): WorkerAuthResult {
+  const verified = getHeader(event, 'x-access-verified')
+  if (verified !== 'true') {
+    throw createApiError(401, "Request must come through Access Worker")
+  }
+
+  const email = getHeader(event, 'x-user-email')
+  const groupsHeader = getHeader(event, 'x-user-groups')
+  const deviceCompliant = getHeader(event, 'x-device-compliant') === 'true'
+
+  if (!email) {
+    throw createApiError(401, "Missing user email from Worker")
+  }
+
+  return {
+    success: true,
+    email,
+    groups: groupsHeader ? JSON.parse(groupsHeader) : [],
+    deviceCompliant
+  }
+}
+
+export function requireWorkerAuth(event: H3Event, requiredGroup?: string): WorkerAuthResult {
+  const auth = extractWorkerAuth(event)
+  
+  if (requiredGroup && !auth.groups.includes(requiredGroup)) {
+    throw createApiError(403, `Group membership required: ${requiredGroup}`)
+  }
+  
+  return auth
+}
+```
+
+#### Migration Benefits
+
+**Security Enhancements:**
+- Cloudflare-managed key rotation (automatic every 6 weeks)
+- Enhanced audit logging via Zero Trust dashboard
+- Device posture integration
+- Advanced threat detection
+
+**Operational Benefits:**
+- Reduced maintenance (no custom JWT secret management)
+- Centralized user management
+- SSO integration built-in
+- Geographic restrictions and conditional access
+
+**Developer Experience:**
+- Simplified auth logic
+- Better error messages from Access
+- Real-time token revocation
+- Built-in rate limiting
+
+#### Implementation Timeline
+
+**Phase 1: Research & Setup (1-2 days)**
+- Configure Zero Trust applications
+- Set up service tokens for testing
+- Create Worker for header injection (Option 3)
+
+**Phase 2: Auth System Replacement (1-2 days)** 
+- Implement new auth utilities
+- Replace auth helpers in all endpoints
+- Remove custom JWT generation logic
+
+**Phase 3: Testing & Validation (1 day)**
+- Update test suite for new auth methods
+- Verify all endpoints with Access tokens
+- Test service token authentication
+
+**Phase 4: Deployment (1 day)**
+- Deploy Worker (if using Option 3)
+- Update environment variables
+- Switch DNS to route through Cloudflare Access
+
+#### Configuration Examples
+
+**Service Token Usage:**
+```bash
+# API-to-API authentication
+curl -H "CF-Access-Client-Id: your-client-id" \
+     -H "CF-Access-Client-Secret: your-client-secret" \
+     https://api.dave.io/api/ping
+
+# User authentication via browser (automatic cookie)
+# Access handles login flow, sets CF_Authorization cookie
+
+# Header-based authentication
+curl -H "cf-access-token: jwt-token-here" \
+     https://api.dave.io/api/ai/alt
+```
+
+**Zero Trust Policy Examples:**
+```yaml
+# Replace current permission hierarchy with Access policies
+current_permissions:
+  - "api:tokens"     → Zero Trust Group: "api-token-managers" 
+  - "ai:alt"         → Zero Trust Group: "ai-users"
+  - "admin"          → Zero Trust Group: "admins"
+  - "*"              → Zero Trust Group: "super-admins"
+
+# Access Application Policies
+policies:
+  - name: "Token Management"
+    application: "api.dave.io" 
+    decision: allow
+    rules:
+      - groups: ["api-token-managers", "admins"]
+      
+  - name: "AI Services"
+    application: "api.dave.io"
+    decision: allow
+    rules:
+      - groups: ["ai-users", "developers", "admins"]
+      - require: ["device-trust"]
+```
+
+This migration eliminates custom JWT management complexity while maintaining stateless authentication and adding enterprise-grade security features.
