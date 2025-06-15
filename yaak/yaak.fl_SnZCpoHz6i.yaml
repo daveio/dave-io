@@ -1,0 +1,13 @@
+type: folder
+model: folder
+id: fl_SnZCpoHz6i
+createdAt: 2025-06-15T15:05:32.553230
+updatedAt: 2025-06-15T15:09:12.841080
+workspaceId: wk_RchFGYKiCS
+folderId: fl_dWYBr84RnE
+authentication: {}
+authenticationType: null
+description: ''
+headers: []
+name: /api/ai
+sortPriority: 0.0

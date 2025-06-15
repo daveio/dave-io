@@ -1,0 +1,13 @@
+type: folder
+model: folder
+id: fl_q9kKFFBE6G
+createdAt: 2025-06-15T15:05:32.553334
+updatedAt: 2025-06-15T15:08:58.731709
+workspaceId: wk_RchFGYKiCS
+folderId: fl_dWYBr84RnE
+authentication: {}
+authenticationType: null
+description: ''
+headers: []
+name: /api/tokens
+sortPriority: 0.0

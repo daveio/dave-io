@@ -1,0 +1,15 @@
+type: environment
+model: environment
+id: ev_NpBy9ekAAZ
+workspaceId: wk_RchFGYKiCS
+createdAt: 2025-06-15T15:05:32.552577
+updatedAt: 2025-06-15T15:16:25.609053
+name: dave-io
+public: true
+base: false
+variables:
+- enabled: true
+  name: baseUrl
+  value: https://dave.io
+  id: h2fq0ES9wn
+color: null

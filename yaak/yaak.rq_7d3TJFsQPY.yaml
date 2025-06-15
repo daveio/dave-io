@@ -1,0 +1,32 @@
+type: http_request
+model: http_request
+id: rq_7d3TJFsQPY
+createdAt: 2025-06-15T15:05:32.552515
+updatedAt: 2025-06-15T15:11:10.020636
+workspaceId: wk_RchFGYKiCS
+folderId: null
+authentication:
+  token: ''
+authenticationType: bearer
+body:
+  text: '{}'
+bodyType: application/json
+description: ''
+headers:
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: null
+- enabled: true
+  name: Accept
+  value: application/json
+  id: null
+method: GET
+name: /go/{}
+sortPriority: 0.0
+url: ${[baseUrl]}/go/:slug
+urlParameters:
+- enabled: true
+  name: :slug
+  value: <string>
+  id: null
