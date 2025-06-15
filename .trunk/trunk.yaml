@@ -47,12 +47,17 @@ lint:
         - prettier
       paths:
         - "**/*.html"
+        - "**/*.css"
         - "**/*.js"
         - "**/*.json"
         - "**/*.jsonc"
         - "**/*.jsx"
         - "**/*.ts"
         - "**/*.tsx"
+        - "**/*.cjs"
+        - "**/*.mjs"
+        - "**/*.cts"
+        - "**/*.mts"
     - linters:
         - biome
       paths:
