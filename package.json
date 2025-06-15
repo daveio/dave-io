@@ -79,7 +79,7 @@
     "deploy:env": "bun run bin/env.ts",
     "deploy:wrangler": "bun run wrangler deploy",
     "deploy:nonprod": "bun run wrangler versions upload",
-    "dev": "bun run-s init dev:nuxt",
+    "dev": "bun run-s generate dev:nuxt",
     "dev:nuxt": "bun run nuxt dev",
     "generate": "bun run-s generate:prepare generate:types generate:openapi",
     "generate:openapi": "bun run bin/openapi.ts && biome format --write public/openapi.json",
