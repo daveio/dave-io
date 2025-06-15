@@ -2,21 +2,17 @@ type: http_request
 model: http_request
 id: rq_7d3TJFsQPY
 createdAt: 2025-06-15T15:05:32.552515
-updatedAt: 2025-06-15T15:11:10.020636
+updatedAt: 2025-06-15T15:21:05.885486
 workspaceId: wk_RchFGYKiCS
-folderId: null
+folderId: fl_PEbNqjCji7
 authentication:
   token: ''
 authenticationType: bearer
 body:
   text: '{}'
-bodyType: application/json
+bodyType: null
 description: ''
 headers:
-- enabled: true
-  name: Content-Type
-  value: application/json
-  id: null
 - enabled: true
   name: Accept
   value: application/json
@@ -28,5 +24,9 @@ url: ${[baseUrl]}/go/:slug
 urlParameters:
 - enabled: true
   name: :slug
-  value: <string>
-  id: null
+  value: mastodon
+  id: S5uCe5JiZK
+- enabled: true
+  name: ''
+  value: ''
+  id: QZu62d57Xt
