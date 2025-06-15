@@ -1,7 +1,14 @@
 # https://docs.trunk.io/cli | https://docs.trunk.io/reference/trunk-yaml
 actions:
-  definitions: []
+  definitions:
+    - display_name: lint
+      id: lint
+      run: bun lint
+      triggers:
+        - git_hooks:
+            - pre-commit
   enabled:
+    - lint
     - trunk-announce
     - trunk-check-pre-push
     - trunk-fmt-pre-commit
