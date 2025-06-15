@@ -1,309 +1,322 @@
 <!DOCTYPE html>
+<!-- trunk-ignore-all(semgrep/html.security.audit.missing-integrity.missing-integrity): scratchpad -->
 <html lang="en" data-theme="cyberpunk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dave.io - because 'just a website' is boring</title>
-    <meta name="description" content="Weapons-grade DevOps engineer, developer, and tinkerer - dave.io">
-    <meta name="keywords" content="DevOps, developer, non-binary, they/them, engineer, cyberpunk">
-
-    <!-- CDN Links for Immediate Testing -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sixtyfour+Convergence:wght@400&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Sono:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Victor+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-
-    <style>
-        /* Custom styles for CDN version */
-        :root {
-            --font-display: 'Sixtyfour Convergence', cursive;
-            --font-subtitle: 'Sono', sans-serif;
-            --font-mono: 'Victor Mono', monospace;
-        }
-
-        .rainbow-gradient {
-            background: linear-gradient(90deg, #f87171 0%, #fbbf24 16.66%, #34d399 33.33%, #60a5fa 50%, #a78bfa 66.66%, #f472b6 83.33%, #f87171 100%);
-            background-size: 200% 100%;
-            animation: rainbow-flow 3s ease-in-out infinite;
-        }
-
-        @keyframes rainbow-flow {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .animate-pulse-slow {
-            animation: pulse-slow 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.05); }
-        }
-
-        .font-display { font-family: var(--font-display); }
-        .font-mono { font-family: var(--font-mono); }
-    </style>
-</head>
-<body class="min-h-screen bg-gray-900 text-base-content">
-    <!-- Trans Pride Background -->
-    <div class="fixed inset-0 -z-10">
-        <div class="absolute w-96 h-96 bg-gradient-to-br from-pink-400/20 to-pink-600/20 rounded-full blur-3xl animate-pulse-slow"
-             style="left: 15%; top: 30%;"></div>
-        <div class="absolute w-80 h-80 bg-gradient-to-br from-blue-400/20 to-blue-600/20 rounded-full blur-3xl animate-pulse-slow"
-             style="left: 85%; top: 60%; animation-delay: 2s;"></div>
-        <div class="absolute w-72 h-72 bg-gradient-to-br from-cyan-400/20 to-cyan-600/20 rounded-full blur-3xl animate-pulse-slow"
-             style="left: 50%; top: 80%; animation-delay: 4s;"></div>
-    </div>
-
-    <main class="container mx-auto px-4 py-8 max-w-4xl">
-        <!-- Navigation -->
-        <nav class="mb-8">
-            <a href="index.html" class="btn btn-ghost btn-sm">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                </svg>
-                Back to dave.io
-            </a>
-        </nav>
-
-        <!-- Header -->
-        <header class="text-center mb-12">
-            <h1 class="text-5xl md:text-7xl font-bold mb-4 rainbow-gradient bg-clip-text text-transparent">
-                Hi, I'm Non-Binary! 🏳️‍⚧️
-            </h1>
-            <div class="mb-6">
-                <span class="text-3xl font-bold bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">they/them/their</span>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>dave.io - because 'just a website' is boring</title>
+        <meta name="description"
+              content="Weapons-grade DevOps engineer, developer, and tinkerer - dave.io">
+        <meta name="keywords"
+              content="DevOps, developer, non-binary, they/them, engineer, cyberpunk">
+        <!-- CDN Links for Immediate Testing -->
+        <link href="https://cdn.jsdelivr.net/npm/daisyui@5"
+              rel="stylesheet"
+              type="text/css" />
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Sixtyfour+Convergence:wght@400&display=swap"
+              rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Sono:wght@200;300;400;500;600;700;800&display=swap"
+              rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Victor+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+              rel="stylesheet">
+        <link href="styles.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body class="min-h-screen bg-gray-900 text-base-content">
+        <!-- Trans Pride Background -->
+        <div class="fixed inset-0 -z-10">
+            <div class="absolute w-96 h-96 bg-gradient-to-br from-pink-400/20 to-pink-600/20 rounded-full blur-3xl animate-pulse-slow bg-element-1">
             </div>
-            <p class="text-lg text-base-content/80 max-w-2xl mx-auto">
-                Questions are welcome! This page exists to help educate and create understanding.
-                Feel free to reach out if you'd like to learn more.
-            </p>
-        </header>
-
-        <!-- Educational Cards -->
-        <section class="space-y-6 mb-12">
-            <!-- Card 1: Non-What? -->
-            <div class="collapse collapse-arrow bg-black/60 backdrop-blur-sm border border-cyan-500/30">
-                <input type="radio" name="gender-accordion" checked="checked" />
-                <div class="collapse-title text-xl font-medium text-cyan-400">
-                    🤔 Non-What?
+            <div class="absolute w-80 h-80 bg-gradient-to-br from-blue-400/20 to-blue-600/20 rounded-full blur-3xl animate-pulse-slow bg-element-2">
+            </div>
+            <div class="absolute w-72 h-72 bg-gradient-to-br from-cyan-400/20 to-cyan-600/20 rounded-full blur-3xl animate-pulse-slow bg-element-3">
+            </div>
+        </div>
+        <main class="container mx-auto px-4 py-8 max-w-4xl">
+            <!-- Navigation -->
+            <nav class="mb-8">
+                <a href="index.html" class="btn btn-ghost btn-sm">
+                    <svg class="w-4 h-4 mr-2"
+                         fill="none"
+                         stroke="currentColor"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to dave.io
+                </a>
+            </nav>
+            <!-- Header -->
+            <header class="text-center mb-12">
+                <h1 class="text-5xl md:text-7xl font-bold mb-4 rainbow-gradient bg-clip-text text-transparent">
+                    Hi, I'm Non-Binary! 🏳️‍⚧️
+                </h1>
+                <div class="mb-6">
+                    <span class="text-3xl font-bold bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">they/them/their</span>
                 </div>
-                <div class="collapse-content text-base-content/90">
-                    <p class="mb-4">
-                        Non-binary is an umbrella term for gender identities that don't fit neatly into the categories of "man" or "woman."
-                        It's about existing outside the traditional gender binary.
-                    </p>
-                    <div class="alert alert-info">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span>Think of gender as a spectrum rather than two distinct boxes!</span>
+                <p class="text-lg text-base-content/80 max-w-2xl mx-auto">
+                    Questions are welcome! This page exists to help educate and create understanding.
+                    Feel free to reach out if you'd like to learn more.
+                </p>
+            </header>
+            <!-- Educational Cards -->
+            <section class="space-y-6 mb-12">
+                <!-- Card 1: Non-What? -->
+                <div class="collapse collapse-arrow bg-black/60 backdrop-blur-sm border border-cyan-500/30">
+                    <input type="radio"
+                           name="gender-accordion"
+                           checked="checked"
+                           id="accordion-non-what"
+                           aria-label="Toggle Non-What? section" />
+                    <label for="accordion-non-what"
+                           class="collapse-title text-xl font-medium text-cyan-400 cursor-pointer">🤔 Non-What?</label>
+                    <div class="collapse-content text-base-content/90">
+                        <p class="mb-4">
+                            Non-binary is an umbrella term for gender identities that don't fit neatly into the categories of "man" or "woman."
+                            It's about existing outside the traditional gender binary.
+                        </p>
+                        <div class="alert alert-info">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                            <span>Think of gender as a spectrum rather than two distinct boxes!</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Card 2: Plot Twist -->
-            <div class="collapse collapse-arrow bg-black/60 backdrop-blur-sm border border-pink-500/30">
-                <input type="radio" name="gender-accordion" />
-                <div class="collapse-title text-xl font-medium text-pink-400">
-                    🎭 Plot Twist: I Thought I Was Cis Too
-                </div>
-                <div class="collapse-content text-base-content/90">
-                    <p class="mb-4">
-                        For most of my life, I identified as cisgender (meaning my gender identity matched what was assigned at birth).
-                        It wasn't until my late 20s that I began to understand myself better.
-                    </p>
-                    <p class="mb-4">
-                        Self-discovery doesn't have an expiration date. Some people know from early childhood, others (like me)
-                        figure it out later in life. Both experiences are completely valid.
-                    </p>
-                    <div class="alert alert-success">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span>There's no "right" timeline for understanding your gender identity.</span>
+                <!-- Card 2: Plot Twist -->
+                <div class="collapse collapse-arrow bg-black/60 backdrop-blur-sm border border-pink-500/30">
+                    <input type="radio"
+                           name="gender-accordion"
+                           id="accordion-plot-twist"
+                           aria-label="Toggle Plot Twist: I Thought I Was Cis Too section" />
+                    <label for="accordion-plot-twist"
+                           class="collapse-title text-xl font-medium text-pink-400 cursor-pointer">
+                        🎭 Plot Twist: I Thought I Was Cis Too
+                    </label>
+                    <div class="collapse-content text-base-content/90">
+                        <p class="mb-4">
+                            For most of my life, I identified as cisgender (meaning my gender identity matched what was assigned at birth).
+                            It wasn't until my late 20s that I began to understand myself better.
+                        </p>
+                        <p class="mb-4">
+                            Self-discovery doesn't have an expiration date. Some people know from early childhood, others (like me)
+                            figure it out later in life. Both experiences are completely valid.
+                        </p>
+                        <div class="alert alert-success">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                            <span>There's no "right" timeline for understanding your gender identity.</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Card 3: Transgender? -->
-            <div class="collapse collapse-arrow bg-black/60 backdrop-blur-sm border border-purple-500/30">
-                <input type="radio" name="gender-accordion" />
-                <div class="collapse-title text-xl font-medium text-purple-400">
-                    🏳️‍⚧️ So Are Non-Binary People Transgender?
-                </div>
-                <div class="collapse-content text-base-content/90">
-                    <p class="mb-4">
-                        Technically, yes! Transgender means your gender identity differs from what was assigned at birth.
-                        Since I was assigned male at birth but identify as non-binary, that makes me transgender.
-                    </p>
-                    <p class="mb-4">
-                        However, not all non-binary people use the label "transgender" for themselves, and that's perfectly fine too.
-                        Identity is personal, and people should use whatever terms feel right for them.
-                    </p>
-                    <div class="mockup-code bg-gray-800 text-sm">
-                        <pre><code>if (gender_assigned_at_birth !== current_gender_identity) {
+                <!-- Card 3: Transgender? -->
+                <div class="collapse collapse-arrow bg-black/60 backdrop-blur-sm border border-purple-500/30">
+                    <input type="radio"
+                           name="gender-accordion"
+                           id="accordion-transgender"
+                           aria-label="Toggle So Are Non-Binary People Transgender? section" />
+                    <label for="accordion-transgender"
+                           class="collapse-title text-xl font-medium text-purple-400 cursor-pointer">
+                        🏳️‍⚧️ So Are Non-Binary People Transgender?
+                    </label>
+                    <div class="collapse-content text-base-content/90">
+                        <p class="mb-4">
+                            Technically, yes! Transgender means your gender identity differs from what was assigned at birth.
+                            Since I was assigned male at birth but identify as non-binary, that makes me transgender.
+                        </p>
+                        <p class="mb-4">
+                            However, not all non-binary people use the label "transgender" for themselves, and that's perfectly fine too.
+                            Identity is personal, and people should use whatever terms feel right for them.
+                        </p>
+                        <div class="mockup-code bg-gray-800 text-sm">
+                            <pre><code>if (gender_assigned_at_birth !== current_gender_identity) {
     return "transgender";
 } else {
     return "cisgender";
 }</code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 4: Two Genders -->
-            <div class="collapse collapse-arrow bg-black/60 backdrop-blur-sm border border-orange-500/30">
-                <input type="radio" name="gender-accordion" />
-                <div class="collapse-title text-xl font-medium text-orange-400">
-                    ⚖️ But There Are Only Two Genders!
-                </div>
-                <div class="collapse-content text-base-content/90">
-                    <p class="mb-4">
-                        This is a common misconception! Many cultures throughout history and around the world have recognized
-                        more than two genders. Here are just a few examples:
-                    </p>
-                    <ul class="list-disc list-inside space-y-2 mb-4 text-sm">
-                        <li><strong>Hijra</strong> - Recognized in India for over 4,000 years</li>
-                        <li><strong>Two-Spirit</strong> - Various Indigenous North American tribes</li>
-                        <li><strong>Fa'afafine</strong> - Samoa</li>
-                        <li><strong>Kathoey</strong> - Thailand</li>
-                        <li><strong>Sworn Virgins</strong> - Albania</li>
-                    </ul>
-                    <div class="alert alert-warning">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.262 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                        </svg>
-                        <span>Even biology isn't as binary as we once thought - intersex conditions affect about 1 in 2000 births!</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 5: Grammar -->
-            <div class="collapse collapse-arrow bg-black/60 backdrop-blur-sm border border-green-500/30">
-                <input type="radio" name="gender-accordion" />
-                <div class="collapse-title text-xl font-medium text-green-400">
-                    📚 They Is Plural, Not Singular!
-                </div>
-                <div class="collapse-content text-base-content/90">
-                    <p class="mb-4">
-                        Actually, singular "they" has been used in English for over 600 years! Here are some examples
-                        you probably use without thinking:
-                    </p>
-                    <div class="space-y-3 mb-4">
-                        <div class="bg-gray-800 p-3 rounded">
-                            <p class="text-green-300">"Someone left <strong>their</strong> umbrella here."</p>
-                            <p class="text-xs text-gray-400">When you don't know who "someone" is</p>
-                        </div>
-                        <div class="bg-gray-800 p-3 rounded">
-                            <p class="text-green-300">"The doctor will see you now. <strong>They</strong> are running a bit late."</p>
-                            <p class="text-xs text-gray-400">When referring to a doctor whose gender you don't know</p>
-                        </div>
-                        <div class="bg-gray-800 p-3 rounded">
-                            <p class="text-green-300">"My friend is coming over. <strong>They</strong> should be here soon."</p>
-                            <p class="text-xs text-gray-400">When talking about a specific person who uses they/them pronouns</p>
                         </div>
                     </div>
-                    <div class="alert alert-info">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span>Shakespeare used singular "they" in his plays. If it's good enough for Shakespeare...</span>
+                </div>
+                <!-- Card 4: Two Genders -->
+                <div class="collapse collapse-arrow bg-black/60 backdrop-blur-sm border border-orange-500/30">
+                    <input type="radio"
+                           name="gender-accordion"
+                           id="accordion-two-genders"
+                           aria-label="Toggle But There Are Only Two Genders! section" />
+                    <label for="accordion-two-genders"
+                           class="collapse-title text-xl font-medium text-orange-400 cursor-pointer">
+                        ⚖️ But There Are Only Two Genders!
+                    </label>
+                    <div class="collapse-content text-base-content/90">
+                        <p class="mb-4">
+                            This is a common misconception! Many cultures throughout history and around the world have recognized
+                            more than two genders. Here are just a few examples:
+                        </p>
+                        <ul class="list-disc list-inside space-y-2 mb-4 text-sm">
+                            <li>
+                                <strong>Hijra</strong> - Recognized in India for over 4,000 years
+                            </li>
+                            <li>
+                                <strong>Two-Spirit</strong> - Various Indigenous North American tribes
+                            </li>
+                            <li>
+                                <strong>Fa'afafine</strong> - Samoa
+                            </li>
+                            <li>
+                                <strong>Kathoey</strong> - Thailand
+                            </li>
+                            <li>
+                                <strong>Sworn Virgins</strong> - Albania
+                            </li>
+                        </ul>
+                        <div class="alert alert-warning">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.262 16.5c-.77.833.192 2.5 1.732 2.5z">
+                                </path>
+                            </svg>
+                            <span>Even biology isn't as binary as we once thought - intersex conditions affect about 1 in 2000 births!</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Card 6: More Questions -->
-            <div class="collapse collapse-arrow bg-black/60 backdrop-blur-sm border border-blue-500/30">
-                <input type="radio" name="gender-accordion" />
-                <div class="collapse-title text-xl font-medium text-blue-400">
-                    ❓ More Questions?
-                </div>
-                <div class="collapse-content text-base-content/90">
-                    <p class="mb-4">
-                        That's great! Questions mean you're interested in learning, and that's awesome.
-                        Here are some ways to learn more:
-                    </p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="#" class="btn btn-outline btn-info hover:scale-105 transition-transform">
-                            🌐 GLAAD Resources
-                        </a>
-                        <a href="#" class="btn btn-outline btn-info hover:scale-105 transition-transform">
-                            📖 Trevor Project
-                        </a>
-                        <a href="#" class="btn btn-outline btn-info hover:scale-105 transition-transform">
-                            🏳️‍⚧️ Trans Lifeline
-                        </a>
-                        <a href="#" class="btn btn-outline btn-info hover:scale-105 transition-transform">
-                            💬 PFLAG
-                        </a>
+                <!-- Card 5: Grammar -->
+                <div class="collapse collapse-arrow bg-black/60 backdrop-blur-sm border border-green-500/30">
+                    <input type="radio"
+                           name="gender-accordion"
+                           id="accordion-grammar"
+                           aria-label="Toggle They Is Plural, Not Singular! section" />
+                    <label for="accordion-grammar"
+                           class="collapse-title text-xl font-medium text-green-400 cursor-pointer">
+                        📚 They Is Plural, Not Singular!
+                    </label>
+                    <div class="collapse-content text-base-content/90">
+                        <p class="mb-4">
+                            Actually, singular "they" has been used in English for over 600 years! Here are some examples
+                            you probably use without thinking:
+                        </p>
+                        <div class="space-y-3 mb-4">
+                            <div class="bg-gray-800 p-3 rounded">
+                                <p class="text-green-300">
+                                    "Someone left <strong>their</strong> umbrella here."
+                                </p>
+                                <p class="text-xs text-gray-400">When you don't know who "someone" is</p>
+                            </div>
+                            <div class="bg-gray-800 p-3 rounded">
+                                <p class="text-green-300">
+                                    "The doctor will see you now. <strong>They</strong> are running a bit late."
+                                </p>
+                                <p class="text-xs text-gray-400">When referring to a doctor whose gender you don't know</p>
+                            </div>
+                            <div class="bg-gray-800 p-3 rounded">
+                                <p class="text-green-300">
+                                    "My friend is coming over. <strong>They</strong> should be here soon."
+                                </p>
+                                <p class="text-xs text-gray-400">When talking about a specific person who uses they/them pronouns</p>
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                            <span>Shakespeare used singular "they" in his plays. If it's good enough for Shakespeare...</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Resources Section -->
-        <section class="text-center mb-12">
-            <h2 class="text-3xl font-bold mb-6 rainbow-gradient bg-clip-text text-transparent">
-                Educational Resources
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <a href="#" class="card bg-black/60 backdrop-blur-sm border border-cyan-500/30 hover:scale-105 transition-transform">
-                    <div class="card-body">
-                        <h3 class="card-title text-cyan-400">📚 Gender Identity Guide</h3>
-                        <p class="text-sm text-base-content/80">Comprehensive guide to understanding gender identity and expression</p>
+                <!-- Card 6: More Questions -->
+                <div class="collapse collapse-arrow bg-black/60 backdrop-blur-sm border border-blue-500/30">
+                    <input type="radio"
+                           name="gender-accordion"
+                           id="accordion-more-questions"
+                           aria-label="Toggle More Questions? section" />
+                    <label for="accordion-more-questions"
+                           class="collapse-title text-xl font-medium text-blue-400 cursor-pointer">
+                        ❓ More Questions?
+                    </label>
+                    <div class="collapse-content text-base-content/90">
+                        <p class="mb-4">
+                            That's great! Questions mean you're interested in learning, and that's awesome.
+                            Here are some ways to learn more:
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <a href="#"
+                               class="btn btn-outline btn-info hover:scale-105 transition-transform">
+                                🌐 GLAAD Resources
+                            </a>
+                            <a href="#"
+                               class="btn btn-outline btn-info hover:scale-105 transition-transform">
+                                📖 Trevor Project
+                            </a>
+                            <a href="#"
+                               class="btn btn-outline btn-info hover:scale-105 transition-transform">
+                                🏳️‍⚧️ Trans Lifeline
+                            </a>
+                            <a href="#"
+                               class="btn btn-outline btn-info hover:scale-105 transition-transform">💬 PFLAG</a>
+                        </div>
                     </div>
-                </a>
-                <a href="#" class="card bg-black/60 backdrop-blur-sm border border-pink-500/30 hover:scale-105 transition-transform">
-                    <div class="card-body">
-                        <h3 class="card-title text-pink-400">🗣️ Pronoun Practice</h3>
-                        <p class="text-sm text-base-content/80">Practice using different pronouns with interactive exercises</p>
-                    </div>
-                </a>
-                <a href="#" class="card bg-black/60 backdrop-blur-sm border border-purple-500/30 hover:scale-105 transition-transform">
-                    <div class="card-body">
-                        <h3 class="card-title text-purple-400">🏳️‍⚧️ Support Networks</h3>
-                        <p class="text-sm text-base-content/80">Find local and online support groups and communities</p>
-                    </div>
-                </a>
-                <a href="#" class="card bg-black/60 backdrop-blur-sm border border-green-500/30 hover:scale-105 transition-transform">
-                    <div class="card-body">
-                        <h3 class="card-title text-green-400">📖 Recommended Reading</h3>
-                        <p class="text-sm text-base-content/80">Books, articles, and resources for deeper understanding</p>
-                    </div>
-                </a>
-            </div>
-        </section>
-
-        <!-- Future AI Chatbot Section -->
-        <section class="text-center">
-            <div class="card bg-black/60 backdrop-blur-sm border border-gray-700">
-                <div class="card-body">
-                    <h3 class="card-title justify-center text-gray-400">🤖 AI Helper (Coming Soon)</h3>
-                    <p class="text-base-content/60">
-                        An AI chatbot to help answer questions about gender identity and provide personalized resources.
-                    </p>
-                    <button class="btn btn-disabled btn-outline">
-                        Chat with AI Helper
-                    </button>
                 </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Floating Chat Button (placeholder) -->
-    <div class="fixed bottom-6 right-6">
-        <button class="btn btn-circle btn-primary btn-lg shadow-lg hover:scale-110 transition-transform" title="Coming Soon">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-            </svg>
-        </button>
-    </div>
-
-    <script src="script.js"></script>
-</body>
+            </section>
+            <!-- Resources Section -->
+            <section class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-6 rainbow-gradient bg-clip-text text-transparent">Educational Resources</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <a href="#"
+                       class="card bg-black/60 backdrop-blur-sm border border-cyan-500/30 hover:scale-105 transition-transform">
+                        <div class="card-body">
+                            <h3 class="card-title text-cyan-400">📚 Gender Identity Guide</h3>
+                            <p class="text-sm text-base-content/80">Comprehensive guide to understanding gender identity and expression</p>
+                        </div>
+                    </a>
+                    <a href="#"
+                       class="card bg-black/60 backdrop-blur-sm border border-pink-500/30 hover:scale-105 transition-transform">
+                        <div class="card-body">
+                            <h3 class="card-title text-pink-400">🗣️ Pronoun Practice</h3>
+                            <p class="text-sm text-base-content/80">Practice using different pronouns with interactive exercises</p>
+                        </div>
+                    </a>
+                    <a href="#"
+                       class="card bg-black/60 backdrop-blur-sm border border-purple-500/30 hover:scale-105 transition-transform">
+                        <div class="card-body">
+                            <h3 class="card-title text-purple-400">🏳️‍⚧️ Support Networks</h3>
+                            <p class="text-sm text-base-content/80">Find local and online support groups and communities</p>
+                        </div>
+                    </a>
+                    <a href="#"
+                       class="card bg-black/60 backdrop-blur-sm border border-green-500/30 hover:scale-105 transition-transform">
+                        <div class="card-body">
+                            <h3 class="card-title text-green-400">📖 Recommended Reading</h3>
+                            <p class="text-sm text-base-content/80">Books, articles, and resources for deeper understanding</p>
+                        </div>
+                    </a>
+                </div>
+            </section>
+            <!-- Future AI Chatbot Section -->
+            <section class="text-center">
+                <div class="card bg-black/60 backdrop-blur-sm border border-gray-700">
+                    <div class="card-body">
+                        <h3 class="card-title justify-center text-gray-400">🤖 AI Helper (Coming Soon)</h3>
+                        <p class="text-base-content/60">
+                            An AI chatbot to help answer questions about gender identity and provide personalized resources.
+                        </p>
+                        <button class="btn btn-disabled btn-outline">Chat with AI Helper</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <!-- Floating Chat Button (placeholder) -->
+        <div class="fixed bottom-6 right-6">
+            <button class="btn btn-circle btn-primary btn-lg shadow-lg hover:scale-110 transition-transform"
+                    title="Coming Soon">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                    </path>
+                </svg>
+            </button>
+        </div>
+        <script src="script.js"></script>
+    </body>
 </html>

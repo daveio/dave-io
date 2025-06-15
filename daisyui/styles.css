@@ -1,15 +1,6 @@
-@import 'tailwindcss';
-@plugin "daisyui" {
-  themes: cyberpunk --default, dark --prefersdark, light;
-  root: ':root';
-  include: ;
-  exclude: ;
-  prefix: ;
-  logs: true;
-}
-
-/* Custom Google Fonts Import for Sixtyfour Convergence */
+/* Google Fonts Import */
 @import url('https://fonts.googleapis.com/css2?family=Sixtyfour+Convergence:wght@400&display=swap');
+
 
 /* Custom CSS Variables and Themes */
 :root {
@@ -201,41 +192,49 @@
   left: 100%;
 }
 
-/* Mobile-specific styles */
-@media (max-width: 800px) {
-  .mobile-hide {
-    display: none;
-  }
-
-  .mobile-text::after {
-    content: attr(data-mobile);
-  }
-
-  .mobile-text .desktop-text {
-    display: none;
-  }
-
-  /* Adjust font sizes for mobile */
-  .rainbow-gradient {
-    font-size: 3rem;
-  }
-
-  /* Stack terminal grid on mobile */
-  .terminal-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
+/* Background element positioning classes */
+/* Used by gender.html and 403.html */
+.bg-element-1 {
+  left: 15%;
+  top: 30%;
 }
 
-@media (min-width: 801px) {
-  .desktop-show {
-    display: block;
-  }
+.bg-element-2 {
+  left: 85%;
+  top: 60%;
+  animation-delay: 2s;
+}
 
-  .terminal-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
+.bg-element-3 {
+  left: 50%;
+  top: 80%;
+  animation-delay: 4s;
+}
+
+/* Used by index.html with centered transforms */
+.index-bg-element-1 {
+  left: 20%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.index-bg-element-2 {
+  left: 80%;
+  top: 20%;
+  transform: translate(-50%, -50%);
+  animation-delay: 2s;
+}
+
+.index-bg-element-3 {
+  left: 40%;
+  top: 80%;
+  transform: translate(-50%, -50%);
+  animation-delay: 4s;
+}
+
+/* Badge subtitle styling */
+.badge-subtitle {
+  font-family: var(--font-subtitle);
 }
 
 /* Loading states */
