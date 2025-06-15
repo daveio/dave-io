@@ -7,7 +7,7 @@
         identity, pronouns, creating inclusive spaces, and all that gender-adjacent junk. And there are even bigger
         plans in the works too...
       </p>
-      <UButton color="purple" variant="outline" disabled>
+      <UButton color="primary" variant="outline" disabled>
         <UIcon name="i-mdi-robot-excited" class="mr-2" />
         Launch Chat (Coming Soon)
       </UButton>

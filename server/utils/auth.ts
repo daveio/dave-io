@@ -121,7 +121,9 @@ export function validateTokenPermissions(
 
 // Check if token is revoked (JTI blacklist)
 export async function isTokenRevoked(event: H3Event, jti: string): Promise<boolean> {
-  if (!jti) return false
+  if (!jti) {
+    return false
+  }
 
   try {
     // Get KV binding from event context

@@ -2,15 +2,8 @@
   <div class="space-y-4">
     <p class="text-gray-300 leading-relaxed mb-4">Let me link a few resources - they might answer your question:</p>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <UButton
-        v-for="resource in resources"
-        :key="resource.title"
-        :to="resource.url"
-        target="_blank"
-        variant="outline"
-        color="cyan"
-        class="justify-start"
-      >
+      <UButton v-for="resource in resources" :key="resource.title" :to="resource.url" target="_blank" variant="outline"
+        color="info" class="justify-start">
         <UIcon :name="resource.icon" class="mr-2" />
         <strong>{{ resource.title }}</strong>
       </UButton>

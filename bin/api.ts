@@ -69,10 +69,8 @@ class APITester {
         if (!this.scriptMode) {
           console.warn("⚠️ Failed to initialize KV data - tests may fail")
         }
-      } else {
-        if (!this.scriptMode) {
-          console.log("✅ KV data initialized successfully")
-        }
+      } else if (!this.scriptMode) {
+        console.log("✅ KV data initialized successfully")
       }
     } catch (error) {
       if (!this.scriptMode) {
@@ -705,7 +703,9 @@ program
 
     try {
       if (options.aiOnly) {
-        if (!options.token && !options.dryRun) await tester.generateTokens(options.dryRun)
+        if (!options.token && !options.dryRun) {
+          await tester.generateTokens(options.dryRun)
+        }
         const suite = options.dryRun
           ? { name: "AI Endpoints", results: [], passed: 0, failed: 0, duration: 0 }
           : await tester.testAI()
@@ -716,7 +716,9 @@ program
           : await tester.testRedirects()
         success = tester.printResults([suite])
       } else if (options.tokensOnly) {
-        if (!options.token && !options.dryRun) await tester.generateTokens(options.dryRun)
+        if (!options.token && !options.dryRun) {
+          await tester.generateTokens(options.dryRun)
+        }
         const suite = options.dryRun
           ? { name: "Token Management", results: [], passed: 0, failed: 0, duration: 0 }
           : await tester.testTokens()
@@ -732,7 +734,9 @@ program
           : await tester.testInternal()
         success = tester.printResults([suite])
       } else if (options.dashboardOnly) {
-        if (!options.token && !options.dryRun) await tester.generateTokens(options.dryRun)
+        if (!options.token && !options.dryRun) {
+          await tester.generateTokens(options.dryRun)
+        }
         const suite = options.dryRun
           ? { name: "Dashboard", results: [], passed: 0, failed: 0, duration: 0 }
           : await tester.testDashboard()

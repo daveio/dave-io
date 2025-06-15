@@ -165,12 +165,11 @@ export async function executeD1Query(
   params: unknown[] = []
 ): Promise<unknown> {
   try {
-    const response = await client.d1.database.query(databaseId, {
+    return await client.d1.database.query(databaseId, {
       account_id: accountId,
       sql,
       params: params as string[]
     })
-    return response
   } catch (error) {
     console.error("D1 query failed:", { sql, params, error })
     throw error

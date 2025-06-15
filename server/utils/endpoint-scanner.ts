@@ -40,7 +40,7 @@ export async function scanApiEndpoints(): Promise<EndpointMetadata[]> {
   const endpoints: EndpointMetadata[] = []
 
   // Recursive function to scan directories
-  function scanDirectory(dir: string, basePath = ""): void {
+  const scanDirectory = (dir: string, basePath = ""): void => {
     const items = readdirSync(dir)
 
     for (const item of items) {
@@ -86,7 +86,9 @@ function analyzeEndpointFile(filePath: string, relativePath: string, basePath: s
 
     // Extract method from filename (e.g., "ping.get.ts" -> "get", "optimise.ts" -> handles both GET/POST)
     const fileName = relativePath.split("/").pop()
-    if (!fileName) return null
+    if (!fileName) {
+      return null
+    }
     const fileNameWithoutExt = fileName.replace(".ts", "")
 
     let method: "get" | "post" | "put" | "delete" | "patch" = "get" // default
@@ -414,12 +416,24 @@ function extractQueryParameters(content: string): Array<{
  * Generate tag from API path
  */
 function getTagFromPath(path: string): string {
-  if (path.startsWith("/api/ai")) return "AI"
-  if (path.startsWith("/api/images")) return "Images"
-  if (path.startsWith("/api/tokens")) return "Tokens"
-  if (path.startsWith("/api/dashboard")) return "Dashboard"
-  if (path.startsWith("/go/")) return "Redirects"
-  if (path.startsWith("/api/docs")) return "Documentation"
+  if (path.startsWith("/api/ai")) {
+    return "AI"
+  }
+  if (path.startsWith("/api/images")) {
+    return "Images"
+  }
+  if (path.startsWith("/api/tokens")) {
+    return "Tokens"
+  }
+  if (path.startsWith("/api/dashboard")) {
+    return "Dashboard"
+  }
+  if (path.startsWith("/go/")) {
+    return "Redirects"
+  }
+  if (path.startsWith("/api/docs")) {
+    return "Documentation"
+  }
   return "System"
 }
 
@@ -435,7 +449,9 @@ function generateSummary(path: string, method: string): string {
   }
 
   if (method === "get") {
-    if (path.includes("{")) return `Get ${lastPart.replace(/[{}]/g, "")}`
+    if (path.includes("{")) {
+      return `Get ${lastPart.replace(/[{}]/g, "")}`
+    }
     return `Get ${lastPart}`
   }
   if (method === "post") {
@@ -449,14 +465,30 @@ function generateSummary(path: string, method: string): string {
  * Generate description from path and method
  */
 function generateDescription(path: string, method: string): string {
-  if (path.includes("/ai/alt")) return "Generate descriptive alt-text for images using AI"
-  if (path.includes("/ai/tickets")) return "AI-powered ticket operations"
-  if (path.includes("/images/optimise")) return "Optimize images using Cloudflare Images service"
-  if (path.includes("/tokens/")) return "Token management operations"
-  if (path.includes("/dashboard/")) return "Dashboard data operations"
-  if (path.includes("/go/")) return "URL redirection service"
-  if (path.includes("/ping")) return "System health and information"
-  if (path.includes("/docs")) return "API documentation"
+  if (path.includes("/ai/alt")) {
+    return "Generate descriptive alt-text for images using AI"
+  }
+  if (path.includes("/ai/tickets")) {
+    return "AI-powered ticket operations"
+  }
+  if (path.includes("/images/optimise")) {
+    return "Optimize images using Cloudflare Images service"
+  }
+  if (path.includes("/tokens/")) {
+    return "Token management operations"
+  }
+  if (path.includes("/dashboard/")) {
+    return "Dashboard data operations"
+  }
+  if (path.includes("/go/")) {
+    return "URL redirection service"
+  }
+  if (path.includes("/ping")) {
+    return "System health and information"
+  }
+  if (path.includes("/docs")) {
+    return "API documentation"
+  }
 
   return `${method.toUpperCase()} operation for ${path}`
 }

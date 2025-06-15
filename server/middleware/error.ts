@@ -23,20 +23,27 @@ interface ErrorContext {
 
 function categorizeError(error: unknown, _context: ErrorContext): ErrorCategory {
   if (isApiError(error)) {
-    const statusCode = error.statusCode
-    if (statusCode === 401 || statusCode === 403) return ErrorCategory.AUTH
-    if (statusCode >= 400 && statusCode < 500) return ErrorCategory.VALIDATION
-    if (statusCode >= 500) return ErrorCategory.INTERNAL
+    const { statusCode } = error
+    if (statusCode === 401 || statusCode === 403) {
+      return ErrorCategory.AUTH
+    }
+    if (statusCode >= 400 && statusCode < 500) {
+      return ErrorCategory.VALIDATION
+    }
+    if (statusCode >= 500) {
+      return ErrorCategory.INTERNAL
+    }
   }
 
   return ErrorCategory.INTERNAL
 }
 
 function logError(error: unknown, category: ErrorCategory, context: ErrorContext) {
+  const message = error instanceof Error ? error.message : String(error)
   const logEntry = {
     level: "error",
     category,
-    message: error instanceof Error ? error.message : String(error),
+    message,
     context,
     timestamp: context.timestamp
   }
@@ -47,7 +54,7 @@ function logError(error: unknown, category: ErrorCategory, context: ErrorContext
 
 export default defineEventHandler(async (event) => {
   // Apply to both API and redirect routes
-  const url = event.node.req.url
+  const { url } = event.node.req
   if (!url?.startsWith("/api/") && !url?.startsWith("/go/")) {
     return
   }

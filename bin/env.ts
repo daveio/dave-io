@@ -323,15 +323,13 @@ async function deployEnvironment(
         dryRun
       }
       console.log(JSON.stringify(output, null, 2))
+    } else if (dryRun) {
+      console.log(`📋 Would deploy ${totalCount} variables successfully`)
     } else {
-      if (dryRun) {
-        console.log(`📋 Would deploy ${totalCount} variables successfully`)
+      if (successCount === totalCount) {
+        console.log(`🎉 Successfully deployed all ${totalCount} variables!`)
       } else {
-        if (successCount === totalCount) {
-          console.log(`🎉 Successfully deployed all ${totalCount} variables!`)
-        } else {
-          console.error(`❌ Deployed ${successCount}/${totalCount} variables. Some deployments failed.`)
-        }
+        console.error(`❌ Deployed ${successCount}/${totalCount} variables. Some deployments failed.`)
       }
     }
 

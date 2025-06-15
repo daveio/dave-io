@@ -49,7 +49,9 @@ async function getTokenUsageFromKV(uuid: string, kv?: KVNamespace): Promise<Toke
       createdAt
     }
   } catch (error: unknown) {
-    if (error && typeof error === "object" && "statusCode" in error) throw error
+    if (error && typeof error === "object" && "statusCode" in error) {
+      throw error
+    }
     console.error("Failed to get token usage from KV:", error)
     throw createApiError(500, "Failed to retrieve token usage")
   }
