@@ -6,8 +6,12 @@
           <UIcon name="i-mdi-light-gender-transgender" class="mr-2 text-green-200" />
           Pronouns
         </span>
-        <ULink to="/gender" target="_blank" class="link-gender"
-          @click="handleLinkClick('gender', 'https://dave.io/gender')">
+        <ULink
+          to="/gender"
+          target="_blank"
+          class="link-gender"
+          @click="handleLinkClick('gender', 'https://dave.io/gender')"
+        >
           they/them (learn more)
         </ULink>
       </div>

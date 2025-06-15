@@ -35,16 +35,16 @@ npx nuxi@latest module add ui
 
 ```typescript
 export default defineNuxtConfig({
-   modules: ["@nuxt/ui"],
-   css: ["~/assets/css/main.css"], // Your Tailwind CSS file
-   ui: {
-      prefix: "U", // Component prefix (default: 'U')
-      fonts: true, // Enable @nuxt/fonts integration
-      colorMode: true, // Enable @nuxtjs/color-mode integration
-      theme: {
-         colors: ["primary", "secondary", "success", "info", "warning", "error", "neutral"],
-      },
-   },
+  modules: ["@nuxt/ui"],
+  css: ["~/assets/css/main.css"], // Your Tailwind CSS file
+  ui: {
+    prefix: "U", // Component prefix (default: 'U')
+    fonts: true, // Enable @nuxt/fonts integration
+    colorMode: true, // Enable @nuxtjs/color-mode integration
+    theme: {
+      colors: ["primary", "secondary", "success", "info", "warning", "error", "neutral"],
+    },
+  },
 });
 ```
 
@@ -63,17 +63,17 @@ import vue from "@vitejs/plugin-vue";
 import ui from "@nuxt/ui/vite";
 
 export default defineConfig({
-   plugins: [
-      vue(),
-      ui({
-         ui: {
-            colors: {
-               primary: "green",
-               neutral: "slate",
-            },
-         },
-      }),
-   ],
+  plugins: [
+    vue(),
+    ui({
+      ui: {
+        colors: {
+          primary: "green",
+          neutral: "slate",
+        },
+      },
+    }),
+  ],
 });
 ```
 
@@ -88,8 +88,8 @@ import App from "./App.vue";
 
 const app = createApp(App);
 const router = createRouter({
-   routes: [],
-   history: createWebHistory(),
+  routes: [],
+  history: createWebHistory(),
 });
 
 app.use(router);
@@ -121,9 +121,9 @@ All components follow a consistent pattern using Tailwind Variants:
 
 ```vue
 <template>
-   <UButton color="primary" variant="solid" size="md" :ui="{ base: 'font-bold' }" class="custom-class">
-      Click me
-   </UButton>
+  <UButton color="primary" variant="solid" size="md" :ui="{ base: 'font-bold' }" class="custom-class">
+    Click me
+  </UButton>
 </template>
 ```
 
@@ -136,17 +136,17 @@ Nuxt UI uses semantic color aliases that can be configured at runtime:
 ```typescript
 // app.config.ts
 export default defineAppConfig({
-   ui: {
-      colors: {
-         primary: "blue", // Any Tailwind color
-         secondary: "indigo",
-         success: "green",
-         info: "sky",
-         warning: "yellow",
-         error: "red",
-         neutral: "zinc",
-      },
-   },
+  ui: {
+    colors: {
+      primary: "blue", // Any Tailwind color
+      secondary: "indigo",
+      success: "green",
+      info: "sky",
+      warning: "yellow",
+      error: "red",
+      neutral: "zinc",
+    },
+  },
 });
 ```
 
@@ -156,17 +156,17 @@ Customize global styling with CSS variables:
 
 ```css
 @theme {
-   --ui-radius: 0.25rem; /* Global border radius */
-   --ui-container: 90rem; /* Container max-width */
-   --ui-bg: var(--ui-color-neutral-50);
-   --ui-text: var(--ui-color-neutral-900);
-   --ui-border: var(--ui-color-neutral-200);
+  --ui-radius: 0.25rem; /* Global border radius */
+  --ui-container: 90rem; /* Container max-width */
+  --ui-bg: var(--ui-color-neutral-50);
+  --ui-text: var(--ui-color-neutral-900);
+  --ui-border: var(--ui-color-neutral-200);
 }
 
 .dark {
-   --ui-bg: var(--ui-color-neutral-950);
-   --ui-text: var(--ui-color-neutral-100);
-   --ui-border: var(--ui-color-neutral-800);
+  --ui-bg: var(--ui-color-neutral-950);
+  --ui-text: var(--ui-color-neutral-100);
+  --ui-border: var(--ui-color-neutral-800);
 }
 ```
 
@@ -178,18 +178,18 @@ Three levels of customization:
 
 ```typescript
 export default defineAppConfig({
-   ui: {
-      button: {
-         slots: {
-            base: "font-bold rounded-lg",
-            label: "text-sm",
-         },
-         defaultVariants: {
-            color: "primary",
-            variant: "solid",
-         },
+  ui: {
+    button: {
+      slots: {
+        base: "font-bold rounded-lg",
+        label: "text-sm",
       },
-   },
+      defaultVariants: {
+        color: "primary",
+        variant: "solid",
+      },
+    },
+  },
 });
 ```
 
@@ -197,10 +197,10 @@ export default defineAppConfig({
 
 ```vue
 <UButton
-   :ui="{
-      base: 'custom-base-class',
-      leadingIcon: 'text-xl',
-   }"
+  :ui="{
+    base: 'custom-base-class',
+    leadingIcon: 'text-xl',
+  }"
 />
 ```
 
@@ -234,32 +234,32 @@ export default defineAppConfig({
 import { z } from "zod";
 
 const schema = z.object({
-   email: z.string().email("Invalid email"),
-   password: z.string().min(8, "Must be at least 8 characters"),
+  email: z.string().email("Invalid email"),
+  password: z.string().min(8, "Must be at least 8 characters"),
 });
 
 const state = reactive({
-   email: "",
-   password: "",
+  email: "",
+  password: "",
 });
 
 async function onSubmit(event: FormSubmitEvent<typeof state>) {
-   console.log("Submitted:", event.data);
+  console.log("Submitted:", event.data);
 }
 </script>
 
 <template>
-   <UForm :schema="schema" :state="state" @submit="onSubmit">
-      <UFormField label="Email" name="email">
-         <UInput v-model="state.email" />
-      </UFormField>
+  <UForm :schema="schema" :state="state" @submit="onSubmit">
+    <UFormField label="Email" name="email">
+      <UInput v-model="state.email" />
+    </UFormField>
 
-      <UFormField label="Password" name="password">
-         <UInput v-model="state.password" type="password" />
-      </UFormField>
+    <UFormField label="Password" name="password">
+      <UInput v-model="state.password" type="password" />
+    </UFormField>
 
-      <UButton type="submit">Submit</UButton>
-   </UForm>
+    <UButton type="submit">Submit</UButton>
+  </UForm>
 </template>
 ```
 
@@ -315,10 +315,10 @@ const toast = useToast();
 
 // Add a toast
 toast.add({
-   title: "Success",
-   description: "Action completed",
-   color: "success",
-   timeout: 5000,
+  title: "Success",
+  description: "Action completed",
+  color: "success",
+  timeout: 5000,
 });
 
 // Update a toast
@@ -340,7 +340,7 @@ const overlay = useOverlay();
 
 // Create modal instance
 const modal = overlay.create(MyModalComponent, {
-   props: { title: "Welcome" },
+  props: { title: "Welcome" },
 });
 
 // Open modal
@@ -364,10 +364,10 @@ Manage dark/light theme:
 const colorMode = useColorMode();
 
 const isDark = computed({
-   get: () => colorMode.value === "dark",
-   set: (value) => {
-      colorMode.preference = value ? "dark" : "light";
-   },
+  get: () => colorMode.value === "dark",
+  set: (value) => {
+    colorMode.preference = value ? "dark" : "light";
+  },
 });
 ```
 
@@ -405,14 +405,14 @@ Add local SVG icons:
 ```typescript
 // nuxt.config.ts
 export default defineNuxtConfig({
-   icon: {
-      customCollections: [
-         {
-            prefix: "custom",
-            dir: "./assets/icons",
-         },
-      ],
-   },
+  icon: {
+    customCollections: [
+      {
+        prefix: "custom",
+        dir: "./assets/icons",
+      },
+    ],
+  },
 });
 ```
 
@@ -425,15 +425,15 @@ Override component icons globally:
 ```typescript
 // app.config.ts
 export default defineAppConfig({
-   ui: {
-      icons: {
-         check: "i-lucide-check",
-         close: "i-lucide-x",
-         loading: "i-lucide-loader-circle",
-         chevronDown: "i-lucide-chevron-down",
-         // ... more icon overrides
-      },
-   },
+  ui: {
+    icons: {
+      check: "i-lucide-check",
+      close: "i-lucide-x",
+      loading: "i-lucide-loader-circle",
+      chevronDown: "i-lucide-chevron-down",
+      // ... more icon overrides
+    },
+  },
 });
 ```
 
@@ -481,25 +481,25 @@ export default defineAppConfig({
 ```vue
 <script setup lang="ts">
 const fields = [
-   { name: "name", label: "Name", type: "text" },
-   { name: "email", label: "Email", type: "email" },
-   { name: "role", label: "Role", type: "select", options: ["Admin", "User"] },
+  { name: "name", label: "Name", type: "text" },
+  { name: "email", label: "Email", type: "email" },
+  { name: "role", label: "Role", type: "select", options: ["Admin", "User"] },
 ];
 
 const state = reactive({
-   name: "",
-   email: "",
-   role: "",
+  name: "",
+  email: "",
+  role: "",
 });
 </script>
 
 <template>
-   <UForm :state="state">
-      <UFormField v-for="field in fields" :key="field.name" :label="field.label" :name="field.name">
-         <UInput v-if="field.type !== 'select'" v-model="state[field.name]" :type="field.type" />
-         <USelect v-else v-model="state[field.name]" :options="field.options" />
-      </UFormField>
-   </UForm>
+  <UForm :state="state">
+    <UFormField v-for="field in fields" :key="field.name" :label="field.label" :name="field.name">
+      <UInput v-if="field.type !== 'select'" v-model="state[field.name]" :type="field.type" />
+      <USelect v-else v-model="state[field.name]" :options="field.options" />
+    </UFormField>
+  </UForm>
 </template>
 ```
 
@@ -509,20 +509,20 @@ const state = reactive({
 <script setup lang="ts">
 // Modal component (MyModal.vue)
 const props = defineProps<{
-   title: string;
-   message: string;
+  title: string;
+  message: string;
 }>();
 
 const emit = defineEmits<{
-   close: [result: boolean];
+  close: [result: boolean];
 }>();
 
 function confirm() {
-   emit("close", true);
+  emit("close", true);
 }
 
 function cancel() {
-   emit("close", false);
+  emit("close", false);
 }
 </script>
 
@@ -531,19 +531,19 @@ function cancel() {
 const overlay = useOverlay();
 
 async function showConfirmation() {
-   const modal = overlay.create(MyModal, {
-      props: {
-         title: "Confirm Action",
-         message: "Are you sure?",
-      },
-   });
+  const modal = overlay.create(MyModal, {
+    props: {
+      title: "Confirm Action",
+      message: "Are you sure?",
+    },
+  });
 
-   const instance = modal.open();
-   const confirmed = await instance.result;
+  const instance = modal.open();
+  const confirmed = await instance.result;
 
-   if (confirmed) {
-      // Proceed with action
-   }
+  if (confirmed) {
+    // Proceed with action
+  }
 }
 </script>
 ```
@@ -553,50 +553,50 @@ async function showConfirmation() {
 ```vue
 <script setup lang="ts">
 const columns = [
-   {
-      key: "name",
-      label: "Name",
-   },
-   {
-      key: "email",
-      label: "Email",
-   },
-   {
-      key: "actions",
-      label: "Actions",
-   },
+  {
+    key: "name",
+    label: "Name",
+  },
+  {
+    key: "email",
+    label: "Email",
+  },
+  {
+    key: "actions",
+    label: "Actions",
+  },
 ];
 
 const data = ref([
-   { id: 1, name: "John Doe", email: "john@example.com" },
-   // ... more data
+  { id: 1, name: "John Doe", email: "john@example.com" },
+  // ... more data
 ]);
 
 const actions = (row) => [
-   [
-      {
-         label: "Edit",
-         icon: "i-lucide-edit",
-         click: () => editUser(row),
-      },
-      {
-         label: "Delete",
-         icon: "i-lucide-trash",
-         color: "error",
-         click: () => deleteUser(row),
-      },
-   ],
+  [
+    {
+      label: "Edit",
+      icon: "i-lucide-edit",
+      click: () => editUser(row),
+    },
+    {
+      label: "Delete",
+      icon: "i-lucide-trash",
+      color: "error",
+      click: () => deleteUser(row),
+    },
+  ],
 ];
 </script>
 
 <template>
-   <UTable :columns="columns" :rows="data">
-      <template #actions-data="{ row }">
-         <UDropdownMenu :items="actions(row)">
-            <UButton icon="i-lucide-more-vertical" variant="ghost" size="xs" />
-         </UDropdownMenu>
-      </template>
-   </UTable>
+  <UTable :columns="columns" :rows="data">
+    <template #actions-data="{ row }">
+      <UDropdownMenu :items="actions(row)">
+        <UButton icon="i-lucide-more-vertical" variant="ghost" size="xs" />
+      </UDropdownMenu>
+    </template>
+  </UTable>
 </template>
 ```
 

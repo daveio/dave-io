@@ -6,27 +6,27 @@ updatedAt: 2025-06-15T15:08:31.396503
 workspaceId: wk_RchFGYKiCS
 folderId: fl_q9kKFFBE6G
 authentication:
-  token: ''
+  token: ""
 authenticationType: bearer
 body:
-  text: '{}'
+  text: "{}"
 bodyType: application/json
-description: ''
+description: ""
 headers:
-- enabled: true
-  name: Content-Type
-  value: application/json
-  id: null
-- enabled: true
-  name: Accept
-  value: application/json
-  id: null
+  - enabled: true
+    name: Content-Type
+    value: application/json
+    id: null
+  - enabled: true
+    name: Accept
+    value: application/json
+    id: null
 method: GET
 name: /api/tokens/{}
 sortPriority: 1000.0
 url: ${[baseUrl]}/api/tokens/:uuid
 urlParameters:
-- enabled: true
-  name: :uuid
-  value: <uuid>
-  id: null
+  - enabled: true
+    name: :uuid
+    value: <uuid>
+    id: null

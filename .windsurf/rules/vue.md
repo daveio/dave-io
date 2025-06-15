@@ -14,46 +14,46 @@ This document outlines best practices for Vue.js development, covering various a
 
 - **Component-Based Structure:** Organize components into logical folders based on their functionality or feature. This improves code readability and maintainability.
 
-   src/
-   ├── components/
-   │ ├── Button/
-   │ │ ├── Button.vue
-   │ │ └── Button.spec.js
-   │ ├── Input/
-   │ │ ├── Input.vue
-   │ │ └── Input.spec.js
-   │ └── ...
-   ├── views/
-   │ ├── Home.vue
-   │ ├── About.vue
-   │ └── ...
-   ├── services/
-   │ ├── api.js
-   │ └── auth.js
-   ├── store/
-   │ ├── index.js # Vuex store
-   │ ├── modules/
-   │ │ ├── user.js
-   │ │ └── ...
-   ├── App.vue
-   └── main.js
+  src/
+  ├── components/
+  │ ├── Button/
+  │ │ ├── Button.vue
+  │ │ └── Button.spec.js
+  │ ├── Input/
+  │ │ ├── Input.vue
+  │ │ └── Input.spec.js
+  │ └── ...
+  ├── views/
+  │ ├── Home.vue
+  │ ├── About.vue
+  │ └── ...
+  ├── services/
+  │ ├── api.js
+  │ └── auth.js
+  ├── store/
+  │ ├── index.js # Vuex store
+  │ ├── modules/
+  │ │ ├── user.js
+  │ │ └── ...
+  ├── App.vue
+  └── main.js
 
 - **Feature-Based Structure:** Alternatively, organize files by feature, grouping components, routes, and store modules related to a specific feature.
 
-   src/
-   ├── features/
-   │ ├── user-profile/
-   │ │ ├── components/
-   │ │ │ ├── UserProfile.vue
-   │ │ │ └── ...
-   │ │ ├── routes.js
-   │ │ ├── store.js
-   │ │ └── ...
-   │ ├── shopping-cart/
-   │ │ ├── ...
-   │ └── ...
-   ├── App.vue
-   └── main.js
+  src/
+  ├── features/
+  │ ├── user-profile/
+  │ │ ├── components/
+  │ │ │ ├── UserProfile.vue
+  │ │ │ └── ...
+  │ │ ├── routes.js
+  │ │ ├── store.js
+  │ │ └── ...
+  │ ├── shopping-cart/
+  │ │ ├── ...
+  │ └── ...
+  ├── App.vue
+  └── main.js
 
 ### 1.2. File Naming Conventions
 

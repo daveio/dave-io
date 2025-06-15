@@ -6,21 +6,21 @@ updatedAt: 2025-06-15T15:10:04.923480
 workspaceId: wk_RchFGYKiCS
 folderId: fl_HEYTYWdErh
 authentication:
-  token: ''
+  token: ""
 authenticationType: bearer
 body:
-  text: '{}'
+  text: "{}"
 bodyType: application/json
-description: ''
+description: ""
 headers:
-- enabled: true
-  name: Content-Type
-  value: application/json
-  id: null
-- enabled: true
-  name: Accept
-  value: application/json
-  id: null
+  - enabled: true
+    name: Content-Type
+    value: application/json
+    id: null
+  - enabled: true
+    name: Accept
+    value: application/json
+    id: null
 method: POST
 name: /api/ai/tickets/description
 sortPriority: 0.0

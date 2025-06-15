@@ -14,39 +14,39 @@ This document outlines best practices for using Vitest to create reliable, maint
 
 - **Keep tests close to the source code:** Place test files in the same directory as the components or modules they test. This improves discoverability and maintainability.
 
-   src/
-   components/
-   MyComponent.vue
-   MyComponent.spec.ts
-   MyComponent.test.ts # Alternative naming
-   utils/
-   math.ts
-   math.test.ts
-   App.vue
-   App.spec.ts
+  src/
+  components/
+  MyComponent.vue
+  MyComponent.spec.ts
+  MyComponent.test.ts # Alternative naming
+  utils/
+  math.ts
+  math.test.ts
+  App.vue
+  App.spec.ts
 
 - **Use a dedicated `tests` directory for end-to-end tests or shared utilities:** For larger projects, a `tests` directory at the root level can house end-to-end tests, integration tests that require a specific environment, or shared testing utilities.
 
-   tests/
-   e2e/
-   specs/
-   home.spec.ts
-   support/
-   commands.ts
-   unit/
-   utils.test.ts # Tests for general utilities
-   integration/
-   db.setup.ts # Setup for integration tests
-   src/
-   ...
+  tests/
+  e2e/
+  specs/
+  home.spec.ts
+  support/
+  commands.ts
+  unit/
+  utils.test.ts # Tests for general utilities
+  integration/
+  db.setup.ts # Setup for integration tests
+  src/
+  ...
 
 ### 1.2 File Naming Conventions
 
 - **Use consistent naming:** Adopt a consistent naming scheme for test files. Common conventions include:
 
-   - `[component/module].spec.ts`
-   - `[component/module].test.ts`
-   - `[component/module].e2e.ts` (for end-to-end tests)
+  - `[component/module].spec.ts`
+  - `[component/module].test.ts`
+  - `[component/module].e2e.ts` (for end-to-end tests)
 
 - **Be descriptive:** Name test files to clearly indicate what they are testing. For example, `MyComponent.props.spec.ts` might test specific props of `MyComponent`.
 
@@ -54,22 +54,22 @@ This document outlines best practices for using Vitest to create reliable, maint
 
 - **Group related tests:** Organize tests into modules using `describe` blocks. This improves readability and helps structure test output.
 
-   typescript
-   import { describe, it, expect } from 'vitest';
-   import { add } from './math';
+  typescript
+  import { describe, it, expect } from 'vitest';
+  import { add } from './math';
 
-   describe('Math functions', () => {
-   describe('add', () => {
-   it('should add two numbers correctly', () => {
-   expect(add(2, 3)).toBe(5);
-   });
+  describe('Math functions', () => {
+  describe('add', () => {
+  it('should add two numbers correctly', () => {
+  expect(add(2, 3)).toBe(5);
+  });
 
          it('should handle negative numbers', () => {
            expect(add(-1, 1)).toBe(0);
          });
 
-   });
-   });
+  });
+  });
 
 ### 1.4 Component Architecture
 
@@ -83,21 +83,21 @@ This document outlines best practices for using Vitest to create reliable, maint
 
 - **Mock dynamic imports:** Use Vitest's mocking capabilities to simulate dynamic imports during testing.
 
-   typescript
-   import { describe, it, expect, vi } from 'vitest';
+  typescript
+  import { describe, it, expect, vi } from 'vitest';
 
-   describe('Dynamic import', () => {
-   it('should mock dynamic import', async () => {
-   const mockModule = { value: 'mocked' };
-   vi.mock('./dynamic-module', () => ({
-   default: mockModule,
-   }));
+  describe('Dynamic import', () => {
+  it('should mock dynamic import', async () => {
+  const mockModule = { value: 'mocked' };
+  vi.mock('./dynamic-module', () => ({
+  default: mockModule,
+  }));
 
          const dynamicModule = await import('./dynamic-module');
          expect(dynamicModule.default).toBe(mockModule);
 
-   });
-   });
+  });
+  });
 
 ## 2. Common Patterns and Anti-patterns
 
@@ -105,18 +105,18 @@ This document outlines best practices for using Vitest to create reliable, maint
 
 - **AAA (Arrange, Act, Assert):** Structure each test case following the AAA pattern for clarity and maintainability.
 
-   typescript
-   it('should add two numbers correctly', () => {
-   // Arrange
-   const a = 2;
-   const b = 3;
+  typescript
+  it('should add two numbers correctly', () => {
+  // Arrange
+  const a = 2;
+  const b = 3;
 
-   // Act
-   const result = add(a, b);
+  // Act
+  const result = add(a, b);
 
-   // Assert
-   expect(result).toBe(5);
-   });
+  // Assert
+  expect(result).toBe(5);
+  });
 
 - **Page Object Model (POM):** For end-to-end tests, use the Page Object Model to abstract away the details of the user interface and make tests more resilient to UI changes. Define dedicated classes representing different pages or components.
 
@@ -126,14 +126,14 @@ This document outlines best practices for using Vitest to create reliable, maint
 
 - **Testing asynchronous code:** Utilize `async/await` and Vitest's `expect.resolves` and `expect.rejects` matchers for testing asynchronous functions.
 
-   typescript
-   it('should resolve with the correct value', async () => {
-   await expect(Promise.resolve(42)).resolves.toBe(42);
-   });
+  typescript
+  it('should resolve with the correct value', async () => {
+  await expect(Promise.resolve(42)).resolves.toBe(42);
+  });
 
-   it('should reject with an error', async () => {
-   await expect(Promise.reject(new Error('Something went wrong'))).rejects.toThrow('Something went wrong');
-   });
+  it('should reject with an error', async () => {
+  await expect(Promise.reject(new Error('Something went wrong'))).rejects.toThrow('Something went wrong');
+  });
 
 ### 2.3 Anti-patterns and Code Smells to Avoid
 
@@ -151,21 +151,21 @@ This document outlines best practices for using Vitest to create reliable, maint
 
 - **Mock store actions/getters:** Mock actions and getters to control the state during testing and verify that they are called correctly.
 
-   typescript
-   import { describe, it, expect, vi } from 'vitest';
-   import { useStore } from './store';
+  typescript
+  import { describe, it, expect, vi } from 'vitest';
+  import { useStore } from './store';
 
-   describe('Store actions', () => {
-   it('should dispatch the correct action', () => {
-   const store = useStore();
-   const mockAction = vi.fn();
-   store.dispatch = mockAction;
+  describe('Store actions', () => {
+  it('should dispatch the correct action', () => {
+  const store = useStore();
+  const mockAction = vi.fn();
+  store.dispatch = mockAction;
 
          store.commit('increment');
          expect(mockAction).toHaveBeenCalledWith('increment');
 
-   });
-   });
+  });
+  });
 
 ### 2.5 Error Handling Patterns
 
@@ -179,21 +179,21 @@ This document outlines best practices for using Vitest to create reliable, maint
 
 - **Run tests in parallel:** Vitest supports running tests in parallel. Enable this feature to speed up test execution.
 
-   json
-   // vitest.config.ts
-   import { defineConfig } from 'vitest/config'
+  json
+  // vitest.config.ts
+  import { defineConfig } from 'vitest/config'
 
-   export default defineConfig({
-   test: {
-   threads: true, // Enable parallel execution
-   },
-   })
+  export default defineConfig({
+  test: {
+  threads: true, // Enable parallel execution
+  },
+  })
 
 - **Use `--changed` and `--related` flags:** When running tests, use the `--changed` flag to only run tests that have changed since the last commit or the `--related` flag to run tests related to specific files.
 
-   bash
-   vitest --changed
-   vitest --related src/components/MyComponent.vue
+  bash
+  vitest --changed
+  vitest --related src/components/MyComponent.vue
 
 - **Optimize test setup:** Minimize the amount of setup required for each test. Use `beforeAll` and `afterAll` hooks to perform setup and teardown operations once for each test suite, rather than for each test case.
 
@@ -207,14 +207,14 @@ This document outlines best practices for using Vitest to create reliable, maint
 
 - **Use shallow rendering:** When testing components, use shallow rendering to avoid rendering the entire component tree. This can significantly improve test performance.
 
-   typescript
-   import { shallowMount } from '@vue/test-utils';
-   import MyComponent from './MyComponent.vue';
+  typescript
+  import { shallowMount } from '@vue/test-utils';
+  import MyComponent from './MyComponent.vue';
 
-   it('should render correctly', () => {
-   const wrapper = shallowMount(MyComponent);
-   expect(wrapper.exists()).toBe(true);
-   });
+  it('should render correctly', () => {
+  const wrapper = shallowMount(MyComponent);
+  expect(wrapper.exists()).toBe(true);
+  });
 
 ### 3.4 Bundle Size Optimization
 

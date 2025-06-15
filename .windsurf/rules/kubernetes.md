@@ -13,15 +13,15 @@ This document outlines a collection of guidelines, style suggestions, and tips f
 ### 1.1 Directory Structure
 
 - **Root Level:**
-   - `cmd/`: Main application entry points. Each subdirectory represents a separate command-line tool or service.
-   - `pkg/`: Reusable libraries and components that can be imported by other projects.
-   - `internal/`: Private code that should not be imported by external projects. Enforces encapsulation.
-   - `api/`: API definitions, including protobuf files and OpenAPI specifications.
-   - `config/`: Configuration files, such as YAML manifests, Kustomize configurations, and Helm charts.
-   - `scripts/`: Utility scripts for building, testing, and deploying the application.
-   - `docs/`: Documentation for the project.
-   - `examples/`: Example usage of the library or application.
-   - `vendor/`: (If using `go modules` without external dependency management) Contains vendored dependencies. Generally discouraged in modern Go with `go modules`.
+  - `cmd/`: Main application entry points. Each subdirectory represents a separate command-line tool or service.
+  - `pkg/`: Reusable libraries and components that can be imported by other projects.
+  - `internal/`: Private code that should not be imported by external projects. Enforces encapsulation.
+  - `api/`: API definitions, including protobuf files and OpenAPI specifications.
+  - `config/`: Configuration files, such as YAML manifests, Kustomize configurations, and Helm charts.
+  - `scripts/`: Utility scripts for building, testing, and deploying the application.
+  - `docs/`: Documentation for the project.
+  - `examples/`: Example usage of the library or application.
+  - `vendor/`: (If using `go modules` without external dependency management) Contains vendored dependencies. Generally discouraged in modern Go with `go modules`.
 - **Component-Specific Directories:** Inside `pkg/` or `internal/`, organize code by component or module. Each component should have its own directory with clear separation of concerns.
 
 Example:

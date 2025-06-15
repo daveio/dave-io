@@ -6,24 +6,24 @@ updatedAt: 2025-06-15T15:10:34.337715
 workspaceId: wk_RchFGYKiCS
 folderId: fl_b2ZLm3aPm3
 authentication:
-  token: ''
+  token: ""
 authenticationType: bearer
 body:
   form:
-  - enabled: true
-    name: image
-    value: ''
+    - enabled: true
+      name: image
+      value: ""
 bodyType: multipart/form-data
-description: ''
+description: ""
 headers:
-- enabled: true
-  name: Content-Type
-  value: multipart/form-data
-  id: null
-- enabled: true
-  name: Accept
-  value: application/json
-  id: null
+  - enabled: true
+    name: Content-Type
+    value: multipart/form-data
+    id: null
+  - enabled: true
+    name: Accept
+    value: application/json
+    id: null
 method: POST
 name: /api/images/optimise
 sortPriority: 0.0

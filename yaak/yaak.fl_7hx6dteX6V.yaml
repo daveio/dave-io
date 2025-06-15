@@ -7,7 +7,7 @@ workspaceId: wk_RchFGYKiCS
 folderId: fl_SnZCpoHz6i
 authentication: {}
 authenticationType: null
-description: ''
+description: ""
 headers: []
 name: /api/ai/alt
 sortPriority: 0.0

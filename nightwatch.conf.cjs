@@ -36,7 +36,7 @@ module.exports = {
 
   test_workers: {
     enabled: true,
-    workers: "auto"
+    workers: "auto",
   },
 
   test_settings: {
@@ -47,30 +47,30 @@ module.exports = {
       screenshots: {
         enabled: false,
         path: "screens",
-        on_failure: true
+        on_failure: true,
       },
 
       desiredCapabilities: {
-        browserName: "firefox"
+        browserName: "firefox",
       },
 
       webdriver: {
         start_process: true,
-        server_path: ""
-      }
+        server_path: "",
+      },
     },
 
     safari: {
       desiredCapabilities: {
         browserName: "safari",
         alwaysMatch: {
-          acceptInsecureCerts: false
-        }
+          acceptInsecureCerts: false,
+        },
       },
       webdriver: {
         start_process: true,
-        server_path: ""
-      }
+        server_path: "",
+      },
     },
 
     firefox: {
@@ -81,8 +81,8 @@ module.exports = {
           args: [
             // '-headless',
             // '-verbose'
-          ]
-        }
+          ],
+        },
       },
       webdriver: {
         start_process: true,
@@ -90,8 +90,8 @@ module.exports = {
         cli_args: [
           // very verbose geckodriver logs
           // '-vv'
-        ]
-      }
+        ],
+      },
     },
 
     chrome: {
@@ -107,8 +107,8 @@ module.exports = {
             //'--ignore-certificate-errors',
             //'--allow-insecure-localhost',
             //'--headless'
-          ]
-        }
+          ],
+        },
       },
 
       webdriver: {
@@ -116,8 +116,8 @@ module.exports = {
         server_path: "",
         cli_args: [
           // '--verbose'
-        ]
-      }
+        ],
+      },
     },
 
     edge: {
@@ -128,8 +128,8 @@ module.exports = {
           // More info on EdgeDriver: https://docs.microsoft.com/en-us/microsoft-edge/webdriver-chromium/capabilities-edge-options
           args: [
             //'--headless'
-          ]
-        }
+          ],
+        },
       },
 
       webdriver: {
@@ -139,8 +139,8 @@ module.exports = {
         server_path: "",
         cli_args: [
           // '--verbose'
-        ]
-      }
+        ],
+      },
     },
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -159,15 +159,15 @@ module.exports = {
         // define cucumber specific options
         options: {
           //set the feature path
-          feature_path: "node_modules/nightwatch/examples/cucumber-js/*/*.feature"
+          feature_path: "node_modules/nightwatch/examples/cucumber-js/*/*.feature",
 
           // start the webdriver session automatically (enabled by default)
           // auto_start_session: true
 
           // use parallel execution in Cucumber
           // workers: 2 // set number of workers to use (can also be defined in the cli as --workers=2
-        }
-      }
+        },
+      },
     },
 
     //////////////////////////////////////////////////////////////////////////////////
@@ -181,33 +181,33 @@ module.exports = {
     browserstack: {
       selenium: {
         host: "hub.browserstack.com",
-        port: 443
+        port: 443,
       },
       // More info on configuring capabilities can be found on:
       // https://www.browserstack.com/automate/capabilities?tag=selenium-4
       desiredCapabilities: {
         "bstack:options": {
           userName: "${BROWSERSTACK_USERNAME}",
-          accessKey: "${BROWSERSTACK_ACCESS_KEY}"
-        }
+          accessKey: "${BROWSERSTACK_ACCESS_KEY}",
+        },
       },
 
       disable_error_log: true,
       webdriver: {
         timeout_options: {
           timeout: 60000,
-          retry_attempts: 3
+          retry_attempts: 3,
         },
         keep_alive: true,
-        start_process: false
-      }
+        start_process: false,
+      },
     },
 
     "browserstack.local": {
       extends: "browserstack",
       desiredCapabilities: {
-        "browserstack.local": true
-      }
+        "browserstack.local": true,
+      },
     },
 
     "browserstack.chrome": {
@@ -215,45 +215,45 @@ module.exports = {
       desiredCapabilities: {
         browserName: "chrome",
         chromeOptions: {
-          w3c: true
-        }
-      }
+          w3c: true,
+        },
+      },
     },
 
     "browserstack.firefox": {
       extends: "browserstack",
       desiredCapabilities: {
-        browserName: "firefox"
-      }
+        browserName: "firefox",
+      },
     },
 
     "browserstack.ie": {
       extends: "browserstack",
       desiredCapabilities: {
         browserName: "internet explorer",
-        browserVersion: "11.0"
-      }
+        browserVersion: "11.0",
+      },
     },
 
     "browserstack.safari": {
       extends: "browserstack",
       desiredCapabilities: {
-        browserName: "safari"
-      }
+        browserName: "safari",
+      },
     },
 
     "browserstack.local_chrome": {
       extends: "browserstack.local",
       desiredCapabilities: {
-        browserName: "chrome"
-      }
+        browserName: "chrome",
+      },
     },
 
     "browserstack.local_firefox": {
       extends: "browserstack.local",
       desiredCapabilities: {
-        browserName: "firefox"
-      }
+        browserName: "firefox",
+      },
     },
     //////////////////////////////////////////////////////////////////////////////////
     // Configuration for when using the SauceLabs cloud service                      |
@@ -265,7 +265,7 @@ module.exports = {
     saucelabs: {
       selenium: {
         host: "ondemand.saucelabs.com",
-        port: 443
+        port: 443,
       },
       // More info on configuring capabilities can be found on:
       // https://docs.saucelabs.com/dev/test-configuration-options/
@@ -273,18 +273,18 @@ module.exports = {
         "sauce:options": {
           username: "${SAUCE_USERNAME}",
           accessKey: "${SAUCE_ACCESS_KEY}",
-          screenResolution: "1280x1024"
+          screenResolution: "1280x1024",
           // https://docs.saucelabs.com/dev/cli/sauce-connect-proxy/#--region
           // region: 'us-west-1'
           // https://docs.saucelabs.com/dev/test-configuration-options/#tunnelidentifier
           // parentTunnel: '',
           // tunnelIdentifier: '',
-        }
+        },
       },
       disable_error_log: false,
       webdriver: {
-        start_process: false
-      }
+        start_process: false,
+      },
     },
     "saucelabs.chrome": {
       extends: "saucelabs",
@@ -295,9 +295,9 @@ module.exports = {
         acceptSslCerts: true,
         timeZone: "London",
         chromeOptions: {
-          w3c: true
-        }
-      }
+          w3c: true,
+        },
+      },
     },
     "saucelabs.firefox": {
       extends: "saucelabs",
@@ -306,8 +306,8 @@ module.exports = {
         browserVersion: "latest",
         javascriptEnabled: true,
         acceptSslCerts: true,
-        timeZone: "London"
-      }
+        timeZone: "London",
+      },
     },
     //////////////////////////////////////////////////////////////////////////////////
     // Configuration for when using the Selenium service, either locally or remote,  |
@@ -324,12 +324,12 @@ module.exports = {
         cli_args: {
           //'webdriver.gecko.driver': '',
           //'webdriver.chrome.driver': ''
-        }
+        },
       },
       webdriver: {
         start_process: false,
-        default_path_prefix: "/wd/hub"
-      }
+        default_path_prefix: "/wd/hub",
+      },
     },
 
     "selenium.chrome": {
@@ -337,9 +337,9 @@ module.exports = {
       desiredCapabilities: {
         browserName: "chrome",
         chromeOptions: {
-          w3c: true
-        }
-      }
+          w3c: true,
+        },
+      },
     },
 
     "selenium.firefox": {
@@ -350,9 +350,9 @@ module.exports = {
           args: [
             // '-headless',
             // '-verbose'
-          ]
-        }
-      }
-    }
-  }
-}
+          ],
+        },
+      },
+    },
+  },
+};

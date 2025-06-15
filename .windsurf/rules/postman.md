@@ -16,41 +16,41 @@ Effective organization is crucial for maintainability and collaboration. While P
 - **Collections:** Group related API requests into collections. Each collection should represent a specific feature or API domain.
 - **Folders:** Organize requests within collections using folders. Folders can represent different workflows or API endpoints. For example:
 
-   MyProject
-   └── Collections
-   └── User Authentication
-   ├── Register User
-   ├── Login User
-   ├── Forgot Password
-   └── Reset Password
+  MyProject
+  └── Collections
+  └── User Authentication
+  ├── Register User
+  ├── Login User
+  ├── Forgot Password
+  └── Reset Password
 
 - **Environment Variables:** Use environments to manage different configurations (development, staging, production) without hardcoding sensitive information.
 - **File Naming Conventions:** Use consistent and descriptive names for collections, folders, and requests.
-   - `Collection`: `[ProjectName] - [APIDomain] API Tests` (e.g., `ECommerce - User Authentication API Tests`)
-   - `Folder`: `[Endpoint]` or `[Workflow]` (e.g., `/users` or `Register User Workflow`)
-   - `Request`: `[HTTPMethod] [EndpointDescription]` (e.g., `POST Register User`)
+  - `Collection`: `[ProjectName] - [APIDomain] API Tests` (e.g., `ECommerce - User Authentication API Tests`)
+  - `Folder`: `[Endpoint]` or `[Workflow]` (e.g., `/users` or `Register User Workflow`)
+  - `Request`: `[HTTPMethod] [EndpointDescription]` (e.g., `POST Register User`)
 
 ## 2. Common Patterns and Anti-patterns
 
 - **Environment-Specific Variables:** Use environment variables to store values that change based on the environment (e.g., API URLs, authentication tokens). Create separate environments for development, staging, and production.
 
-   - **Pattern:** Create environment variables for the base URL, API keys, and other environment-specific settings.
-   - **Anti-pattern:** Hardcoding URLs or API keys directly into requests.
+  - **Pattern:** Create environment variables for the base URL, API keys, and other environment-specific settings.
+  - **Anti-pattern:** Hardcoding URLs or API keys directly into requests.
 
 - **Data-Driven Testing:** Use data-driven testing to run the same request multiple times with different data sets. This can be achieved by importing data from CSV or JSON files.
 
-   - **Pattern:** Use the Collection Runner to iterate through data files and automatically populate request parameters.
-   - **Anti-pattern:** Manually creating multiple requests with slightly different data.
+  - **Pattern:** Use the Collection Runner to iterate through data files and automatically populate request parameters.
+  - **Anti-pattern:** Manually creating multiple requests with slightly different data.
 
 - **Reusing Code with Pre-request Scripts and Tests:** Use pre-request scripts to dynamically generate request parameters or perform setup tasks. Use test scripts to validate API responses and set variables for subsequent requests.
 
-   - **Pattern:** Use pre-request scripts to generate authentication tokens or timestamps. Use test scripts to extract data from responses and store them in environment variables for use in other requests.
-   - **Anti-pattern:** Duplicating the same code in multiple requests.
+  - **Pattern:** Use pre-request scripts to generate authentication tokens or timestamps. Use test scripts to extract data from responses and store them in environment variables for use in other requests.
+  - **Anti-pattern:** Duplicating the same code in multiple requests.
 
 - **Error Handling:** Implement robust error handling to gracefully handle unexpected API responses or network issues.
 
-   - **Pattern:** Check for error status codes (e.g., 4xx, 5xx) in your test scripts and log detailed error messages.
-   - **Anti-pattern:** Ignoring error responses or assuming that all requests will succeed.
+  - **Pattern:** Check for error status codes (e.g., 4xx, 5xx) in your test scripts and log detailed error messages.
+  - **Anti-pattern:** Ignoring error responses or assuming that all requests will succeed.
 
 ## 3. Performance Considerations
 
@@ -63,15 +63,15 @@ Effective organization is crucial for maintainability and collaboration. While P
 
 - **Input Validation:** While Postman itself doesn't directly handle server-side input validation, your tests should validate that the API responds appropriately to invalid input.
 
-   - **Pattern:** Send requests with invalid or malicious input and verify that the API returns appropriate error messages and status codes.
+  - **Pattern:** Send requests with invalid or malicious input and verify that the API returns appropriate error messages and status codes.
 
 - **Authentication and Authorization:** Implement secure authentication and authorization mechanisms to protect your APIs.
 
-   - **Pattern:** Use environment variables to store API keys, tokens, and other credentials. Implement authentication flows (e.g., OAuth 2.0) in your collections.
-   - **Anti-pattern:** Hardcoding credentials directly into requests or storing them in plain text.
+  - **Pattern:** Use environment variables to store API keys, tokens, and other credentials. Implement authentication flows (e.g., OAuth 2.0) in your collections.
+  - **Anti-pattern:** Hardcoding credentials directly into requests or storing them in plain text.
 
 - **Data Protection:** Ensure that sensitive data is encrypted in transit and at rest.
-   - **Pattern:** Use HTTPS to encrypt communication between Postman and your APIs. Implement data masking or redaction in your test scripts to prevent sensitive data from being exposed.
+  - **Pattern:** Use HTTPS to encrypt communication between Postman and your APIs. Implement data masking or redaction in your test scripts to prevent sensitive data from being exposed.
 
 ## 5. Testing Approaches
 
@@ -80,12 +80,12 @@ Effective organization is crucial for maintainability and collaboration. While P
 - **End-to-End Testing:** Create workflows to test the entire user experience, from start to finish. This verifies that all parts of your application are working together correctly.
 - **Test Organization:**
 
-   - Group tests by functionality.
-   - Use descriptive names for tests.
-   - Keep tests small and focused.
+  - Group tests by functionality.
+  - Use descriptive names for tests.
+  - Keep tests small and focused.
 
 - **Mocking and Stubbing:**
-   - Use Postman's mock server feature to create mock APIs for testing purposes. This allows you to test your application without relying on a live API.
+  - Use Postman's mock server feature to create mock APIs for testing purposes. This allows you to test your application without relying on a live API.
 
 ## 6. Common Pitfalls and Gotchas
 
@@ -101,5 +101,5 @@ Effective organization is crucial for maintainability and collaboration. While P
 - **Version Control (Git):** Store your Postman collections in a Git repository to track changes and collaborate with team members.
 - **Linting and Formatting:** While Postman doesn't have built-in linting, ensure consistency in request structures and test scripts.
 
-   - **Build Configuration:** Use Newman with CI/CD tools (Jenkins, GitLab CI, GitHub Actions) to automate API testing.
-   - **Deployment:** Deploy API specifications and Postman collections alongside your API for easier testing and documentation.
+  - **Build Configuration:** Use Newman with CI/CD tools (Jenkins, GitLab CI, GitHub Actions) to automate API testing.
+  - **Deployment:** Deploy API specifications and Postman collections alongside your API for easier testing and documentation.

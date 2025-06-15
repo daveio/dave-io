@@ -6,27 +6,27 @@ updatedAt: 2025-06-15T15:21:05.885486
 workspaceId: wk_RchFGYKiCS
 folderId: fl_PEbNqjCji7
 authentication:
-  token: ''
+  token: ""
 authenticationType: bearer
 body:
-  text: '{}'
+  text: "{}"
 bodyType: null
-description: ''
+description: ""
 headers:
-- enabled: true
-  name: Accept
-  value: application/json
-  id: null
+  - enabled: true
+    name: Accept
+    value: application/json
+    id: null
 method: GET
 name: /go/{}
 sortPriority: 0.0
 url: ${[baseUrl]}/go/:slug
 urlParameters:
-- enabled: true
-  name: :slug
-  value: mastodon
-  id: S5uCe5JiZK
-- enabled: true
-  name: ''
-  value: ''
-  id: QZu62d57Xt
+  - enabled: true
+    name: :slug
+    value: mastodon
+    id: S5uCe5JiZK
+  - enabled: true
+    name: ""
+    value: ""
+    id: QZu62d57Xt

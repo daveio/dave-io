@@ -8,8 +8,8 @@ name: dave-io
 public: true
 base: false
 variables:
-- enabled: true
-  name: baseUrl
-  value: https://dave.io
-  id: h2fq0ES9wn
+  - enabled: true
+    name: baseUrl
+    value: https://dave.io
+    id: h2fq0ES9wn
 color: null

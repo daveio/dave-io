@@ -11,28 +11,28 @@ This document outlines the standard procedure to follow after making any changes
 ## Testing
 
 - Run the test suite to ensure all tests pass
-   ```bash
-   mise test
-   ```
+  ```bash
+  mise test
+  ```
 - If tests fail, fix the issues by either:
-   - Updating the code to match the test expectations
-   - Updating the tests to match the new code behavior (if the changes were intentional)
+  - Updating the code to match the test expectations
+  - Updating the tests to match the new code behavior (if the changes were intentional)
 - Remember that the codebase requires Python 3.13+
 
 ## Code Quality Checks
 
 - Run Trunk checks to identify and fix issues:
-   ```bash
-   trunk check -a --show-existing
-   ```
+  ```bash
+  trunk check -a --show-existing
+  ```
 - Use the `--show-existing` flag to see all issues, including those that might be ignored by default
 - For targeted checks on specific files:
-   ```bash
-   trunk check --show-existing FILENAME
-   ```
+  ```bash
+  trunk check --show-existing FILENAME
+  ```
 - Fix issues using appropriate methods:
-   - For formatting issues: `trunk fmt FILENAME` or `trunk fmt -a`
-   - For linting issues: attempt fix with `trunk check --fix FILENAME` or `trunk check --fix -a`
+  - For formatting issues: `trunk fmt FILENAME` or `trunk fmt -a`
+  - For linting issues: attempt fix with `trunk check --fix FILENAME` or `trunk check --fix -a`
 
 ## Documentation Updates
 

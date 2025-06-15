@@ -6,16 +6,16 @@ updatedAt: 2025-06-15T15:09:37.876794
 workspaceId: wk_RchFGYKiCS
 folderId: fl_7hx6dteX6V
 authentication:
-  token: ''
+  token: ""
 authenticationType: bearer
 body: {}
 bodyType: null
-description: ''
+description: ""
 headers:
-- enabled: true
-  name: Accept
-  value: application/json
-  id: null
+  - enabled: true
+    name: Accept
+    value: application/json
+    id: null
 method: POST
 name: /api/ai/alt
 sortPriority: 0.0

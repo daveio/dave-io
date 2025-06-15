@@ -228,7 +228,7 @@ function initMatrixRain() {
 
   document.body.appendChild(canvas)
 
-  const resizeCanvas = function() {
+  const resizeCanvas = () => {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
   }
@@ -241,7 +241,7 @@ function initMatrixRain() {
   const columns = canvas.width / fontSize
   const drops = Array(Math.floor(columns)).fill(1)
 
-  const draw = function() {
+  const draw = () => {
     ctx.fillStyle = "rgba(0, 0, 0, 0.05)"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 

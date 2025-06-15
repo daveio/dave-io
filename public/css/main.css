@@ -1,11 +1,11 @@
-@import 'tailwindcss';
-@import '@nuxt/ui';
-@import './gradients.css';
+@import "tailwindcss";
+@import "@nuxt/ui";
+@import "./gradients.css";
 
 @theme {
-  --font-mono: 'Victor Mono', 'monospace';
-  --font-subtitle: 'Sono', 'sans-serif';
-  --font-display: 'Sixtyfour Convergence', 'sans-serif';
+  --font-mono: "Victor Mono", "monospace";
+  --font-subtitle: "Sono", "sans-serif";
+  --font-display: "Sixtyfour Convergence", "sans-serif";
   --gradient-rainbow: linear-gradient(
     to right,
     #e87777 35%,

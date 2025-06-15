@@ -2,56 +2,81 @@
 <!-- trunk-ignore-all(semgrep/html.security.audit.missing-integrity.missing-integrity): scratchpad -->
 <html lang="en" data-theme="cyberpunk">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>dave.io - because 'just a website' is boring</title>
         <meta name="description"
-              content="Weapons-grade DevOps engineer, developer, and tinkerer - dave.io">
+              content="Weapons-grade DevOps engineer, developer, and tinkerer - dave.io" />
         <meta name="keywords"
-              content="DevOps, developer, non-binary, they/them, engineer, cyberpunk">
+              content="DevOps, developer, non-binary, they/them, engineer, cyberpunk" />
         <!-- CDN Links for Immediate Testing -->
         <link href="https://cdn.jsdelivr.net/npm/daisyui@5"
               rel="stylesheet"
               type="text/css" />
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Sixtyfour+Convergence:wght@400&display=swap"
-              rel="stylesheet">
+              rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Sono:wght@200;300;400;500;600;700;800&display=swap"
-              rel="stylesheet">
+              rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Victor+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
-              rel="stylesheet">
+              rel="stylesheet" />
         <style>
-        /* Custom styles for CDN version */
-        :root {
-            --font-display: 'Sixtyfour Convergence', cursive;
-            --font-subtitle: 'Sono', sans-serif;
-            --font-mono: 'Victor Mono', monospace;
-        }
+      /* Custom styles for CDN version */
+      :root {
+        --font-display: "Sixtyfour Convergence", cursive;
+        --font-subtitle: "Sono", sans-serif;
+        --font-mono: "Victor Mono", monospace;
+      }
 
-        .rainbow-gradient {
-            background: linear-gradient(90deg, #f87171 0%, #fbbf24 16.66%, #34d399 33.33%, #60a5fa 50%, #a78bfa 66.66%, #f472b6 83.33%, #f87171 100%);
-            background-size: 200% 100%;
-            animation: rainbow-flow 3s ease-in-out infinite;
-        }
+      .rainbow-gradient {
+        background: linear-gradient(
+          90deg,
+          #f87171 0%,
+          #fbbf24 16.66%,
+          #34d399 33.33%,
+          #60a5fa 50%,
+          #a78bfa 66.66%,
+          #f472b6 83.33%,
+          #f87171 100%
+        );
+        background-size: 200% 100%;
+        animation: rainbow-flow 3s ease-in-out infinite;
+      }
 
-        @keyframes rainbow-flow {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+      @keyframes rainbow-flow {
+        0%,
+        100% {
+          background-position: 0% 50%;
         }
-
-        .animate-pulse-slow {
-            animation: pulse-slow 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        50% {
+          background-position: 100% 50%;
         }
+      }
 
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.05); }
+      .animate-pulse-slow {
+        animation: pulse-slow 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+
+      @keyframes pulse-slow {
+        0%,
+        100% {
+          opacity: 0.3;
+          transform: scale(1);
         }
+        50% {
+          opacity: 0.6;
+          transform: scale(1.05);
+        }
+      }
 
-        .font-display { font-family: var(--font-display); }
-        .font-mono { font-family: var(--font-mono); }
+      .font-display {
+        font-family: var(--font-display);
+      }
+      .font-mono {
+        font-family: var(--font-mono);
+      }
         </style>
     </head>
     <body class="min-h-screen bg-gray-900 text-base-content overflow-x-hidden">
@@ -142,7 +167,7 @@
                                     <a href="#"
                                        class="block text-blue-400 hover:text-blue-300 font-mono text-sm hover:scale-105 transition-transform">🔑 Public Key</a>
                                     <a href="#"
-                                       class="block text-blue-400 hover:text-blue-300 font-mono text-sm hover:scale-105 transition-transform">📝 TODO System</a> <!-- trunk-ignore(trunk-toolbox/todo) -->
+                                       class="block text-blue-400 hover:text-blue-300 font-mono text-sm hover:scale-105 transition-transform">📝 TODO System</a>
                                     <a href="#"
                                        class="block text-blue-400 hover:text-blue-300 font-mono text-sm hover:scale-105 transition-transform">🎤 Talks</a>
                                     <a href="#"

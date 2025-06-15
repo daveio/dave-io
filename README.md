@@ -128,28 +128,28 @@ import { recordAPIMetrics } from "~/server/middleware/metrics";
 import { ExampleResponseSchema } from "~/server/utils/schemas";
 
 export default defineEventHandler(async (event) => {
-   try {
-      // Your endpoint logic here
-      const result = { message: "Hello, World!" };
+  try {
+    // Your endpoint logic here
+    const result = { message: "Hello, World!" };
 
-      // Record metrics (always call this on success)
-      recordAPIMetrics(event, 200);
+    // Record metrics (always call this on success)
+    recordAPIMetrics(event, 200);
 
-      // Log request (optional but recommended)
-      logRequest(event, "example", "GET", 200, {
-         customField: "value",
-      });
+    // Log request (optional but recommended)
+    logRequest(event, "example", "GET", 200, {
+      customField: "value",
+    });
 
-      return createApiResponse({
-         result,
-         message: "Example endpoint successful",
-         error: null,
-      });
-   } catch (error) {
-      // Error handling is automatic via createApiResponse
-      console.error("Example endpoint error:", error);
-      throw error;
-   }
+    return createApiResponse({
+      result,
+      message: "Example endpoint successful",
+      error: null,
+    });
+  } catch (error) {
+    // Error handling is automatic via createApiResponse
+    console.error("Example endpoint error:", error);
+    throw error;
+  }
 });
 ```
 
@@ -162,34 +162,34 @@ Add your schemas to `server/utils/schemas.ts`:
 ```typescript
 // Request schema (for POST/PUT endpoints)
 export const ExampleRequestSchema = z
-   .object({
-      name: z.string().min(1).max(100),
-      email: z.string().email(),
-      age: z.number().min(0).max(150).optional(),
-   })
-   .openapi({
-      title: "Example Request",
-      description: "Schema for creating examples",
-   });
+  .object({
+    name: z.string().min(1).max(100),
+    email: z.string().email(),
+    age: z.number().min(0).max(150).optional(),
+  })
+  .openapi({
+    title: "Example Request",
+    description: "Schema for creating examples",
+  });
 
 // Response schema
 export const ExampleResponseSchema = z
-   .object({
-      ok: z.literal(true),
-      result: z.object({
-         id: z.string().uuid(),
-         name: z.string(),
-         email: z.string(),
-         createdAt: z.string(),
-      }),
-      message: z.string(),
-      error: z.null(),
-      timestamp: z.string(),
-   })
-   .openapi({
-      title: "Example Response",
-      description: "Successful example creation response",
-   });
+  .object({
+    ok: z.literal(true),
+    result: z.object({
+      id: z.string().uuid(),
+      name: z.string(),
+      email: z.string(),
+      createdAt: z.string(),
+    }),
+    message: z.string(),
+    error: z.null(),
+    timestamp: z.string(),
+  })
+  .openapi({
+    title: "Example Response",
+    description: "Successful example creation response",
+  });
 
 // Export types
 export type ExampleRequest = z.infer<typeof ExampleRequestSchema>;
@@ -204,32 +204,32 @@ import { readBody } from "h3";
 import { ExampleRequestSchema, ExampleResponseSchema } from "~/server/utils/schemas";
 
 export default defineEventHandler(async (event) => {
-   try {
-      // Parse and validate request body
-      const body = await readBody(event);
-      const validatedData = ExampleRequestSchema.parse(body);
+  try {
+    // Parse and validate request body
+    const body = await readBody(event);
+    const validatedData = ExampleRequestSchema.parse(body);
 
-      // Your business logic
-      const result = {
-         id: crypto.randomUUID(),
-         name: validatedData.name,
-         email: validatedData.email,
-         createdAt: new Date().toISOString(),
-      };
+    // Your business logic
+    const result = {
+      id: crypto.randomUUID(),
+      name: validatedData.name,
+      email: validatedData.email,
+      createdAt: new Date().toISOString(),
+    };
 
-      recordAPIMetrics(event, 201);
+    recordAPIMetrics(event, 201);
 
-      return createApiResponse({
-         result,
-         message: "Example created successfully",
-         error: null,
-      });
-   } catch (error) {
-      if (error instanceof z.ZodError) {
-         throw createApiError(400, "Validation failed", error.errors);
-      }
-      throw error;
-   }
+    return createApiResponse({
+      result,
+      message: "Example created successfully",
+      error: null,
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw createApiError(400, "Validation failed", error.errors);
+    }
+    throw error;
+  }
 });
 ```
 
@@ -253,16 +253,16 @@ Run `bun run generate:openapi` to update `public/openapi.json`.
 import { getValidatedUUID } from "~/server/utils/validation";
 
 export default defineEventHandler(async (event) => {
-   // Automatically validates UUID format and throws 400 if invalid
-   const uuid = getValidatedUUID(event, "uuid");
+  // Automatically validates UUID format and throws 400 if invalid
+  const uuid = getValidatedUUID(event, "uuid");
 
-   // Your logic here
-   const user = await getUserById(uuid);
+  // Your logic here
+  const user = await getUserById(uuid);
 
-   return createApiResponse({
-      result: user,
-      message: "User retrieved successfully",
-   });
+  return createApiResponse({
+    result: user,
+    message: "User retrieved successfully",
+  });
 });
 ```
 
@@ -273,27 +273,27 @@ export default defineEventHandler(async (event) => {
 import { z } from "zod";
 
 const QuerySchema = z.object({
-   page: z.coerce.number().min(1).default(1),
-   limit: z.coerce.number().min(1).max(100).default(20),
-   search: z.string().optional(),
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(20),
+  search: z.string().optional(),
 });
 
 export default defineEventHandler(async (event) => {
-   const query = getQuery(event);
-   const { page, limit, search } = QuerySchema.parse(query);
+  const query = getQuery(event);
+  const { page, limit, search } = QuerySchema.parse(query);
 
-   // Your pagination logic
-   const users = await getUsers({ page, limit, search });
+  // Your pagination logic
+  const users = await getUsers({ page, limit, search });
 
-   return createApiResponse({
-      result: users,
-      meta: {
-         page,
-         per_page: limit,
-         total: users.total,
-         total_pages: Math.ceil(users.total / limit),
-      },
-   });
+  return createApiResponse({
+    result: users,
+    meta: {
+      page,
+      per_page: limit,
+      total: users.total,
+      total_pages: Math.ceil(users.total / limit),
+    },
+  });
 });
 ```
 
@@ -330,16 +330,16 @@ The JWT system uses hierarchical permissions where parent permissions grant acce
 import { requireAPIAuth } from "~/server/utils/auth-helpers";
 
 export default defineEventHandler(async (event) => {
-   // Requires "api" permission (or higher)
-   const auth = await requireAPIAuth(event);
+  // Requires "api" permission (or higher)
+  const auth = await requireAPIAuth(event);
 
-   // Access user info
-   const userId = auth.payload?.sub;
-   const tokenId = auth.payload?.jti;
+  // Access user info
+  const userId = auth.payload?.sub;
+  const tokenId = auth.payload?.jti;
 
-   return createApiResponse({
-      result: { message: "Secure data", userId },
-   });
+  return createApiResponse({
+    result: { message: "Secure data", userId },
+  });
 });
 ```
 
@@ -350,12 +350,12 @@ export default defineEventHandler(async (event) => {
 import { requireAuth } from "~/server/utils/auth-helpers";
 
 export default defineEventHandler(async (event) => {
-   // Requires "admin:users" permission
-   const auth = await requireAuth(event, "admin", "users");
+  // Requires "admin:users" permission
+  const auth = await requireAuth(event, "admin", "users");
 
-   return createApiResponse({
-      result: await getAdminUserList(),
-   });
+  return createApiResponse({
+    result: await getAdminUserList(),
+  });
 });
 ```
 
@@ -375,25 +375,25 @@ requireAdminAuth(event)              // "admin"
 import { extractToken, verifyJWT } from "~/server/utils/auth";
 
 export default defineEventHandler(async (event) => {
-   const token = extractToken(event);
-   if (!token) {
-      throw createApiError(401, "Token required");
-   }
+  const token = extractToken(event);
+  if (!token) {
+    throw createApiError(401, "Token required");
+  }
 
-   const secret = process.env.API_JWT_SECRET;
-   const verification = await verifyJWT(token, secret);
+  const secret = process.env.API_JWT_SECRET;
+  const verification = await verifyJWT(token, secret);
 
-   if (!verification.success) {
-      throw createApiError(401, verification.error);
-   }
+  if (!verification.success) {
+    throw createApiError(401, verification.error);
+  }
 
-   // Custom permission logic
-   const hasSpecialAccess = verification.payload?.sub === "special:user";
-   if (!hasSpecialAccess) {
-      throw createApiError(403, "Special access required");
-   }
+  // Custom permission logic
+  const hasSpecialAccess = verification.payload?.sub === "special:user";
+  if (!hasSpecialAccess) {
+    throw createApiError(403, "Special access required");
+  }
 
-   return createApiResponse({ result: "Special data" });
+  return createApiResponse({ result: "Special data" });
 });
 ```
 
@@ -407,26 +407,26 @@ import { describe, expect, it, beforeEach } from "vitest";
 import { createApiResponse, createApiError } from "~/server/utils/response";
 
 describe("My Feature", () => {
-   beforeEach(() => {
-      // Reset state before each test
-   });
+  beforeEach(() => {
+    // Reset state before each test
+  });
 
-   it("should handle valid input", () => {
-      const result = createApiResponse({
-         result: { test: "data" },
-         message: "Success",
-      });
+  it("should handle valid input", () => {
+    const result = createApiResponse({
+      result: { test: "data" },
+      message: "Success",
+    });
 
-      expect(result.ok).toBe(true);
-      expect(result.result).toEqual({ test: "data" });
-      expect(result.timestamp).toBeDefined();
-   });
+    expect(result.ok).toBe(true);
+    expect(result.result).toEqual({ test: "data" });
+    expect(result.timestamp).toBeDefined();
+  });
 
-   it("should throw error for invalid input", () => {
-      expect(() => {
-         createApiError(400, "Bad request");
-      }).toThrow();
-   });
+  it("should throw error for invalid input", () => {
+    expect(() => {
+      createApiError(400, "Bad request");
+    }).toThrow();
+  });
 });
 ```
 
@@ -438,30 +438,30 @@ import { SignJWT } from "jose";
 import { verifyJWT, hasPermission } from "~/server/utils/auth";
 
 describe("Authentication", () => {
-   const testSecret = "test-secret-key";
+  const testSecret = "test-secret-key";
 
-   it("should verify valid JWT", async () => {
-      const encoder = new TextEncoder();
-      const secretKey = encoder.encode(testSecret);
+  it("should verify valid JWT", async () => {
+    const encoder = new TextEncoder();
+    const secretKey = encoder.encode(testSecret);
 
-      const token = await new SignJWT({
-         sub: "api:tokens",
-         iat: Math.floor(Date.now() / 1000),
-      })
-         .setProtectedHeader({ alg: "HS256" })
-         .sign(secretKey);
+    const token = await new SignJWT({
+      sub: "api:tokens",
+      iat: Math.floor(Date.now() / 1000),
+    })
+      .setProtectedHeader({ alg: "HS256" })
+      .sign(secretKey);
 
-      const result = await verifyJWT(token, testSecret);
+    const result = await verifyJWT(token, testSecret);
 
-      expect(result.success).toBe(true);
-      expect(result.payload?.sub).toBe("api:tokens");
-   });
+    expect(result.success).toBe(true);
+    expect(result.payload?.sub).toBe("api:tokens");
+  });
 
-   it("should check hierarchical permissions", () => {
-      expect(hasPermission(["api"], "api:tokens")).toBe(true);
-      expect(hasPermission(["api:tokens"], "api")).toBe(false);
-      expect(hasPermission(["*"], "anything")).toBe(true);
-   });
+  it("should check hierarchical permissions", () => {
+    expect(hasPermission(["api"], "api:tokens")).toBe(true);
+    expect(hasPermission(["api:tokens"], "api")).toBe(false);
+    expect(hasPermission(["*"], "anything")).toBe(true);
+  });
 });
 ```
 
@@ -493,28 +493,28 @@ bun run test:api --token "eyJ..."
 import { vi } from "vitest";
 
 describe("Cloudflare Integration", () => {
-   it("should handle AI service", async () => {
-      const mockAI = {
-         run: vi.fn().mockResolvedValue({
-            description: "Test alt text",
-         }),
-      };
+  it("should handle AI service", async () => {
+    const mockAI = {
+      run: vi.fn().mockResolvedValue({
+        description: "Test alt text",
+      }),
+    };
 
-      const mockEnv = { AI: mockAI };
+    const mockEnv = { AI: mockAI };
 
-      // Test your function with mocked AI
-      const result = await generateAltText(mockEnv, imageBuffer);
+    // Test your function with mocked AI
+    const result = await generateAltText(mockEnv, imageBuffer);
 
-      expect(mockAI.run).toHaveBeenCalledWith(
-         "@cf/llava-hf/llava-1.5-7b-hf",
-         expect.objectContaining({
-            image: expect.any(Array),
-            prompt: expect.stringContaining("Describe this image"),
-         }),
-      );
+    expect(mockAI.run).toHaveBeenCalledWith(
+      "@cf/llava-hf/llava-1.5-7b-hf",
+      expect.objectContaining({
+        image: expect.any(Array),
+        prompt: expect.stringContaining("Describe this image"),
+      }),
+    );
 
-      expect(result).toBe("Test alt text");
-   });
+    expect(result).toBe("Test alt text");
+  });
 });
 ```
 
@@ -536,17 +536,17 @@ throw new Error("Something went wrong");
 
 ```typescript
 export default defineEventHandler(async (event) => {
-   try {
-      // Your logic
-   } catch (error) {
-      console.error("Endpoint error:", error);
+  try {
+    // Your logic
+  } catch (error) {
+    console.error("Endpoint error:", error);
 
-      // Record metrics for error tracking
-      recordAPIErrorMetrics(event, error);
+    // Record metrics for error tracking
+    recordAPIErrorMetrics(event, error);
 
-      // Re-throw to let global handler format response
-      throw error;
-   }
+    // Re-throw to let global handler format response
+    throw error;
+  }
 });
 ```
 
@@ -557,15 +557,15 @@ export default defineEventHandler(async (event) => {
 ```typescript
 // Good: Standardized response
 return createApiResponse({
-   result: data,
-   message: "Operation successful",
-   error: null,
+  result: data,
+  message: "Operation successful",
+  error: null,
 });
 
 // Bad: Manual response object
 return {
-   success: true,
-   data: data,
+  success: true,
+  data: data,
 };
 ```
 
@@ -573,13 +573,13 @@ return {
 
 ```typescript
 return createApiResponse({
-   result: items,
-   meta: {
-      total: 150,
-      page: 2,
-      per_page: 20,
-      total_pages: 8,
-   },
+  result: items,
+  meta: {
+    total: 150,
+    page: 2,
+    per_page: 20,
+    total_pages: 8,
+  },
 });
 ```
 
@@ -614,9 +614,9 @@ recordAPIErrorMetrics(event, error);
 
 ```typescript
 logRequest(event, "endpoint-name", "POST", 201, {
-   userId: auth.payload?.sub,
-   itemCount: results.length,
-   processingTime: Date.now() - startTime,
+  userId: auth.payload?.sub,
+  itemCount: results.length,
+  processingTime: Date.now() - startTime,
 });
 ```
 
@@ -629,7 +629,7 @@ import { getCloudflareEnv } from "~/server/utils/cloudflare";
 
 const env = getCloudflareEnv(event);
 if (!env?.AI) {
-   throw createApiError(503, "AI service not available");
+  throw createApiError(503, "AI service not available");
 }
 
 // Use bindings
@@ -657,12 +657,12 @@ const secret = process.env.API_JWT_SECRET;
 ```typescript
 // Bad
 return createApiResponse({
-   result: { ...user, passwordHash, apiKey },
+  result: { ...user, passwordHash, apiKey },
 });
 
 // Good
 return createApiResponse({
-   result: { id: user.id, name: user.name, email: user.email },
+  result: { id: user.id, name: user.name, email: user.email },
 });
 ```
 
@@ -716,8 +716,8 @@ return response
 const cacheKey = `user:${uuid}`;
 let user = await kv.get(cacheKey);
 if (!user) {
-   user = await fetchUserFromDatabase(uuid);
-   await kv.put(cacheKey, user, { expirationTtl: 300 });
+  user = await fetchUserFromDatabase(uuid);
+  await kv.put(cacheKey, user, { expirationTtl: 300 });
 }
 ```
 
@@ -763,17 +763,17 @@ return createApiResponse({ result });
 ```typescript
 // Opportunity: Create reusable image upload handler
 export async function handleImageUpload(event: H3Event, options: ImageUploadOptions) {
-   // Consolidate parseImageUpload, validation, and optimization
+  // Consolidate parseImageUpload, validation, and optimization
 }
 
 // Opportunity: Standardize paginated responses
 export function createPaginatedResponse<T>(items: T[], pagination: PaginationOptions) {
-   // Standard pagination metadata
+  // Standard pagination metadata
 }
 
 // Opportunity: Common async operation wrapper
 export async function withMetrics<T>(event: H3Event, operation: () => Promise<T>): Promise<T> {
-   // Automatic metrics recording and error handling
+  // Automatic metrics recording and error handling
 }
 ```
 
@@ -785,9 +785,9 @@ throw createApiError(400, "Validation failed", details);
 
 // Improved: Structured error metadata
 throw createApiError(400, "Validation failed", {
-   code: "VALIDATION_ERROR",
-   field: "email",
-   details: validationErrors,
+  code: "VALIDATION_ERROR",
+  field: "email",
+  details: validationErrors,
 });
 ```
 
@@ -810,7 +810,7 @@ const values = await kv.getMultiple(keys);
 ```typescript
 // Opportunity: Add caching layer for expensive operations
 export async function withCache<T>(key: string, operation: () => Promise<T>, ttl = 300): Promise<T> {
-   // Check cache, execute if miss, store result
+  // Check cache, execute if miss, store result
 }
 ```
 
@@ -845,14 +845,14 @@ export async function withCache<T>(key: string, operation: () => Promise<T>, ttl
 ```typescript
 // Opportunity: End-to-end type safety
 type ApiEndpoints = {
-   "GET /api/users/{uuid}": {
-      params: { uuid: string };
-      response: UserResponse;
-   };
-   "POST /api/users": {
-      body: CreateUserRequest;
-      response: UserResponse;
-   };
+  "GET /api/users/{uuid}": {
+    params: { uuid: string };
+    response: UserResponse;
+  };
+  "POST /api/users": {
+    body: CreateUserRequest;
+    response: UserResponse;
+  };
 };
 ```
 
@@ -861,9 +861,9 @@ type ApiEndpoints = {
 ```typescript
 // Opportunity: Centralized config validation
 const ConfigSchema = z.object({
-   API_JWT_SECRET: z.string().min(32),
-   CLOUDFLARE_API_TOKEN: z.string(),
-   NODE_ENV: z.enum(["development", "production"]),
+  API_JWT_SECRET: z.string().min(32),
+  CLOUDFLARE_API_TOKEN: z.string(),
+  NODE_ENV: z.enum(["development", "production"]),
 });
 
 export const config = ConfigSchema.parse(process.env);
@@ -915,78 +915,79 @@ Explore complete replacement of current custom JWT authentication system with Cl
 Replace the entire custom JWT system with Cloudflare Access authentication, using service tokens for API-to-API communication and Access application tokens for user authentication.
 
 **Current Implementation:**
+
 ```typescript
 // server/utils/auth.ts - Custom JWT verification
 export async function verifyJWT(token: string, secret: string): Promise<AuthResult> {
-  const encoder = new TextEncoder()
-  const secretKey = encoder.encode(secret)
-  const { payload } = await jwtVerify(token, secretKey)
+  const encoder = new TextEncoder();
+  const secretKey = encoder.encode(secret);
+  const { payload } = await jwtVerify(token, secretKey);
   // Custom validation logic...
 }
 
 // server/utils/auth-helpers.ts - Permission checking
 export async function requireAPIAuth(event: H3Event, resource?: string) {
-  const authFunc = await authorizeEndpoint("api", resource)
-  const auth = await authFunc(event)
+  const authFunc = await authorizeEndpoint("api", resource);
+  const auth = await authFunc(event);
   // Custom hierarchical permission validation...
 }
 ```
 
 **Zero Trust Replacement:**
+
 ```typescript
 // server/utils/zero-trust-auth.ts - New implementation
-import { jwtVerify, createRemoteJWKSet } from 'jose'
+import { jwtVerify, createRemoteJWKSet } from "jose";
 
-const CLOUDFLARE_JWKS = createRemoteJWKSet(
-  new URL('https://your-team.cloudflareaccess.com/cdn-cgi/access/certs')
-)
+const CLOUDFLARE_JWKS = createRemoteJWKSet(new URL("https://your-team.cloudflareaccess.com/cdn-cgi/access/certs"));
 
 export async function verifyAccessToken(token: string): Promise<AccessAuthResult> {
   const { payload } = await jwtVerify(token, CLOUDFLARE_JWKS, {
-    issuer: 'https://your-team.cloudflareaccess.com',
-    audience: 'your-application-aud-tag'
-  })
-  
+    issuer: "https://your-team.cloudflareaccess.com",
+    audience: "your-application-aud-tag",
+  });
+
   return {
     success: true,
     email: payload.email as string,
     sub: payload.sub as string,
-    groups: payload.groups as string[] || []
-  }
+    groups: (payload.groups as string[]) || [],
+  };
 }
 
 // Service token authentication for API-to-API
 export function extractServiceToken(event: H3Event): { clientId: string; clientSecret: string } | null {
-  const clientId = getHeader(event, 'cf-access-client-id')
-  const clientSecret = getHeader(event, 'cf-access-client-secret')
-  
-  if (!clientId || !clientSecret) return null
-  return { clientId, clientSecret }
+  const clientId = getHeader(event, "cf-access-client-id");
+  const clientSecret = getHeader(event, "cf-access-client-secret");
+
+  if (!clientId || !clientSecret) return null;
+  return { clientId, clientSecret };
 }
 
 // Replace hierarchical permissions with Zero Trust policies
 export async function requireAccessAuth(event: H3Event, requiredGroup?: string): Promise<AccessAuthResult> {
-  const token = extractToken(event) || extractAccessCookie(event)
+  const token = extractToken(event) || extractAccessCookie(event);
   if (!token) {
-    throw createApiError(401, "Access token required")
+    throw createApiError(401, "Access token required");
   }
-  
-  const auth = await verifyAccessToken(token)
-  
+
+  const auth = await verifyAccessToken(token);
+
   if (requiredGroup && !auth.groups.includes(requiredGroup)) {
-    throw createApiError(403, `Group ${requiredGroup} required`)
+    throw createApiError(403, `Group ${requiredGroup} required`);
   }
-  
-  return auth
+
+  return auth;
 }
 
 function extractAccessCookie(event: H3Event): string | null {
-  const cookies = parseCookies(event)
-  return cookies.CF_Authorization || null
+  const cookies = parseCookies(event);
+  return cookies.CF_Authorization || null;
 }
 ```
 
 **Breaking Changes Required:**
+
 - Remove `server/utils/auth.ts` completely
 - Replace `server/utils/auth-helpers.ts` with Zero Trust equivalents
 - Update all protected endpoints to use `requireAccessAuth()`
@@ -994,21 +995,22 @@ function extractAccessCookie(event: H3Event): string | null {
 - Replace permission strings with Zero Trust groups
 
 **Zero Trust Configuration:**
+
 ```yaml
 # Zero Trust Application Setup
 application:
   name: "dave.io API"
   domain: "api.dave.io"
   type: "self_hosted"
-  
+
 policies:
   - name: "API Access"
     decision: "allow"
     rules:
       - email_domain: "dave.io"
       - groups: ["api-users", "developers"]
-      
-  - name: "Admin Access"  
+
+  - name: "Admin Access"
     decision: "allow"
     rules:
       - groups: ["admins"]
@@ -1024,82 +1026,84 @@ service_tokens:
 Keep JWT-style authentication but replace custom signing with Cloudflare Access RS256 JWTs verified against Cloudflare's public JWKS endpoint.
 
 **Implementation:**
+
 ```typescript
 // server/utils/access-jwt-auth.ts
-import { jwtVerify, createRemoteJWKSet } from 'jose'
+import { jwtVerify, createRemoteJWKSet } from "jose";
 
-const TEAM_DOMAIN = process.env.CLOUDFLARE_TEAM_DOMAIN // "your-team.cloudflareaccess.com"
-const JWKS = createRemoteJWKSet(new URL(`https://${TEAM_DOMAIN}/cdn-cgi/access/certs`))
+const TEAM_DOMAIN = process.env.CLOUDFLARE_TEAM_DOMAIN; // "your-team.cloudflareaccess.com"
+const JWKS = createRemoteJWKSet(new URL(`https://${TEAM_DOMAIN}/cdn-cgi/access/certs`));
 
 export async function verifyCloudflareJWT(token: string, audience: string): Promise<CloudflareAuthResult> {
   try {
     const { payload, protectedHeader } = await jwtVerify(token, JWKS, {
       issuer: `https://${TEAM_DOMAIN}`,
       audience,
-      algorithms: ['RS256']
-    })
+      algorithms: ["RS256"],
+    });
 
     return {
       success: true,
       payload: {
         sub: payload.sub as string,
         email: payload.email as string,
-        groups: payload.groups as string[] || [],
+        groups: (payload.groups as string[]) || [],
         aud: payload.aud,
         iat: payload.iat as number,
-        exp: payload.exp as number
+        exp: payload.exp as number,
       },
-      kid: protectedHeader.kid as string
-    }
+      kid: protectedHeader.kid as string,
+    };
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'JWT verification failed'
-    }
+      error: error instanceof Error ? error.message : "JWT verification failed",
+    };
   }
 }
 
 // Updated auth helpers
 export async function requireCloudflareAuth(event: H3Event, appAudience: string, requiredGroup?: string) {
-  const token = extractToken(event) || getHeader(event, 'cf-access-jwt-assertion')
+  const token = extractToken(event) || getHeader(event, "cf-access-jwt-assertion");
   if (!token) {
-    throw createApiError(401, "Cloudflare Access token required")
+    throw createApiError(401, "Cloudflare Access token required");
   }
 
-  const verification = await verifyCloudflareJWT(token, appAudience)
+  const verification = await verifyCloudflareJWT(token, appAudience);
   if (!verification.success) {
-    throw createApiError(401, verification.error)
+    throw createApiError(401, verification.error);
   }
 
   if (requiredGroup && !verification.payload.groups.includes(requiredGroup)) {
-    throw createApiError(403, `Group membership required: ${requiredGroup}`)
+    throw createApiError(403, `Group membership required: ${requiredGroup}`);
   }
 
-  return verification
+  return verification;
 }
 ```
 
 **Application Configuration:**
+
 ```typescript
 // server/utils/access-config.ts
 export const ACCESS_APPLICATIONS = {
   API: {
-    audience: 'your-api-aud-tag-here',
-    requiredGroups: ['api-users']
+    audience: "your-api-aud-tag-here",
+    requiredGroups: ["api-users"],
   },
   AI: {
-    audience: 'your-ai-aud-tag-here', 
-    requiredGroups: ['ai-users']
+    audience: "your-ai-aud-tag-here",
+    requiredGroups: ["ai-users"],
   },
   ADMIN: {
-    audience: 'your-admin-aud-tag-here',
-    requiredGroups: ['admins']
-  }
-} as const
+    audience: "your-admin-aud-tag-here",
+    requiredGroups: ["admins"],
+  },
+} as const;
 
 // Usage in endpoints
 export async function requireAPIAccess(event: H3Event) {
-  return requireCloudflareAuth(event, ACCESS_APPLICATIONS.API.audience, 'api-users')
+  return requireCloudflareAuth(event, ACCESS_APPLICATIONS.API.audience, "api-users");
 }
 ```
 
@@ -1108,105 +1112,111 @@ export async function requireAPIAccess(event: H3Event) {
 Pure Cloudflare Access authentication with Workers to inject custom headers and enhanced claims before reaching the origin.
 
 **Worker Implementation:**
+
 ```javascript
 // cloudflare-worker.js - Deployed to your domain
 export default {
   async fetch(request, env, ctx) {
-    const url = new URL(request.url)
-    
+    const url = new URL(request.url);
+
     // Skip worker processing for non-API routes
-    if (!url.pathname.startsWith('/api/')) {
-      return fetch(request)
+    if (!url.pathname.startsWith("/api/")) {
+      return fetch(request);
     }
 
-    const accessToken = request.headers.get('cf-access-jwt-assertion')
+    const accessToken = request.headers.get("cf-access-jwt-assertion");
     if (!accessToken) {
-      return new Response('Access token required', { status: 401 })
+      return new Response("Access token required", { status: 401 });
     }
 
     try {
       // Decode token to extract user info (already verified by Access)
-      const payload = JSON.parse(atob(accessToken.split('.')[1]))
-      
+      const payload = JSON.parse(atob(accessToken.split(".")[1]));
+
       // Add custom headers based on user attributes
-      const modifiedRequest = new Request(request)
-      modifiedRequest.headers.set('x-user-email', payload.email)
-      modifiedRequest.headers.set('x-user-groups', JSON.stringify(payload.groups || []))
-      modifiedRequest.headers.set('x-access-verified', 'true')
-      
+      const modifiedRequest = new Request(request);
+      modifiedRequest.headers.set("x-user-email", payload.email);
+      modifiedRequest.headers.set("x-user-groups", JSON.stringify(payload.groups || []));
+      modifiedRequest.headers.set("x-access-verified", "true");
+
       // Add device posture if available (requires device enrollment)
       if (payload.device_posture) {
-        modifiedRequest.headers.set('x-device-compliant', 
-          payload.device_posture.firewall && payload.device_posture.disk_encrypted ? 'true' : 'false'
-        )
+        modifiedRequest.headers.set(
+          "x-device-compliant",
+          payload.device_posture.firewall && payload.device_posture.disk_encrypted ? "true" : "false",
+        );
       }
 
-      return fetch(modifiedRequest)
+      return fetch(modifiedRequest);
     } catch (error) {
-      return new Response('Token processing failed', { status: 500 })
+      return new Response("Token processing failed", { status: 500 });
     }
-  }
-}
+  },
+};
 ```
 
 **Simplified Origin Authentication:**
+
 ```typescript
 // server/utils/worker-auth.ts - Origin only validates headers from Worker
 export interface WorkerAuthResult {
-  success: true
-  email: string
-  groups: string[]
-  deviceCompliant?: boolean
+  success: true;
+  email: string;
+  groups: string[];
+  deviceCompliant?: boolean;
 }
 
 export function extractWorkerAuth(event: H3Event): WorkerAuthResult {
-  const verified = getHeader(event, 'x-access-verified')
-  if (verified !== 'true') {
-    throw createApiError(401, "Request must come through Access Worker")
+  const verified = getHeader(event, "x-access-verified");
+  if (verified !== "true") {
+    throw createApiError(401, "Request must come through Access Worker");
   }
 
-  const email = getHeader(event, 'x-user-email')
-  const groupsHeader = getHeader(event, 'x-user-groups')
-  const deviceCompliant = getHeader(event, 'x-device-compliant') === 'true'
+  const email = getHeader(event, "x-user-email");
+  const groupsHeader = getHeader(event, "x-user-groups");
+  const deviceCompliant = getHeader(event, "x-device-compliant") === "true";
 
   if (!email) {
-    throw createApiError(401, "Missing user email from Worker")
+    throw createApiError(401, "Missing user email from Worker");
   }
 
   return {
     success: true,
     email,
     groups: groupsHeader ? JSON.parse(groupsHeader) : [],
-    deviceCompliant
-  }
+    deviceCompliant,
+  };
 }
 
 export function requireWorkerAuth(event: H3Event, requiredGroup?: string): WorkerAuthResult {
-  const auth = extractWorkerAuth(event)
-  
+  const auth = extractWorkerAuth(event);
+
   if (requiredGroup && !auth.groups.includes(requiredGroup)) {
-    throw createApiError(403, `Group membership required: ${requiredGroup}`)
+    throw createApiError(403, `Group membership required: ${requiredGroup}`);
   }
-  
-  return auth
+
+  return auth;
 }
 ```
 
 #### Migration Benefits
 
 **Security Enhancements:**
+
 - Cloudflare-managed key rotation (automatic every 6 weeks)
 - Enhanced audit logging via Zero Trust dashboard
 - Device posture integration
 - Advanced threat detection
 
 **Operational Benefits:**
+
 - Reduced maintenance (no custom JWT secret management)
 - Centralized user management
 - SSO integration built-in
 - Geographic restrictions and conditional access
 
 **Developer Experience:**
+
 - Simplified auth logic
 - Better error messages from Access
 - Real-time token revocation
@@ -1214,22 +1224,26 @@ export function requireWorkerAuth(event: H3Event, requiredGroup?: string): Worke
 
 #### Implementation Timeline
 
-**Phase 1: Research & Setup (1-2 days)**
+**Phase 1: Research & Setup (1-2 days):**
+
 - Configure Zero Trust applications
 - Set up service tokens for testing
 - Create Worker for header injection (Option 3)
 
-**Phase 2: Auth System Replacement (1-2 days)** 
+**Phase 2: Auth System Replacement (1-2 days):**
+
 - Implement new auth utilities
 - Replace auth helpers in all endpoints
 - Remove custom JWT generation logic
 
-**Phase 3: Testing & Validation (1 day)**
+**Phase 3: Testing & Validation (1 day):**
+
 - Update test suite for new auth methods
 - Verify all endpoints with Access tokens
 - Test service token authentication
 
-**Phase 4: Deployment (1 day)**
+**Phase 4: Deployment (1 day):**
+
 - Deploy Worker (if using Option 3)
 - Update environment variables
 - Switch DNS to route through Cloudflare Access
@@ -1237,6 +1251,7 @@ export function requireWorkerAuth(event: H3Event, requiredGroup?: string): Worke
 #### Configuration Examples
 
 **Service Token Usage:**
+
 ```bash
 # API-to-API authentication
 curl -H "CF-Access-Client-Id: your-client-id" \
@@ -1252,10 +1267,11 @@ curl -H "cf-access-token: jwt-token-here" \
 ```
 
 **Zero Trust Policy Examples:**
+
 ```yaml
 # Replace current permission hierarchy with Access policies
 current_permissions:
-  - "api:tokens"     → Zero Trust Group: "api-token-managers" 
+  - "api:tokens"     → Zero Trust Group: "api-token-managers"
   - "ai:alt"         → Zero Trust Group: "ai-users"
   - "admin"          → Zero Trust Group: "admins"
   - "*"              → Zero Trust Group: "super-admins"
@@ -1263,11 +1279,11 @@ current_permissions:
 # Access Application Policies
 policies:
   - name: "Token Management"
-    application: "api.dave.io" 
+    application: "api.dave.io"
     decision: allow
     rules:
       - groups: ["api-token-managers", "admins"]
-      
+
   - name: "AI Services"
     application: "api.dave.io"
     decision: allow

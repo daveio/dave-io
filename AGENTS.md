@@ -98,9 +98,9 @@ throw createApiError(400, "Validation failed", validationDetails);
 
 // Always use createApiResponse for success
 return createApiResponse({
-   result: data,
-   message: "Operation successful",
-   error: null,
+  result: data,
+  message: "Operation successful",
+  error: null,
 });
 
 // Log errors before throwing
@@ -253,7 +253,7 @@ const secret = "hardcoded-secret"; // Bad: never commit secrets
 
 // Check for default secrets in development
 if (secret === "dev-secret-change-in-production") {
-   console.warn("Using default JWT secret - insecure for production!");
+  console.warn("Using default JWT secret - insecure for production!");
 }
 ```
 
@@ -278,15 +278,15 @@ return createApiResponse({ result: user })           // Bad: might expose secret
 ```typescript
 // Don't copy-paste code
 if (condition1) {
-   /* same logic */
+  /* same logic */
 }
 if (condition2) {
-   /* same logic */
+  /* same logic */
 }
 
 // Extract to shared utility instead
 const sharedLogic = (condition) => {
-   /* logic */
+  /* logic */
 };
 ```
 
@@ -295,17 +295,17 @@ const sharedLogic = (condition) => {
 ```typescript
 // Don't fail silently
 try {
-   riskyOperation();
+  riskyOperation();
 } catch {
-   /* ignored */
+  /* ignored */
 }
 
 // Always handle errors explicitly
 try {
-   riskyOperation();
+  riskyOperation();
 } catch (error) {
-   console.error("Operation failed:", error);
-   throw createApiError(500, "Operation failed");
+  console.error("Operation failed:", error);
+  throw createApiError(500, "Operation failed");
 }
 ```
 
@@ -322,12 +322,12 @@ return { ok: true, result, error: null, ... }   // Good: standard format
 ```typescript
 // Don't skip tests for business logic
 function calculateTotal(items) {
-   /* complex logic */
+  /* complex logic */
 } // Needs tests
 
 // Don't test trivial code
 function getName() {
-   return this.name;
+  return this.name;
 } // Skip testing
 ```
 

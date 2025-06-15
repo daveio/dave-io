@@ -2,24 +2,24 @@
 <!-- trunk-ignore-all(semgrep/html.security.audit.missing-integrity.missing-integrity): scratchpad -->
 <html lang="en" data-theme="cyberpunk">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>403 Forbidden - dave.io</title>
-        <meta name="description" content="Access denied - dave.io">
-        <meta name="keywords" content="403, forbidden, error, dave.io, cyberpunk">
+        <meta name="description" content="Access denied - dave.io" />
+        <meta name="keywords" content="403, forbidden, error, dave.io, cyberpunk" />
         <!-- CDN Links for Immediate Testing -->
         <link href="https://cdn.jsdelivr.net/npm/daisyui@5"
               rel="stylesheet"
               type="text/css" />
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Sixtyfour+Convergence:wght@400&display=swap"
-              rel="stylesheet">
+              rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Sono:wght@200;300;400;500;600;700;800&display=swap"
-              rel="stylesheet">
+              rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Victor+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
-              rel="stylesheet">
+              rel="stylesheet" />
         <link href="styles.css" rel="stylesheet" type="text/css" />
     </head>
     <body class="min-h-screen bg-gray-900 text-base-content overflow-x-hidden">
@@ -77,7 +77,8 @@
                                         <span class="text-white">dave.io/restricted</span>
                                     </div>
                                     <div class="text-red-400">
-                                        <span class="text-gray-400">Error:</span> Forbidden - You don't have permission to access this resource
+                                        <span class="text-gray-400">Error:</span> Forbidden - You don't have permission to access this
+                                        resource
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-400">status:</span>
@@ -96,8 +97,8 @@
                         </div>
                         <!-- Description -->
                         <p class="text-lg text-base-content/80 mb-6">
-                            Sorry, but you don't have the necessary permissions to access this page.
-                            This might be a restricted area or require special authorization.
+                            Sorry, but you don't have the necessary permissions to access this page. This might be a restricted area
+                            or require special authorization.
                         </p>
                         <!-- Action Buttons -->
                         <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -129,13 +130,13 @@
         </main>
         <script src="script.js"></script>
         <script>
-        // Set current timestamp and add Nedry easter egg
-        document.addEventListener('DOMContentLoaded', () => {
-            const timestampElement = document.getElementById('timestamp');
-            if (timestampElement) {
-                timestampElement.textContent = new Date().toISOString();
-            }
-        });
+      // Set current timestamp and add Nedry easter egg
+      document.addEventListener("DOMContentLoaded", () => {
+        const timestampElement = document.getElementById("timestamp");
+        if (timestampElement) {
+          timestampElement.textContent = new Date().toISOString();
+        }
+      });
         </script>
     </body>
 </html>

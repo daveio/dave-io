@@ -6,26 +6,26 @@ updatedAt: 2025-06-15T15:11:18.060621
 workspaceId: wk_RchFGYKiCS
 folderId: fl_dWYBr84RnE
 authentication:
-  token: ''
+  token: ""
 authenticationType: bearer
 body: {}
 bodyType: null
-description: ''
+description: ""
 headers:
-- enabled: true
-  name: Accept
-  value: application/json
-  id: null
+  - enabled: true
+    name: Accept
+    value: application/json
+    id: null
 method: GET
 name: /api/dashboard/{}
 sortPriority: 0.0
 url: ${[baseUrl]}/api/dashboard/:name
 urlParameters:
-- enabled: true
-  name: :name
-  value: hackernews
-  id: Y8hs0ympbV
-- enabled: true
-  name: ''
-  value: ''
-  id: CbYyhuK4Z4
+  - enabled: true
+    name: :name
+    value: hackernews
+    id: Y8hs0ympbV
+  - enabled: true
+    name: ""
+    value: ""
+    id: CbYyhuK4Z4

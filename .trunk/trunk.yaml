@@ -1,21 +1,7 @@
 # https://docs.trunk.io/cli | https://docs.trunk.io/reference/trunk-yaml
 actions:
-  definitions:
-    - display_name: lint
-      id: lint
-      run: bun run biome check
-      triggers:
-        - git_hooks:
-            - pre-commit
-    - display_name: typecheck
-      id: typecheck
-      run: bun run typecheck
-      triggers:
-        - git_hooks:
-            - pre-commit
+  definitions: []
   enabled:
-    #    - lint
-    #    - typecheck
     - trunk-announce
     - trunk-check-pre-push
     - trunk-fmt-pre-commit
@@ -28,10 +14,10 @@ lint:
     - codespell
     - eslint
     - markdown-link-check
-    - prettier
     - stylelint
     - vale
   enabled:
+    - prettier@3.5.3
     - djlint@1.36.4
     - clippy
     - rustfmt
@@ -58,25 +44,36 @@ lint:
     - yamllint@1.37.1
   ignore:
     - linters:
+        - prettier
+      paths:
+        - "**/*.html"
+        - "**/*.js"
+        - "**/*.json"
+        - "**/*.jsonc"
+        - "**/*.jsx"
+        - "**/*.ts"
+        - "**/*.tsx"
+    - linters:
         - biome
       paths:
         - "**/.claude/settings.local.json"
     - linters:
         - trunk-toolbox
       paths:
+        - .cursor/**
         - .cursor/rules/bash.mdc
         - .github/copilot-instructions.md
+        - .windsurf/**
         - "**/*.gif"
         - "**/*.ico"
         - "**/*.jpg"
         - "**/*.png"
         - AGENTS.md
         - components/ExtraLinks.vue
+        - daisyui/index.html
+        - data/kv/*.yaml
         - nuxt.config.ts
         - server/middleware/shell-scripts.ts
-        - data/kv/*.yaml
-        - .cursor/**
-        - .windsurf/**
     - linters:
         - gitleaks
       paths:
