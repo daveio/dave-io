@@ -14,7 +14,7 @@ actions:
         - git_hooks:
             - pre-commit
   enabled:
-    - lint
+    - biome
     - typecheck
     - trunk-announce
     - trunk-check-pre-push
