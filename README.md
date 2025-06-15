@@ -951,6 +951,8 @@ APIs maintain single-token access patterns while leveraging Zero Trust infrastru
 
 **Service Tokens for Programmatic Access:**
 
+<!-- trunk-ignore-begin(gitleaks/curl-auth-header) -->
+
 ```bash
 # API-to-API authentication with service tokens
 curl -H "CF-Access-Client-Id: your-client-id" \
@@ -965,6 +967,8 @@ curl -H "Authorization: Bearer jwt-token" \
 curl -H "cf-access-jwt-assertion: jwt-token" \
      https://dave.io/api/ai/alt
 ```
+
+<!-- trunk-ignore-end(gitleaks/curl-auth-header) -->
 
 **No Subdomain Requirement:**
 APIs remain available at `dave.io/api/*` without requiring separate subdomains, maintaining backward compatibility and simplifying deployment.
