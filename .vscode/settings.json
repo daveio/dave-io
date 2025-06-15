@@ -3,11 +3,19 @@
   "debug.javascript.defaultRuntimeExecutable": {
     "pwa-node": "/Users/dave/.local/share/mise/shims/node"
   },
-  "python.defaultInterpreterPath": "/Users/dave/.local/share/mise/installs/python/3.13.4/bin/python",
+  "python.defaultInterpreterPath": "/Users/dave/.local/share/mise/shims/python",
   "go.alternateTools": {
     "go": "/Users/dave/.local/share/mise/shims/go",
     "gopls": "/Users/dave/.local/share/mise/shims/gopls"
   },
   "workbench.colorCustomizations": {},
-  "postman.settings.dotenv-detection-notification-visibility": false
+  "files.exclude": {
+    ".cursor": true,
+    ".nuxt": true,
+    ".output": true,
+    ".windsurf": true,
+    ".wrangler": true,
+    "node_modules": true,
+    "worker-configuration.d.ts": true
+  }
 }
