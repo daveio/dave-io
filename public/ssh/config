@@ -3,13 +3,11 @@
 Host github.com *.github.com
   Port 22
 
-  Host tilde-club
-  HostName tilde.club
+Host tilde.club
   User daveio
   Port 22
 
-Host tilde-pink
-  HostName tilde.pink
+Host tilde.pink
   Port 22
 
 Host fw fw-16c
