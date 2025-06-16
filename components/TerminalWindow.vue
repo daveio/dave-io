@@ -12,7 +12,7 @@
           <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
         </div>
         <div class="text-center flex-1 text-sm text-gray-400 font-mono">
-          dave.io :: <ULink to="https://github.com/fish-shell/fish-shell" class="hover:text-gray-300">fish</ULink> ::
+          dave.io :: <ULink to="mailto:user@host.io">user@host.io</ULink> :: <ULink to="https://github.com/fish-shell/fish-shell" class="hover:text-gray-300">fish</ULink> ::
           13×37
         </div>
       </div>
