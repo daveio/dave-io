@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
+
 vi.mock("h3", async () => {
   const actual = await vi.importActual<typeof import("h3")>("h3")
   return {
@@ -9,8 +10,8 @@ vi.mock("h3", async () => {
   }
 })
 
-import { getHeader, readBody, readFormData } from "h3"
 import type { H3Event } from "h3"
+import { getHeader, readBody, readFormData } from "h3"
 import { parseImageUpload } from "~/server/utils/validation"
 
 const smallPngBase64 =

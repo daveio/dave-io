@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 import { writeFileSync } from "node:fs"
-import { OpenAPIRegistry, OpenApiGeneratorV31, extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi"
+import { extendZodWithOpenApi, OpenAPIRegistry, OpenApiGeneratorV31 } from "@asteasolutions/zod-to-openapi"
 import { type ZodTypeAny, z } from "zod"
 import { scanApiEndpoints } from "../server/utils/endpoint-scanner"
 import * as schemas from "../server/utils/schemas"

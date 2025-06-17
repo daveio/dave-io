@@ -18,7 +18,9 @@ body {
   border: 0;
   color: #33343f;
   background: #c9dbef;
-  font: 16pt Oxygen, sans-serif;
+  font:
+    16pt Oxygen,
+    sans-serif;
 }
 
 /* organization */
@@ -120,7 +122,9 @@ summary::after {
 /* secondary */
 
 #secondary {
-  font: bold 100% Oxygen, sans-serif;
+  font:
+    bold 100% Oxygen,
+    sans-serif;
 }
 
 #secondary > .inner:first-child {
@@ -245,7 +249,9 @@ span.access-filter {
 .metadata {
   color: #345372;
   text-transform: lowercase;
-  font: 0.7rem / 1.5 Oxygen, sans-serif;
+  font:
+    0.7rem / 1.5 Oxygen,
+    sans-serif;
 }
 
 .metadata li {
@@ -319,7 +325,9 @@ li.page-forward,
 li.page-back {
   padding: 0;
   text-transform: lowercase;
-  font: bold 0.8rem Oxygen, sans-serif;
+  font:
+    bold 0.8rem Oxygen,
+    sans-serif;
 }
 
 .noentries {
@@ -372,7 +380,9 @@ span.poster-ip {
 
 .comment .footer label {
   text-transform: lowercase;
-  font: 0.8rem Oxygen, sans-serif;
+  font:
+    0.8rem Oxygen,
+    sans-serif;
 }
 
 .comment .edittime {
@@ -382,7 +392,9 @@ span.poster-ip {
 
 ul.comment-interaction-links {
   text-transform: lowercase;
-  font: 0.8rem Oxygen, sans-serif;
+  font:
+    0.8rem Oxygen,
+    sans-serif;
 }
 
 .bottomcomment {
@@ -406,14 +418,18 @@ ul.comment-interaction-links {
   margin: 0;
   color: #345372;
   text-transform: lowercase;
-  font: bold 0.9rem Oxygen, sans-serif;
+  font:
+    bold 0.9rem Oxygen,
+    sans-serif;
 }
 
 ul.ljtaglist {
   padding: 0;
   margin: 0.5em 0;
   list-style-position: inside;
-  font: 0.8rem Oxygen, sans-serif;
+  font:
+    0.8rem Oxygen,
+    sans-serif;
 }
 
 /* archive page */
@@ -424,7 +440,10 @@ ul.ljtaglist {
 }
 
 .year {
-  font: 0.75rem 'courier new', Oxygen, sans-serif;
+  font:
+    0.75rem 'courier new',
+    Oxygen,
+    sans-serif;
 }
 
 .month {
@@ -438,14 +457,18 @@ ul.ljtaglist {
   color: #4e6f90;
   text-align: right;
   text-transform: lowercase;
-  font: 0.8rem Oxygen, sans-serif;
+  font:
+    0.8rem Oxygen,
+    sans-serif;
 }
 
 .month .footer {
   margin-top: 1em;
   text-align: right;
   text-transform: lowercase;
-  font: 0.8rem Oxygen, sans-serif;
+  font:
+    0.8rem Oxygen,
+    sans-serif;
 }
 
 .month .footer a {
@@ -506,7 +529,9 @@ td.day a:visited:active {
 table.month {
   color: #345372;
   text-transform: lowercase;
-  font: 0.8rem Oxygen, sans-serif;
+  font:
+    0.8rem Oxygen,
+    sans-serif;
 }
 
 table.month caption {
@@ -548,7 +573,9 @@ td.day span.label {
   color: #345372;
   text-align: right;
   text-transform: lowercase;
-  font: 1em Oxygen, sans-serif;
+  font:
+    1em Oxygen,
+    sans-serif;
 }
 
 .navigation li {
@@ -573,7 +600,9 @@ td.day span.label {
 }
 
 .month dl h3 {
-  font: bold 0.8rem Oxygen, sans-serif;
+  font:
+    bold 0.8rem Oxygen,
+    sans-serif;
 }
 
 .month dl dt {
@@ -581,11 +610,15 @@ td.day span.label {
   margin: 0.25em 0;
   text-align: right;
   text-transform: lowercase;
-  font: 1rem bold Oxygen, sans-serif;
+  font:
+    1rem bold Oxygen,
+    sans-serif;
 }
 
 .month .overview-commentcount {
-  font: 0.8rem Oxygen, sans-serif;
+  font:
+    0.8rem Oxygen,
+    sans-serif;
 }
 
 #archive-month input[value='View'] {
@@ -594,13 +627,17 @@ td.day span.label {
   color: #345372;
   background: none;
   text-transform: lowercase;
-  font: 0.8rem Oxygen, sans-serif;
+  font:
+    0.8rem Oxygen,
+    sans-serif;
 }
 
 li.month-forward,
 li.month-back {
   padding: 0;
-  font: 0.8rem Oxygen, sans-serif;
+  font:
+    0.8rem Oxygen,
+    sans-serif;
 }
 
 #archive-month .navigation.bottomnav li {
@@ -617,12 +654,16 @@ li.month-back {
 #lj_controlstrip a {
   color: #f7f7f7;
   text-transform: lowercase;
-  font: bold 11px / 0 Oxygen, sans-serif;
+  font:
+    bold 11px / 0 Oxygen,
+    sans-serif;
 }
 
 #lj_controlstrip > div {
   text-transform: lowercase;
-  font: bold 11px Oxygen, sans-serif;
+  font:
+    bold 11px Oxygen,
+    sans-serif;
 }
 
 #lj_controlstrip_statustext {

@@ -98,8 +98,10 @@
   background: rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), inset 0 1px 0
-    rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* Custom Card Styling */
@@ -118,11 +120,17 @@
 
 /* Neon glow effects */
 .neon-glow {
-  text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor, 0 0 20px currentColor;
+  text-shadow:
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 15px currentColor,
+    0 0 20px currentColor;
 }
 
 .neon-border {
-  box-shadow: 0 0 5px currentColor, inset 0 0 5px currentColor;
+  box-shadow:
+    0 0 5px currentColor,
+    inset 0 0 5px currentColor;
 }
 
 /* Glitch effect for special elements */

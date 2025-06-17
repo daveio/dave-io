@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 import type Cloudflare from "cloudflare"
 import { Command } from "commander"
-import { SignJWT, jwtVerify } from "jose"
+import { jwtVerify, SignJWT } from "jose"
 import readlineSync from "readline-sync"
 import { v4 as uuidv4 } from "uuid"
 import { getJWTSecret, parseExpiration } from "./shared/cli-utils"
