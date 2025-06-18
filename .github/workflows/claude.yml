@@ -1,5 +1,6 @@
 name: Claude Code
 
+# trunk-ignore-all(checkov/CKV2_GHA_1)
 on:
   issue_comment:
     types: [created]

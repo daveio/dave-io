@@ -2511,194 +2511,115 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "data": {
+                    "cloudflare": {
                       "type": "object",
                       "properties": {
-                        "cloudflare": {
+                        "connectingIP": {
+                          "type": "string"
+                        },
+                        "country": {
                           "type": "object",
                           "properties": {
-                            "connectingIP": {
+                            "ip": {
                               "type": "string"
                             },
-                            "country": {
-                              "type": "object",
-                              "properties": {
-                                "ip": {
-                                  "type": "string"
-                                },
-                                "primary": {
-                                  "type": "string"
-                                }
-                              },
-                              "required": ["ip", "primary"]
-                            },
-                            "datacentre": {
+                            "primary": {
                               "type": "string"
-                            },
-                            "ray": {
-                              "type": "string"
-                            },
-                            "request": {
-                              "type": "object",
-                              "properties": {
-                                "agent": {
-                                  "type": "string"
-                                },
-                                "host": {
-                                  "type": "string"
-                                },
-                                "method": {
-                                  "type": "string"
-                                },
-                                "path": {
-                                  "type": "string"
-                                },
-                                "proto": {
-                                  "type": "object",
-                                  "properties": {
-                                    "forward": {
-                                      "type": "string"
-                                    },
-                                    "request": {
-                                      "type": "string"
-                                    }
-                                  },
-                                  "required": ["forward", "request"]
-                                },
-                                "version": {
-                                  "type": "string"
-                                }
-                              },
-                              "required": ["agent", "host", "method", "path", "proto", "version"]
                             }
                           },
-                          "required": ["connectingIP", "country", "datacentre", "ray", "request"]
+                          "required": ["ip", "primary"]
                         },
-                        "worker": {
+                        "datacentre": {
+                          "type": "string"
+                        },
+                        "ray": {
+                          "type": "string"
+                        },
+                        "request": {
                           "type": "object",
                           "properties": {
-                            "edge_functions": {
-                              "type": "boolean"
-                            },
-                            "environment": {
+                            "agent": {
                               "type": "string"
                             },
-                            "limits": {
+                            "host": {
+                              "type": "string"
+                            },
+                            "method": {
+                              "type": "string"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "proto": {
                               "type": "object",
                               "properties": {
-                                "cpu_time": {
+                                "forward": {
                                   "type": "string"
                                 },
-                                "memory": {
-                                  "type": "string"
-                                },
-                                "request_timeout": {
+                                "request": {
                                   "type": "string"
                                 }
                               },
-                              "required": ["cpu_time", "memory", "request_timeout"]
-                            },
-                            "preset": {
-                              "type": "string"
-                            },
-                            "runtime": {
-                              "type": "string"
-                            },
-                            "server_side_rendering": {
-                              "type": "boolean"
+                              "required": ["forward", "request"]
                             },
                             "version": {
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "edge_functions",
-                            "environment",
-                            "limits",
-                            "preset",
-                            "runtime",
-                            "server_side_rendering",
-                            "version"
-                          ]
+                          "required": ["agent", "host", "method", "path", "proto", "version"]
                         }
                       },
-                      "required": ["cloudflare", "worker"]
+                      "required": ["connectingIP", "country", "datacentre", "ray", "request"]
                     },
-                    "auth": {
+                    "worker": {
                       "type": "object",
                       "properties": {
-                        "supplied": {
+                        "edge_functions": {
                           "type": "boolean"
                         },
-                        "token": {
+                        "environment": {
+                          "type": "string"
+                        },
+                        "limits": {
                           "type": "object",
                           "properties": {
-                            "value": {
+                            "cpu_time": {
                               "type": "string"
                             },
-                            "valid": {
-                              "type": "boolean"
+                            "memory": {
+                              "type": "string"
                             },
-                            "payload": {
-                              "type": "object",
-                              "properties": {
-                                "subject": {
-                                  "type": "string"
-                                },
-                                "tokenId": {
-                                  "type": ["string", "null"]
-                                },
-                                "issuedAt": {
-                                  "type": "string"
-                                },
-                                "expiresAt": {
-                                  "type": ["string", "null"]
-                                }
-                              },
-                              "required": ["subject", "tokenId", "issuedAt", "expiresAt"]
+                            "request_timeout": {
+                              "type": "string"
                             }
                           },
-                          "required": ["value", "valid"]
+                          "required": ["cpu_time", "memory", "request_timeout"]
+                        },
+                        "preset": {
+                          "type": "string"
+                        },
+                        "runtime": {
+                          "type": "string"
+                        },
+                        "server_side_rendering": {
+                          "type": "boolean"
+                        },
+                        "version": {
+                          "type": "string"
                         }
                       },
-                      "required": ["supplied"]
-                    },
-                    "headers": {
-                      "type": "object",
-                      "properties": {
-                        "count": {
-                          "type": "number"
-                        },
-                        "cloudflare": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        },
-                        "forwarding": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        },
-                        "other": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "required": ["count", "cloudflare", "forwarding", "other"]
-                    },
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "timestamp": {
-                      "type": "string"
+                      "required": [
+                        "edge_functions",
+                        "environment",
+                        "limits",
+                        "preset",
+                        "runtime",
+                        "server_side_rendering",
+                        "version"
+                      ]
                     }
                   },
-                  "required": ["data", "auth", "headers", "ok", "timestamp"]
+                  "required": ["cloudflare", "worker"]
                 }
               }
             }
