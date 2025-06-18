@@ -104,7 +104,6 @@
         Many cultures throughout history and around the world have recognized more than two genders. Here are just a few
         examples:
       </p>
-      <p class="text-text leading-relaxed">
       <ul>
         <li>
           ◦ <strong class="text-red">Hijra</strong> in South Asia, recognized for over 4,000 years as a third gender.
@@ -129,7 +128,6 @@
           ◦ <strong class="text-red">Bakla</strong> in the Philippines.
         </li>
       </ul>
-      </p>
       <p class="text-text leading-relaxed">
         The list goes on.
       </p>
