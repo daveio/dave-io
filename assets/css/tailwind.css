@@ -1,0 +1,30 @@
+@import './gradients.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  /* Custom utility classes */
+  .bg-rainbow-gradient {
+    background-image: linear-gradient(
+      to right,
+      #e87777 35%,
+      #eaaa77 40%,
+      #eacc77 45%,
+      #eded77 50%,
+      #aaeaaa 55%,
+      #77ccea 60%,
+      #ccaaea 65%,
+      #eaaad4 70%
+    );
+  }
+
+  .link-url {
+    @apply text-blue-400 hover:text-blue-200 transition-colors;
+  }
+
+  .link-gender {
+    @apply text-green-200 hover:text-green-100 transition-colors;
+  }
+}

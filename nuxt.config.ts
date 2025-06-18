@@ -66,7 +66,6 @@ export default defineNuxtConfig({
     }
   },
   modules: [
-    "@nuxt/ui",
     "@nuxt/fonts",
     "@nuxt/icon",
     "@nuxt/image",
@@ -82,7 +81,13 @@ export default defineNuxtConfig({
     fallback: "dark",
     storageKey: "nuxt-color-mode"
   },
-  css: ["~/public/css/main.css"],
+  tailwindcss: {
+    cssPath: "~/assets/css/tailwind.css",
+    configPath: "./tailwind.config.ts",
+    editorSupport: true,
+    viewer: false,
+    exposeConfig: false
+  },
   fonts: {
     defaults: {
       weights: [400],
