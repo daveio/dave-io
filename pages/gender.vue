@@ -7,7 +7,7 @@
     <GenderFloatingChatButton />
 
     <div class="max-w-4xl mx-auto w-full relative z-10">
-      <Interface title="gender.dave.io" subtitle="pronouns guide" :showFishLink="false">
+      <Interface title="gender.dave.io" subtitle="pronouns guide" :showFishLink="false" :useMonospace="false">
         <GenderContent />
       </Interface>
     </div>

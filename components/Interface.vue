@@ -21,7 +21,7 @@
       </div>
 
       <!-- Interface content - scrollable -->
-      <div class="card-body terminal-content font-mono text-text p-4 text-sm flex-1 overflow-y-auto" ref="interfaceContent">
+      <div :class="['card-body terminal-content text-text p-4 text-sm flex-1 overflow-y-auto', useMonospace ? 'font-mono' : '']" ref="interfaceContent">
         <slot />
       </div>
     </div>
@@ -34,13 +34,15 @@ interface Props {
   subtitle?: string
   dimensions?: string
   showFishLink?: boolean
+  useMonospace?: boolean
 }
 
 withDefaults(defineProps<Props>(), {
   title: "dave.io",
   subtitle: "",
   dimensions: "13×37",
-  showFishLink: true
+  showFishLink: true,
+  useMonospace: true
 })
 </script>
 
