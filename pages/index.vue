@@ -4,7 +4,6 @@
   >
     <Background />
     <div class="max-w-3xl mx-auto w-full relative z-10">
-      <Hero />
       <Interface>
         <HomeContent />
       </Interface>
@@ -18,8 +17,6 @@
 import Background from "../components/Background.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import CurlCommand from "../components/CurlCommand.vue"
-// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import Hero from "../components/Hero.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import HomeContent from "../components/HomeContent.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template

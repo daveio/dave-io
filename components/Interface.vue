@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Hero />
     <div
       class="pb-6 card card-bordered terminal-container w-full bg-surface0/50 border-surface2 shadow-2xl backdrop-blur-sm flex flex-col"
       ref="interfaceContainer">
@@ -29,6 +30,9 @@
 </template>
 
 <script setup lang="ts">
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
+import Hero from "./Hero.vue"
+
 interface Props {
   title?: string
   subtitle?: string
