@@ -16,7 +16,7 @@ export default (<Partial<Config>>{
   },
   plugins: [
     require("@catppuccin/tailwindcss")({
-      defaultFlavour: "macchiato"
+      defaultFlavour: "mocha"
     })
   ]
 })
