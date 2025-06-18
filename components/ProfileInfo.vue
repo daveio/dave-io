@@ -1,20 +1,18 @@
 <template>
   <div class="mb-4">
-    <div class="profile-info-table pb-4">
-      <div class="links-row">
-        <span class="link-name text-white font-bold">
-          <UIcon name="i-mdi-light-gender-transgender" class="mr-2 text-green-200" />
-          Pronouns
-        </span>
-        <ULink
-          to="/gender"
-          target="_blank"
-          class="link-gender"
-          @click="handleLinkClick('gender', 'https://dave.io/gender')"
-        >
-          they/them (learn more)
-        </ULink>
-      </div>
+    <div class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto pb-4 max-md:grid-cols-[0.7fr_1.2fr] max-md:text-sm max-md:max-w-full">
+      <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
+        <i class="i-mdi-light-gender-transgender mr-2 text-green-200 w-5 h-5"></i>
+        Pronouns
+      </span>
+      <NuxtLink
+        to="/gender"
+        target="_blank"
+        class="link-gender break-all"
+        @click="handleLinkClick('gender', 'https://dave.io/gender')"
+      >
+        they/them (learn more)
+      </NuxtLink>
     </div>
   </div>
 </template>
@@ -29,45 +27,3 @@ const handleLinkClick = (service: string, url: string) => {
   logInteraction("click", "terminal-link", { service, url })
 }
 </script>
-
-<style scoped>
-.profile-info-table {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem 1rem;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.links-row {
-  display: contents;
-}
-
-.link-name {
-  font-weight: 500;
-  text-align: right;
-  padding-right: 5px;
-  display: inline-flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.link-url {
-  word-break: break-all;
-}
-
-@media (max-width: 800px) {
-  .profile-info-table {
-    grid-template-columns: 0.6fr 1.3fr;
-    font-size: 0.95em;
-    max-width: 100%;
-    gap: 0.5rem 1rem;
-  }
-
-  .link-name,
-  .link-url {
-    min-width: 0;
-    word-break: break-all;
-  }
-}
-</style>

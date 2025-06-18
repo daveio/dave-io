@@ -14,6 +14,4 @@ import TerminalWindow from "./TerminalWindow.vue"
 defineProps<{
   handleServiceClick: (service: string) => void
 }>()
-
-// Animation removed per user request
 </script>

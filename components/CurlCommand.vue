@@ -1,22 +1,21 @@
 <template>
   <div class="curl-section mb-8">
-    <UCard class="bg-black/50 border-gray-700 shadow-2xl overflow-hidden">
+    <div class="bg-black/50 border border-neutral-700 shadow-2xl overflow-hidden rounded-lg">
       <div class="text-center p-4 font-mono text-white text-sm">
         <div class="text-lg font-extrabold mb-4 rainbow-gradient-text">Want to see this animated?</div>
-        <div class="text-gray-300">
-          <UButton
-            variant="ghost"
-            size="sm"
-            class="font-mono bg-gray-800 hover:bg-gray-700 cursor-pointer"
-            @click="copyCurlCommand"
-            title="Click to copy to clipboard"
-            icon="i-heroicons-clipboard"
-          >
+        <div class="text-neutral-300">
+          <button
+            class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-mono bg-neutral-800 hover:bg-neutral-700 rounded-md transition-colors cursor-pointer"
+            @click="copyCurlCommand" title="Click to copy to clipboard">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+            </svg>
             curl https://dave.io | sh
-          </UButton>
+          </button>
         </div>
       </div>
-    </UCard>
+    </div>
   </div>
 </template>
 

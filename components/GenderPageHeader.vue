@@ -5,9 +5,9 @@
     >
       Hi, I'm Non-Binary! 🏳️‍⚧️
     </h1>
-    <p class="text-xl text-gray-300 mb-4">I use <strong class="text-pink-400">they/them/their</strong> pronouns.</p>
-    <p class="text-lg text-gray-400">You probably have questions.</p>
-    <p class="text-lg text-gray-400">Let me give you a primer 💚</p>
+    <p class="text-xl text-neutral-300 mb-4">I use <strong class="text-pink-400">they/them/their</strong> pronouns.</p>
+    <p class="text-lg text-neutral-400">You probably have questions.</p>
+    <p class="text-lg text-neutral-400">Let me give you a primer 💚</p>
   </div>
 </template>
 
