@@ -1,13 +1,12 @@
 <template>
   <div
-    class="min-h-screen bg-gradient-to-br from-base via-mantle to-base flex flex-col justify-center py-12 px-4 relative overflow-hidden"
-  >
+    class="min-h-screen bg-gradient-to-br from-base via-mantle to-base flex flex-col justify-center py-12 px-4 relative overflow-hidden">
     <Background />
-    
+
     <GenderFloatingChatButton />
 
     <div class="max-w-4xl mx-auto w-full relative z-10">
-      <Interface title="gender.dave.io" subtitle="pronouns guide" :showFishLink="false" :useMonospace="false">
+      <Interface title="dave.io/gender" :useMonospace="false">
         <GenderContent />
       </Interface>
     </div>

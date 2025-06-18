@@ -1,23 +1,24 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-black">
-    <div class="bg-black border-green-400 border-2 rounded-lg p-6 shadow-xl">
-      <div class="text-center">
-        <img src="/gifs/nedry.gif" alt="You didn't say the magic word" class="mx-auto max-w-lg w-full h-auto" />
-        <div class="mt-6 bg-black border-green-400 border rounded-lg p-4">
-          <div class="flex items-start space-x-3">
-            <Icon name="i-mdi-skull" class="text-green-400 w-5 h-5 mt-0.5 flex-shrink-0" />
-            <div class="text-left">
-              <h3 class="text-green-400 font-semibold">Access Denied</h3>
-              <p class="text-neutral-300 mt-1">You didn't say the magic word!</p>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div
+    class="min-h-screen bg-gradient-to-br from-base via-mantle to-base flex flex-col justify-center py-12 px-4 relative overflow-hidden">
+    <Background />
+
+    <div class="max-w-4xl mx-auto w-full relative z-10">
+      <Interface title="dave.io/go" :useMonospace="false">
+        <GoContent />
+      </Interface>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
+import Background from "../../components/Background.vue"
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
+import GoContent from "../../components/GoContent.vue"
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
+import Interface from "../../components/Interface.vue"
+
 // Page metadata
 useHead({
   title: "Access Denied - Dave.io",

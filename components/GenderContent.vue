@@ -126,20 +126,13 @@
     <GenderChatbotPlaceholder />
 
     <!-- Back Button -->
-    <div class="text-center pt-8">
-      <NuxtLink
-        to="/"
-        @click="handleBackClick"
-        class="inline-flex items-center px-6 py-4 text-xl font-semibold text-crust bg-gradient-to-r from-pink to-mauve hover:from-pink hover:to-mauve transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl rounded-lg"
-      >
-        <Icon name="i-mdi-arrow-left" class="mr-3 w-6 h-6" />
-        🏠 Back to Home
-      </NuxtLink>
-    </div>
+    <BackToHomeButton from="gender" />
   </div>
 </template>
 
 <script setup lang="ts">
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
+import BackToHomeButton from "./BackToHomeButton.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import GenderChatbotPlaceholder from "./GenderChatbotPlaceholder.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
@@ -148,13 +141,4 @@ import GenderInfoCard from "./GenderInfoCard.vue"
 import GenderPageHeader from "./GenderPageHeader.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import GenderResourcesGrid from "./GenderResourcesGrid.vue"
-
-// Page logging
-const { logInteraction } = usePageLogging()
-
-// Track back button clicks
-// biome-ignore lint/correctness/noUnusedVariables: Used in template
-const handleBackClick = () => {
-  logInteraction("click", "navigation", { action: "back-to-home", from: "gender" })
-}
 </script>
