@@ -88,8 +88,6 @@ lint:
         - "**/*.jpg"
         - "**/*.png"
         - AGENTS.md
-        - components/ExtraLinks.vue
-        - daisyui/index.html
         - data/kv/*.yaml
         - nuxt.config.ts
         - server/middleware/shell-scripts.ts
