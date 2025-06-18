@@ -1,11 +1,11 @@
 <template>
   <div>
     <div
-      class="pb-6 terminal-container w-full bg-surface0/50 border border-surface2 rounded-lg overflow-hidden shadow-2xl backdrop-blur-sm flex flex-col"
+      class="pb-6 card card-bordered terminal-container w-full bg-surface0/50 border-surface2 shadow-2xl backdrop-blur-sm flex flex-col"
       ref="terminalContainer">
       <!-- Terminal header - sticky -->
       <div
-        class="terminal-header flex items-center justify-start px-4 py-2 bg-surface1/95 backdrop-blur-sm border-b border-surface2 sticky top-0 z-10">
+        class="card-title terminal-header flex items-center justify-start px-4 py-2 bg-surface1/95 backdrop-blur-sm border-b border-surface2 sticky top-0 z-10">
         <div class="flex space-x-2">
           <div class="w-3 h-3 rounded-full bg-red"></div>
           <div class="w-3 h-3 rounded-full bg-yellow"></div>
@@ -19,7 +19,7 @@
       </div>
 
       <!-- Terminal content - scrollable -->
-      <div class="terminal-content font-mono text-text p-4 text-sm flex-1 overflow-y-auto" ref="terminalContent">
+      <div class="card-body terminal-content font-mono text-text p-4 text-sm flex-1 overflow-y-auto" ref="terminalContent">
         <Subtitle />
         <ProfileInfo />
         <SocialLinks />

@@ -1,3 +1,4 @@
+import { createCatppuccinPlugin } from "@catppuccin/daisyui"
 import type { Config } from "tailwindcss"
 
 export default (<Partial<Config>>{
@@ -17,6 +18,16 @@ export default (<Partial<Config>>{
   plugins: [
     require("@catppuccin/tailwindcss")({
       defaultFlavour: "mocha"
-    })
-  ]
+    }),
+    require("daisyui"),
+    createCatppuccinPlugin("mocha")
+  ],
+  daisyui: {
+    themes: ["mocha"], // Use the Catppuccin Mocha theme
+    darkTheme: "mocha",
+    base: true,
+    styled: true,
+    utils: true,
+    logs: false
+  }
 })

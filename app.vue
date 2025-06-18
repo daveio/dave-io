@@ -1,5 +1,5 @@
 <template>
-  <div class="mocha">
+  <div data-theme="mocha" class="mocha">
     <NuxtRouteAnnouncer />
     <NuxtLoadingIndicator />
     <NuxtPage />

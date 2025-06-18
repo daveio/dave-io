@@ -30,6 +30,7 @@
   "devDependencies": {
     "@anthropic-ai/claude-code": "1.0.27",
     "@biomejs/biome": "2.0.0",
+    "@catppuccin/daisyui": "^2.1.1",
     "@catppuccin/tailwindcss": "^0.1.6",
     "@iconify-json/mdi": "1.2.3",
     "@iconify-json/simple-icons": "1.2.39",
@@ -45,6 +46,7 @@
     "boxen": "8.0.1",
     "chalk": "5.4.1",
     "commander": "14.0.0",
+    "daisyui": "^5.0.43",
     "happy-dom": "18.0.1",
     "json5": "2.2.3",
     "ms": "2.1.3",
