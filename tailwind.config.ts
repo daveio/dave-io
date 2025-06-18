@@ -1,7 +1,14 @@
-import { createCatppuccinPlugin } from "@catppuccin/daisyui"
 import type { Config } from "tailwindcss"
 
-export default (<Partial<Config>>{
+export default {
+  content: [
+    "./components/**/*.{js,vue,ts}",
+    "./layouts/**/*.vue",
+    "./pages/**/*.vue",
+    "./plugins/**/*.{js,ts}",
+    "./app.vue",
+    "./error.vue"
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -16,18 +23,48 @@ export default (<Partial<Config>>{
     }
   },
   plugins: [
-    require("@catppuccin/tailwindcss")({
-      defaultFlavour: "mocha"
-    }),
-    require("daisyui"),
-    createCatppuccinPlugin("mocha")
+    require("daisyui")
   ],
+  // @ts-ignore - DaisyUI config not yet typed for Tailwind 4
   daisyui: {
-    themes: ["mocha"], // Use the Catppuccin Mocha theme
-    darkTheme: "mocha",
+    themes: [
+      "light",
+      "dark", 
+      "cupcake",
+      "bumblebee",
+      "emerald",
+      "corporate",
+      "synthwave",
+      "retro",
+      "cyberpunk",
+      "valentine",
+      "halloween",
+      "garden",
+      "forest",
+      "aqua",
+      "lofi",
+      "pastel",
+      "fantasy",
+      "wireframe",
+      "black",
+      "luxury",
+      "dracula",
+      "cmyk",
+      "autumn",
+      "business",
+      "acid",
+      "lemonade",
+      "night",
+      "coffee",
+      "winter",
+      "dim",
+      "nord",
+      "sunset"
+    ],
+    darkTheme: "dark",
     base: true,
     styled: true,
     utils: true,
     logs: false
   }
-})
+} satisfies Config
