@@ -1,18 +1,15 @@
 <template>
   <div class="mb-4">
-    <div class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto max-md:grid-cols-[0.7fr_1.2fr] max-md:text-sm max-md:max-w-full">
+    <div
+      class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto max-md:grid-cols-[0.7fr_1.2fr] max-md:text-sm max-md:max-w-full">
       <!-- Bluesky -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
           <Icon name="i-simple-icons-bluesky" class="mr-2 text-sky font-bold" />
           Bluesky
         </span>
-        <NuxtLink
-          href="https://dave.io/go/bluesky"
-          target="_blank"
-          class="break-all link-url"
-          @click="handleLinkClick('Bluesky', 'https://dave.io/go/bluesky')"
-        >
+        <NuxtLink href="/go/bluesky" target="_blank" class="break-all link-url"
+          @click="handleLinkClick('Bluesky', '/go/bluesky')">
           dave.io/go/bluesky
         </NuxtLink>
       </div>
@@ -22,12 +19,8 @@
           <Icon name="i-heroicons-book-open" class="mr-2 text-green font-bold" />
           Dreamwidth
         </span>
-        <NuxtLink
-          href="https://dave.io/go/dreamwidth"
-          target="_blank"
-          class="break-all link-url"
-          @click="handleLinkClick('Dreamwidth', 'https://dave.io/go/dreamwidth')"
-        >
+        <NuxtLink href="/go/dreamwidth" target="_blank" class="break-all link-url"
+          @click="handleLinkClick('Dreamwidth', '/go/dreamwidth')">
           dave.io/go/dreamwidth
         </NuxtLink>
       </div>
@@ -37,12 +30,8 @@
           <Icon name="i-simple-icons-facebook" class="mr-2 text-blue font-bold" />
           Facebook
         </span>
-        <NuxtLink
-          href="https://dave.io/go/facebook"
-          target="_blank"
-          class="break-all link-url"
-          @click="handleLinkClick('Facebook', 'https://dave.io/go/facebook')"
-        >
+        <NuxtLink href="/go/facebook" target="_blank" class="break-all link-url"
+          @click="handleLinkClick('Facebook', '/go/facebook')">
           dave.io/go/facebook
         </NuxtLink>
       </div>
@@ -52,12 +41,8 @@
           <Icon name="i-simple-icons-github" class="mr-2 text-subtext1 font-bold" />
           GitHub
         </span>
-        <NuxtLink
-          href="https://dave.io/go/github"
-          target="_blank"
-          class="break-all link-url"
-          @click="handleLinkClick('GitHub', 'https://dave.io/go/github')"
-        >
+        <NuxtLink href="/go/github" target="_blank" class="break-all link-url"
+          @click="handleLinkClick('GitHub', '/go/github')">
           dave.io/go/github
         </NuxtLink>
       </div>
@@ -67,12 +52,8 @@
           <Icon name="i-simple-icons-instagram" class="mr-2 text-pink font-bold" />
           Instagram
         </span>
-        <NuxtLink
-          href="https://dave.io/go/instagram"
-          target="_blank"
-          class="break-all link-url"
-          @click="handleLinkClick('Instagram', 'https://dave.io/go/instagram')"
-        >
+        <NuxtLink href="/go/instagram" target="_blank" class="break-all link-url"
+          @click="handleLinkClick('Instagram', '/go/instagram')">
           dave.io/go/instagram
         </NuxtLink>
       </div>
@@ -82,12 +63,8 @@
           <Icon name="i-simple-icons-linkedin" class="mr-2 text-blue font-bold" />
           LinkedIn
         </span>
-        <NuxtLink
-          href="https://dave.io/go/linkedin"
-          target="_blank"
-          class="break-all link-url"
-          @click="handleLinkClick('LinkedIn', 'https://dave.io/go/linkedin')"
-        >
+        <NuxtLink href="/go/linkedin" target="_blank" class="break-all link-url"
+          @click="handleLinkClick('LinkedIn', '/go/linkedin')">
           dave.io/go/linkedin
         </NuxtLink>
       </div>
@@ -97,12 +74,8 @@
           <Icon name="i-simple-icons-mastodon" class="mr-2 text-mauve font-bold" />
           Mastodon
         </span>
-        <NuxtLink
-          href="https://dave.io/go/mastodon"
-          target="_blank"
-          class="break-all link-url"
-          @click="handleLinkClick('Mastodon', 'https://dave.io/go/mastodon')"
-        >
+        <NuxtLink href="/go/mastodon" target="_blank" class="break-all link-url"
+          @click="handleLinkClick('Mastodon', '/go/mastodon')">
           dave.io/go/mastodon
         </NuxtLink>
       </div>
@@ -112,12 +85,8 @@
           <Icon name="i-heroicons-chat-bubble-left-ellipsis" class="mr-2 text-lavender font-bold" />
           Pillowfort
         </span>
-        <NuxtLink
-          href="https://dave.io/go/pillowfort"
-          target="_blank"
-          class="break-all link-url"
-          @click="handleLinkClick('Pillowfort', 'https://dave.io/go/pillowfort')"
-        >
+        <NuxtLink href="/go/pillowfort" target="_blank" class="break-all link-url"
+          @click="handleLinkClick('Pillowfort', '/go/pillowfort')">
           dave.io/go/pillowfort
         </NuxtLink>
       </div>
@@ -127,12 +96,8 @@
           <Icon name="i-simple-icons-threads" class="mr-2 text-subtext1 font-bold" />
           Threads
         </span>
-        <NuxtLink
-          href="https://dave.io/go/threads"
-          target="_blank"
-          class="break-all link-url"
-          @click="handleLinkClick('Threads', 'https://dave.io/go/threads')"
-        >
+        <NuxtLink href="/go/threads" target="_blank" class="break-all link-url"
+          @click="handleLinkClick('Threads', '/go/threads')">
           dave.io/go/threads
         </NuxtLink>
       </div>
@@ -142,12 +107,8 @@
           <Icon name="i-simple-icons-tumblr" class="mr-2 text-sapphire font-bold" />
           Tumblr
         </span>
-        <NuxtLink
-          href="https://dave.io/go/tumblr"
-          target="_blank"
-          class="break-all link-url"
-          @click="handleLinkClick('Tumblr', 'https://dave.io/go/tumblr')"
-        >
+        <NuxtLink href="/go/tumblr" target="_blank" class="break-all link-url"
+          @click="handleLinkClick('Tumblr', '/go/tumblr')">
           dave.io/go/tumblr
         </NuxtLink>
       </div>
@@ -157,12 +118,8 @@
           <Icon name="i-simple-icons-youtube" class="mr-2 text-red font-bold" />
           YouTube
         </span>
-        <NuxtLink
-          href="https://dave.io/go/youtube"
-          target="_blank"
-          class="break-all link-url"
-          @click="handleLinkClick('YouTube', 'https://dave.io/go/youtube')"
-        >
+        <NuxtLink href="/go/youtube" target="_blank" class="break-all link-url"
+          @click="handleLinkClick('YouTube', '/go/youtube')">
           dave.io/go/youtube
         </NuxtLink>
       </div>
