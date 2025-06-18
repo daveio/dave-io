@@ -11,7 +11,7 @@
     <div class="bg-cyan-900/20 p-4 rounded-lg border border-cyan-400/30 mt-6">
       <p class="text-cyan-200">
         💌 If you can't find answers from this piece or any of the above, that's okay! Ask me. There are plenty of ways
-        to get in touch with me on the main page. Expect a delay in my reply.
+        to get in touch with me on the main page. Expect a delay in my reply, it's nothing personal.
       </p>
     </div>
   </div>

@@ -22,14 +22,12 @@ export default {
       }
     }
   },
-  plugins: [
-    require("daisyui")
-  ],
+  plugins: [require("daisyui")],
   // @ts-ignore - DaisyUI config not yet typed for Tailwind 4
   daisyui: {
     themes: [
       "light",
-      "dark", 
+      "dark",
       "cupcake",
       "bumblebee",
       "emerald",

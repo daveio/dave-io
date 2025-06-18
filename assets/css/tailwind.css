@@ -1,11 +1,11 @@
 @import './gradients.css';
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* Font Families */
-  --font-mono: "Victor Mono", monospace;
-  --font-subtitle: "Sono", sans-serif;
-  --font-display: "Sixtyfour Convergence", sans-serif;
+  --font-mono: 'Victor Mono', monospace;
+  --font-subtitle: 'Sono', sans-serif;
+  --font-display: 'Sixtyfour Convergence', sans-serif;
 
   /* Catppuccin Mocha Color Palette */
   --color-rosewater: #f5e0dc;
@@ -34,7 +34,7 @@
   --color-base: #1e1e2e;
   --color-mantle: #181825;
   --color-crust: #11111b;
-  
+
   /* Additional semantic colors */
   --color-purple: #cba6f7;
   --color-cyan: #89dceb;

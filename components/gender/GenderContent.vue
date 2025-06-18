@@ -5,7 +5,12 @@
     <!-- Non-What Section -->
     <GenderInfoCard title="🤔 Non-What?" color="pink">
       <p class="text-text leading-relaxed">
-        <strong class="text-pink">Non-binary.</strong> The gender binary - that is, male and female - is
+        <strong class="text-pink">Non-binary</strong> is an umbrella term for gender identities that don't fit neatly
+        into the categories of "man" or
+        "woman." It's about existing outside the traditional gender binary.
+      </p>
+      <p class="text-text leading-relaxed">
+        The gender binary - that is, male and female - is
         increasingly seen as outdated and restrictive for no good reason. Non-binary people have been around for all
         of human history, but it's only fairly recently that we're starting to be formally defined in terms of
         sociological theory.
@@ -28,13 +33,14 @@
     </GenderInfoCard>
 
     <!-- Plot Twist Section -->
-    <GenderInfoCard title="😅 Plot Twist: I Thought I Was Cis Too" color="blue">
+    <GenderInfoCard title="😅 Plot Twist: I Thought I Was Cis" color="blue">
       <p class="text-text leading-relaxed">
-        First, a definition - <strong class="text-blue">cisgender</strong>, or 'cis', people have an assigned
+        First, a definition - <strong class="text-blue">cisgender</strong>, or <strong class="text-blue">cis</strong>,
+        people have an assigned
         gender at birth matching their actual gender. It's the opposite of transgender.
       </p>
       <p class="text-text leading-relaxed">
-        For a very long time, I fully believed that I <em>was</em> cisgender. A couple of years ago, a trans developer
+        For a very long time, I fully believed that I <em>was</em> cisgender. In my early thirties, a trans developer
         posted something on Twitter which made me stop and think.
       </p>
       <p class="text-text leading-relaxed">
@@ -47,18 +53,29 @@
         I've always felt 'somewhere in the middle' and pursued androgyny. While I had the occasional wish to present
         femme, I rarely (if ever) had the wish to present more masculine.
       </p>
+      <p class="text-text leading-relaxed">
+        Self-discovery doesn't have an expiration date. Some people know from early childhood, others (like me) figure
+        it out later in life. Both experiences are completely valid.
+      </p>
     </GenderInfoCard>
 
     <!-- Transgender Question Section -->
     <GenderInfoCard title="🏳️‍⚧️ So Are Non-Binary People Transgender?" color="purple">
       <p class="text-text leading-relaxed">
-        I do consider myself transgender, but with hesitation and awareness of privilege.
+        Transgender means your gender identity differs from what was assigned at birth. Since I was assigned male at
+        birth but identify as non-binary, that makes me transgender.
       </p>
       <p class="text-text leading-relaxed">
-        That depends who you ask. Some feel the label to be appropriate, some don't. In terms of dictionary
-        definitions, yes - the gender we were assigned at birth does not match our actual gender, and never has.
-        There's a complication to it, which is that the construction of the word 'transgender' implies alternation
-        from one binary to another, and so some people aren't comfortable with it.
+        <strong class="text-purple">I do consider myself transgender, but with awareness of
+          privilege.</strong>
+      </p>
+      <p class="text-text leading-relaxed">
+        In the wider world, it depends who you ask. Some feel the label to be appropriate, some don't.
+      </p>
+      <p class="text-text leading-relaxed">
+        In terms of dictionary definitions, yes - the gender we were assigned at birth does not match our actual gender,
+        and never has. There's a complication to it, which is that the construction of the word 'transgender' implies
+        alternation from one binary to another, and so some people aren't comfortable with it.
       </p>
       <p class="text-text leading-relaxed">
         There's also the factor with which I have trouble, which is that it feels like appropriating someone else's
@@ -83,38 +100,88 @@
         Studies suggest that while sex differentiation exists on a single axis, it's actually quite common for a
         person to be somewhere between the extremes. Science is cool like that.
       </p>
+      <p class="text-text leading-relaxed">
+        Many cultures throughout history and around the world have recognized more than two genders. Here are just a few
+        examples:
+      </p>
+      <p class="text-text leading-relaxed">
+      <ul>
+        <li>
+          ◦ <strong class="text-red">Hijra</strong> in South Asia, recognized for over 4,000 years as a third gender.
+        </li>
+        <li>
+          ◦ <strong class="text-red">Two-Spirit</strong> in many Indigenous cultures in North America, encompassing a
+          variety of gender identities.
+        </li>
+        <li>
+          ◦ <strong class="text-red">Fa'afafine</strong> in Samoa.
+        </li>
+        <li>
+          ◦ <strong class="text-red">Bissu</strong> in Indonesia.
+        </li>
+        <li>
+          ◦ <strong class="text-red">Sworn Virgins</strong> in Albania.
+        </li>
+        <li>
+          ◦ <strong class="text-red">Muxe</strong> in Zapotec cultures of Mexico.
+        </li>
+        <li>
+          ◦ <strong class="text-red">Bakla</strong> in the Philippines.
+        </li>
+      </ul>
+      </p>
+      <p class="text-text leading-relaxed">
+        The list goes on.
+      </p>
+      <div class="bg-red/20 p-4 rounded-lg border border-red/30 space-y-2">
+        <p class="text-red">
+          <Icon name="i-heroicons-exclamation-circle" class="font-bold mr-2 text-red" /> Even biology isn't as
+          binary
+          as we
+          once
+          thought - intersex conditions affect about 1 in 2000 births.
+        </p>
+      </div>
     </GenderInfoCard>
 
     <!-- Grammar Lesson Section -->
     <GenderInfoCard title='"They" Is Plural, Not Singular!' color="green">
       <p class="text-text leading-relaxed">
-        You're not the first person to have that response, and you are
-        <strong class="text-green">objectively wrong</strong>.
+        <strong class="text-green">The singular "they" has been used in English for over 600 years</strong>.
       </p>
-      <p class="text-text leading-relaxed mb-4">
-        Consider the following sentences, which while admittedly somewhat contrived, scan naturally:
+      <p class="text-text leading-relaxed">
+        Here are some examples you probably use without thinking:
+      </p>
+      <div class="space-y-3 mb-4">
+        <div class="bg-gray-800 p-3 rounded">
+          <p class="text-green-300">
+            "Someone left <strong class="text-green">their</strong> umbrella here"
+          </p>
+          <p class="text-xs text-gray-400">When you don't know who "someone" is.</p>
+        </div>
+        <div class="bg-gray-800 p-3 rounded">
+          <p class="text-green-300">
+            "The doctor will see you now. <strong class="text-green">They</strong> are running a bit late"
+          </p>
+          <p class="text-xs text-gray-400">When referring to a doctor whose gender you don't know.</p>
+        </div>
+        <div class="bg-gray-800 p-3 rounded">
+          <p class="text-green-300">
+            "My friend is coming over. <strong class="text-green">They</strong> should be here soon"
+          </p>
+          <p class="text-xs text-gray-400">When talking about a specific person who uses they/them pronouns.</p>
+        </div>
+      </div>
+      <p class="text-text leading-relaxed mt-4">
+        The fact is that you use the singular <strong class="text-green">they</strong> every day. You just don't think
+        about it, and that's why it <em>feels</em> artificial. But it isn't.
       </p>
       <div class="bg-green/20 p-4 rounded-lg border border-green/30 space-y-2">
         <p class="text-green">
-          • <em>"When I tell somebody a joke, <strong>they</strong> laugh."</em>
-        </p>
-        <p class="text-green">
-          • <em>"When I greet a friend, I hug <strong>them</strong>."</em>
-        </p>
-        <p class="text-green">
-          • <em>"When somebody does not get a haircut, <strong>their</strong> hair grows long."</em>
-        </p>
-        <p class="text-green">
-          • <em>"If my mobile phone runs out of power, a friend lets me borrow <strong>theirs</strong>."</em>
-        </p>
-        <p class="text-green">
-          • <em>"Each child dresses <strong>themself</strong>."</em>
+          <Icon name="i-heroicons-exclamation-circle" class="font-bold mr-2 text-green" />Shakespeare used singular
+          "they" in his plays.
         </p>
       </div>
-      <p class="text-text leading-relaxed mt-4">
-        The fact is that you use the singular <strong>they</strong> every day. You just don't think about it, and
-        that's why it <em>feels</em> artificial. But it isn't.
-      </p>
     </GenderInfoCard>
 
     <!-- Resources Section -->
