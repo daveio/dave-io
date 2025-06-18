@@ -2,9 +2,8 @@ import { getHeaders } from "h3"
 import { recordAPIMetrics } from "~/server/middleware/metrics"
 import { extractToken, getUserFromPayload, verifyJWT } from "~/server/utils/auth"
 import { getCloudflareRequestInfo } from "~/server/utils/cloudflare"
-import { prepareSortedApiResponse } from "~/server/utils/json-utils"
 import { createApiResponse, logRequest } from "~/server/utils/response"
-import { EnhancedPingResponseSchema, PingResponseSchema } from "~/server/utils/schemas"
+import { PingResponseSchema } from "~/server/utils/schemas"
 
 export default defineEventHandler(async (event) => {
   const startTime = Date.now()

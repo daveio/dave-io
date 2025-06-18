@@ -1,4 +1,4 @@
-import { type ApiResponse, BaseAdapter, type RequestConfig } from "./base"
+import { type ApiResponse, BaseAdapter } from "./base"
 
 /**
  * Options for public requests (without authentication)
@@ -62,7 +62,6 @@ export class ImagesAdapter extends BaseAdapter {
     const headers = this.buildHeaders(additionalHeaders)
 
     // Remove Authorization header for public requests
-    // biome-ignore lint/performance/noDelete: known scope
     delete headers.Authorization
 
     if (this.config.dryRun) {

@@ -8,7 +8,9 @@
 </template>
 
 <script setup lang="ts">
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import Background from "../components/Background.vue"
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import IndexUI from "../components/IndexUI.vue"
 
 // Set page title and meta

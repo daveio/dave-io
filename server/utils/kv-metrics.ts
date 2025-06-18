@@ -1,5 +1,3 @@
-import type { H3Event } from "h3"
-
 /**
  * Execute a KV get without recording timing metrics
  */

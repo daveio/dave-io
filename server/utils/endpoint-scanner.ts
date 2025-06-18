@@ -271,6 +271,7 @@ function detectSchemaUsage(content: string): { requestSchema?: any; responseSche
   if (parseMatches?.[0]) {
     const schemaName = parseMatches[0].replace(".parse(", "")
     // @ts-ignore - Dynamic schema access
+    // biome-ignore lint/performance/noDynamicNamespaceImportAccess: Required for dynamic schema scanning
     result.requestSchema = schemas[schemaName]
   }
 
@@ -280,6 +281,7 @@ function detectSchemaUsage(content: string): { requestSchema?: any; responseSche
     const typeName = responseTypeMatch[0].replace(/Promise<|>/g, "")
     const schemaName = `${typeName}Schema`
     // @ts-ignore - Dynamic schema access
+    // biome-ignore lint/performance/noDynamicNamespaceImportAccess: Required for dynamic schema scanning
     result.responseSchema = schemas[schemaName]
   }
 
@@ -297,6 +299,7 @@ function detectSchemaUsage(content: string): { requestSchema?: any; responseSche
     )
     if (requestSchemas.length > 0) {
       // @ts-ignore - Dynamic schema access
+      // biome-ignore lint/performance/noDynamicNamespaceImportAccess: Required for dynamic schema scanning
       result.requestSchema = schemas[requestSchemas[0]]
     }
 
@@ -304,6 +307,7 @@ function detectSchemaUsage(content: string): { requestSchema?: any; responseSche
     const responseSchemas = importedSchemas.filter((s) => s.includes("Response"))
     if (responseSchemas.length > 0) {
       // @ts-ignore - Dynamic schema access
+      // biome-ignore lint/performance/noDynamicNamespaceImportAccess: Required for dynamic schema scanning
       result.responseSchema = schemas[responseSchemas[0]]
     }
   }

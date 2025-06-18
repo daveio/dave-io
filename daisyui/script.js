@@ -164,7 +164,6 @@ function initScrollAnimations() {
   }
 
   const revealOnScroll = utils.debounce(() => {
-    // biome-ignore lint/complexity/noForEach: performance is acceptable for UI effects
     revealElements.forEach((element) => {
       if (utils.isInViewport(element)) {
         element.classList.add("revealed")
@@ -180,7 +179,6 @@ function initScrollAnimations() {
 function initTerminalAnimation() {
   const terminalElements = document.querySelectorAll("[data-terminal-type]")
 
-  // biome-ignore lint/complexity/noForEach: terminal animation setup needs iteration
   terminalElements.forEach((element) => {
     const text = element.textContent
     const speed = Number.parseInt(element.dataset.terminalSpeed) || 50
@@ -198,7 +196,6 @@ function initTerminalAnimation() {
 
     // Start typing animation when element comes into view
     const observer = new IntersectionObserver((entries) => {
-      // biome-ignore lint/complexity/noForEach: intersection observer callback iteration
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           typeWriter()
@@ -268,7 +265,6 @@ function initMatrixRain() {
 function initGlitchEffects() {
   const glitchElements = document.querySelectorAll(".glitch")
 
-  // biome-ignore lint/complexity/noForEach: glitch effect setup needs iteration
   glitchElements.forEach((element) => {
     element.addEventListener("mouseenter", () => {
       if (state.animationEnabled) {

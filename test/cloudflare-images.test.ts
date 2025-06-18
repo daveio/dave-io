@@ -1,5 +1,4 @@
 import { blake3 } from "@noble/hashes/blake3"
-import { fileTypeFromBuffer } from "file-type"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import {
   CLOUDFLARE_IMAGES_FORMATS,

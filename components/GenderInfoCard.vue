@@ -15,6 +15,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
+// biome-ignore lint/correctness/noUnusedVariables: Used in template with :class
 const colorClasses = computed(() => {
   const colorMap = {
     pink: {

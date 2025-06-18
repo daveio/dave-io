@@ -1,5 +1,4 @@
 import type { H3Event } from "h3"
-import { setHeader } from "h3"
 import { type AuthResult, authorizeEndpoint } from "./auth"
 import { createApiError } from "./response"
 

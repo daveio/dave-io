@@ -1,4 +1,4 @@
-import { type ApiResponse, BaseAdapter, type RequestConfig } from "./base"
+import { type ApiResponse, BaseAdapter } from "./base"
 
 /**
  * Response format for ping endpoint (new restructured format)

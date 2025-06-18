@@ -1,5 +1,5 @@
 import type { H3Event } from "h3"
-import { createError, sendRedirect } from "h3"
+import { createError } from "h3"
 import { getCloudflareRequestInfo } from "./cloudflare"
 import { prepareSortedApiResponse } from "./json-utils"
 import type { ApiErrorResponse, ApiSuccessResponse } from "./schemas"

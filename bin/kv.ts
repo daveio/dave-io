@@ -25,7 +25,7 @@ import { Command } from "commander"
 import yaml from "js-yaml"
 import JSON5 from "json5"
 import { getTimestamp, keyMatchesPatterns, tryParseJson } from "./shared/cli-utils"
-import { deleteKeyKV, fetchAllKeysKV, getKeyValueKV, getWranglerConfig, putKeyValueKV } from "./shared/cloudflare"
+import { deleteKeyKV, fetchAllKeysKV, getKeyValueKV, putKeyValueKV } from "./shared/cloudflare"
 
 const EXPORT_DIR = "data/kv"
 

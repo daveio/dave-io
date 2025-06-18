@@ -148,11 +148,17 @@
 </template>
 
 <script setup lang="ts">
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import Background from "../components/Background.vue"
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import GenderChatbotPlaceholder from "../components/GenderChatbotPlaceholder.vue"
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import GenderFloatingChatButton from "../components/GenderFloatingChatButton.vue"
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import GenderInfoCard from "../components/GenderInfoCard.vue"
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import GenderPageHeader from "../components/GenderPageHeader.vue"
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import GenderResourcesGrid from "../components/GenderResourcesGrid.vue"
 
 // Set page title and meta
