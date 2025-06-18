@@ -3,7 +3,13 @@
     class="min-h-screen bg-gradient-to-br from-base via-mantle to-base flex flex-col justify-center py-12 px-4 relative overflow-hidden"
   >
     <Background />
-    <IndexUI :handleServiceClick="handleServiceClick" />
+    <div class="max-w-3xl mx-auto w-full relative z-10">
+      <Hero />
+      <Interface>
+        <HomeContent />
+      </Interface>
+      <CurlCommand />
+    </div>
   </div>
 </template>
 
@@ -11,7 +17,13 @@
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import Background from "../components/Background.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import IndexUI from "../components/IndexUI.vue"
+import CurlCommand from "../components/CurlCommand.vue"
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
+import Hero from "../components/Hero.vue"
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
+import HomeContent from "../components/HomeContent.vue"
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
+import Interface from "../components/Interface.vue"
 
 // Set page title and meta
 useHead({
