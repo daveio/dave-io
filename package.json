@@ -30,6 +30,7 @@
   "devDependencies": {
     "@anthropic-ai/claude-code": "1.0.27",
     "@biomejs/biome": "2.0.0",
+    "@catppuccin/tailwindcss": "^0.1.6",
     "@iconify-json/mdi": "1.2.3",
     "@iconify-json/simple-icons": "1.2.39",
     "@nuxt/test-utils": "3.19.1",

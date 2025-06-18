@@ -4,7 +4,7 @@
       <!-- Bluesky -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
-          <Icon name="i-simple-icons-bluesky" class="mr-2 text-sky-400 font-bold" />
+          <Icon name="i-simple-icons-bluesky" class="mr-2 text-sky font-bold" />
           Bluesky
         </span>
         <NuxtLink
@@ -19,7 +19,7 @@
       <!-- Dreamwidth -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
-          <Icon name="i-heroicons-book-open" class="mr-2 text-green-400 font-bold" />
+          <Icon name="i-heroicons-book-open" class="mr-2 text-green font-bold" />
           Dreamwidth
         </span>
         <NuxtLink
@@ -34,7 +34,7 @@
       <!-- Facebook -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
-          <Icon name="i-simple-icons-facebook" class="mr-2 text-blue-500 font-bold" />
+          <Icon name="i-simple-icons-facebook" class="mr-2 text-blue font-bold" />
           Facebook
         </span>
         <NuxtLink
@@ -49,7 +49,7 @@
       <!-- GitHub -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
-          <Icon name="i-simple-icons-github" class="mr-2 text-neutral-300 font-bold" />
+          <Icon name="i-simple-icons-github" class="mr-2 text-subtext1 font-bold" />
           GitHub
         </span>
         <NuxtLink
@@ -64,7 +64,7 @@
       <!-- Instagram -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
-          <Icon name="i-simple-icons-instagram" class="mr-2 text-pink-400 font-bold" />
+          <Icon name="i-simple-icons-instagram" class="mr-2 text-pink font-bold" />
           Instagram
         </span>
         <NuxtLink
@@ -79,7 +79,7 @@
       <!-- LinkedIn -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
-          <Icon name="i-simple-icons-linkedin" class="mr-2 text-blue-600 font-bold" />
+          <Icon name="i-simple-icons-linkedin" class="mr-2 text-blue font-bold" />
           LinkedIn
         </span>
         <NuxtLink
@@ -94,7 +94,7 @@
       <!-- Mastodon -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
-          <Icon name="i-simple-icons-mastodon" class="mr-2 text-purple-400 font-bold" />
+          <Icon name="i-simple-icons-mastodon" class="mr-2 text-mauve font-bold" />
           Mastodon
         </span>
         <NuxtLink
@@ -109,7 +109,7 @@
       <!-- Pillowfort -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
-          <Icon name="i-heroicons-chat-bubble-left-ellipsis" class="mr-2 text-indigo-400 font-bold" />
+          <Icon name="i-heroicons-chat-bubble-left-ellipsis" class="mr-2 text-lavender font-bold" />
           Pillowfort
         </span>
         <NuxtLink
@@ -124,7 +124,7 @@
       <!-- Threads -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
-          <Icon name="i-simple-icons-threads" class="mr-2 text-gray-300 font-bold" />
+          <Icon name="i-simple-icons-threads" class="mr-2 text-subtext1 font-bold" />
           Threads
         </span>
         <NuxtLink
@@ -139,7 +139,7 @@
       <!-- Tumblr -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
-          <Icon name="i-simple-icons-tumblr" class="mr-2 text-blue-400 font-bold" />
+          <Icon name="i-simple-icons-tumblr" class="mr-2 text-sapphire font-bold" />
           Tumblr
         </span>
         <NuxtLink
@@ -154,7 +154,7 @@
       <!-- YouTube -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
-          <Icon name="i-simple-icons-youtube" class="mr-2 text-red-500 font-bold" />
+          <Icon name="i-simple-icons-youtube" class="mr-2 text-red font-bold" />
           YouTube
         </span>
         <NuxtLink
@@ -169,10 +169,10 @@
       <!-- Twitter -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
-          <Icon name="i-heroicons-x-mark" class="mr-2 text-gray-400 font-bold" />
+          <Icon name="i-heroicons-x-mark" class="mr-2 text-subtext0 font-bold" />
           Twitter
         </span>
-        <span class="text-gray-500">Nope.</span>
+        <span class="text-subtext0">Nope.</span>
       </div>
     </div>
   </div>

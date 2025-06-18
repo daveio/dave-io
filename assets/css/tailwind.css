@@ -21,10 +21,10 @@
   }
 
   .link-url {
-    @apply text-blue-400 hover:text-blue-200 transition-colors;
+    @apply text-blue hover:text-sapphire transition-colors;
   }
 
   .link-gender {
-    @apply text-green-200 hover:text-green-100 transition-colors;
+    @apply text-green hover:text-teal transition-colors;
   }
 }

@@ -1,12 +1,12 @@
 <template>
   <div
-    class="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(120,119,198,0.3),transparent_50%)] animate-pulse-slow">
+    class="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgb(180_190_254/0.3),transparent_50%)] animate-pulse-slow">
   </div>
   <div
-    class="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,119,198,0.3),transparent_50%)] animate-pulse-slow">
+    class="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgb(245_169_184/0.3),transparent_50%)] animate-pulse-slow">
   </div>
   <div
-    class="absolute inset-0 bg-[radial-gradient(circle_at_40%_80%,rgba(255,198,119,0.2),transparent_50%)] animate-pulse-slow">
+    class="absolute inset-0 bg-[radial-gradient(circle_at_40%_80%,rgb(238_212_159/0.2),transparent_50%)] animate-pulse-slow">
   </div>
 </template>
 

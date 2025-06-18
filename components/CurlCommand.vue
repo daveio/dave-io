@@ -1,11 +1,11 @@
 <template>
   <div class="curl-section mb-8">
-    <div class="bg-black/50 border border-neutral-700 shadow-2xl overflow-hidden rounded-lg">
-      <div class="text-center p-4 font-mono text-white text-sm">
+    <div class="bg-surface0/50 border border-surface2 shadow-2xl overflow-hidden rounded-lg">
+      <div class="text-center p-4 font-mono text-text text-sm">
         <div class="text-lg font-extrabold mb-4 rainbow-gradient-text">Want to see this animated?</div>
-        <div class="text-neutral-300">
+        <div class="text-subtext1">
           <button
-            class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-mono bg-neutral-800 hover:bg-neutral-700 rounded-md transition-colors cursor-pointer"
+            class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-mono bg-surface1 hover:bg-surface2 rounded-md transition-colors cursor-pointer"
             @click="copyCurlCommand" title="Click to copy to clipboard">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round"

@@ -13,5 +13,10 @@ export default (<Partial<Config>>{
           "linear-gradient(to right, #e87777 35%, #eaaa77 40%, #eacc77 45%, #eded77 50%, #aaeaaa 55%, #77ccea 60%, #ccaaea 65%, #eaaad4 70%)"
       }
     }
-  }
+  },
+  plugins: [
+    require("@catppuccin/tailwindcss")({
+      defaultFlavour: "macchiato"
+    })
+  ]
 })
