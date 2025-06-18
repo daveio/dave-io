@@ -1,4 +1,5 @@
 <template>
+  <!-- trunk-ignore-all(trunk-toolbox/todo) -->
   <div class="mt-8">
     <div
       class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto md:gap-x-4 max-md:text-sm max-md:max-w-full max-md:pl-4">

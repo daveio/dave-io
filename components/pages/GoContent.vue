@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import BackToHomeButton from "./BackToHomeButton.vue"
+import BackToHomeButton from "../ui/BackToHomeButton.vue"
 
 // This component handles the Jurassic Park themed access denied content
 </script>

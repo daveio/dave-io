@@ -9,11 +9,11 @@
 
 <script setup lang="ts">
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import ExtraLinks from "./ExtraLinks.vue"
+import ExtraLinks from "../ui/ExtraLinks.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import ProfileInfo from "./ProfileInfo.vue"
+import ProfileInfo from "../ui/ProfileInfo.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import SocialLinks from "./SocialLinks.vue"
+import SocialLinks from "../ui/SocialLinks.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import Subtitle from "./Subtitle.vue"
+import Subtitle from "../ui/Subtitle.vue"
 </script>

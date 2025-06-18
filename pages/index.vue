@@ -14,13 +14,13 @@
 
 <script setup lang="ts">
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import Background from "../components/Background.vue"
+import Background from "../components/layout/Background.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import CurlCommand from "../components/CurlCommand.vue"
+import Interface from "../components/layout/Interface.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import HomeContent from "../components/HomeContent.vue"
+import HomeContent from "../components/pages/HomeContent.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import Interface from "../components/Interface.vue"
+import CurlCommand from "../components/ui/CurlCommand.vue"
 
 // Set page title and meta
 useHead({

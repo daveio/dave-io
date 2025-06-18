@@ -15,13 +15,13 @@
 
 <script setup lang="ts">
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import Background from "../components/Background.vue"
+import GenderContent from "../components/gender/GenderContent.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import GenderContent from "../components/GenderContent.vue"
+import GenderFloatingChatButton from "../components/gender/GenderFloatingChatButton.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import GenderFloatingChatButton from "../components/GenderFloatingChatButton.vue"
+import Background from "../components/layout/Background.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import Interface from "../components/Interface.vue"
+import Interface from "../components/layout/Interface.vue"
 
 // Set page title and meta
 useHead({

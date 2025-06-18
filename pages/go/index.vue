@@ -13,11 +13,11 @@
 
 <script setup lang="ts">
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import Background from "../../components/Background.vue"
+import Background from "../../components/layout/Background.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import GoContent from "../../components/GoContent.vue"
+import Interface from "../../components/layout/Interface.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
-import Interface from "../../components/Interface.vue"
+import GoContent from "../../components/pages/GoContent.vue"
 
 // Page metadata
 useHead({
