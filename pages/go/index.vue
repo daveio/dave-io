@@ -20,10 +20,12 @@ import Interface from "../../components/layout/Interface.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import GoContent from "../../components/pages/GoContent.vue"
 
-// Page metadata
-useHead({
-  title: "Access Denied - Dave.io",
-  meta: [{ name: "description", content: "You didn't say the magic word!" }]
+usePageSetup({
+  title: "go",
+  keywords: ["access denied", "magic word", "jurassic park", "dennis nedry"],
+  description: "You didn't say the magic word!",
+  icon: "/images/dave-io-icon-128.png",
+  image: "/images/dave-io-social-1280.png"
 })
 
 // Page logging
