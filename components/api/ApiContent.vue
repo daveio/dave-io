@@ -34,7 +34,7 @@
     </ApiInfoCard>
 
     <!-- Public Endpoints Section -->
-    <ApiInfoCard title="🌍 Public Endpoints (No Auth Required)" color="green">
+    <ApiInfoCard title="🌍 Public Endpoints" color="green">
       <p class="text-text leading-relaxed mb-4">
         These endpoints are available to everyone. Use them responsibly, or don't - I'm not your dad.
       </p>
