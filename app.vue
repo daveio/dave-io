@@ -3,6 +3,7 @@
     <NuxtRouteAnnouncer />
     <NuxtLoadingIndicator />
     <NuxtPage />
+    <NuxtImg src="images/dave-io-social-1280.png" alt="image" width="400" height="400" />
   </div>
 </template>
 
