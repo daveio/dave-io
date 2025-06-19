@@ -105,7 +105,7 @@ export default defineNuxtConfig({
   },
   image: {
     cloudflare: {
-      baseURL: 'https://dave.io'
+      baseURL: "https://dave.io"
     }
   }
 })
