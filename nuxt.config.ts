@@ -102,10 +102,5 @@ export default defineNuxtConfig({
     assets: {
       prefix: "/_fonts/"
     }
-  },
-  image: {
-    cloudflare: {
-      baseURL: "https://dave.io"
-    }
   }
 })
