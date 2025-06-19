@@ -9,6 +9,7 @@
     "@nuxt/image": "1.10.0",
     "@nuxt/scripts": "0.11.8",
     "@nuxtjs/color-mode": "3.5.2",
+    "@nuxtjs/seo": "^3.0.3",
     "@pinia/nuxt": "0.11.1",
     "@tanstack/vue-table": "8.21.3",
     "@unhead/vue": "2.0.10",
@@ -28,7 +29,7 @@
     "zod": "3.25.67"
   },
   "devDependencies": {
-    "@anthropic-ai/claude-code": "1.0.29",
+    "@anthropic-ai/claude-code": "1.0.30",
     "@biomejs/biome": "2.0.0",
     "@catppuccin/daisyui": "^2.1.1",
     "@catppuccin/tailwindcss": "1.0.0-beta.2",
@@ -67,7 +68,7 @@
     "node": "22.16.0"
   },
   "license": "MIT",
-  "name": "dave-io",
+  "name": "dave.io",
   "packageManager": "bun@1.2.16",
   "private": true,
   "resolutions": {

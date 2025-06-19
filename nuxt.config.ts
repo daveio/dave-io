@@ -72,6 +72,7 @@ export default defineNuxtConfig({
     "@nuxt/scripts",
     "@nuxt/test-utils",
     "@nuxtjs/color-mode",
+    "@nuxtjs/seo",
     "@nuxtjs/tailwindcss",
     "@pinia/nuxt",
     "nitro-cloudflare-dev"

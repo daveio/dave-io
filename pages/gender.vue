@@ -1,6 +1,7 @@
 <template>
   <div
-    class="min-h-screen bg-gradient-to-br from-base via-mantle to-base flex flex-col justify-center py-12 px-4 relative overflow-hidden">
+    class="min-h-screen bg-gradient-to-br from-base via-mantle to-base flex flex-col justify-center py-12 px-4 relative overflow-hidden"
+  >
     <Background />
 
     <GenderFloatingChatButton />
@@ -23,29 +24,23 @@ import Background from "../components/layout/Background.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import Interface from "../components/layout/Interface.vue"
 
-// Set page title and meta
-useHead({
-  title: "🏳️‍⚧️ Gender Identity & Pronouns - dave.io",
-  meta: [
-    {
-      name: "description",
-      content:
-        "Dave Williams' journey with non-binary gender identity, using they/them pronouns. A friendly, educational guide to understanding gender diversity."
-    },
-    {
-      name: "keywords",
-      content:
-        "non-binary, pronouns, they/them, gender identity, LGBTQ+, transgender, enby, inclusion, respect, gender diversity"
-    },
-    {
-      property: "og:title",
-      content: "Gender Identity & Pronouns - dave.io"
-    },
-    {
-      property: "og:description",
-      content: "Understanding non-binary gender identity and they/them pronouns - a friendly educational guide"
-    }
-  ]
+usePageSetup({
+  title: "gender",
+  keywords: [
+    "non-binary",
+    "pronouns",
+    "they/them",
+    "gender identity",
+    "LGBTQ+",
+    "transgender",
+    "enby",
+    "inclusion",
+    "respect",
+    "gender diversity"
+  ],
+  description: "Understanding non-binary gender identity and they/them pronouns - a friendly educational guide",
+  icon: "/images/dave-io-icon-128.png",
+  image: "/images/dave-io-social-1280.png"
 })
 
 // Page logging

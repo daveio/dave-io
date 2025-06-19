@@ -4,16 +4,14 @@
 
     <!-- What's This About Section -->
     <ApiInfoCard title="🤨 What's This About?" color="yellow">
-      <p class="text-text leading-relaxed">
-        Yes. <strong class="text-yellow">Of course there's an API</strong>.
-      </p>
+      <p class="text-text leading-relaxed">Yes. <strong class="text-yellow">Of course there's an API</strong>.</p>
       <p class="text-text leading-relaxed">
         It started as a simple way to serve some images and somehow evolved into a full-blown JWT-authenticated,
         Cloudflare Workers-powered, over-engineered monster. But hey, at least it's fast. ⚡
       </p>
       <p class="text-text leading-relaxed">
-        The API powers various features on this site and provides programmatic access to some services.
-        It's built on Nuxt 3, runs on Cloudflare's edge network, and has more authentication than a government facility.
+        The API powers various features on this site and provides programmatic access to some services. It's built on
+        Nuxt 3, runs on Cloudflare's edge network, and has more authentication than a government facility.
       </p>
       <div class="bg-yellow/20 p-4 rounded-lg border border-yellow/30">
         <p class="text-yellow text-sm">
@@ -24,9 +22,7 @@
 
     <!-- Authentication Section -->
     <ApiInfoCard title="🔐 Authentication" color="purple">
-      <p class="text-text leading-relaxed">
-        The API uses JWT tokens.
-      </p>
+      <p class="text-text leading-relaxed">The API uses JWT tokens.</p>
       <div class="mt-4">
         <h3 class="text-purple font-semibold mb-2">Using Authentication</h3>
         <p class="text-sm text-subtext0 mt-2">Pass your JWT as a Bearer token or a <code>token</code> GET parameter.</p>
@@ -41,16 +37,15 @@
       <div class="space-y-4">
         <div>
           <h3 class="text-green font-semibold mb-2">Health Check</h3>
-          <p class="text-sm text-subtext0 mt-2">The classic ping-pong. Confirms the API hasn't caught fire and returns
-            some information about your request.
-          </p>
           <p class="text-sm text-subtext0 mt-2">
-            Could be used as a "what is my IP" at a push.
+            The classic ping-pong. Confirms the API hasn't caught fire and returns some information about your request.
           </p>
+          <p class="text-sm text-subtext0 mt-2">Could be used as a "what is my IP" at a push.</p>
         </div>
         <div>
           <h3 class="text-green font-semibold mb-2">Dashboards</h3>
-          <p class="text-sm text-subtext0 mt-2">Generates dashboard data for dashboard apps which display dashboards.
+          <p class="text-sm text-subtext0 mt-2">
+            Generates dashboard data for dashboard apps which display dashboards.
           </p>
         </div>
       </div>
@@ -70,8 +65,10 @@
         </div>
         <div>
           <h3 class="text-red font-semibold mb-2">Ticket Enrichment</h3>
-          <p class="text-sm text-subtext0 mb-2">Got a ticket with a description just containing a URL, image, or single
-            sentence of text? Let AI go into detail for you.</p>
+          <p class="text-sm text-subtext0 mb-2">
+            Got a ticket with a description just containing a URL, image, or single sentence of text? Let AI go into
+            detail for you.
+          </p>
         </div>
         <div>
           <h3 class="text-red font-semibold mb-2">Image Optimisation</h3>
@@ -82,9 +79,7 @@
 
     <!-- Getting Started Section -->
     <ApiInfoCard title="🚀 Getting Started" color="cyan">
-      <p class="text-text leading-relaxed mb-4">
-        Want to use the API? Here's the quickest way to get started:
-      </p>
+      <p class="text-text leading-relaxed mb-4">Want to use the API? Here's the quickest way to get started:</p>
 
       <div class="space-y-4">
         <div>
@@ -95,9 +90,7 @@
 
         <div>
           <h3 class="text-cyan font-semibold mb-2">Need Authentication?</h3>
-          <p class="text-text text-sm mb-2">
-            Need a JWT to call any protected endpoints? Ask me.
-          </p>
+          <p class="text-text text-sm mb-2">Need a JWT to call any protected endpoints? Ask me.</p>
         </div>
       </div>
 

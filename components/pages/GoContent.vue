@@ -1,8 +1,11 @@
 <template>
   <div class="text-center space-y-6">
     <div class="bg-surface0/80 border border-surface2 rounded-lg p-8 shadow-2xl backdrop-blur-sm">
-      <img src="/gifs/nedry.gif" alt="You didn't say the magic word"
-        class="mx-auto max-w-lg w-full h-auto rounded-lg" />
+      <img
+        src="/gifs/nedry.gif"
+        alt="You didn't say the magic word"
+        class="mx-auto max-w-lg w-full h-auto rounded-lg"
+      />
     </div>
 
     <div class="alert alert-error border-red border-2 bg-surface1/60 backdrop-blur-sm">

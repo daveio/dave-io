@@ -1,6 +1,8 @@
 <template>
   <div class="pt-4 mb-4 flex flex-col items-center">
-    <div class="rounded-xl p-0.5 w-[420px] h-[70px] flex items-center justify-center bg-rainbow-gradient max-md:w-[98vw] max-md:min-w-0 max-md:max-w-full max-md:h-[60px] max-md:text-base">
+    <div
+      class="rounded-xl p-0.5 w-[420px] h-[70px] flex items-center justify-center bg-rainbow-gradient max-md:w-[98vw] max-md:min-w-0 max-md:max-w-full max-md:h-[60px] max-md:text-base"
+    >
       <div class="bg-[#111] rounded-[10px] w-full h-full flex items-center justify-center">
         <span class="font-bold text-lg text-white">Dave Williams</span>
       </div>

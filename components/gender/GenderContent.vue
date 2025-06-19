@@ -6,23 +6,21 @@
     <GenderInfoCard title="🤔 Non-What?" color="pink">
       <p class="text-text leading-relaxed">
         <strong class="text-pink">Non-binary</strong> is an umbrella term for gender identities that don't fit neatly
-        into the categories of "man" or
-        "woman." It's about existing outside the traditional gender binary.
+        into the categories of "man" or "woman." It's about existing outside the traditional gender binary.
       </p>
       <p class="text-text leading-relaxed">
-        The gender binary - that is, male and female - is
-        increasingly seen as outdated and restrictive for no good reason. Non-binary people have been around for all
-        of human history, but it's only fairly recently that we're starting to be formally defined in terms of
-        sociological theory.
+        The gender binary - that is, male and female - is increasingly seen as outdated and restrictive for no good
+        reason. Non-binary people have been around for all of human history, but it's only fairly recently that we're
+        starting to be formally defined in terms of sociological theory.
       </p>
       <p class="text-text leading-relaxed">
         Being non-binary or otherwise genderqueer is more complicated than 'somewhere between male and female'. Gender
         is distinct from sex, and refers to a fairly nebulous psychological, cultural, and sociological identity.
       </p>
       <p class="text-text leading-relaxed">
-        In fact, to us, gender isn't a simple line between male and female. There are other axes to it, ones which
-        don't have convenient names yet. Our gender identity shifts around in this multidimensional space, where
-        gender is a strange, variable, often inscrutable haze. ✨
+        In fact, to us, gender isn't a simple line between male and female. There are other axes to it, ones which don't
+        have convenient names yet. Our gender identity shifts around in this multidimensional space, where gender is a
+        strange, variable, often inscrutable haze. ✨
       </p>
       <div class="bg-pink/20 p-4 rounded-lg border border-pink/30">
         <p class="text-pink text-sm">
@@ -36,8 +34,7 @@
     <GenderInfoCard title="😅 Plot Twist: I Thought I Was Cis" color="blue">
       <p class="text-text leading-relaxed">
         First, a definition - <strong class="text-blue">cisgender</strong>, or <strong class="text-blue">cis</strong>,
-        people have an assigned
-        gender at birth matching their actual gender. It's the opposite of transgender.
+        people have an assigned gender at birth matching their actual gender. It's the opposite of transgender.
       </p>
       <p class="text-text leading-relaxed">
         For a very long time, I fully believed that I <em>was</em> cisgender. In my early thirties, a trans developer
@@ -45,8 +42,8 @@
       </p>
       <p class="text-text leading-relaxed">
         When you feel a thing so regularly, you just assume that it's part of the normal human experience. Frequently
-        having times you wish you could interact with the world being seen as feminine, envying people who get
-        feminine presentation for free? Turns out those are things which cis people don't experience.
+        having times you wish you could interact with the world being seen as feminine, envying people who get feminine
+        presentation for free? Turns out those are things which cis people don't experience.
       </p>
       <p class="text-text leading-relaxed">
         It was particularly confusing because - and this is why I never pursued it - it wasn't the case all the time.
@@ -66,8 +63,7 @@
         birth but identify as non-binary, that makes me transgender.
       </p>
       <p class="text-text leading-relaxed">
-        <strong class="text-purple">I do consider myself transgender, but with awareness of
-          privilege.</strong>
+        <strong class="text-purple">I do consider myself transgender, but with awareness of privilege.</strong>
       </p>
       <p class="text-text leading-relaxed">
         In the wider world, it depends who you ask. Some feel the label to be appropriate, some don't.
@@ -88,17 +84,17 @@
     <GenderInfoCard title='🙄 "But There Are Only Two Genders!"' color="red">
       <p class="text-text leading-relaxed">
         I think it's very likely that you're conflating <strong class="text-red">sex</strong> and
-        <strong class="text-red">gender</strong> here. Sex is determined by your genes, and relates to the
-        biological differentiation of your body. Gender is distinct, and refers to a fairly nebulous psychological,
-        cultural, and sociological identity. 🧬
+        <strong class="text-red">gender</strong> here. Sex is determined by your genes, and relates to the biological
+        differentiation of your body. Gender is distinct, and refers to a fairly nebulous psychological, cultural, and
+        sociological identity. 🧬
       </p>
       <p class="text-text leading-relaxed">
         But sex isn't binary either! Most of us are aware of sexual differentiation resolving somewhere other than the
         extremes of 'male' and 'female', referred to as being intersex, and the perception we have is that it's rare.
       </p>
       <p class="text-text leading-relaxed">
-        Studies suggest that while sex differentiation exists on a single axis, it's actually quite common for a
-        person to be somewhere between the extremes. Science is cool like that.
+        Studies suggest that while sex differentiation exists on a single axis, it's actually quite common for a person
+        to be somewhere between the extremes. Science is cool like that.
       </p>
       <p class="text-text leading-relaxed">
         Many cultures throughout history and around the world have recognized more than two genders. Here are just a few
@@ -112,32 +108,17 @@
           ◦ <strong class="text-red">Two-Spirit</strong> in many Indigenous cultures in North America, encompassing a
           variety of gender identities.
         </li>
-        <li>
-          ◦ <strong class="text-red">Fa'afafine</strong> in Samoa.
-        </li>
-        <li>
-          ◦ <strong class="text-red">Bissu</strong> in Indonesia.
-        </li>
-        <li>
-          ◦ <strong class="text-red">Sworn Virgins</strong> in Albania.
-        </li>
-        <li>
-          ◦ <strong class="text-red">Muxe</strong> in Zapotec cultures of Mexico.
-        </li>
-        <li>
-          ◦ <strong class="text-red">Bakla</strong> in the Philippines.
-        </li>
+        <li>◦ <strong class="text-red">Fa'afafine</strong> in Samoa.</li>
+        <li>◦ <strong class="text-red">Bissu</strong> in Indonesia.</li>
+        <li>◦ <strong class="text-red">Sworn Virgins</strong> in Albania.</li>
+        <li>◦ <strong class="text-red">Muxe</strong> in Zapotec cultures of Mexico.</li>
+        <li>◦ <strong class="text-red">Bakla</strong> in the Philippines.</li>
       </ul>
-      <p class="text-text leading-relaxed">
-        The list goes on.
-      </p>
+      <p class="text-text leading-relaxed">The list goes on.</p>
       <div class="bg-red/20 p-4 rounded-lg border border-red/30 space-y-2">
         <p class="text-red">
-          <Icon name="i-heroicons-exclamation-circle" class="font-bold mr-2 text-red" /> Even biology isn't as
-          binary
-          as we
-          once
-          thought - intersex conditions affect about 1 in 2000 births.
+          <Icon name="i-heroicons-exclamation-circle" class="font-bold mr-2 text-red" /> Even biology isn't as binary as
+          we once thought - intersex conditions affect about 1 in 2000 births.
         </p>
       </div>
     </GenderInfoCard>
@@ -147,14 +128,10 @@
       <p class="text-text leading-relaxed">
         <strong class="text-green">The singular "they" has been used in English for over 600 years</strong>.
       </p>
-      <p class="text-text leading-relaxed">
-        Here are some examples you probably use without thinking:
-      </p>
+      <p class="text-text leading-relaxed">Here are some examples you probably use without thinking:</p>
       <div class="space-y-3 mb-4">
         <div class="bg-gray-800 p-3 rounded">
-          <p class="text-green-300">
-            "Someone left <strong class="text-green">their</strong> umbrella here"
-          </p>
+          <p class="text-green-300">"Someone left <strong class="text-green">their</strong> umbrella here"</p>
           <p class="text-xs text-gray-400">When you don't know who "someone" is.</p>
         </div>
         <div class="bg-gray-800 p-3 rounded">

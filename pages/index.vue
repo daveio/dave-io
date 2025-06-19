@@ -22,15 +22,23 @@ import HomeContent from "../components/pages/HomeContent.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import CurlCommand from "../components/ui/CurlCommand.vue"
 
-// Set page title and meta
-useHead({
-  title: "dave.io - Dave Williams",
-  meta: [
-    {
-      name: "description",
-      content: "Personal site of Dave Williams"
-    }
-  ]
+usePageSetup({
+  title: "home",
+  keywords: [
+    "dave.io",
+    "Dave Williams",
+    "personal site",
+    "portfolio",
+    "blog",
+    "projects",
+    "web development",
+    "programming",
+    "technology",
+    "software engineer"
+  ],
+  description: "Personal site of Dave Williams",
+  icon: "/images/dave-io-icon-128.png",
+  image: "/images/dave-io-social-1280.png"
 })
 
 // Page logging

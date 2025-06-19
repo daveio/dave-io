@@ -39,7 +39,7 @@ lint:
     - golangci-lint2
     - actionlint@1.7.7
     - biome@2.0.0
-    - checkov@3.2.442
+    - checkov@3.2.443
     - dustilock@1.2.0
     - git-diff-check
     - gitleaks@8.27.2
@@ -47,7 +47,7 @@ lint:
     - markdownlint@0.45.0
     - osv-scanner@2.0.3
     - oxipng@9.1.5
-    - semgrep@1.125.0
+    - semgrep@1.126.0
     - shellcheck@0.10.0
     - shfmt@3.6.0
     - sourcery@1.37.0
