@@ -3,37 +3,37 @@ export function usePageSetup({
   description,
   icon,
   image,
-  keywords
+  keywords,
 }: {
-  title: string
-  description: string
-  icon: string
-  image: string
-  keywords: string[]
+  title: string;
+  description: string;
+  icon: string;
+  image: string;
+  keywords: string[];
 }) {
   useHead({
     title: title,
     link: [
       {
         rel: "icon",
-        href: icon
+        href: icon,
       },
       {
         rel: "apple-touch-icon",
-        href: icon
-      }
+        href: icon,
+      },
     ],
     meta: [
       {
         name: "description",
-        content: description
+        content: description,
       },
       {
         name: "keywords",
-        content: keywords.join(", ")
-      }
-    ]
-  })
+        content: keywords.join(", "),
+      },
+    ],
+  });
 
   useSeoMeta({
     title,
@@ -42,12 +42,12 @@ export function usePageSetup({
     twitterTitle: title,
     twitterDescription: description,
     twitterImage: image,
-    description
-  })
-
-  defineOgImageComponent("Frame", {
     description,
-    image,
-    icon
-  })
+  });
+
+  // defineOgImageComponent("Frame", {
+  //   description,
+  //   image,
+  //   icon
+  // })
 }
