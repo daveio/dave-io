@@ -1,6 +1,12 @@
 # https://docs.trunk.io/cli | https://docs.trunk.io/reference/trunk-yaml
 actions:
   definitions:
+    - display_name: format
+      id: format
+      run: bun lint:format
+      triggers:
+        - git_hooks:
+            - pre-commit
     - display_name: biome
       id: biome
       run: bun lint:biome
@@ -14,6 +20,7 @@ actions:
         - git_hooks:
             - pre-commit
   enabled:
+    - format
     - biome
     - typecheck
     - trunk-announce
