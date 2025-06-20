@@ -2,13 +2,12 @@
   <!-- trunk-ignore-all(trunk-toolbox/todo) -->
   <div class="mt-8 mb-3">
     <div
-      class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto md:gap-x-4 max-md:text-sm max-md:max-w-full max-md:pl-4"
-    >
+      class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto md:gap-x-4 max-md:text-sm max-md:max-w-full max-md:pl-4">
       <!-- API Link -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
           <Icon name="i-heroicons-cog" class="font-bold mr-2 text-peach" />
-          Learn about the API
+          About the API
         </span>
         <NuxtLink href="/api" class="break-all link-url text-peach" @click="handleLinkClick('API', '/api')">
           dave.io/api
@@ -18,8 +17,7 @@
   </div>
   <div class="mt-8">
     <div
-      class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto md:gap-x-4 max-md:text-sm max-md:max-w-full max-md:pl-4"
-    >
+      class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto md:gap-x-4 max-md:text-sm max-md:max-w-full max-md:pl-4">
       <!-- CV Link -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">

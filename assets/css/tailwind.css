@@ -1,6 +1,8 @@
 @import './gradients.css';
 @import 'tailwindcss';
 
+@plugin "daisyui";
+
 @theme {
   /* Font Families */
   --font-mono: 'Victor Mono', monospace;
