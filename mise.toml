@@ -8,10 +8,10 @@ idiomatic_version_file_enable_tools = []
 
 
 [tools]
+bun = { version = '1.2.17' }
 node = { version = '22.16.0' }
-bun = { version = '1.2.16' }
 rust = { version = '1.87.0' }
 
 [tasks]
 'hello' = { run = "echo 'Hello, world!'" }
-'claude' = { run = "bun run claude", description = "Run the claude CLI command via bun" }
+'claude' = { run = "bun x --bun @anthropic-ai/claude-code", description = "Invoke the latest Claude Code" }
