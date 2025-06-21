@@ -56,7 +56,6 @@ function mockH3Event(headers: Record<string, string> = {}, query: Record<string,
 }
 
 // Mock getQuery function
-
 ;(global as unknown as { getQuery: (event: H3Event) => Record<string, unknown> }).getQuery = (event: H3Event) => {
   return (event as unknown as { query: Record<string, unknown> })?.query || {}
 }
