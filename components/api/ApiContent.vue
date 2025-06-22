@@ -85,6 +85,11 @@
         <div>
           <h3 class="text-cyan font-semibold mb-2">Test the Ping Endpoint</h3>
           <ApiExampleBlock code="curl https://dave.io/api/ping" />
+          <p class="text-sm text-subtext0 mt-2">
+            Or, if you want pretty and formatted JSON, and have
+            <code>jq</code> installed
+          </p>
+          <ApiExampleBlock code="curl https://dave.io/api/ping | jq" />
           <p class="text-sm text-subtext0 mt-2">If this works, congrats! The API is alive.</p>
         </div>
 
@@ -109,6 +114,7 @@
 
 <script setup lang="ts">
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
+import Api from "~/pages/api.vue"
 import BackToHomeButton from "../ui/BackToHomeButton.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import ApiExampleBlock from "./ApiExampleBlock.vue"
