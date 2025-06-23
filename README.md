@@ -1,5 +1,7 @@
 # dave.io
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/daveio/dave-io)
+
 <!-- trunk-ignore-all(trunk-toolbox/todo) -->
 
 > A modern Nuxt 3 + Cloudflare Workers API platform with JWT authentication, AI integration, and automated OpenAPI documentation.
