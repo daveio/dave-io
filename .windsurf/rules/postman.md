@@ -48,7 +48,6 @@ Effective organization is crucial for maintainability and collaboration. While P
   - **Anti-pattern:** Duplicating the same code in multiple requests.
 
 - **Error Handling:** Implement robust error handling to gracefully handle unexpected API responses or network issues.
-
   - **Pattern:** Check for error status codes (e.g., 4xx, 5xx) in your test scripts and log detailed error messages.
   - **Anti-pattern:** Ignoring error responses or assuming that all requests will succeed.
 
@@ -100,6 +99,5 @@ Effective organization is crucial for maintainability and collaboration. While P
 - **Postman CLI (Newman):** Use Newman to run Postman collections from the command line. This is essential for CI/CD integration.
 - **Version Control (Git):** Store your Postman collections in a Git repository to track changes and collaborate with team members.
 - **Linting and Formatting:** While Postman doesn't have built-in linting, ensure consistency in request structures and test scripts.
-
   - **Build Configuration:** Use Newman with CI/CD tools (Jenkins, GitLab CI, GitHub Actions) to automate API testing.
   - **Deployment:** Deploy API specifications and Postman collections alongside your API for easier testing and documentation.
