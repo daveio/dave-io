@@ -9,8 +9,8 @@ idiomatic_version_file_enable_tools = []
 
 [tools]
 bun = { version = '1.2.17' }
-node = { version = '22.16.0' }
-rust = { version = '1.87.0' }
+node = { version = '22.17.0' }
+rust = { version = '1.88.0' }
 
 [tasks]
 'hello' = { run = "echo 'Hello, world!'" }
