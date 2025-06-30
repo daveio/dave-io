@@ -54,7 +54,6 @@ withDefaults(defineProps<Props>(), {
   showFishLink: true,
   useMonospace: true
 })
-
 </script>
 
 <style scoped>
