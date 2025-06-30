@@ -17,8 +17,7 @@
         <div class="text-center flex-1 text-sm text-subtext0 font-mono">
           {{ title || "dave.io" }} ::
           <NuxtLink v-if="showFishLink" to="https://github.com/fish-shell/fish-shell" class="link-url"> fish</NuxtLink>
-          <span v-if="!showFishLink">{{ subtitle }}</span> ::
-          <EmailAddress :encoded-email="encodedContactEmail" /> ::
+          <span v-if="!showFishLink">{{ subtitle }}</span> :: <EmailAddress encoded-email="Fzf3Z1Z/b99fDc/3" /> ::
           {{ dimensions || "13×37" }}
         </div>
       </div>
@@ -56,10 +55,6 @@ withDefaults(defineProps<Props>(), {
   useMonospace: true
 })
 
-// Server-side email encoding to prevent plaintext emails from reaching the browser
-const { encodeEmail } = useEmailObfuscation()
-// biome-ignore lint/correctness/noUnusedVariables: Used in Vue template
-const encodedContactEmail = encodeEmail("dave@dave.io")
 </script>
 
 <style scoped>

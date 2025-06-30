@@ -1,6 +1,6 @@
 <template>
   <span v-if="displayEmail" class="inline-block" :data-encoded-email="props.encodedEmail">
-    <a :href="`mailto:${displayEmail}`" :class="linkClasses" :title="`Send email to ${displayEmail}`">
+    <a :href="`mailto:${displayEmail}`" class="link-url" :title="`Send email to ${displayEmail}`">
       {{ displayEmail }}
     </a>
   </span>
@@ -47,7 +47,6 @@ onMounted(() => {
 
     if (decodedEmail) {
       displayEmail.value = decodedEmail
-      console.log("Successfully decoded email for display")
     } else {
       console.error("Failed to decode email - invalid format or encoding")
       decodingError.value = true
