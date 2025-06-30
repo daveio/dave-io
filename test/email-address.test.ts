@@ -25,7 +25,7 @@ describe("EmailAddress Component", () => {
         props: { email: validEmail }
       })
 
-      const span = wrapper.find(".email-address")
+      const span = wrapper.find(".inline-block")
       expect(span.exists()).toBe(true)
 
       const encodedData = span.attributes("data-encoded-email")
@@ -95,8 +95,8 @@ describe("EmailAddress Component", () => {
       const wrapper1 = await mountSuspended(EmailAddress, { props: { email: email1 } })
       const wrapper2 = await mountSuspended(EmailAddress, { props: { email: email2 } })
 
-      const encoded1 = wrapper1.find(".email-address").attributes("data-encoded-email")
-      const encoded2 = wrapper2.find(".email-address").attributes("data-encoded-email")
+      const encoded1 = wrapper1.find(".inline-block").attributes("data-encoded-email")
+      const encoded2 = wrapper2.find(".inline-block").attributes("data-encoded-email")
 
       expect(encoded1).not.toBe(encoded2)
       expect(encoded1).not.toBe(email1)
@@ -109,8 +109,8 @@ describe("EmailAddress Component", () => {
       const wrapper1 = await mountSuspended(EmailAddress, { props: { email } })
       const wrapper2 = await mountSuspended(EmailAddress, { props: { email } })
 
-      const encoded1 = wrapper1.find(".email-address").attributes("data-encoded-email")
-      const encoded2 = wrapper2.find(".email-address").attributes("data-encoded-email")
+      const encoded1 = wrapper1.find(".inline-block").attributes("data-encoded-email")
+      const encoded2 = wrapper2.find(".inline-block").attributes("data-encoded-email")
 
       expect(encoded1).toBe(encoded2)
     })

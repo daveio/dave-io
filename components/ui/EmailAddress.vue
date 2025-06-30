@@ -1,5 +1,5 @@
 <template>
-  <span v-if="displayEmail" class="email-address" :data-encoded-email="encodedEmail">
+  <span v-if="displayEmail" class="inline-block" :data-encoded-email="encodedEmail">
     <a :href="`mailto:${displayEmail}`" :class="linkClasses" :title="`Send email to ${displayEmail}`">
       {{ displayEmail }}
     </a>
@@ -94,9 +94,3 @@ onMounted(() => {
   }
 })
 </script>
-
-<style scoped>
-.email-address {
-  @apply inline-block;
-}
-</style>
