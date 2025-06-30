@@ -44,6 +44,7 @@
     "@types/readline-sync": "^1.4.8",
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
+    "@vue/test-utils": "^2.4.6",
     "boxen": "^8.0.1",
     "chalk": "^5.4.1",
     "commander": "^14.0.0",
