@@ -18,6 +18,7 @@
           {{ title || "dave.io" }} ::
           <NuxtLink v-if="showFishLink" to="https://github.com/fish-shell/fish-shell" class="link-url"> fish</NuxtLink>
           <span v-if="!showFishLink">{{ subtitle }}</span> ::
+          <EmailAddress :encoded-email="encodedContactEmail" /> ::
           {{ dimensions || "13×37" }}
         </div>
       </div>
@@ -34,6 +35,8 @@
 </template>
 
 <script setup lang="ts">
+// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
+import EmailAddress from "../ui/EmailAddress.vue"
 // biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import Hero from "./Hero.vue"
 
@@ -52,6 +55,11 @@ withDefaults(defineProps<Props>(), {
   showFishLink: true,
   useMonospace: true
 })
+
+// Server-side email encoding to prevent plaintext emails from reaching the browser
+const { encodeEmail } = useEmailObfuscation()
+// biome-ignore lint/correctness/noUnusedVariables: Used in Vue template
+const encodedContactEmail = encodeEmail("dave@dave.io")
 </script>
 
 <style scoped>
