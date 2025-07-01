@@ -7,7 +7,7 @@ import EmailAddress from "../components/ui/EmailAddress.vue"
 function encodeEmailForTest(email: string): string {
   const bytes = new TextEncoder().encode(email)
   const key = email.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0) % 256
-  const xorBytes = bytes.map((byte, i) => byte ^ ((key + i) % 256))
+  const xorBytes = bytes.map((byte, i) => byte ^ (key + i) % 256)
   const rotatedBytes = xorBytes.map((byte) => ((byte << 3) | (byte >> 5)) & 0xff)
   const binaryString = String.fromCharCode(...rotatedBytes)
   return btoa(binaryString)

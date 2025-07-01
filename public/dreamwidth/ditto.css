@@ -99,12 +99,12 @@ summary:hover {
 
 summary::before {
   color: #33343f;
-  content: '( ';
+  content: "( ";
 }
 
 summary::after {
   color: #33343f;
-  content: ' )';
+  content: " )";
 }
 
 .entry-content ul {
@@ -260,22 +260,22 @@ span.access-filter {
 
 .metadata-item-mood {
   padding: 0 0 0 20px;
-  background: url('https://dave.io/dreamwidth/metadata-mood.png') no-repeat;
+  background: url("https://dave.io/dreamwidth/metadata-mood.png") no-repeat;
 }
 
 .metadata-item-location {
   padding: 0 0 0 20px;
-  background: url('https://dave.io/dreamwidth/metadata-location.png') no-repeat;
+  background: url("https://dave.io/dreamwidth/metadata-location.png") no-repeat;
 }
 
 .metadata-item-music {
   padding: 0 0 0 20px;
-  background: url('https://dave.io/dreamwidth/metadata-music.png') no-repeat;
+  background: url("https://dave.io/dreamwidth/metadata-music.png") no-repeat;
 }
 
 .tag ul {
   padding: 0 0 0 20px;
-  background: url('https://dave.io/dreamwidth/tag.png') no-repeat;
+  background: url("https://dave.io/dreamwidth/tag.png") no-repeat;
 }
 
 /* .tag li {
@@ -284,7 +284,7 @@ span.access-filter {
 
 .tag li::before {
   color: #345372;
-  content: '#';
+  content: "#";
 }
 
 .tag-nav-trigger {
@@ -441,7 +441,7 @@ ul.ljtaglist {
 
 .year {
   font:
-    0.75rem 'courier new',
+    0.75rem "courier new",
     Oxygen,
     sans-serif;
 }
@@ -621,7 +621,7 @@ td.day span.label {
     sans-serif;
 }
 
-#archive-month input[value='View'] {
+#archive-month input[value="View"] {
   padding: 0.5em;
   border: 0;
   color: #345372;
@@ -707,47 +707,47 @@ li.month-back {
 
 /* tinyicons - fugue icon set by yusukekamiyamane */
 
-img[src*='user.png'] {
+img[src*="user.png"] {
   width: 0;
   height: 0;
   padding: 16px 0 0 18px !important;
   margin: 0 auto;
-  background: transparent url('https://dave.io/dreamwidth/user.png') no-repeat !important;
+  background: transparent url("https://dave.io/dreamwidth/user.png") no-repeat !important;
   vertical-align: middle;
 }
 
-img[src*='community.png'] {
+img[src*="community.png"] {
   width: 0;
   height: 0;
   padding: 16px 0 0 18px !important;
   margin: 0 auto;
-  background: transparent url('https://dave.io/dreamwidth/community.png') no-repeat !important;
+  background: transparent url("https://dave.io/dreamwidth/community.png") no-repeat !important;
   vertical-align: middle;
 }
 
-img[src*='collapse.svg'] {
+img[src*="collapse.svg"] {
   width: 0;
   height: 0;
   padding: 16px 0 0 8px !important;
   margin: 0 auto;
-  background: transparent url('https://dave.io/dreamwidth/collapse.png') no-repeat !important;
+  background: transparent url("https://dave.io/dreamwidth/collapse.png") no-repeat !important;
   vertical-align: middle !important;
 }
 
-img[src*='expand.svg'] {
+img[src*="expand.svg"] {
   width: 0;
   height: 0;
   padding: 16px 0 0 8px !important;
   margin: 0 auto;
-  background: transparent url('https://dave.io/dreamwidth/expand.png') no-repeat !important;
+  background: transparent url("https://dave.io/dreamwidth/expand.png") no-repeat !important;
   vertical-align: middle !important;
 }
 
-img[src*='collapse-end.svg'] {
+img[src*="collapse-end.svg"] {
   width: 0;
   height: 0;
   padding: 16px 0 0 8px !important;
   margin: 0 auto;
-  background: transparent url('https://dave.io/dreamwidth/collapse-end.png') no-repeat !important;
+  background: transparent url("https://dave.io/dreamwidth/collapse-end.png") no-repeat !important;
   vertical-align: middle !important;
 }

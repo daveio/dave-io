@@ -23,7 +23,7 @@ function encodeEmailServerSide(email: string): string {
   const key = email.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0) % 256
 
   // XOR each byte with rotating key
-  const xorBytes = bytes.map((byte, i) => byte ^ ((key + i) % 256))
+  const xorBytes = bytes.map((byte, i) => byte ^ (key + i) % 256)
 
   // Bit rotation: rotate each byte left by 3 positions
   const rotatedBytes = xorBytes.map((byte) => ((byte << 3) | (byte >> 5)) & 0xff)
@@ -54,7 +54,7 @@ function decodeEmailClientSide(encoded: string): string | null {
     // Try different keys since we need to brute force the original key
     // The key was generated from the sum of character codes of the original email
     for (let keyBase = 0; keyBase < 256; keyBase++) {
-      const testBytes = xorBytes.map((byte, i) => byte ^ ((keyBase + i) % 256))
+      const testBytes = xorBytes.map((byte, i) => byte ^ (keyBase + i) % 256)
       const testEmail = new TextDecoder().decode(testBytes)
 
       // Check if it looks like an email (contains @ and .)

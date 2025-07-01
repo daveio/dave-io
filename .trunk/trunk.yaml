@@ -1,18 +1,6 @@
 # https://docs.trunk.io/cli | https://docs.trunk.io/reference/trunk-yaml
 actions:
   definitions:
-    - display_name: format
-      id: format
-      run: bun lint:format
-      triggers:
-        - git_hooks:
-            - pre-commit
-    - display_name: biome
-      id: biome
-      run: bun lint:biome
-      triggers:
-        - git_hooks:
-            - pre-commit
     - display_name: typecheck
       id: typecheck
       run: bun lint:types
@@ -20,8 +8,6 @@ actions:
         - git_hooks:
             - pre-commit
   enabled:
-    # - format
-    # - biome
     # - typecheck
     - trunk-announce
     - trunk-check-pre-push
@@ -33,11 +19,19 @@ lint:
   # https://docs.trunk.io/check/configuration
   disabled:
     - codespell
-    - eslint
     - markdown-link-check
     - stylelint
     - vale
   enabled:
+    - eslint@9.30.0:
+        packages:
+          - "@eslint/js"
+          - "@nuxt/eslint"
+          - "@stylistic/eslint-plugin"
+          - eslint-plugin-import
+          - eslint-plugin-vue
+          - globals
+          - typescript-eslint
     - prettier@3.5.3
     - djlint@1.36.4
     - clippy
@@ -45,7 +39,6 @@ lint:
     - gofmt@1.20.4
     - golangci-lint2
     - actionlint@1.7.7
-    - biome@2.0.0
     - checkov@3.2.443
     - dustilock@1.2.0
     - git-diff-check
@@ -64,25 +57,6 @@ lint:
     - trunk-toolbox@0.5.4
     - yamllint@1.37.1
   ignore:
-    - linters:
-        - prettier
-      paths:
-        - "**/*.html"
-        - "**/*.css"
-        - "**/*.js"
-        - "**/*.json"
-        - "**/*.jsonc"
-        - "**/*.jsx"
-        - "**/*.ts"
-        - "**/*.tsx"
-        - "**/*.cjs"
-        - "**/*.mjs"
-        - "**/*.cts"
-        - "**/*.mts"
-    - linters:
-        - biome
-      paths:
-        - "**/.claude/settings.local.json"
     - linters:
         - trunk-toolbox
       paths:

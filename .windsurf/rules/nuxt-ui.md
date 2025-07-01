@@ -42,10 +42,10 @@ export default defineNuxtConfig({
     fonts: true, // Enable @nuxt/fonts integration
     colorMode: true, // Enable @nuxtjs/color-mode integration
     theme: {
-      colors: ["primary", "secondary", "success", "info", "warning", "error", "neutral"],
-    },
-  },
-});
+      colors: ["primary", "secondary", "success", "info", "warning", "error", "neutral"]
+    }
+  }
+})
 ```
 
 ### For Vue Projects
@@ -58,9 +58,9 @@ npm install @nuxt/ui
 
 ```javascript
 // vite.config.ts
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import ui from "@nuxt/ui/vite";
+import { defineConfig } from "vite"
+import vue from "@vitejs/plugin-vue"
+import ui from "@nuxt/ui/vite"
 
 export default defineConfig({
   plugins: [
@@ -69,32 +69,32 @@ export default defineConfig({
       ui: {
         colors: {
           primary: "green",
-          neutral: "slate",
-        },
-      },
-    }),
-  ],
-});
+          neutral: "slate"
+        }
+      }
+    })
+  ]
+})
 ```
 
 **Main App Setup:**
 
 ```javascript
 // main.js
-import { createApp } from "vue";
-import { createRouter, createWebHistory } from "vue-router";
-import ui from "@nuxt/ui/vue-plugin";
-import App from "./App.vue";
+import { createApp } from "vue"
+import { createRouter, createWebHistory } from "vue-router"
+import ui from "@nuxt/ui/vue-plugin"
+import App from "./App.vue"
 
-const app = createApp(App);
+const app = createApp(App)
 const router = createRouter({
   routes: [],
-  history: createWebHistory(),
-});
+  history: createWebHistory()
+})
 
-app.use(router);
-app.use(ui);
-app.mount("#app");
+app.use(router)
+app.use(ui)
+app.mount("#app")
 ```
 
 ### CSS Setup
@@ -144,10 +144,10 @@ export default defineAppConfig({
       info: "sky",
       warning: "yellow",
       error: "red",
-      neutral: "zinc",
-    },
-  },
-});
+      neutral: "zinc"
+    }
+  }
+})
 ```
 
 #### Design Tokens
@@ -182,15 +182,15 @@ export default defineAppConfig({
     button: {
       slots: {
         base: "font-bold rounded-lg",
-        label: "text-sm",
+        label: "text-sm"
       },
       defaultVariants: {
         color: "primary",
-        variant: "solid",
-      },
-    },
-  },
-});
+        variant: "solid"
+      }
+    }
+  }
+})
 ```
 
 2. **Component-level** (ui prop):
@@ -199,7 +199,7 @@ export default defineAppConfig({
 <UButton
   :ui="{
     base: 'custom-base-class',
-    leadingIcon: 'text-xl',
+    leadingIcon: 'text-xl'
   }"
 />
 ```
@@ -231,20 +231,20 @@ export default defineAppConfig({
 
 ```vue
 <script setup lang="ts">
-import { z } from "zod";
+import { z } from "zod"
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
-  password: z.string().min(8, "Must be at least 8 characters"),
-});
+  password: z.string().min(8, "Must be at least 8 characters")
+})
 
 const state = reactive({
   email: "",
-  password: "",
-});
+  password: ""
+})
 
 async function onSubmit(event: FormSubmitEvent<typeof state>) {
-  console.log("Submitted:", event.data);
+  console.log("Submitted:", event.data)
 }
 </script>
 
@@ -311,24 +311,24 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
 Programmatically display toast notifications:
 
 ```typescript
-const toast = useToast();
+const toast = useToast()
 
 // Add a toast
 toast.add({
   title: "Success",
   description: "Action completed",
   color: "success",
-  timeout: 5000,
-});
+  timeout: 5000
+})
 
 // Update a toast
-toast.update(id, { title: "Updated" });
+toast.update(id, { title: "Updated" })
 
 // Remove specific toast
-toast.remove(id);
+toast.remove(id)
 
 // Clear all toasts
-toast.clear();
+toast.clear()
 ```
 
 ### useOverlay
@@ -336,24 +336,24 @@ toast.clear();
 Control Modal and Slideover components programmatically:
 
 ```typescript
-const overlay = useOverlay();
+const overlay = useOverlay()
 
 // Create modal instance
 const modal = overlay.create(MyModalComponent, {
-  props: { title: "Welcome" },
-});
+  props: { title: "Welcome" }
+})
 
 // Open modal
-const instance = modal.open();
+const instance = modal.open()
 
 // Get result from modal
-const result = await instance.result;
+const result = await instance.result
 
 // Update props
-modal.patch({ title: "Updated" });
+modal.patch({ title: "Updated" })
 
 // Close
-await modal.close();
+await modal.close()
 ```
 
 ### useColorMode
@@ -361,14 +361,14 @@ await modal.close();
 Manage dark/light theme:
 
 ```typescript
-const colorMode = useColorMode();
+const colorMode = useColorMode()
 
 const isDark = computed({
   get: () => colorMode.value === "dark",
   set: (value) => {
-    colorMode.preference = value ? "dark" : "light";
-  },
-});
+    colorMode.preference = value ? "dark" : "light"
+  }
+})
 ```
 
 ## Icon System
@@ -409,11 +409,11 @@ export default defineNuxtConfig({
     customCollections: [
       {
         prefix: "custom",
-        dir: "./assets/icons",
-      },
-    ],
-  },
-});
+        dir: "./assets/icons"
+      }
+    ]
+  }
+})
 ```
 
 Usage: `<Icon name="custom:my-icon" />`
@@ -430,11 +430,11 @@ export default defineAppConfig({
       check: "i-lucide-check",
       close: "i-lucide-x",
       loading: "i-lucide-loader-circle",
-      chevronDown: "i-lucide-chevron-down",
+      chevronDown: "i-lucide-chevron-down"
       // ... more icon overrides
-    },
-  },
-});
+    }
+  }
+})
 ```
 
 ## Best Practices
@@ -483,14 +483,14 @@ export default defineAppConfig({
 const fields = [
   { name: "name", label: "Name", type: "text" },
   { name: "email", label: "Email", type: "email" },
-  { name: "role", label: "Role", type: "select", options: ["Admin", "User"] },
-];
+  { name: "role", label: "Role", type: "select", options: ["Admin", "User"] }
+]
 
 const state = reactive({
   name: "",
   email: "",
-  role: "",
-});
+  role: ""
+})
 </script>
 
 <template>
@@ -509,37 +509,37 @@ const state = reactive({
 <script setup lang="ts">
 // Modal component (MyModal.vue)
 const props = defineProps<{
-  title: string;
-  message: string;
-}>();
+  title: string
+  message: string
+}>()
 
 const emit = defineEmits<{
-  close: [result: boolean];
-}>();
+  close: [result: boolean]
+}>()
 
 function confirm() {
-  emit("close", true);
+  emit("close", true)
 }
 
 function cancel() {
-  emit("close", false);
+  emit("close", false)
 }
 </script>
 
 <!-- In parent component -->
 <script setup lang="ts">
-const overlay = useOverlay();
+const overlay = useOverlay()
 
 async function showConfirmation() {
   const modal = overlay.create(MyModal, {
     props: {
       title: "Confirm Action",
-      message: "Are you sure?",
-    },
-  });
+      message: "Are you sure?"
+    }
+  })
 
-  const instance = modal.open();
-  const confirmed = await instance.result;
+  const instance = modal.open()
+  const confirmed = await instance.result
 
   if (confirmed) {
     // Proceed with action
@@ -555,38 +555,38 @@ async function showConfirmation() {
 const columns = [
   {
     key: "name",
-    label: "Name",
+    label: "Name"
   },
   {
     key: "email",
-    label: "Email",
+    label: "Email"
   },
   {
     key: "actions",
-    label: "Actions",
-  },
-];
+    label: "Actions"
+  }
+]
 
 const data = ref([
-  { id: 1, name: "John Doe", email: "john@example.com" },
+  { id: 1, name: "John Doe", email: "john@example.com" }
   // ... more data
-]);
+])
 
 const actions = (row) => [
   [
     {
       label: "Edit",
       icon: "i-lucide-edit",
-      click: () => editUser(row),
+      click: () => editUser(row)
     },
     {
       label: "Delete",
       icon: "i-lucide-trash",
       color: "error",
-      click: () => deleteUser(row),
-    },
-  ],
-];
+      click: () => deleteUser(row)
+    }
+  ]
+]
 </script>
 
 <template>

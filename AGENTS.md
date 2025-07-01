@@ -94,32 +94,32 @@ worker-configuration.d.ts        # Cloudflare bindings
 
 ```typescript
 // Always use createApiError for consistent format
-throw createApiError(400, "Validation failed", validationDetails);
+throw createApiError(400, "Validation failed", validationDetails)
 
 // Always use createApiResponse for success
 return createApiResponse({
   result: data,
   message: "Operation successful",
-  error: null,
-});
+  error: null
+})
 
 // Log errors before throwing
-console.error("Endpoint error:", error);
-recordAPIErrorMetrics(event, error);
-throw error;
+console.error("Endpoint error:", error)
+recordAPIErrorMetrics(event, error)
+throw error
 ```
 
 ### Authentication Flow
 
 ```typescript
 // Use auth helpers for consistent patterns
-const auth = await requireAPIAuth(event, "resource"); // api:resource
-const auth = await requireAIAuth(event, "alt"); // ai:alt
-const auth = await requireAdminAuth(event); // admin
+const auth = await requireAPIAuth(event, "resource") // api:resource
+const auth = await requireAIAuth(event, "alt") // ai:alt
+const auth = await requireAdminAuth(event) // admin
 
 // Access user info from auth.payload
-const userId = auth.payload?.sub;
-const tokenId = auth.payload?.jti;
+const userId = auth.payload?.sub
+const tokenId = auth.payload?.jti
 ```
 
 ## Auth & Endpoints
@@ -207,25 +207,25 @@ bun jwt init && bun run deploy
 
 ```typescript
 // Use hierarchical keys for efficient querying
-"metrics:api:ok"; // Good: hierarchical
-"metrics:api:tokens:usage"; // Good: specific scope
-"user_data_12345"; // Bad: flat structure
+"metrics:api:ok" // Good: hierarchical
+"metrics:api:tokens:usage" // Good: specific scope
+"user_data_12345" // Bad: flat structure
 
 // Simple values only, no complex objects
-await kv.put("metrics:api:ok", "42"); // Good: simple value
-await kv.put("user:123", JSON.stringify(userObject)); // Bad: complex object
+await kv.put("metrics:api:ok", "42") // Good: simple value
+await kv.put("user:123", JSON.stringify(userObject)) // Bad: complex object
 ```
 
 ### Async Operation Patterns
 
 ```typescript
 // Non-blocking metrics (fire and forget)
-recordAPIMetricsAsync(event, statusCode); // Good: doesn't block response
-await recordAPIMetrics(event, statusCode); // Bad: blocks response
+recordAPIMetricsAsync(event, statusCode) // Good: doesn't block response
+await recordAPIMetrics(event, statusCode) // Bad: blocks response
 
 // Real service calls (no mocks except tests)
-const result = await env.AI.run(model, prompt); // Good: real AI call
-const result = mockAI.generate(); // Bad: mock data
+const result = await env.AI.run(model, prompt) // Good: real AI call
+const result = mockAI.generate() // Bad: mock data
 ```
 
 ## Security Standards
@@ -234,26 +234,26 @@ const result = mockAI.generate(); // Bad: mock data
 
 ```typescript
 // Always validate at API boundaries
-const validated = RequestSchema.parse(await readBody(event));
+const validated = RequestSchema.parse(await readBody(event))
 
 // Use validation helpers
-const uuid = getValidatedUUID(event, "uuid");
-validateURL(imageUrl, "image URL");
+const uuid = getValidatedUUID(event, "uuid")
+validateURL(imageUrl, "image URL")
 
 // Never trust external data
-const userInput = sanitizeInput(rawInput);
+const userInput = sanitizeInput(rawInput)
 ```
 
 ### Secret Management
 
 ```typescript
 // Environment variables only
-const secret = process.env.API_JWT_SECRET; // Good
-const secret = "hardcoded-secret"; // Bad: never commit secrets
+const secret = process.env.API_JWT_SECRET // Good
+const secret = "hardcoded-secret" // Bad: never commit secrets
 
 // Check for default secrets in development
 if (secret === "dev-secret-change-in-production") {
-  console.warn("Using default JWT secret - insecure for production!");
+  console.warn("Using default JWT secret - insecure for production!")
 }
 ```
 
@@ -287,7 +287,7 @@ if (condition2) {
 // Extract to shared utility instead
 const sharedLogic = (condition) => {
   /* logic */
-};
+}
 ```
 
 ### ❌ Error Handling
@@ -295,17 +295,17 @@ const sharedLogic = (condition) => {
 ```typescript
 // Don't fail silently
 try {
-  riskyOperation();
+  riskyOperation()
 } catch {
   /* ignored */
 }
 
 // Always handle errors explicitly
 try {
-  riskyOperation();
+  riskyOperation()
 } catch (error) {
-  console.error("Operation failed:", error);
-  throw createApiError(500, "Operation failed");
+  console.error("Operation failed:", error)
+  throw createApiError(500, "Operation failed")
 }
 ```
 
@@ -327,7 +327,7 @@ function calculateTotal(items) {
 
 // Don't test trivial code
 function getName() {
-  return this.name;
+  return this.name
 } // Skip testing
 ```
 
@@ -343,17 +343,17 @@ function getName() {
  * @returns Promise<string> Generated alt-text
  * @throws {Error} When AI service is unavailable
  */
-export async function generateAltText(imageBuffer: Buffer, options: AltTextOptions): Promise<string>;
+export async function generateAltText(imageBuffer: Buffer, options: AltTextOptions): Promise<string>
 ```
 
 ### Inline Comments
 
 ```typescript
 // Use comments for business logic, not obvious code
-const tax = subtotal * 0.1; // 10% tax rate for region
+const tax = subtotal * 0.1 // 10% tax rate for region
 
 // Don't comment obvious code
-const name = user.name; // Gets the user name ← unnecessary
+const name = user.name // Gets the user name ← unnecessary
 ```
 
 ## Troubleshooting Checklist

@@ -252,14 +252,14 @@ test/                         # Test files
 ```typescript
 describe("Cloudflare Images Integration", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks()
+  })
 
   it("should validate supported image formats", () => {
-    const supportedFormats = ["image/jpeg", "image/png", "image/gif"];
+    const supportedFormats = ["image/jpeg", "image/png", "image/gif"]
     // Test implementation
-  });
-});
+  })
+})
 ```
 
 Sources: [test/cloudflare-images.test.ts:1-50](), [README.md:70-80]()
@@ -343,13 +343,13 @@ export default defineNuxtConfig({
     preset: "cloudflare_module",
     cloudflare: {
       deployConfig: true,
-      nodeCompat: true,
+      nodeCompat: true
     },
     experimental: {
-      wasm: true,
-    },
-  },
-});
+      wasm: true
+    }
+  }
+})
 ```
 
 Sources: [nuxt.config.ts:10-25](), [package.json:40-60]()
@@ -615,10 +615,10 @@ export default defineConfig({
   test: {
     environment: "happy-dom",
     coverage: {
-      provider: "v8",
-    },
-  },
-});
+      provider: "v8"
+    }
+  }
+})
 ```
 
 Sources: [package.json:44]()
@@ -1106,15 +1106,15 @@ For Cloudflare services, the platform uses specific mocking patterns:
 const mockKV = {
   get: vi.fn(),
   put: vi.fn(),
-  delete: vi.fn(),
-};
+  delete: vi.fn()
+}
 
 // AI service mocking
 const mockAI = {
   run: vi.fn().mockResolvedValue({
-    description: "Test alt text",
-  }),
-};
+    description: "Test alt text"
+  })
+}
 ```
 
 Sources: [test/kv-import-export.test.ts:15-50]()
@@ -1172,13 +1172,13 @@ export default defineNuxtConfig({
     preset: "cloudflare_module",
     cloudflare: {
       deployConfig: true,
-      nodeCompat: true,
+      nodeCompat: true
     },
     experimental: {
-      wasm: true,
-    },
-  },
-});
+      wasm: true
+    }
+  }
+})
 ```
 
 Sources: [nuxt.config.ts:11-20]()
@@ -1237,14 +1237,14 @@ All endpoints must use standardized error handling:
 
 ```typescript
 // Consistent error responses
-throw createApiError(400, "Validation failed", validationDetails);
+throw createApiError(400, "Validation failed", validationDetails)
 
 // Standardized success responses
 return createApiResponse({
   result: data,
   message: "Operation successful",
-  error: null,
-});
+  error: null
+})
 ```
 
 Sources: [AGENTS.md:114-126]()
@@ -1706,13 +1706,13 @@ export default defineEventHandler(async (event) => {
   setHeaders(event, {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  });
+    "Access-Control-Allow-Headers": "Content-Type, Authorization"
+  })
 
   if (getMethod(event) === "OPTIONS") {
-    return "";
+    return ""
   }
-});
+})
 ```
 
 ### CORS Headers Configuration
@@ -1754,10 +1754,10 @@ The metrics middleware automatically tracks API usage and performance metrics fo
 
 ```typescript
 // Metrics are recorded for successful requests
-recordAPIMetrics(event, statusCode);
+recordAPIMetrics(event, statusCode)
 
 // Error metrics are tracked separately
-recordAPIErrorMetrics(event, error);
+recordAPIErrorMetrics(event, error)
 ```
 
 ### Metrics Data Structure
@@ -1886,9 +1886,9 @@ The system uses hierarchical KV storage keys for efficient data retrieval:
 
 ```typescript
 // Hierarchical key structure
-"metrics:api:ok";
-"metrics:api:error";
-"auth:token-uuid";
+"metrics:api:ok"
+"metrics:api:error"
+"auth:token-uuid"
 ```
 
 ### Async Operations
@@ -1897,7 +1897,7 @@ Non-blocking operations are used for metrics recording to avoid impacting respon
 
 ```typescript
 // Fire-and-forget metrics recording
-recordAPIMetricsAsync(event, statusCode);
+recordAPIMetricsAsync(event, statusCode)
 ```
 
 Sources: [README.md:60-65](), [AGENTS.md:85-90]()
@@ -2000,20 +2000,20 @@ The metrics system extracts comprehensive request information and stores it asyn
 ```typescript
 export function recordAPIMetrics(event: H3Event, statusCode = 200): void {
   try {
-    const env = getCloudflareEnv(event);
+    const env = getCloudflareEnv(event)
     if (!env?.KV) {
-      return; // Skip metrics if KV is not available
+      return // Skip metrics if KV is not available
     }
 
-    const url = getRequestURL(event);
-    const method = getMethod(event);
-    const cfInfo = getCloudflareRequestInfo(event);
-    const userAgent = getHeader(event, "user-agent") || "";
+    const url = getRequestURL(event)
+    const method = getMethod(event)
+    const cfInfo = getCloudflareRequestInfo(event)
+    const userAgent = getHeader(event, "user-agent") || ""
 
     // Fire and forget using the async version
-    updateAPIRequestMetricsAsync(env.KV, url.pathname, method, statusCode, cfInfo, userAgent);
+    updateAPIRequestMetricsAsync(env.KV, url.pathname, method, statusCode, cfInfo, userAgent)
   } catch (error) {
-    console.error("Failed to record API metrics:", error);
+    console.error("Failed to record API metrics:", error)
     // Never let metrics errors break the request
   }
 }
@@ -2027,14 +2027,14 @@ The system provides specialized error tracking that automatically extracts statu
 
 ```typescript
 export function recordAPIErrorMetrics(event: H3Event, error: unknown): void {
-  let statusCode = 500;
+  let statusCode = 500
 
   // Extract status code from error if it's an API error
   if (error && typeof error === "object" && "statusCode" in error) {
-    statusCode = (error as any).statusCode || 500;
+    statusCode = (error as any).statusCode || 500
   }
 
-  recordAPIMetrics(event, statusCode);
+  recordAPIMetrics(event, statusCode)
 }
 ```
 
@@ -2088,7 +2088,7 @@ The middleware implements defensive programming practices to ensure metrics fail
 try {
   // Metrics collection logic
 } catch (error) {
-  console.error("Failed to record API metrics:", error);
+  console.error("Failed to record API metrics:", error)
   // Never let metrics errors break the request
 }
 ```
@@ -2209,19 +2209,19 @@ The `verifyJWT` function handles JWT validation and returns structured results:
 ```typescript
 export async function verifyJWT(
   token: string,
-  secret: string,
+  secret: string
 ): Promise<{
-  success: boolean;
-  payload?: JWTPayload;
-  error?: string;
+  success: boolean
+  payload?: JWTPayload
+  error?: string
 }> {
   try {
-    const encoder = new TextEncoder();
-    const secretKey = encoder.encode(secret);
-    const { payload } = await jwtVerify(token, secretKey);
-    return { success: true, payload };
+    const encoder = new TextEncoder()
+    const secretKey = encoder.encode(secret)
+    const { payload } = await jwtVerify(token, secretKey)
+    return { success: true, payload }
   } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error" }
   }
 }
 ```
@@ -2235,18 +2235,18 @@ The system supports multiple token sources for maximum flexibility:
 ```typescript
 export function extractToken(event: H3Event): string | null {
   // 1. Authorization header: "Bearer <token>"
-  const authHeader = getHeader(event, "authorization");
+  const authHeader = getHeader(event, "authorization")
   if (authHeader?.startsWith("Bearer ")) {
-    return authHeader.slice(7);
+    return authHeader.slice(7)
   }
 
   // 2. Query parameter: ?token=<token>
-  const query = getQuery(event);
+  const query = getQuery(event)
   if (query.token && typeof query.token === "string") {
-    return query.token;
+    return query.token
   }
 
-  return null;
+  return null
 }
 ```
 
@@ -2269,33 +2269,33 @@ The platform provides convenient helper functions for common authorization patte
 
 ```typescript
 export async function requireAPIAuth(event: H3Event, resource?: string): Promise<AuthResult> {
-  return await requireAuth(event, "api", resource);
+  return await requireAuth(event, "api", resource)
 }
 
 async function requireAuth(event: H3Event, category: string, resource?: string): Promise<AuthResult> {
-  const token = extractToken(event);
+  const token = extractToken(event)
   if (!token) {
-    throw createApiError(401, "Authentication required");
+    throw createApiError(401, "Authentication required")
   }
 
-  const secret = process.env.API_JWT_SECRET;
+  const secret = process.env.API_JWT_SECRET
   if (!secret) {
-    throw createApiError(500, "JWT secret not configured");
+    throw createApiError(500, "JWT secret not configured")
   }
 
-  const verification = await verifyJWT(token, secret);
+  const verification = await verifyJWT(token, secret)
   if (!verification.success) {
-    throw createApiError(401, verification.error || "Invalid token");
+    throw createApiError(401, verification.error || "Invalid token")
   }
 
-  const requiredPermission = resource ? `${category}:${resource}` : category;
-  const userPermissions = getUserPermissions(verification.payload);
+  const requiredPermission = resource ? `${category}:${resource}` : category
+  const userPermissions = getUserPermissions(verification.payload)
 
   if (!hasPermission(userPermissions, requiredPermission)) {
-    throw createApiError(403, `Insufficient permissions. Required: ${requiredPermission}`);
+    throw createApiError(403, `Insufficient permissions. Required: ${requiredPermission}`)
   }
 
-  return { payload: verification.payload };
+  return { payload: verification.payload }
 }
 ```
 
@@ -2355,10 +2355,10 @@ const token = await new SignJWT({
   sub: "api:tokens",
   iat: Math.floor(Date.now() / 1000),
   exp: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60, // 30 days
-  jti: crypto.randomUUID(),
+  jti: crypto.randomUUID()
 })
   .setProtectedHeader({ alg: "HS256" })
-  .sign(secretKey);
+  .sign(secretKey)
 ```
 
 Sources: [bin/jwt.ts]()
@@ -2372,17 +2372,17 @@ Protected endpoints follow a consistent pattern using the authentication helpers
 ```typescript
 export default defineEventHandler(async (event) => {
   // Require specific permission
-  const auth = await requireAPIAuth(event, "tokens");
+  const auth = await requireAPIAuth(event, "tokens")
 
   // Access user information
-  const userId = auth.payload?.sub;
-  const tokenId = auth.payload?.jti;
+  const userId = auth.payload?.sub
+  const tokenId = auth.payload?.jti
 
   // Proceed with authorized logic
   return createApiResponse({
-    result: { message: "Authorized access", userId },
-  });
-});
+    result: { message: "Authorized access", userId }
+  })
+})
 ```
 
 Sources: [server/api/tokens/[uuid].get.ts]()
@@ -2393,26 +2393,26 @@ The token revocation system demonstrates advanced authorization patterns:
 
 ```typescript
 export default defineEventHandler(async (event) => {
-  const auth = await requireAPIAuth(event, "tokens");
-  const uuid = getValidatedUUID(event, "uuid");
+  const auth = await requireAPIAuth(event, "tokens")
+  const uuid = getValidatedUUID(event, "uuid")
 
   // Validate token exists and user has permission
-  const env = getCloudflareEnv(event);
-  const tokenKey = `auth:token-${uuid}`;
-  const tokenData = await env?.KV.get(tokenKey);
+  const env = getCloudflareEnv(event)
+  const tokenKey = `auth:token-${uuid}`
+  const tokenData = await env?.KV.get(tokenKey)
 
   if (!tokenData) {
-    throw createApiError(404, "Token not found");
+    throw createApiError(404, "Token not found")
   }
 
   // Revoke token
-  await env.KV.delete(tokenKey);
+  await env.KV.delete(tokenKey)
 
   return createApiResponse({
     result: { revoked: true, uuid },
-    message: "Token revoked successfully",
-  });
-});
+    message: "Token revoked successfully"
+  })
+})
 ```
 
 Sources: [server/api/tokens/[uuid]/revoke.post.ts]()
@@ -2444,22 +2444,22 @@ describe("Authentication", () => {
   it("should verify valid JWT", async () => {
     const token = await new SignJWT({
       sub: "api:tokens",
-      iat: Math.floor(Date.now() / 1000),
+      iat: Math.floor(Date.now() / 1000)
     })
       .setProtectedHeader({ alg: "HS256" })
-      .sign(secretKey);
+      .sign(secretKey)
 
-    const result = await verifyJWT(token, testSecret);
-    expect(result.success).toBe(true);
-    expect(result.payload?.sub).toBe("api:tokens");
-  });
+    const result = await verifyJWT(token, testSecret)
+    expect(result.success).toBe(true)
+    expect(result.payload?.sub).toBe("api:tokens")
+  })
 
   it("should check hierarchical permissions", () => {
-    expect(hasPermission(["api"], "api:tokens")).toBe(true);
-    expect(hasPermission(["api:tokens"], "api")).toBe(false);
-    expect(hasPermission(["*"], "anything")).toBe(true);
-  });
-});
+    expect(hasPermission(["api"], "api:tokens")).toBe(true)
+    expect(hasPermission(["api:tokens"], "api")).toBe(false)
+    expect(hasPermission(["*"], "anything")).toBe(true)
+  })
+})
 ```
 
 Sources: [test/auth-feature.test.ts]()
@@ -2726,12 +2726,12 @@ export const ExampleRequestSchema = z
   .object({
     name: z.string().min(1).max(100),
     email: z.string().email(),
-    age: z.number().min(0).max(150).optional(),
+    age: z.number().min(0).max(150).optional()
   })
   .openapi({
     title: "Example Request",
-    description: "Schema for creating examples",
-  });
+    description: "Schema for creating examples"
+  })
 
 // Response schema
 export const ExampleResponseSchema = z
@@ -2741,16 +2741,16 @@ export const ExampleResponseSchema = z
       id: z.string().uuid(),
       name: z.string(),
       email: z.string(),
-      createdAt: z.string(),
+      createdAt: z.string()
     }),
     message: z.string(),
     error: z.null(),
-    timestamp: z.string(),
+    timestamp: z.string()
   })
   .openapi({
     title: "Example Response",
-    description: "Successful example creation response",
-  });
+    description: "Successful example creation response"
+  })
 ```
 
 Sources: [README.md](), [AGENTS.md]()
@@ -2893,10 +2893,10 @@ The API includes comprehensive performance monitoring and metrics collection:
 
 ```typescript
 // Hierarchical key structure
-"metrics:api:ok"; // API success metrics
-"metrics:api:error"; // API error metrics
-"auth:token-uuid"; // Authentication tokens
-"metrics:api:tokens:usage"; // Specific endpoint metrics
+"metrics:api:ok" // API success metrics
+"metrics:api:error" // API error metrics
+"auth:token-uuid" // Authentication tokens
+"metrics:api:tokens:usage" // Specific endpoint metrics
 ```
 
 ### Metrics Recording
@@ -2919,8 +2919,8 @@ The platform uses fire-and-forget patterns for non-blocking metrics:
 
 ```typescript
 // Non-blocking metrics recording
-recordAPIMetricsAsync(event, statusCode); // Good: doesn't block response
-await recordAPIMetrics(event, statusCode); // Bad: blocks response
+recordAPIMetricsAsync(event, statusCode) // Good: doesn't block response
+await recordAPIMetrics(event, statusCode) // Bad: blocks response
 ```
 
 Sources: [AGENTS.md](), [README.md]()
@@ -2998,7 +2998,7 @@ The AI services implement a hierarchical permission system based on JWT tokens. 
 The authentication flow uses the `requireAIAuth` helper function which validates JWT tokens and checks for appropriate permissions:
 
 ```typescript
-const auth = await requireAIAuth(event, "alt");
+const auth = await requireAIAuth(event, "alt")
 ```
 
 Sources: [server/api/ai/alt.get.ts:8](), [server/api/ai/alt.post.ts:10](), [server/utils/auth-helpers.ts]()
@@ -3033,14 +3033,14 @@ sequenceDiagram
 The endpoint validates the provided URL and fetches the image for processing:
 
 ```typescript
-const query = GetAltTextQuerySchema.parse(getQuery(event));
-const imageBuffer = await fetchImageFromURL(query.url);
+const query = GetAltTextQuerySchema.parse(getQuery(event))
+const imageBuffer = await fetchImageFromURL(query.url)
 const result = await env.AI.run("@cf/llava-hf/llava-1.5-7b-hf", {
   image: Array.from(imageBuffer),
   prompt:
     "Describe this image in detail for accessibility purposes. Focus on the main subject, important visual elements, and any text present. Keep it concise but informative.",
-  max_tokens: 512,
-});
+  max_tokens: 512
+})
 ```
 
 Sources: [server/api/ai/alt.get.ts:15-25]()
@@ -3052,11 +3052,11 @@ The POST endpoint supports both multipart form uploads and direct base64 image d
 ```typescript
 const uploadResult = await parseImageUpload(event, {
   maxSizeBytes: 4 * 1024 * 1024, // 4MB limit
-  allowedMimeTypes: CLOUDFLARE_IMAGES_FORMATS,
-});
+  allowedMimeTypes: CLOUDFLARE_IMAGES_FORMATS
+})
 
 if (!uploadResult.success) {
-  throw createApiError(400, uploadResult.error);
+  throw createApiError(400, uploadResult.error)
 }
 ```
 
@@ -3073,13 +3073,13 @@ const result = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", [
   {
     role: "system",
     content:
-      "You are a helpful assistant that creates concise, actionable ticket titles from descriptions. Keep titles under 80 characters and focus on the main issue or request.",
+      "You are a helpful assistant that creates concise, actionable ticket titles from descriptions. Keep titles under 80 characters and focus on the main issue or request."
   },
   {
     role: "user",
-    content: `Create a ticket title for this description: ${validatedInput.description}`,
-  },
-]);
+    content: `Create a ticket title for this description: ${validatedInput.description}`
+  }
+])
 ```
 
 Sources: [server/api/ai/tickets/title.post.ts:20-30]()
@@ -3108,13 +3108,13 @@ const result = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", [
   {
     role: "system",
     content:
-      "You are a helpful assistant that enriches support tickets with additional context, potential solutions, and categorization. Provide structured, actionable information.",
+      "You are a helpful assistant that enriches support tickets with additional context, potential solutions, and categorization. Provide structured, actionable information."
   },
   {
     role: "user",
-    content: `Enrich this ticket with additional context and suggestions: ${validatedInput.ticket}`,
-  },
-]);
+    content: `Enrich this ticket with additional context and suggestions: ${validatedInput.ticket}`
+  }
+])
 ```
 
 Sources: [server/api/ai/tickets/enrich.post.ts:20-30]()
@@ -3127,25 +3127,25 @@ All AI endpoints use Zod schemas for input validation and type safety:
 
 ```typescript
 export const GetAltTextQuerySchema = z.object({
-  url: z.string().url("Must be a valid URL"),
-});
+  url: z.string().url("Must be a valid URL")
+})
 
 export const PostAltTextBodySchema = z.object({
   image: z.string().min(1, "Image data is required"),
-  prompt: z.string().optional(),
-});
+  prompt: z.string().optional()
+})
 ```
 
 ### Ticket Processing Schemas
 
 ```typescript
 export const TicketTitleRequestSchema = z.object({
-  description: z.string().min(1, "Description is required").max(1000, "Description too long"),
-});
+  description: z.string().min(1, "Description is required").max(1000, "Description too long")
+})
 
 export const TicketDescriptionRequestSchema = z.object({
-  brief: z.string().min(1, "Brief description is required").max(500, "Brief description too long"),
-});
+  brief: z.string().min(1, "Brief description is required").max(500, "Brief description too long")
+})
 ```
 
 Sources: [server/utils/schemas.ts]()
@@ -3159,21 +3159,21 @@ return createApiResponse({
   result: {
     altText: cleanedDescription,
     model: "@cf/llava-hf/llava-1.5-7b-hf",
-    processingTime: Date.now() - startTime,
+    processingTime: Date.now() - startTime
   },
-  message: "Alt-text generated successfully",
-});
+  message: "Alt-text generated successfully"
+})
 ```
 
 Error responses maintain consistency across all endpoints:
 
 ```typescript
 if (!env?.AI) {
-  throw createApiError(503, "AI service not available");
+  throw createApiError(503, "AI service not available")
 }
 
 if (!result?.description) {
-  throw createApiError(500, "Failed to generate alt-text");
+  throw createApiError(500, "Failed to generate alt-text")
 }
 ```
 
@@ -3195,15 +3195,15 @@ export const CLOUDFLARE_IMAGES_FORMATS = [
   "image/avif",
   "image/heic",
   "image/heif",
-  "image/svg+xml",
-] as const;
+  "image/svg+xml"
+] as const
 ```
 
 Image validation ensures compatibility with both AI processing and Cloudflare Images:
 
 ```typescript
 export async function validateImageForCloudflareImages(buffer: Buffer): Promise<string> {
-  const uint8Array = new Uint8Array(buffer);
+  const uint8Array = new Uint8Array(buffer)
 
   // PNG signature
   if (
@@ -3213,15 +3213,15 @@ export async function validateImageForCloudflareImages(buffer: Buffer): Promise<
     uint8Array[2] === 0x4e &&
     uint8Array[3] === 0x47
   ) {
-    return "image/png";
+    return "image/png"
   }
 
   // JPEG signature
   if (uint8Array.length >= 2 && uint8Array[0] === 0xff && uint8Array[1] === 0xd8) {
-    return "image/jpeg";
+    return "image/jpeg"
   }
 
-  throw new Error("Unsupported image format");
+  throw new Error("Unsupported image format")
 }
 ```
 
@@ -3232,12 +3232,12 @@ Sources: [server/utils/cloudflare-images.ts:1-15](), [test/cloudflare-images.tes
 The AI services include comprehensive metrics recording for monitoring and optimization:
 
 ```typescript
-recordAPIMetrics(event, 200);
+recordAPIMetrics(event, 200)
 logRequest(event, "ai-alt-text", "GET", 200, {
   imageSize: imageBuffer.length,
   processingTime: Date.now() - startTime,
-  model: "@cf/llava-hf/llava-1.5-7b-hf",
-});
+  model: "@cf/llava-hf/llava-1.5-7b-hf"
+})
 ```
 
 Processing times and model performance are tracked across all endpoints to ensure optimal user experience and identify potential bottlenecks.
@@ -3324,10 +3324,10 @@ The system enforces strict data simplicity to optimize performance and reduce co
 
 ```typescript
 // Good: Simple value storage
-await kv.put("metrics:api:ok", "42");
+await kv.put("metrics:api:ok", "42")
 
 // Bad: Complex object storage
-await kv.put("user:123", JSON.stringify(userObject));
+await kv.put("user:123", JSON.stringify(userObject))
 ```
 
 Sources: [AGENTS.md:10](), [AGENTS.md:Performance Guidelines]()
@@ -3455,10 +3455,10 @@ The system implements fire-and-forget patterns for metrics collection to avoid b
 
 ```typescript
 // Non-blocking metrics (fire and forget)
-recordAPIMetricsAsync(event, statusCode); // Good: doesn't block response
+recordAPIMetricsAsync(event, statusCode) // Good: doesn't block response
 
 // Blocking metrics (avoid)
-await recordAPIMetrics(event, statusCode); // Bad: blocks response
+await recordAPIMetrics(event, statusCode) // Bad: blocks response
 ```
 
 This pattern ensures that metrics collection doesn't impact user-facing response times while maintaining data consistency.
@@ -3491,11 +3491,11 @@ The system implements TTL-based caching for expensive operations:
 
 ```typescript
 // Cache expensive operations with TTL
-const cacheKey = `user:${uuid}`;
-let user = await kv.get(cacheKey);
+const cacheKey = `user:${uuid}`
+let user = await kv.get(cacheKey)
 if (!user) {
-  user = await fetchUserFromDatabase(uuid);
-  await kv.put(cacheKey, user, { expirationTtl: 300 });
+  user = await fetchUserFromDatabase(uuid)
+  await kv.put(cacheKey, user, { expirationTtl: 300 })
 }
 ```
 
@@ -3513,19 +3513,19 @@ describe("KV Data Schema Validation", () => {
     const kvData = {
       metrics: {
         ok: 1000,
-        error: 50,
+        error: 50
         // ... additional metrics
       },
       redirect: {
         gh: "https://github.com/daveio",
-        blog: "https://blog.dave.io",
-      },
-    };
+        blog: "https://blog.dave.io"
+      }
+    }
 
-    const result = KVDataSchema.safeParse(kvData);
-    expect(result.success).toBe(true);
-  });
-});
+    const result = KVDataSchema.safeParse(kvData)
+    expect(result.success).toBe(true)
+  })
+})
 ```
 
 Sources: [test/schemas.test.ts:15-35]()
@@ -3558,11 +3558,11 @@ All KV operations require validation at API boundaries:
 
 ```typescript
 // Always validate at API boundaries
-const validated = RequestSchema.parse(await readBody(event));
+const validated = RequestSchema.parse(await readBody(event))
 
 // Use validation helpers
-const uuid = getValidatedUUID(event, "uuid");
-validateURL(imageUrl, "image URL");
+const uuid = getValidatedUUID(event, "uuid")
+validateURL(imageUrl, "image URL")
 ```
 
 Sources: [AGENTS.md:Security Standards]()
@@ -3573,10 +3573,10 @@ The system enforces strict secret management practices:
 
 ```typescript
 // Environment variables only
-const secret = process.env.API_JWT_SECRET; // Good
+const secret = process.env.API_JWT_SECRET // Good
 
 // Never commit secrets
-const secret = "hardcoded-secret"; // Bad: never commit secrets
+const secret = "hardcoded-secret" // Bad: never commit secrets
 ```
 
 Sources: [AGENTS.md:Security Standards]()
@@ -3692,20 +3692,20 @@ The primary metrics collection is handled through two main functions that provid
 ```typescript
 export function recordAPIMetrics(event: H3Event, statusCode = 200): void {
   try {
-    const env = getCloudflareEnv(event);
+    const env = getCloudflareEnv(event)
     if (!env?.KV) {
-      return; // Skip metrics if KV is not available
+      return // Skip metrics if KV is not available
     }
 
-    const url = getRequestURL(event);
-    const method = getMethod(event);
-    const cfInfo = getCloudflareRequestInfo(event);
-    const userAgent = getHeader(event, "user-agent") || "";
+    const url = getRequestURL(event)
+    const method = getMethod(event)
+    const cfInfo = getCloudflareRequestInfo(event)
+    const userAgent = getHeader(event, "user-agent") || ""
 
     // Fire and forget using the async version
-    updateAPIRequestMetricsAsync(env.KV, url.pathname, method, statusCode, cfInfo, userAgent);
+    updateAPIRequestMetricsAsync(env.KV, url.pathname, method, statusCode, cfInfo, userAgent)
   } catch (error) {
-    console.error("Failed to record API metrics:", error);
+    console.error("Failed to record API metrics:", error)
     // Never let metrics errors break the request
   }
 }
@@ -3719,14 +3719,14 @@ Error scenarios are automatically tracked through a dedicated error metrics func
 
 ```typescript
 export function recordAPIErrorMetrics(event: H3Event, error: unknown): void {
-  let statusCode = 500;
+  let statusCode = 500
 
   // Extract status code from error if it's an API error
   if (error && typeof error === "object" && "statusCode" in error) {
-    statusCode = (error as any).statusCode || 500;
+    statusCode = (error as any).statusCode || 500
   }
 
-  recordAPIMetrics(event, statusCode);
+  recordAPIMetrics(event, statusCode)
 }
 ```
 
@@ -3758,33 +3758,33 @@ const kvMetrics = {
   error: 50,
   times: {
     "last-hit": 1704067200000,
-    "last-error": 1704060000000,
+    "last-error": 1704060000000
   },
   resources: {
     internal: {
       ok: 500,
       visitor: {
         human: 150,
-        bot: 25,
-      },
+        bot: 25
+      }
     },
     ai: {
       visitor: {
         human: 150,
-        bot: 25,
-      },
-    },
+        bot: 25
+      }
+    }
   },
   redirect: {
     gh: {
       ok: 150,
       status: {
         "302": 150,
-        "404": 5,
-      },
-    },
-  },
-};
+        "404": 5
+      }
+    }
+  }
+}
 ```
 
 Sources: [test/schemas.test.ts:120-150]()
@@ -3817,20 +3817,20 @@ YAML output is generated using the js-yaml library with specific formatting opti
 
 ```typescript
 export function formatMetricsAsYAML(metrics: {
-  success: boolean;
+  success: boolean
   data: {
-    total_requests: number;
-    successful_requests: number;
-    failed_requests: number;
-    redirect_clicks: number;
-  };
-  timestamp: string;
+    total_requests: number
+    successful_requests: number
+    failed_requests: number
+    redirect_clicks: number
+  }
+  timestamp: string
 }): string {
   return yamlDump(metrics, {
     indent: 2,
     lineWidth: 120,
-    noRefs: true,
-  });
+    noRefs: true
+  })
 }
 ```
 
@@ -3843,21 +3843,21 @@ Prometheus exposition format is supported for integration with monitoring system
 ```typescript
 export function formatMetricsAsPrometheus(metrics: {
   data: {
-    total_requests: number;
-    successful_requests: number;
-    failed_requests: number;
-    redirect_clicks: number;
-  };
+    total_requests: number
+    successful_requests: number
+    failed_requests: number
+    redirect_clicks: number
+  }
 }): string {
-  const lines: string[] = [];
+  const lines: string[] = []
 
   // Total requests counter
-  lines.push("# HELP api_requests_total Total number of API requests");
-  lines.push("# TYPE api_requests_total counter");
-  lines.push(`api_requests_total ${metrics.data.total_requests}`);
+  lines.push("# HELP api_requests_total Total number of API requests")
+  lines.push("# TYPE api_requests_total counter")
+  lines.push(`api_requests_total ${metrics.data.total_requests}`)
 
   // Additional metrics...
-  return lines.join("\n");
+  return lines.join("\n")
 }
 ```
 
@@ -3925,12 +3925,12 @@ metrics:
     ai:
       <<: *sample_metrics
       ok: 50
-  `;
+  `
 
-  const parsedData = yaml.load(yamlWithAnchors);
-  expect(parsedData).toBeDefined();
-  expect(typeof parsedData).toBe("object");
-});
+  const parsedData = yaml.load(yamlWithAnchors)
+  expect(parsedData).toBeDefined()
+  expect(typeof parsedData).toBe("object")
+})
 ```
 
 Sources: [test/kv-import-export.test.ts:95-125]()
@@ -3942,15 +3942,15 @@ Comprehensive schema validation ensures data integrity:
 ```typescript
 describe("KVMetricsSchema", () => {
   it("should validate complete metrics structure", () => {
-    const result = KVMetricsSchema.safeParse(kvMetrics);
-    expect(result.success).toBe(true);
+    const result = KVMetricsSchema.safeParse(kvMetrics)
+    expect(result.success).toBe(true)
     if (result.success) {
-      expect(result.data.ok).toBe(1000);
-      expect(result.data.resources.internal?.ok).toBe(500);
-      expect(result.data.resources.ai?.visitor.human).toBe(150);
+      expect(result.data.ok).toBe(1000)
+      expect(result.data.resources.internal?.ok).toBe(500)
+      expect(result.data.resources.ai?.visitor.human).toBe(150)
     }
-  });
-});
+  })
+})
 ```
 
 Sources: [test/schemas.test.ts:155-165]()
@@ -4504,7 +4504,7 @@ Sources: [AGENTS.md:auth-endpoints](), [README.md:auth-endpoints]()
 
 ```typescript
 // Standard authentication pattern
-const auth = await requireAuth(event, "api", "tokens");
+const auth = await requireAuth(event, "api", "tokens")
 // Validates JWT and checks for api:tokens permission or higher
 ```
 
@@ -4570,9 +4570,9 @@ The KV storage system uses hierarchical keys with specific naming conventions:
 
 ```typescript
 // Hierarchical key examples
-"metrics:api:ok"; // API success metrics
-"metrics:api:tokens:usage"; // Token usage metrics
-"auth:token-uuid"; // Authentication tokens
+"metrics:api:ok" // API success metrics
+"metrics:api:tokens:usage" // Token usage metrics
+"auth:token-uuid" // Authentication tokens
 ```
 
 **KV Storage Rules:**
@@ -4625,8 +4625,8 @@ const supportedFormats = [
   "image/avif",
   "image/heic",
   "image/heif",
-  "image/svg+xml",
-];
+  "image/svg+xml"
+]
 ```
 
 Sources: [test/cloudflare-images.test.ts:23-34]()
@@ -4657,10 +4657,10 @@ All endpoints automatically record metrics for monitoring and analytics:
 
 ```typescript
 // Success metrics
-recordAPIMetrics(event, 200);
+recordAPIMetrics(event, 200)
 
 // Error metrics
-recordAPIErrorMetrics(event, error);
+recordAPIErrorMetrics(event, error)
 ```
 
 Sources: [AGENTS.md:error-handling](), [README.md:error-handling]()
@@ -4677,9 +4677,9 @@ const mockEnv = {
   CLOUDFLARE_ACCOUNT_ID: "test-account-id",
   IMAGES: {
     input: vi.fn(),
-    info: vi.fn(),
-  },
-};
+    info: vi.fn()
+  }
+}
 ```
 
 ### Test Data Patterns
@@ -4689,11 +4689,11 @@ The utilities include standardized test data for consistent testing:
 ```typescript
 // Small PNG test image (1x1 pixel)
 const smallPngBase64 =
-  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAE/AO/lZy6hAAAAABJRU5ErkJggg==";
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAE/AO/lZy6hAAAAABJRU5ErkJggg=="
 
 // Small JPEG test image (red square)
 const smallJpegBase64 =
-  "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/...";
+  "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/..."
 ```
 
 Sources: [test/cloudflare-images.test.ts:8-15]()
@@ -4750,7 +4750,7 @@ All utilities follow comprehensive JSDoc standards with type definitions and usa
  * @returns Promise<string> Generated alt-text
  * @throws {Error} When AI service is unavailable
  */
-export async function generateAltText(imageBuffer: Buffer, options: AltTextOptions): Promise<string>;
+export async function generateAltText(imageBuffer: Buffer, options: AltTextOptions): Promise<string>
 ```
 
 Sources: [AGENTS.md:jsdoc-standards](), [README.md:jsdoc-standards]()
@@ -4817,12 +4817,12 @@ export const JWTPayloadSchema = z
     sub: z.string(),
     iat: z.number(),
     exp: z.number().optional(),
-    jti: z.string().optional(),
+    jti: z.string().optional()
   })
   .openapi({
     title: "JWT Payload",
-    description: "Standard JWT payload structure",
-  });
+    description: "Standard JWT payload structure"
+  })
 ```
 
 The schema supports hierarchical permissions through the `sub` field, where permissions follow a `category:resource` pattern. Parent permissions automatically grant access to child resources.
@@ -4838,8 +4838,8 @@ For image-related operations, the system provides specialized validation schemas
 const ImageOptimizeRequestSchema = z.object({
   image: z.string().min(1),
   quality: z.number().min(1).max(100).optional(),
-  format: z.enum(["jpeg", "png", "webp"]).optional(),
-});
+  format: z.enum(["jpeg", "png", "webp"]).optional()
+})
 ```
 
 Sources: [CLAUDE.md](), [AGENTS.md]()
@@ -4857,12 +4857,12 @@ export const ApiSuccessResponseSchema = z.object({
   message: z.string().optional(),
   status: z
     .object({
-      message: z.string(),
+      message: z.string()
     })
     .optional(),
   meta: z.record(z.any()).optional(),
-  timestamp: z.string(),
-});
+  timestamp: z.string()
+})
 ```
 
 This schema ensures consistent response formatting across all endpoints, with optional metadata and status information.
@@ -4880,13 +4880,13 @@ export const ApiErrorResponseSchema = z.object({
   message: z.string().optional(),
   status: z
     .object({
-      message: z.string(),
+      message: z.string()
     })
     .optional(),
   details: z.any().optional(),
   meta: z.record(z.any()).optional(),
-  timestamp: z.string(),
-});
+  timestamp: z.string()
+})
 ```
 
 The error schema supports detailed error information through the `details` field while maintaining a user-friendly error message.
@@ -4927,13 +4927,13 @@ The system provides utility functions for common validation patterns:
 
 ```typescript
 // UUID validation with automatic error handling
-const uuid = getValidatedUUID(event, "uuid");
+const uuid = getValidatedUUID(event, "uuid")
 
 // URL validation for image processing
-validateURL(imageUrl, "image URL");
+validateURL(imageUrl, "image URL")
 
 // Request body validation
-const validatedData = RequestSchema.parse(await readBody(event));
+const validatedData = RequestSchema.parse(await readBody(event))
 ```
 
 Sources: [CLAUDE.md](), [README.md]()
@@ -4949,12 +4949,12 @@ export const ExampleRequestSchema = z
   .object({
     name: z.string().min(1).max(100),
     email: z.string().email(),
-    age: z.number().min(0).max(150).optional(),
+    age: z.number().min(0).max(150).optional()
   })
   .openapi({
     title: "Example Request",
-    description: "Schema for creating examples",
-  });
+    description: "Schema for creating examples"
+  })
 ```
 
 The OpenAPI integration detects:
@@ -4980,13 +4980,13 @@ describe("JWTPayloadSchema", () => {
       sub: "api:metrics",
       iat: 1609459200,
       exp: 1609545600,
-      jti: "unique-token-id",
-    };
+      jti: "unique-token-id"
+    }
 
-    const result = JWTPayloadSchema.safeParse(payload);
-    expect(result.success).toBe(true);
-  });
-});
+    const result = JWTPayloadSchema.safeParse(payload)
+    expect(result.success).toBe(true)
+  })
+})
 ```
 
 Tests verify both positive and negative validation cases, ensuring schemas correctly accept valid data and reject invalid inputs.
@@ -5004,12 +5004,12 @@ it("should validate error response with details", () => {
     error: "Validation failed",
     message: "Validation error occurred",
     details: 'Field "name" is required',
-    timestamp: "2025-01-01T00:00:00.000Z",
-  };
+    timestamp: "2025-01-01T00:00:00.000Z"
+  }
 
-  const result = ApiErrorResponseSchema.safeParse(response);
-  expect(result.success).toBe(true);
-});
+  const result = ApiErrorResponseSchema.safeParse(response)
+  expect(result.success).toBe(true)
+})
 ```
 
 Sources: [test/schemas.test.ts:66-84]()
@@ -5043,30 +5043,30 @@ Sources: [AGENTS.md](), [CLAUDE.md]()
 
 ```typescript
 // Good: Schema validation at API boundary
-const validatedInput = RequestSchema.parse(await readBody(event));
+const validatedInput = RequestSchema.parse(await readBody(event))
 
 // Good: Using validation helpers
-const uuid = getValidatedUUID(event, "uuid");
+const uuid = getValidatedUUID(event, "uuid")
 
 // Good: Standardized response creation
 return createApiResponse({
   result: data,
-  message: "Operation successful",
-});
+  message: "Operation successful"
+})
 ```
 
 ### Anti-Patterns to Avoid
 
 ```typescript
 // Bad: Manual validation bypassing
-const uuid = getRouterParam(event, "uuid"); // No validation
+const uuid = getRouterParam(event, "uuid") // No validation
 
 // Bad: Inconsistent response format
-return { success: true, data: result }; // Non-standard format
+return { success: true, data: result } // Non-standard format
 
 // Bad: Silent validation failures
 try {
-  validate();
+  validate()
 } catch {
   /* ignored */
 } // Should handle explicitly
@@ -5243,8 +5243,8 @@ const CLOUDFLARE_IMAGES_FORMATS = [
   "image/avif",
   "image/heic",
   "image/heif",
-  "image/svg+xml",
-];
+  "image/svg+xml"
+]
 ```
 
 Sources: [test/cloudflare-images.test.ts:7-9](), [test/cloudflare-images.test.ts:38-49](), [README.md:142]()
@@ -5380,9 +5380,9 @@ const mockEnv = {
   CLOUDFLARE_ACCOUNT_ID: "test-account-id",
   IMAGES: {
     input: vi.fn(),
-    info: vi.fn(),
-  },
-};
+    info: vi.fn()
+  }
+}
 ```
 
 ### Remote Testing Capabilities
@@ -5416,13 +5416,13 @@ The platform implements efficient KV storage patterns:
 
 ```typescript
 // Hierarchical key structure for efficient querying
-"metrics:api:ok"; // Good: hierarchical
-"metrics:api:tokens:usage"; // Good: specific scope
-"user_data_12345"; // Bad: flat structure
+"metrics:api:ok" // Good: hierarchical
+"metrics:api:tokens:usage" // Good: specific scope
+"user_data_12345" // Bad: flat structure
 
 // Simple values only, no complex objects
-await kv.put("metrics:api:ok", "42"); // Good: simple value
-await kv.put("user:123", JSON.stringify(userObject)); // Bad: complex object
+await kv.put("metrics:api:ok", "42") // Good: simple value
+await kv.put("user:123", JSON.stringify(userObject)) // Bad: complex object
 ```
 
 ### Async Operation Patterns
@@ -5431,8 +5431,8 @@ Non-blocking operations are used for metrics and logging:
 
 ```typescript
 // Non-blocking metrics (fire and forget)
-recordAPIMetricsAsync(event, statusCode); // Good: doesn't block response
-await recordAPIMetrics(event, statusCode); // Bad: blocks response
+recordAPIMetricsAsync(event, statusCode) // Good: doesn't block response
+await recordAPIMetrics(event, statusCode) // Bad: blocks response
 ```
 
 Sources: [AGENTS.md:117-127](), [README.md:11-13]()
@@ -5716,10 +5716,10 @@ export default defineNuxtConfig({
     preset: "cloudflare_module",
     cloudflare: {
       deployConfig: true,
-      nodeCompat: true,
-    },
-  },
-});
+      nodeCompat: true
+    }
+  }
+})
 ```
 
 **Sources: [nuxt.config.ts:1-20]()**

@@ -41,19 +41,19 @@ GET https://registry.smithery.ai/servers
 ```typescript
 {
   servers: Array<{
-    qualifiedName: string;
-    displayName: string;
-    description: string;
-    homepage: string;
-    useCount: string;
-    isDeployed: boolean;
-    createdAt: string;
-  }>;
+    qualifiedName: string
+    displayName: string
+    description: string
+    homepage: string
+    useCount: string
+    isDeployed: boolean
+    createdAt: string
+  }>
   pagination: {
-    currentPage: number;
-    pageSize: number;
-    totalPages: number;
-    totalCount: number;
+    currentPage: number
+    pageSize: number
+    totalPages: number
+    totalCount: number
   }
 }
 ```

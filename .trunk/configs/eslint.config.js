@@ -29,7 +29,7 @@ export default createConfigForNuxt({
       braceStyle: "1tbs",
 
       // Additional stylistic options
-      arrowParens: "always", // Always use parentheses around arrow function parameters
+      arrowParens: true, // Always use parentheses around arrow function parameters
       blockSpacing: true, // Enforce spaces inside of blocks after opening and before closing
       quoteProps: "as-needed" // Only quote object properties when necessary
     },
