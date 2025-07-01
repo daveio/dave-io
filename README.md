@@ -60,7 +60,7 @@
 - **Methods**: `Authorization: Bearer <jwt>` + `?token=<jwt>`
 - **JWT**: `{sub, iat, exp?, jti?}` | **Permissions**: `category:resource` (parent grants child) | **Categories**: `api`, `ai`, `dashboard`, `admin`, `*`
 - **Public**: `/api/ping`, `/api/images/optimise`, `/go/{slug}`, `/api/ai/ticket/*`
-- **Protected**: `/api/ai/alt` (`ai:alt`+), `/api/tokens/{uuid}/*` (`api:tokens`+)
+- **Protected**: `/api/ai/alt` (`ai:alt`+), `/api/token/{uuid}/*` (`api:token`+)
 
 ## Breaking Changes
 
@@ -308,14 +308,14 @@ The JWT system uses hierarchical permissions where parent permissions grant acce
 ```typescript
 // Permission hierarchy examples:
 "*"           // Grants everything (admin)
-"api"         // Grants api:metrics, api:tokens, etc.
+"api"         // Grants api:metrics, api:token, etc.
 "ai"          // Grants ai:alt, ai:ticket, etc.
-"api:tokens"  // Grants api:tokens:usage, api:tokens:revoke, etc.
+"api:token"  // Grants api:token:usage, api:token:revoke, etc.
 "ai:alt"      // Grants only ai:alt endpoint
 
 // JWT payload structure:
 {
-  sub: "api:tokens",        // Main permission
+  sub: "api:token",        // Main permission
   iat: 1234567890,         // Issued at
   exp: 1234567890,         // Optional expiry
   jti: "uuid-v4",          // Optional revocation ID
@@ -447,7 +447,7 @@ describe("Authentication", () => {
     const secretKey = encoder.encode(testSecret)
 
     const token = await new SignJWT({
-      sub: "api:tokens",
+      sub: "api:token",
       iat: Math.floor(Date.now() / 1000)
     })
       .setProtectedHeader({ alg: "HS256" })
@@ -456,12 +456,12 @@ describe("Authentication", () => {
     const result = await verifyJWT(token, testSecret)
 
     expect(result.success).toBe(true)
-    expect(result.payload?.sub).toBe("api:tokens")
+    expect(result.payload?.sub).toBe("api:token")
   })
 
   it("should check hierarchical permissions", () => {
-    expect(hasPermission(["api"], "api:tokens")).toBe(true)
-    expect(hasPermission(["api:tokens"], "api")).toBe(false)
+    expect(hasPermission(["api"], "api:token")).toBe(true)
+    expect(hasPermission(["api:token"], "api")).toBe(false)
     expect(hasPermission(["*"], "anything")).toBe(true)
   })
 })
@@ -1136,7 +1136,7 @@ groups:
 - Replace `server/utils/auth-helpers.ts` with Zero Trust equivalents
 - Update all protected endpoints to use `requireAccessAuth()` functions
 - Remove JWT generation CLI commands (`bun jwt init`, `bun jwt create`, etc.)
-- Replace permission strings (`api:tokens`) with Zero Trust groups (`api-users`)
+- Replace permission strings (`api:token`) with Zero Trust groups (`api-users`)
 - Update environment variables:
   - Remove: `API_JWT_SECRET`
   - Add: `CLOUDFLARE_TEAM_DOMAIN`, `CLOUDFLARE_API_AUDIENCE`, `CLOUDFLARE_AI_AUDIENCE`, `CLOUDFLARE_DASHBOARD_AUDIENCE`

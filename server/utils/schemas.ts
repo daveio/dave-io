@@ -346,7 +346,7 @@ export const ImageOptimisationResponseSchema = z.object({
   timestamp: z.string()
 })
 
-// AI Tickets schemas
+// AI Ticket schemas
 export const AiTicketImageDataSchema = z.object({
   data: z.string().refine((val) => !val.startsWith("data:"), {
     message: "Image must be raw base64 without data URL"

@@ -9,7 +9,7 @@ const endpointRegistry = new Map<string, RouteConfig>()
 
 /**
  * Register an endpoint with its OpenAPI metadata
- * @param path The API path (e.g., "/api/images/optimise")
+ * @param path The API path (e.g., "/api/image/optimise")
  * @param method The HTTP method
  * @param config The OpenAPI route configuration
  */
