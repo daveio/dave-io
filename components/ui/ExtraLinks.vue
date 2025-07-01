@@ -2,8 +2,7 @@
   <!-- trunk-ignore-all(trunk-toolbox/todo) -->
   <div class="mt-8 mb-3">
     <div
-      class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto md:gap-x-4 max-md:text-sm max-md:max-w-full max-md:pl-4"
-    >
+      class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto md:gap-x-4 max-md:text-sm max-md:max-w-full max-md:pl-4">
       <!-- API Link -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
@@ -18,8 +17,7 @@
   </div>
   <div class="mt-8">
     <div
-      class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto md:gap-x-4 max-md:text-sm max-md:max-w-full max-md:pl-4"
-    >
+      class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto md:gap-x-4 max-md:text-sm max-md:max-w-full max-md:pl-4">
       <!-- CV Link -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
@@ -80,7 +78,6 @@
 const { logInteraction } = usePageLogging()
 
 // Track link clicks
-// biome-ignore lint/correctness/noUnusedVariables: Used in template
 const handleLinkClick = (service: string, url: string) => {
   logInteraction("click", "terminal-link", { service, url })
 }

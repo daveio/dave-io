@@ -6,15 +6,10 @@
         <div class="text-subtext1">
           <button
             class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-mono bg-surface1 hover:bg-surface2 rounded-md transition-colors cursor-pointer"
-            @click="copyCurlCommand"
-            title="Click to copy to clipboard"
-          >
+            @click="copyCurlCommand" title="Click to copy to clipboard">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
-              />
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
             </svg>
             curl https://dave.io | sh
           </button>
@@ -29,7 +24,6 @@
 const { logInteraction } = usePageLogging()
 
 // Copy curl command to clipboard and track the action
-// biome-ignore lint/correctness/noUnusedVariables: Used in template
 const copyCurlCommand = async () => {
   const command = "curl https://dave.io | sh"
   try {

@@ -173,14 +173,9 @@
 </template>
 
 <script setup lang="ts">
-// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import BackToHomeButton from "../ui/BackToHomeButton.vue"
-// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import GenderChatbotPlaceholder from "./GenderChatbotPlaceholder.vue"
-// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import GenderInfoCard from "./GenderInfoCard.vue"
-// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import GenderPageHeader from "./GenderPageHeader.vue"
-// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import GenderResourcesGrid from "./GenderResourcesGrid.vue"
 </script>

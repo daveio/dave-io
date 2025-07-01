@@ -1,7 +1,6 @@
 <template>
   <div
-    class="min-h-screen bg-gradient-to-br from-base via-mantle to-base flex flex-col justify-center py-12 px-4 relative overflow-hidden"
-  >
+    class="min-h-screen bg-gradient-to-br from-base via-mantle to-base flex flex-col justify-center py-12 px-4 relative overflow-hidden">
     <Background />
 
     <GenderFloatingChatButton />
@@ -15,13 +14,9 @@
 </template>
 
 <script setup lang="ts">
-// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import GenderContent from "../components/gender/GenderContent.vue"
-// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import GenderFloatingChatButton from "../components/gender/GenderFloatingChatButton.vue"
-// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import Background from "../components/layout/Background.vue"
-// biome-ignore lint/correctness/noUnusedImports: Vue components used in template
 import Interface from "../components/layout/Interface.vue"
 
 usePageSetup({

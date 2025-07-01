@@ -1,8 +1,7 @@
 <template>
   <div class="mb-4">
     <div
-      class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto max-md:grid-cols-[0.7fr_1.2fr] max-md:text-sm max-md:max-w-full"
-    >
+      class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto max-md:grid-cols-[0.7fr_1.2fr] max-md:text-sm max-md:max-w-full">
       <!-- Bluesky -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
@@ -19,11 +18,8 @@
           <Icon name="i-heroicons-book-open" class="mr-2 text-green font-bold" />
           Dreamwidth
         </span>
-        <NuxtLink
-          href="/go/dreamwidth"
-          class="break-all link-url"
-          @click="handleLinkClick('Dreamwidth', '/go/dreamwidth')"
-        >
+        <NuxtLink href="/go/dreamwidth" class="break-all link-url"
+          @click="handleLinkClick('Dreamwidth', '/go/dreamwidth')">
           dave.io/go/dreamwidth
         </NuxtLink>
       </div>
@@ -53,11 +49,8 @@
           <Icon name="i-simple-icons-instagram" class="mr-2 text-pink font-bold" />
           Instagram
         </span>
-        <NuxtLink
-          href="/go/instagram"
-          class="break-all link-url"
-          @click="handleLinkClick('Instagram', '/go/instagram')"
-        >
+        <NuxtLink href="/go/instagram" class="break-all link-url"
+          @click="handleLinkClick('Instagram', '/go/instagram')">
           dave.io/go/instagram
         </NuxtLink>
       </div>
@@ -87,11 +80,8 @@
           <Icon name="i-heroicons-chat-bubble-left-ellipsis" class="mr-2 text-lavender font-bold" />
           Pillowfort
         </span>
-        <NuxtLink
-          href="/go/pillowfort"
-          class="break-all link-url"
-          @click="handleLinkClick('Pillowfort', '/go/pillowfort')"
-        >
+        <NuxtLink href="/go/pillowfort" class="break-all link-url"
+          @click="handleLinkClick('Pillowfort', '/go/pillowfort')">
           dave.io/go/pillowfort
         </NuxtLink>
       </div>
@@ -142,7 +132,6 @@
 const { logInteraction } = usePageLogging()
 
 // Track link clicks
-// biome-ignore lint/correctness/noUnusedVariables: Used in template
 const handleLinkClick = (service: string, url: string) => {
   logInteraction("click", "terminal-link", { service, url })
 }

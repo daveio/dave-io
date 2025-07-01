@@ -58,7 +58,6 @@ function decodeEmail(encoded: string): string | null {
 }
 
 // Computed property for link classes
-// biome-ignore lint/correctness/noUnusedVariables: Used in template
 const linkClasses = computed(() => {
   const defaultClasses = "text-blue-600 hover:text-blue-800 underline transition-colors duration-200"
   return props.linkClass ? `${defaultClasses} ${props.linkClass}` : defaultClasses

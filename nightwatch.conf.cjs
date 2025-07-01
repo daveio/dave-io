@@ -187,9 +187,7 @@ module.exports = {
       // https://www.browserstack.com/automate/capabilities?tag=selenium-4
       desiredCapabilities: {
         "bstack:options": {
-          // biome-ignore lint/suspicious/noTemplateCurlyInString: Environment variables in config
           userName: "${BROWSERSTACK_USERNAME}",
-          // biome-ignore lint/suspicious/noTemplateCurlyInString: Environment variables in config
           accessKey: "${BROWSERSTACK_ACCESS_KEY}"
         }
       },
@@ -273,9 +271,7 @@ module.exports = {
       // https://docs.saucelabs.com/dev/test-configuration-options/
       desiredCapabilities: {
         "sauce:options": {
-          // biome-ignore lint/suspicious/noTemplateCurlyInString: Environment variables in config
           username: "${SAUCE_USERNAME}",
-          // biome-ignore lint/suspicious/noTemplateCurlyInString: Environment variables in config
           accessKey: "${SAUCE_ACCESS_KEY}",
           screenResolution: "1280x1024"
           // https://docs.saucelabs.com/dev/cli/sauce-connect-proxy/#--region
