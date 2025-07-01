@@ -60,10 +60,10 @@ describe("KV Import/Export", () => {
             "5xx": 2
           },
           status: {
-            "200": 85,
-            "302": 5,
-            "404": 3,
-            "500": 2
+            200: 85,
+            302: 5,
+            404: 3,
+            500: 2
           },
           resources: {
             internal: {
@@ -87,9 +87,9 @@ describe("KV Import/Export", () => {
                 "5xx": 0
               },
               status: {
-                "200": 48,
-                "302": 2,
-                "404": 2
+                200: 48,
+                302: 2,
+                404: 2
               }
             },
             go: {
@@ -113,8 +113,8 @@ describe("KV Import/Export", () => {
                 "5xx": 0
               },
               status: {
-                "302": 24,
-                "404": 1
+                302: 24,
+                404: 1
               }
             }
           },
@@ -140,7 +140,7 @@ describe("KV Import/Export", () => {
                 "5xx": 0
               },
               status: {
-                "302": 15
+                302: 15
               }
             }
           }

@@ -133,7 +133,7 @@ describe("JSON Utilities", () => {
 
   describe("sortJsonString", () => {
     it("should sort JSON string keys", () => {
-      const input = '{"zebra": "animal", "apple": "fruit"}'
+      const input = "{\"zebra\": \"animal\", \"apple\": \"fruit\"}"
       const result = sortJsonString(input)
       const parsed = JSON.parse(result)
       const keys = Object.keys(parsed)
@@ -147,10 +147,10 @@ describe("JSON Utilities", () => {
     })
 
     it("should format with proper indentation", () => {
-      const input = '{"b": 1, "a": 2}'
+      const input = "{\"b\": 1, \"a\": 2}"
       const result = sortJsonString(input)
       expect(result).toContain("\n") // Should have newlines for formatting
-      expect(result).toBe('{\n  "a": 2,\n  "b": 1\n}')
+      expect(result).toBe("{\n  \"a\": 2,\n  \"b\": 1\n}")
     })
   })
 

@@ -38,7 +38,7 @@ export function tryParseJson(value: string): unknown {
   }
 
   const jsonPatterns = [
-    /^{.*}$/, // Object: {...}
+    /^\{.*\}$/, // Object: {...}
     /^\[.*\]$/, // Array: [...]
     /^(true|false)$/, // Boolean: true or false
     /^null$/ // null

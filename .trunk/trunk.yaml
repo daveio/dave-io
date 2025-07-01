@@ -58,6 +58,10 @@ lint:
     - yamllint@1.37.1
   ignore:
     - linters:
+        - prettier
+      paths:
+        - "**/*.ts"
+    - linters:
         - trunk-toolbox
       paths:
         - .cursor/**

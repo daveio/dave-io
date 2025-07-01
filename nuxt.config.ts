@@ -3,15 +3,35 @@ import { defineNuxtConfig } from "nuxt/config"
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 export default defineNuxtConfig({
-  compatibilityDate: "2025-05-15",
+  modules: [
+    "@nuxt/eslint",
+    "@nuxt/fonts",
+    "@nuxt/icon",
+    "@nuxt/image",
+    "@nuxt/scripts",
+    "@nuxt/test-utils",
+    "@nuxtjs/color-mode",
+    "@nuxtjs/seo",
+    "@nuxtjs/tailwindcss",
+    "@pinia/nuxt",
+    "nitro-cloudflare-dev"
+  ],
   devtools: { enabled: true },
-
-  // Vite configuration to disable sourcemaps in production
-  vite: {
-    build: {
-      sourcemap: true // Enable sourcemaps in production (disable if warnings)
+  colorMode: {
+    preference: "dark",
+    fallback: "dark",
+    storageKey: "nuxt-color-mode"
+  },
+  runtimeConfig: {
+    // Server-side environment variables
+    apiJwtSecret: process.env.API_JWT_SECRET || "dev-secret-change-in-production",
+    cloudflareApiToken: process.env.CLOUDFLARE_API_TOKEN || "",
+    public: {
+      // Client-side environment variables
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || "/api"
     }
   },
+  compatibilityDate: "2025-05-15",
   nitro: {
     preset: "cloudflare_module",
     cloudflare: {
@@ -56,39 +76,12 @@ export default defineNuxtConfig({
       }
     }
   },
-  runtimeConfig: {
-    // Server-side environment variables
-    apiJwtSecret: process.env.API_JWT_SECRET || "dev-secret-change-in-production",
-    cloudflareApiToken: process.env.CLOUDFLARE_API_TOKEN || "",
-    public: {
-      // Client-side environment variables
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || "/api"
+
+  // Vite configuration to disable sourcemaps in production
+  vite: {
+    build: {
+      sourcemap: true // Enable sourcemaps in production (disable if warnings)
     }
-  },
-  modules: [
-    "@nuxt/eslint",
-    "@nuxt/fonts",
-    "@nuxt/icon",
-    "@nuxt/image",
-    "@nuxt/scripts",
-    "@nuxt/test-utils",
-    "@nuxtjs/color-mode",
-    "@nuxtjs/seo",
-    "@nuxtjs/tailwindcss",
-    "@pinia/nuxt",
-    "nitro-cloudflare-dev"
-  ],
-  colorMode: {
-    preference: "dark",
-    fallback: "dark",
-    storageKey: "nuxt-color-mode"
-  },
-  tailwindcss: {
-    cssPath: "~/assets/css/tailwind.css",
-    configPath: "./tailwind.config.ts",
-    editorSupport: true,
-    viewer: false,
-    exposeConfig: false
   },
   fonts: {
     defaults: {
@@ -104,5 +97,12 @@ export default defineNuxtConfig({
     assets: {
       prefix: "/_fonts/"
     }
+  },
+  tailwindcss: {
+    cssPath: "~/assets/css/tailwind.css",
+    configPath: "./tailwind.config.ts",
+    editorSupport: true,
+    viewer: false,
+    exposeConfig: false
   }
 })

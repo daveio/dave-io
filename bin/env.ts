@@ -51,7 +51,7 @@ function parseEnvFile(filePath: string): EnvVars {
     let value = trimmedLine.slice(equalIndex + 1).trim()
 
     // Remove quotes from value if present
-    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+    if ((value.startsWith("\"") && value.endsWith("\"")) || (value.startsWith("'") && value.endsWith("'"))) {
       value = value.slice(1, -1)
     }
 
@@ -74,12 +74,12 @@ function validateEnvironment(envVars: EnvVars): void {
 
   // Check for dangerous API key configuration
   if (
-    (envVars.CLOUDFLARE_API_KEY || envVars.CLOUDFLARE_EMAIL) &&
-    (!envVars.CLOUDFLARE_API_TOKEN || !envVars.CLOUDFLARE_ACCOUNT_ID)
+    (envVars.CLOUDFLARE_API_KEY || envVars.CLOUDFLARE_EMAIL)
+    && (!envVars.CLOUDFLARE_API_TOKEN || !envVars.CLOUDFLARE_ACCOUNT_ID)
   ) {
     throw new Error(
-      "API key and email are configured but missing CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID. " +
-        "Production deployment requires secure API token authentication."
+      "API key and email are configured but missing CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID. "
+      + "Production deployment requires secure API token authentication."
     )
   }
 }

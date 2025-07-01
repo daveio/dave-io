@@ -132,8 +132,8 @@ export async function validateFormDataImage(file: File): Promise<Buffer> {
  */
 export async function parseImageUpload(
   event: H3Event,
-  options: { includeQuality?: boolean; allowUrl?: boolean } = {}
-): Promise<{ buffer: Buffer; source: string; quality?: number }> {
+  options: { includeQuality?: boolean, allowUrl?: boolean } = {}
+): Promise<{ buffer: Buffer, source: string, quality?: number }> {
   const contentType = getHeader(event, "content-type") || ""
 
   let quality: number | undefined

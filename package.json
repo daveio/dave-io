@@ -29,7 +29,7 @@
     "zod": "^3.25.67"
   },
   "devDependencies": {
-    "@anthropic-ai/claude-code": "^1.0.38",
+    "@anthropic-ai/claude-code": "^1.0.39",
     "@biomejs/biome": "^2.0.6",
     "@catppuccin/daisyui": "^2.1.1",
     "@catppuccin/tailwindcss": "^1.0.0-beta.2",
@@ -39,7 +39,6 @@
     "@nuxt/eslint": "^1.4.1",
     "@nuxt/test-utils": "^3.19.2",
     "@nuxtjs/tailwindcss": "^7.0.0-beta.0",
-    "@stylistic/eslint-plugin": "^5.1.0",
     "@trunkio/launcher": "^1.3.4",
     "@types/bun": "^1.2.17",
     "@types/js-yaml": "^4.0.9",
@@ -58,7 +57,6 @@
     "eslint-plugin-vue": "^10.2.0",
     "globals": "^16.3.0",
     "happy-dom": "^18.0.1",
-    "jiti": "^2.4.2",
     "json5": "^2.2.3",
     "ms": "^2.1.3",
     "nitro-cloudflare-dev": "^0.2.2",

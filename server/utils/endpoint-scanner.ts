@@ -262,9 +262,9 @@ function extractEndpointMetadata(
  * Detect Zod schema usage in endpoint content
  */
 // biome-ignore lint/suspicious/noExplicitAny: Schema detection returns dynamic schema objects
-function detectSchemaUsage(content: string): { requestSchema?: any; responseSchema?: any } {
+function detectSchemaUsage(content: string): { requestSchema?: any, responseSchema?: any } {
   // biome-ignore lint/suspicious/noExplicitAny: Result object holds dynamic schema references
-  const result: { requestSchema?: any; responseSchema?: any } = {}
+  const result: { requestSchema?: any, responseSchema?: any } = {}
 
   // Look for .parse() calls to identify request schemas
   const parseMatches = content.match(/(\w+Schema)\.parse\(/g)
@@ -286,7 +286,7 @@ function detectSchemaUsage(content: string): { requestSchema?: any; responseSche
   }
 
   // Look for specific schemas mentioned in imports or usage
-  const schemaImportMatch = content.match(/import.*{([^}]*Schema[^}]*)}.*from.*schemas/s)
+  const schemaImportMatch = content.match(/import.*\{([^}]*Schema[^}]*)\}.*from.*schemas/s)
   if (schemaImportMatch?.[1]) {
     const importedSchemas = schemaImportMatch[1]
       .split(",")
@@ -322,13 +322,13 @@ function extractParameters(
   path: string,
   _content: string
 ): Array<{
-  name: string
-  in: "path"
-  required: boolean
-  description: string
-  // biome-ignore lint/suspicious/noExplicitAny: OpenAPI parameter schema can be any valid JSON schema
-  schema: any
-}> {
+    name: string
+    in: "path"
+    required: boolean
+    description: string
+    // biome-ignore lint/suspicious/noExplicitAny: OpenAPI parameter schema can be any valid JSON schema
+    schema: any
+  }> {
   const parameters: Array<{
     name: string
     in: "path"
@@ -339,7 +339,7 @@ function extractParameters(
   }> = []
 
   // Extract path parameters
-  const pathParams = path.match(/{([^}]+)}/g)
+  const pathParams = path.match(/\{([^}]+)\}/g)
   if (pathParams) {
     for (const param of pathParams) {
       const paramName = param.slice(1, -1) // Remove { }

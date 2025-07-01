@@ -113,11 +113,11 @@ export const KVGroupMetricsSchema = z.object({
 
 export const KVStatusMetricsSchema = z
   .object({
-    "304": z.number().optional(),
-    "404": z.number().optional(),
-    "307": z.number().optional(),
-    "405": z.number().optional(),
-    "500": z.number().optional()
+    304: z.number().optional(),
+    404: z.number().optional(),
+    307: z.number().optional(),
+    405: z.number().optional(),
+    500: z.number().optional()
   })
   .passthrough() // Allow additional status codes
 
@@ -238,7 +238,7 @@ export const UrlRedirectSchema = z.object({
     .string()
     .min(1)
     .max(50)
-    .regex(/^[a-zA-Z0-9\-_]+$/),
+    .regex(/^[\w\-]+$/),
   url: z.string().url(),
   title: z.string().optional(),
   description: z.string().optional(),
@@ -252,7 +252,7 @@ export const CreateRedirectSchema = z.object({
     .string()
     .min(1)
     .max(50)
-    .regex(/^[a-zA-Z0-9\-_]+$/),
+    .regex(/^[\w\-]+$/),
   url: z.string().url(),
   title: z.string().optional(),
   description: z.string().optional()

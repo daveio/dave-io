@@ -177,7 +177,7 @@ export async function updateAPIRequestMetrics(
   endpoint: string,
   _method: string,
   statusCode: number,
-  _cfInfo: { country: string; datacenter: string },
+  _cfInfo: { country: string, datacenter: string },
   userAgent?: string
 ): Promise<void> {
   try {
@@ -234,7 +234,7 @@ export function updateAPIRequestMetricsAsync(
   endpoint: string,
   method: string,
   statusCode: number,
-  cfInfo: { country: string; datacenter: string },
+  cfInfo: { country: string, datacenter: string },
   userAgent?: string
 ): void {
   // Fire and forget

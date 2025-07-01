@@ -263,7 +263,7 @@ export async function processWithCloudflareImagesBinding(
   env: Env,
   buffer: Buffer,
   options: CloudflareImagesOptions = {}
-): Promise<{ buffer: Buffer; result: CloudflareImagesResult }> {
+): Promise<{ buffer: Buffer, result: CloudflareImagesResult }> {
   if (!env.IMAGES) {
     throw createApiError(503, "Cloudflare Images binding not available")
   }
@@ -336,15 +336,15 @@ export async function processImageWithCloudflareImages(
   env: Env,
   _metadata: Record<string, string> = {}
 ): Promise<{
-  buffer: Buffer
-  originalSize: number
-  optimisedSize: number
-  format: string
-  hash: string
-  url: string
-  quality?: number
-  originalMimeType: string
-}> {
+    buffer: Buffer
+    originalSize: number
+    optimisedSize: number
+    format: string
+    hash: string
+    url: string
+    quality?: number
+    originalMimeType: string
+  }> {
   const startTime = Date.now()
 
   const cloudflareOptions: CloudflareImagesOptions = {

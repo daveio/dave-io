@@ -13,12 +13,12 @@ export function usePageLogging() {
     } // Only run on client side
 
     const referrer = window.document.referrer || "direct"
-    const userAgent =
-      window.navigator.userAgent.substring(0, 50) + (window.navigator.userAgent.length > 50 ? "..." : "")
+    const userAgent
+      = window.navigator.userAgent.substring(0, 50) + (window.navigator.userAgent.length > 50 ? "..." : "")
     const extrasStr = extras
       ? ` | ${Object.entries(extras)
-          .map(([k, v]) => `${k}: ${v}`)
-          .join(" | ")}`
+        .map(([k, v]) => `${k}: ${v}`)
+        .join(" | ")}`
       : ""
 
     console.log(`[PAGE] ${route} | referrer: ${referrer} | UA: ${userAgent}${extrasStr}`)
@@ -35,8 +35,8 @@ export function usePageLogging() {
 
     const extrasStr = extras
       ? ` | ${Object.entries(extras)
-          .map(([k, v]) => `${k}: ${v}`)
-          .join(" | ")}`
+        .map(([k, v]) => `${k}: ${v}`)
+        .join(" | ")}`
       : ""
 
     console.log(`[INTERACTION] ${action} | element: ${element}${extrasStr}`)
@@ -58,8 +58,8 @@ export function usePageLogging() {
 
     const extrasStr = extras
       ? ` | ${Object.entries(extras)
-          .map(([k, v]) => `${k}: ${v}`)
-          .join(" | ")}`
+        .map(([k, v]) => `${k}: ${v}`)
+        .join(" | ")}`
       : ""
 
     console.log(`[NAVIGATION] ${from} -> ${to} | method: ${method}${extrasStr}`)

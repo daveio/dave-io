@@ -98,9 +98,9 @@ export default defineEventHandler(async (event) => {
   const otherHeaders = Object.entries(headers)
     .filter(
       ([key]) =>
-        !key.toLowerCase().startsWith("cf-") &&
-        !key.toLowerCase().includes("forward") &&
-        !key.toLowerCase().includes("real-ip")
+        !key.toLowerCase().startsWith("cf-")
+        && !key.toLowerCase().includes("forward")
+        && !key.toLowerCase().includes("real-ip")
     )
     .reduce(
       (acc, [key, value]) => {

@@ -26,7 +26,7 @@ function encodeEmailServerSide(email: string): string {
   const xorBytes = bytes.map((byte, i) => byte ^ (key + i) % 256)
 
   // Bit rotation: rotate each byte left by 3 positions
-  const rotatedBytes = xorBytes.map((byte) => ((byte << 3) | (byte >> 5)) & 0xff)
+  const rotatedBytes = xorBytes.map((byte) => ((byte << 3) | (byte >> 5)) & 0xFF)
 
   // Convert to binary string then Base64
   const binaryString = String.fromCharCode(...rotatedBytes)
@@ -49,7 +49,7 @@ function decodeEmailClientSide(encoded: string): string | null {
     }
 
     // Reverse bit rotation: rotate each byte right by 3 positions
-    const xorBytes = rotatedBytes.map((byte) => ((byte >> 3) | (byte << 5)) & 0xff)
+    const xorBytes = rotatedBytes.map((byte) => ((byte >> 3) | (byte << 5)) & 0xFF)
 
     // Try different keys since we need to brute force the original key
     // The key was generated from the sum of character codes of the original email
@@ -58,7 +58,7 @@ function decodeEmailClientSide(encoded: string): string | null {
       const testEmail = new TextDecoder().decode(testBytes)
 
       // Check if it looks like an email (contains @ and .)
-      if (testEmail.includes("@") && testEmail.includes(".") && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(testEmail)) {
+      if (testEmail.includes("@") && testEmail.includes(".") && /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(testEmail)) {
         return testEmail
       }
     }

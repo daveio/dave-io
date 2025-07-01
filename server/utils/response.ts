@@ -135,7 +135,7 @@ export function validateInput(
   input: unknown,
   schema: Record<
     string,
-    { required?: boolean; type?: "string" | "number" | "boolean" | "object"; maxLength?: number; pattern?: RegExp }
+    { required?: boolean, type?: "string" | "number" | "boolean" | "object", maxLength?: number, pattern?: RegExp }
   >
 ): boolean {
   // Basic validation - in production, use a proper validation library like Zod
@@ -209,7 +209,7 @@ export function sanitizeInput(input: unknown): string {
           return "&lt;"
         case ">":
           return "&gt;"
-        case '"':
+        case "\"":
           return "&quot;"
         case "'":
           return "&#x27;"
@@ -239,7 +239,7 @@ function generateRequestId(): string {
 }
 
 // Type guard for API errors
-export function isApiError(error: unknown): error is { statusCode: number; message?: string } {
+export function isApiError(error: unknown): error is { statusCode: number, message?: string } {
   return typeof error === "object" && error !== null && "statusCode" in error
 }
 
@@ -257,8 +257,8 @@ export function logRequest(
   const cfInfo = getCloudflareRequestInfo(event)
   const extrasStr = extras
     ? ` | ${Object.entries(extras)
-        .map(([k, v]) => `${k}: ${v}`)
-        .join(" | ")}`
+      .map(([k, v]) => `${k}: ${v}`)
+      .join(" | ")}`
     : ""
 
   console.log(

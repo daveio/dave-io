@@ -103,10 +103,10 @@ module.exports = {
           // w3c:false tells Chromedriver to run using the legacy JSONWire protocol (not required in Chrome 78)
           w3c: true,
           args: [
-            //'--no-sandbox',
-            //'--ignore-certificate-errors',
-            //'--allow-insecure-localhost',
-            //'--headless'
+            // '--no-sandbox',
+            // '--ignore-certificate-errors',
+            // '--allow-insecure-localhost',
+            // '--headless'
           ]
         }
       },
@@ -127,7 +127,7 @@ module.exports = {
           w3c: true,
           // More info on EdgeDriver: https://docs.microsoft.com/en-us/microsoft-edge/webdriver-chromium/capabilities-edge-options
           args: [
-            //'--headless'
+            // '--headless'
           ]
         }
       },
@@ -158,7 +158,7 @@ module.exports = {
 
         // define cucumber specific options
         options: {
-          //set the feature path
+          // set the feature path
           feature_path: "node_modules/nightwatch/examples/cucumber-js/*/*.feature"
 
           // start the webdriver session automatically (enabled by default)
@@ -326,8 +326,8 @@ module.exports = {
         server_path: "", // Leave empty if @nightwatch/selenium-server is installed
         command: "standalone", // Selenium 4 only
         cli_args: {
-          //'webdriver.gecko.driver': '',
-          //'webdriver.chrome.driver': ''
+          // 'webdriver.gecko.driver': '',
+          // 'webdriver.chrome.driver': ''
         }
       },
       webdriver: {

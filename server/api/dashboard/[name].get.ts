@@ -18,7 +18,7 @@ interface DashboardResponse {
   source?: "kv" | "mock" | "live" | "cache"
 }
 
-async function fetchHackerNews(kv: KVNamespace): Promise<{ items: DashboardItem[]; source: "cache" | "live" }> {
+async function fetchHackerNews(kv: KVNamespace): Promise<{ items: DashboardItem[], source: "cache" | "live" }> {
   const lastUpdatedKey = "dashboard:hackernews:last-updated"
   const cacheHours = 1 // 1 hour cache
   const cacheMs = cacheHours * 60 * 60 * 1000

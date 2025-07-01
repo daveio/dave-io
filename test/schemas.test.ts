@@ -78,7 +78,7 @@ describe("API Schemas", () => {
         error: "Validation failed",
         message: "Validation error occurred",
         status: { message: "Validation error occurred" },
-        details: 'Field "name" is required',
+        details: "Field \"name\" is required",
         meta: {
           requestId: "req-123",
           timestamp: "2025-01-01T00:00:00.000Z"
@@ -288,10 +288,10 @@ describe("API Schemas", () => {
             "5xx": 2
           },
           status: {
-            "200": 85,
-            "302": 5,
-            "404": 3,
-            "500": 2
+            200: 85,
+            302: 5,
+            404: 3,
+            500: 2
           }
         }
 
@@ -357,10 +357,10 @@ describe("API Schemas", () => {
             "5xx": 5
           },
           status: {
-            "200": 900,
-            "302": 30,
-            "404": 15,
-            "500": 5
+            200: 900,
+            302: 30,
+            404: 15,
+            500: 5
           },
           // Resources
           resources: {
@@ -385,9 +385,9 @@ describe("API Schemas", () => {
                 "5xx": 0
               },
               status: {
-                "200": 480,
-                "302": 15,
-                "404": 5
+                200: 480,
+                302: 15,
+                404: 5
               }
             },
             ai: {
@@ -411,9 +411,9 @@ describe("API Schemas", () => {
                 "5xx": 0
               },
               status: {
-                "200": 190,
-                "302": 5,
-                "404": 5
+                200: 190,
+                302: 5,
+                404: 5
               }
             }
           },
@@ -440,8 +440,8 @@ describe("API Schemas", () => {
                 "5xx": 0
               },
               status: {
-                "302": 150,
-                "404": 5
+                302: 150,
+                404: 5
               }
             }
           }
@@ -482,10 +482,10 @@ describe("API Schemas", () => {
               "5xx": 5
             },
             status: {
-              "200": 900,
-              "302": 30,
-              "404": 15,
-              "500": 5
+              200: 900,
+              302: 30,
+              404: 15,
+              500: 5
             },
             resources: {
               internal: {
@@ -509,9 +509,9 @@ describe("API Schemas", () => {
                   "5xx": 0
                 },
                 status: {
-                  "200": 480,
-                  "302": 15,
-                  "404": 5
+                  200: 480,
+                  302: 15,
+                  404: 5
                 }
               }
             },
