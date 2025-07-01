@@ -42,7 +42,7 @@ export function recordAPIErrorMetrics(event: H3Event, error: unknown): void {
 
   // Extract status code from error if it's an API error
   if (error && typeof error === "object" && "statusCode" in error) {
-    // biome-ignore lint/suspicious/noExplicitAny: Error objects have dynamic structure
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     statusCode = (error as any).statusCode || 500
   }
 

@@ -192,6 +192,7 @@ export function getKVBindingName(): string {
         return kvBinding.binding
       }
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_error) {
     console.warn("⚠️  Could not read KV binding from wrangler.jsonc, using default 'KV'")
   }

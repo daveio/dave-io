@@ -89,7 +89,7 @@ export default defineEventHandler(async (event) => {
     recordAPIErrorMetrics(event, error)
 
     // Log error request
-    // biome-ignore lint/suspicious/noExplicitAny: Type assertion needed for error handling
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const statusCode = isApiError(error) ? (error as any).statusCode || 500 : 500
     logRequest(event, "images/optimise", method, statusCode, {
       user: "unknown",

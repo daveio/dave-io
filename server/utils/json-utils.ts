@@ -43,6 +43,7 @@ export function sortJsonString(jsonString: string): string {
     const parsed = JSON.parse(jsonString)
     const sorted = sortObjectKeysRecursively(parsed)
     return JSON.stringify(sorted, null, 2)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_error) {
     // If parsing fails, return original string
     return jsonString

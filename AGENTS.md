@@ -198,7 +198,7 @@ bun jwt init && bun run deploy
 ```
 
 **KV YAML**: `metrics: {ok: 0}` → `metrics:ok = "0"`
-**Linting**: `// biome-ignore lint/suspicious/noExplicitAny: [reason]`
+**Linting**: `// eslint-disable-next-line @typescript-eslint/no-explicit-any
 **Images**: Cloudflare service, BLAKE3 IDs, 4MB limit, global CDN
 
 ## Performance Guidelines

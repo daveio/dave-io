@@ -234,7 +234,7 @@ redirect:
         expect(parsedData).toBeDefined()
         expect(typeof parsedData).toBe("object")
 
-        // biome-ignore lint/suspicious/noExplicitAny: Testing generic YAML parsing
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data = parsedData as any
         expect(data.metrics.resources.internal.ok).toBe(100)
         expect(data.metrics.resources.ai.ok).toBe(50)

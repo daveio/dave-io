@@ -99,7 +99,7 @@ export default defineEventHandler(async (event) => {
     console.error("Token usage error:", error)
 
     // Log error request
-    // biome-ignore lint/suspicious/noExplicitAny: isApiError type guard ensures statusCode property exists
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const statusCode = isApiError(error) ? (error as any).statusCode || 500 : 500
     logRequest(event, "tokens/{uuid}/usage", "GET", statusCode, {
       tokenId: uuid || "unknown",

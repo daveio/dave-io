@@ -435,7 +435,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 50,
-            "pattern": "^[a-zA-Z0-9\\-_]+$"
+            "pattern": "^[\\w-]+$"
           },
           "url": {
             "type": "string",
@@ -1844,7 +1844,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 50,
-            "pattern": "^[a-zA-Z0-9\\-_]+$"
+            "pattern": "^[\\w-]+$"
           },
           "url": {
             "type": "string",

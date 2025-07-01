@@ -1,15 +1,17 @@
 // Simple list panel
 // Dave Williams | https://dave.io | dave@dave.io
 
-Panel.setLoading()
+import { setLoading, showList, showError } from "dashkit/panel"
+
+setLoading()
 
 loadFeed()
   .then((articles) => {
-    Panel.showList({ items: articles })
+    showList({ items: articles })
     console.log("Done")
   })
   .catch((error) => {
-    Panel.showError(error)
+    showError(error)
     console.error(error)
   })
 

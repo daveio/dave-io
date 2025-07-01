@@ -238,7 +238,7 @@ export const UrlRedirectSchema = z.object({
     .string()
     .min(1)
     .max(50)
-    .regex(/^[\w\-]+$/),
+    .regex(/^[\w-]+$/),
   url: z.string().url(),
   title: z.string().optional(),
   description: z.string().optional(),
@@ -252,7 +252,7 @@ export const CreateRedirectSchema = z.object({
     .string()
     .min(1)
     .max(50)
-    .regex(/^[\w\-]+$/),
+    .regex(/^[\w-]+$/),
   url: z.string().url(),
   title: z.string().optional(),
   description: z.string().optional()

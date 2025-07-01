@@ -77,13 +77,13 @@ export default defineEventHandler(async (event) => {
     // Perform proper HTTP redirect
     await sendRedirect(event, redirect.url, 302)
   } catch (error: unknown) {
-    // biome-ignore lint/suspicious/noExplicitAny: isApiError type guard ensures statusCode property exists
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const statusCode = isApiError(error) ? (error as any).statusCode || 500 : 500
     const slug = getRouterParam(event, "slug")
 
     // Log failed redirect request
     logRequest(event, `go/${slug || "unknown"}`, "GET", statusCode, {
-      // biome-ignore lint/suspicious/noExplicitAny: isApiError type guard ensures statusMessage property exists
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       error: isApiError(error) ? (error as any).statusMessage || "Unknown error" : "Internal error"
     })
 

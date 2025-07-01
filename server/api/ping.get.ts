@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const cfInfo = getCloudflareRequestInfo(event)
 
   // Try to extract and validate JWT token (optional)
-  // biome-ignore lint/suspicious/noExplicitAny: Complex auth object structure varies based on token validity
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let authInfo: any = { supplied: false }
   const token = extractToken(event)
 
@@ -23,7 +23,8 @@ export default defineEventHandler(async (event) => {
         const verification = await verifyJWT(token, secret)
         if (verification.success && verification.payload) {
           const { payload } = verification
-          // biome-ignore lint/correctness/noUnusedVariables: User variable needed for JWT validation context
+          // User variable needed for JWT validation context
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const user = getUserFromPayload(payload)
 
           authInfo = {
@@ -48,7 +49,8 @@ export default defineEventHandler(async (event) => {
             }
           }
         }
-        // biome-ignore lint/correctness/noUnusedVariables: Error variable needed for exception handling context
+        // Error variable needed for exception handling context
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         authInfo = {
           supplied: true,
@@ -98,9 +100,9 @@ export default defineEventHandler(async (event) => {
   const otherHeaders = Object.entries(headers)
     .filter(
       ([key]) =>
-        !key.toLowerCase().startsWith("cf-")
-        && !key.toLowerCase().includes("forward")
-        && !key.toLowerCase().includes("real-ip")
+        !key.toLowerCase().startsWith("cf-") &&
+        !key.toLowerCase().includes("forward") &&
+        !key.toLowerCase().includes("real-ip")
     )
     .reduce(
       (acc, [key, value]) => {

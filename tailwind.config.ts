@@ -22,8 +22,9 @@ export default {
       }
     }
   },
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   plugins: [require("daisyui")],
-  // @ts-ignore - DaisyUI config not yet typed for Tailwind 4
+  // @ts-expect-error - DaisyUI config not yet typed for Tailwind 4
   daisyui: {
     themes: [
       "light",

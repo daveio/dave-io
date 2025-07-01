@@ -54,7 +54,7 @@ export interface CloudflareImagesResult {
 export async function validateImageForCloudflareImages(buffer: Buffer): Promise<string> {
   const fileType = await fileTypeFromBuffer(buffer)
 
-  // biome-ignore lint/suspicious/noExplicitAny: fileType.mime comes from external library with loose typing
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!fileType || !CLOUDFLARE_IMAGES_FORMATS.includes(fileType.mime as any)) {
     throw createApiError(
       406,
@@ -263,7 +263,7 @@ export async function processWithCloudflareImagesBinding(
   env: Env,
   buffer: Buffer,
   options: CloudflareImagesOptions = {}
-): Promise<{ buffer: Buffer, result: CloudflareImagesResult }> {
+): Promise<{ buffer: Buffer; result: CloudflareImagesResult }> {
   if (!env.IMAGES) {
     throw createApiError(503, "Cloudflare Images binding not available")
   }
@@ -281,7 +281,7 @@ export async function processWithCloudflareImagesBinding(
     })
 
     // Apply transformations using the binding
-    // biome-ignore lint/suspicious/noExplicitAny: Images binding API not fully typed
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let imagesChain = (env.IMAGES as any).input(stream)
 
     if (options.width || options.height) {
@@ -326,8 +326,9 @@ export async function processWithCloudflareImagesBinding(
  * Replaces the Sharp-based processImageOptimisation function
  * @param imageBuffer - Original image buffer
  * @param options - Processing options
+ * @param options.quality - Image quality setting (optional)
  * @param env - Cloudflare environment
- * @param metadata - Additional metadata
+ * @param _metadata - Additional metadata
  * @returns Promise<OptimisedImageResult> - Compatible result format
  */
 export async function processImageWithCloudflareImages(
@@ -336,15 +337,15 @@ export async function processImageWithCloudflareImages(
   env: Env,
   _metadata: Record<string, string> = {}
 ): Promise<{
-    buffer: Buffer
-    originalSize: number
-    optimisedSize: number
-    format: string
-    hash: string
-    url: string
-    quality?: number
-    originalMimeType: string
-  }> {
+  buffer: Buffer
+  originalSize: number
+  optimisedSize: number
+  format: string
+  hash: string
+  url: string
+  quality?: number
+  originalMimeType: string
+}> {
   const startTime = Date.now()
 
   const cloudflareOptions: CloudflareImagesOptions = {

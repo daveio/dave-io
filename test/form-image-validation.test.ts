@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest"
 import { validateFormDataImage } from "~/server/utils/validation"
 
-const smallPngBase64
-  = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAE/AO/lZy6hAAAAABJRU5ErkJggg=="
+const smallPngBase64 =
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAE/AO/lZy6hAAAAABJRU5ErkJggg=="
 
 const textBuffer = Buffer.from("hello world")
 

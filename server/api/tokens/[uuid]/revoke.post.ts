@@ -51,7 +51,7 @@ export default defineEventHandler(async (event) => {
     }
 
     if (typeof body.revoked !== "boolean") {
-      throw createApiError(400, "Field \"revoked\" must be a boolean")
+      throw createApiError(400, 'Field "revoked" must be a boolean')
     }
 
     _operation = body.revoked ? "revoke" : "unrevoke"

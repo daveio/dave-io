@@ -48,8 +48,8 @@ describe("Response Utils", () => {
 
       // Use type guard with assertion
       if (response.ok) {
-        // biome-ignore lint/suspicious/noExplicitAny: test response can have any structure
-        const successResponse = response as { ok: true, result: any }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const successResponse = response as { ok: true; result: any }
         expect(successResponse.result).toEqual(testData)
       } else {
         // This should not happen
@@ -108,8 +108,8 @@ describe("Response Utils", () => {
 
       // Use type guard with assertion
       if (response.ok) {
-        // biome-ignore lint/suspicious/noExplicitAny: test response can have any structure
-        const successResponse = response as { ok: true, result: any }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const successResponse = response as { ok: true; result: any }
         expect(successResponse.result).toEqual(data)
       } else {
         // This should not happen
@@ -153,7 +153,7 @@ describe("Response Utils", () => {
 
     it("should include error details when provided", () => {
       expect(() => {
-        createApiError(422, "Validation failed", "Field \"name\" is required")
+        createApiError(422, "Validation failed", 'Field "name" is required')
       }).toThrow()
     })
 
@@ -199,7 +199,7 @@ describe("Response Utils", () => {
 
     it("should stringify objects and arrays", () => {
       const obj = { key: "value" }
-      expect(sanitizeInput(obj)).toBe("{\"key\":\"value\"}")
+      expect(sanitizeInput(obj)).toBe('{"key":"value"}')
 
       const arr = [1, 2, 3]
       expect(sanitizeInput(arr)).toBe("[1,2,3]")
@@ -213,7 +213,7 @@ describe("Response Utils", () => {
     })
 
     it("should handle circular references in objects", () => {
-      const circular: { name: string, self?: unknown } = { name: "test" }
+      const circular: { name: string; self?: unknown } = { name: "test" }
       circular.self = circular
 
       const result = sanitizeInput(circular)

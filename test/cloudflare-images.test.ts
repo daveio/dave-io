@@ -7,12 +7,12 @@ import {
 } from "~/server/utils/cloudflare-images"
 
 // Test data - small PNG image (1x1 pixel)
-const smallPngBase64
-  = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAE/AO/lZy6hAAAAABJRU5ErkJggg=="
+const smallPngBase64 =
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAE/AO/lZy6hAAAAABJRU5ErkJggg=="
 
 // Test data - small JPEG image (red square)
-const smallJpegBase64
-  = "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA8p6+WAAAABJRU5ErkJggg=="
+const smallJpegBase64 =
+  "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA8p6+WAAAABJRU5ErkJggg=="
 
 const textBase64 = Buffer.from("hello world").toString("base64")
 
@@ -24,11 +24,11 @@ const mockEnv = {
     input: vi.fn(),
     info: vi.fn()
   }
-  // biome-ignore lint/suspicious/noExplicitAny: Mock environment needs flexible typing
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any
 
 // Mock global fetch for API calls
-// biome-ignore lint/suspicious/noExplicitAny: Mock fetch needs flexible typing
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mockFetch = vi.fn() as any
 global.fetch = mockFetch
 
@@ -176,7 +176,7 @@ describe("Cloudflare Images Integration", () => {
       })
 
       expect(response.ok).toBe(true)
-      // biome-ignore lint/suspicious/noExplicitAny: Mock API response needs flexible typing
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = (await response.json()) as any
       expect(result.success).toBe(true)
       expect(result.result.id).toBe("test-image-id")
@@ -290,7 +290,7 @@ describe("Performance considerations", () => {
   it("should handle large image buffers", () => {
     // Test with a reasonably large buffer to ensure no memory issues
     const largeBuffer = Buffer.alloc(1024 * 1024) // 1MB
-    largeBuffer.fill(0xFF) // Fill with data
+    largeBuffer.fill(0xff) // Fill with data
 
     const id = generateCloudflareImageId(largeBuffer)
     expect(id).toMatch(/^[a-f0-9]{32}$/)

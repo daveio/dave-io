@@ -132,8 +132,8 @@ export async function validateFormDataImage(file: File): Promise<Buffer> {
  */
 export async function parseImageUpload(
   event: H3Event,
-  options: { includeQuality?: boolean, allowUrl?: boolean } = {}
-): Promise<{ buffer: Buffer, source: string, quality?: number }> {
+  options: { includeQuality?: boolean; allowUrl?: boolean } = {}
+): Promise<{ buffer: Buffer; source: string; quality?: number }> {
   const contentType = getHeader(event, "content-type") || ""
 
   let quality: number | undefined
@@ -176,7 +176,7 @@ export async function parseImageUpload(
         buffer = await validateBase64Image(body.image)
       }
       if (options.includeQuality) {
-        // biome-ignore lint/suspicious/noExplicitAny: JSON body can have dynamic shape
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         quality = validateImageQuality((body as any).quality)
       }
     } else {

@@ -18,7 +18,7 @@ interface DashboardResponse {
   source?: "kv" | "mock" | "live" | "cache"
 }
 
-async function fetchHackerNews(kv: KVNamespace): Promise<{ items: DashboardItem[], source: "cache" | "live" }> {
+async function fetchHackerNews(kv: KVNamespace): Promise<{ items: DashboardItem[]; source: "cache" | "live" }> {
   const lastUpdatedKey = "dashboard:hackernews:last-updated"
   const cacheHours = 1 // 1 hour cache
   const cacheMs = cacheHours * 60 * 60 * 1000
@@ -171,7 +171,7 @@ export default defineEventHandler(async (event) => {
     console.error("Dashboard error:", error)
 
     // Log error request
-    // biome-ignore lint/suspicious/noExplicitAny: Type assertion needed for error handling
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const statusCode = isApiError(error) ? (error as any).statusCode || 500 : 500
     const name = getRouterParam(event, "name") || "unknown"
     logRequest(event, "dashboard/{name}", "GET", statusCode, {

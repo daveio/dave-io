@@ -59,15 +59,15 @@ Respond with the complete enriched description only.`
     ? "@cf/meta/llama-3.2-11b-vision-instruct" // Use vision model when image is present
     : "@cf/meta/llama-3.2-3b-instruct" // Use cheaper text-only model when no image
 
-  // biome-ignore lint/suspicious/noExplicitAny: AI models have varying message formats
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const aiResponse = await AI.run(model as any, {
-    // biome-ignore lint/suspicious/noExplicitAny: AI models accept various message formats
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     messages: messages as any,
     max_tokens: 1500,
     temperature: 0.4
   })
 
-  // biome-ignore lint/suspicious/noExplicitAny: AI response has dynamic structure
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const description = (aiResponse as any).response?.trim() || "No enriched description generated"
 
   // Use type assertion to ensure return type matches expected type

@@ -103,7 +103,7 @@ export function checkEndpointPermission(subject: string, endpoint: string): bool
 
 // Validate token permissions with expiry check
 export function validateTokenPermissions(
-  token: { sub: string, permissions?: string[], iat: number, exp?: number },
+  token: { sub: string; permissions?: string[]; iat: number; exp?: number },
   required: string
 ): boolean {
   // Check if token is expired

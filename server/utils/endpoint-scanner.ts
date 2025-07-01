@@ -14,19 +14,19 @@ interface EndpointMetadata {
     in: "query" | "path" | "header"
     required?: boolean
     description?: string
-    // biome-ignore lint/suspicious/noExplicitAny: OpenAPI schema can be any valid JSON schema
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     schema: any
   }>
   requestBody?: {
     required?: boolean
-    // biome-ignore lint/suspicious/noExplicitAny: OpenAPI schema can be any valid JSON schema
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     content: Record<string, { schema: any }>
   }
   responses: Record<
     string,
     {
       description: string
-      // biome-ignore lint/suspicious/noExplicitAny: OpenAPI schema can be any valid JSON schema
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       content?: Record<string, { schema: any }>
     }
   >
@@ -261,16 +261,16 @@ function extractEndpointMetadata(
 /**
  * Detect Zod schema usage in endpoint content
  */
-// biome-ignore lint/suspicious/noExplicitAny: Schema detection returns dynamic schema objects
-function detectSchemaUsage(content: string): { requestSchema?: any, responseSchema?: any } {
-  // biome-ignore lint/suspicious/noExplicitAny: Result object holds dynamic schema references
-  const result: { requestSchema?: any, responseSchema?: any } = {}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function detectSchemaUsage(content: string): { requestSchema?: any; responseSchema?: any } {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result: { requestSchema?: any; responseSchema?: any } = {}
 
   // Look for .parse() calls to identify request schemas
   const parseMatches = content.match(/(\w+Schema)\.parse\(/g)
   if (parseMatches?.[0]) {
     const schemaName = parseMatches[0].replace(".parse(", "")
-    // @ts-ignore - Dynamic schema access
+    // @ts-expect-error - Dynamic schema access
     // biome-ignore lint/performance/noDynamicNamespaceImportAccess: Required for dynamic schema scanning
     result.requestSchema = schemas[schemaName]
   }
@@ -280,13 +280,13 @@ function detectSchemaUsage(content: string): { requestSchema?: any, responseSche
   if (responseTypeMatch?.[0]) {
     const typeName = responseTypeMatch[0].replace(/Promise<|>/g, "")
     const schemaName = `${typeName}Schema`
-    // @ts-ignore - Dynamic schema access
+    // @ts-expect-error - Dynamic schema access
     // biome-ignore lint/performance/noDynamicNamespaceImportAccess: Required for dynamic schema scanning
     result.responseSchema = schemas[schemaName]
   }
 
   // Look for specific schemas mentioned in imports or usage
-  const schemaImportMatch = content.match(/import.*\{([^}]*Schema[^}]*)\}.*from.*schemas/s)
+  const schemaImportMatch = content.match(/import[^{]*\{([^}]*Schema[^}]*)\}[^}]*from[^}]*schemas/)
   if (schemaImportMatch?.[1]) {
     const importedSchemas = schemaImportMatch[1]
       .split(",")
@@ -298,7 +298,7 @@ function detectSchemaUsage(content: string): { requestSchema?: any, responseSche
       (s) => s.includes("Request") || s.includes("Query") || s.includes("Title") || s.includes("Description")
     )
     if (requestSchemas.length > 0) {
-      // @ts-ignore - Dynamic schema access
+      // @ts-expect-error - Dynamic schema access
       // biome-ignore lint/performance/noDynamicNamespaceImportAccess: Required for dynamic schema scanning
       result.requestSchema = schemas[requestSchemas[0]]
     }
@@ -306,7 +306,7 @@ function detectSchemaUsage(content: string): { requestSchema?: any, responseSche
     // Use the first response-like schema found
     const responseSchemas = importedSchemas.filter((s) => s.includes("Response"))
     if (responseSchemas.length > 0) {
-      // @ts-ignore - Dynamic schema access
+      // @ts-expect-error - Dynamic schema access
       // biome-ignore lint/performance/noDynamicNamespaceImportAccess: Required for dynamic schema scanning
       result.responseSchema = schemas[responseSchemas[0]]
     }
@@ -322,19 +322,19 @@ function extractParameters(
   path: string,
   _content: string
 ): Array<{
-    name: string
-    in: "path"
-    required: boolean
-    description: string
-    // biome-ignore lint/suspicious/noExplicitAny: OpenAPI parameter schema can be any valid JSON schema
-    schema: any
-  }> {
+  name: string
+  in: "path"
+  required: boolean
+  description: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  schema: any
+}> {
   const parameters: Array<{
     name: string
     in: "path"
     required: boolean
     description: string
-    // biome-ignore lint/suspicious/noExplicitAny: OpenAPI parameter schema can be any valid JSON schema
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     schema: any
   }> = []
 
@@ -344,7 +344,7 @@ function extractParameters(
     for (const param of pathParams) {
       const paramName = param.slice(1, -1) // Remove { }
 
-      // biome-ignore lint/suspicious/noExplicitAny: Schema object represents OpenAPI JSON schema
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let schema: any = { type: "string" }
       let description = `${paramName} parameter`
 
@@ -380,7 +380,7 @@ function extractQueryParameters(content: string): Array<{
   in: "query"
   required?: boolean
   description?: string
-  // biome-ignore lint/suspicious/noExplicitAny: OpenAPI parameter schema can be any valid JSON schema
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   schema: any
 }> {
   const parameters: Array<{
@@ -388,7 +388,7 @@ function extractQueryParameters(content: string): Array<{
     in: "query"
     required?: boolean
     description?: string
-    // biome-ignore lint/suspicious/noExplicitAny: OpenAPI parameter schema can be any valid JSON schema
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     schema: any
   }> = []
 

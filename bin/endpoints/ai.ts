@@ -94,7 +94,7 @@ export class AIAdapter extends BaseAdapter {
    * @returns AI-generated ticket title
    */
   async generateTicketTitle(description?: string, imageFilePath?: string): Promise<ApiResponse<TicketTitleResponse>> {
-    // biome-ignore lint/suspicious/noExplicitAny: Dynamic request body structure
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body: any = {}
 
     if (description) {
@@ -140,7 +140,7 @@ export class AIAdapter extends BaseAdapter {
     description?: string,
     imageFilePath?: string
   ): Promise<ApiResponse<TicketEnrichResponse>> {
-    // biome-ignore lint/suspicious/noExplicitAny: Dynamic request body structure
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body: any = { title }
 
     if (description) {

@@ -11,13 +11,13 @@ import {
 } from "../bin/endpoints"
 
 // Mock fetch globally
-// biome-ignore lint/suspicious/noExplicitAny: mock function type
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mockFetch = vi.fn() as any
 global.fetch = mockFetch
 
 // Mock global Bun for tests that need it
 const mockBunFile = vi.fn()
-// biome-ignore lint/suspicious/noExplicitAny: Mock global assignment
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ;(global as any).Bun = { file: mockBunFile }
 
 describe("BaseAdapter", () => {
@@ -46,21 +46,21 @@ describe("BaseAdapter", () => {
 
   describe("buildUrl", () => {
     it("should build URL with base URL and path", () => {
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const testAdapter = adapter as any
       const url = testAdapter.buildUrl("/api/test")
       expect(url).toBe("https://test.example.com/api/test?token=test-token")
     })
 
     it("should add query parameters", () => {
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const testAdapter = adapter as any
       const url = testAdapter.buildUrl("/api/test", { param1: "value1", param2: 123 })
       expect(url).toBe("https://test.example.com/api/test?param1=value1&param2=123&token=test-token")
     })
 
     it("should not add token if already in params", () => {
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const testAdapter = adapter as any
       const url = testAdapter.buildUrl("/api/test", { token: "custom-token" })
       expect(url).toBe("https://test.example.com/api/test?token=custom-token")
@@ -69,7 +69,7 @@ describe("BaseAdapter", () => {
 
   describe("buildHeaders", () => {
     it("should build headers with auth token", () => {
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const testAdapter = adapter as any
       const headers = testAdapter.buildHeaders()
       expect(headers).toEqual({
@@ -80,7 +80,7 @@ describe("BaseAdapter", () => {
     })
 
     it("should merge additional headers", () => {
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const testAdapter = adapter as any
       const headers = testAdapter.buildHeaders({ "Custom-Header": "value" })
       expect(headers).toEqual({
@@ -98,7 +98,7 @@ describe("BaseAdapter", () => {
           return this.makeRequest("/test")
         }
       }
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const noTokenAdapter = new TestAdapter(noTokenConfig) as any
       const headers = noTokenAdapter.buildHeaders()
       expect(headers).toEqual({
@@ -117,7 +117,7 @@ describe("BaseAdapter", () => {
         }
       }
       const dryRunAdapter = new TestAdapter(dryRunConfig)
-      // biome-ignore lint/suspicious/noExplicitAny: cast for test access
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await (dryRunAdapter as any).testMethod()
 
       expect(result.ok).toBe(true)
@@ -139,7 +139,7 @@ describe("BaseAdapter", () => {
         }
       }
       const testAdapter = new TestAdapter(config)
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await (testAdapter as any).testMethod()
 
       expect(result.ok).toBe(true)
@@ -170,7 +170,7 @@ describe("BaseAdapter", () => {
         }
       }
       const testAdapter = new TestAdapter(config)
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await (testAdapter as any).testMethod()
 
       expect(result.ok).toBe(false)
@@ -186,7 +186,7 @@ describe("BaseAdapter", () => {
         }
       }
       const testAdapter = new TestAdapter(config)
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await (testAdapter as any).testMethod()
 
       expect(result.ok).toBe(false)
@@ -210,7 +210,7 @@ describe("BaseAdapter", () => {
         }
       }
       const testAdapter = new TestAdapter(config)
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await (testAdapter as any).testMethod()
 
       expect(result.ok).toBe(true)
@@ -251,7 +251,7 @@ describe("BaseAdapter", () => {
         }
       }
       const testAdapter = new TestAdapter(config)
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await (testAdapter as any).testUploadFile()
 
       expect(result.ok).toBe(true)
@@ -275,7 +275,7 @@ describe("BaseAdapter", () => {
       const mockFile = {
         exists: vi.fn().mockResolvedValue(false)
       }
-      // biome-ignore lint/suspicious/noExplicitAny: Mock global Bun object
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
       global.Bun = mockBun
 
@@ -285,7 +285,7 @@ describe("BaseAdapter", () => {
         }
       }
       const testAdapter = new TestAdapter(config)
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await (testAdapter as any).testUploadFile()
 
       expect(result.ok).toBe(false)
@@ -301,7 +301,7 @@ describe("BaseAdapter", () => {
         exists: vi.fn().mockResolvedValue(true),
         arrayBuffer: vi.fn().mockResolvedValue(Buffer.from("test content"))
       }
-      // biome-ignore lint/suspicious/noExplicitAny: Mock global Bun object
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
       global.Bun = mockBun
 
@@ -318,7 +318,7 @@ describe("BaseAdapter", () => {
         }
       }
       const testAdapter = new TestAdapter(config)
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (testAdapter as any).testUploadFile()
 
       expect(mockFetch).toHaveBeenCalledWith(
@@ -342,7 +342,7 @@ describe("BaseAdapter", () => {
         exists: vi.fn().mockResolvedValue(true),
         arrayBuffer: vi.fn().mockResolvedValue(Buffer.from("test content"))
       }
-      // biome-ignore lint/suspicious/noExplicitAny: Mock global Bun object
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
       global.Bun = mockBun
 
@@ -352,7 +352,7 @@ describe("BaseAdapter", () => {
         }
       }
       const dryRunAdapter = new TestAdapter(dryRunConfig)
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await (dryRunAdapter as any).testUploadFile()
 
       expect(result.ok).toBe(true)
@@ -373,7 +373,7 @@ describe("BaseAdapter", () => {
       }
       mockFetch.mockResolvedValueOnce(mockResponse)
 
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await (adapter as any).uploadImageFromUrl("/process", "https://example.com/image.jpg")
 
       expect(result.ok).toBe(true)
@@ -394,7 +394,7 @@ describe("BaseAdapter", () => {
       }
       mockFetch.mockResolvedValueOnce(mockResponse)
 
-      // biome-ignore lint/suspicious/noExplicitAny: Testing private method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (adapter as any).uploadImageFromUrl("/process", "https://example.com/image.jpg", { quality: 75 })
 
       expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining("quality=75"), expect.any(Object))
@@ -469,7 +469,7 @@ describe("AIAdapter", () => {
       exists: vi.fn().mockResolvedValue(true),
       arrayBuffer: vi.fn().mockResolvedValue(Buffer.from("image file content"))
     }
-    // biome-ignore lint/suspicious/noExplicitAny: Mock global Bun object
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
     global.Bun = mockBun
 
@@ -507,7 +507,7 @@ describe("AIAdapter", () => {
     const mockFile = {
       exists: vi.fn().mockResolvedValue(false)
     }
-    // biome-ignore lint/suspicious/noExplicitAny: Mock global Bun object
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
     global.Bun = mockBun
 
@@ -569,7 +569,7 @@ describe("ImagesAdapter", () => {
       exists: vi.fn().mockResolvedValue(true),
       arrayBuffer: vi.fn().mockResolvedValue(Buffer.from("jpeg file content"))
     }
-    // biome-ignore lint/suspicious/noExplicitAny: Mock global Bun object
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
     global.Bun = mockBun
 
@@ -612,7 +612,7 @@ describe("ImagesAdapter", () => {
     const mockFile = {
       exists: vi.fn().mockResolvedValue(false)
     }
-    // biome-ignore lint/suspicious/noExplicitAny: Mock global Bun object
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
     global.Bun = mockBun
 

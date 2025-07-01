@@ -29,15 +29,15 @@ Format the response as a proper ticket description that a developer could work f
   ]
 
   // Use a cheaper text-only model since this endpoint never needs vision capabilities
-  // biome-ignore lint/suspicious/noExplicitAny: AI models have varying message formats
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const aiResponse = await AI.run("@cf/meta/llama-3.2-3b-instruct" as any, {
-    // biome-ignore lint/suspicious/noExplicitAny: AI models accept various message formats
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     messages: messages as any,
     max_tokens: 1000,
     temperature: 0.4
   })
 
-  // biome-ignore lint/suspicious/noExplicitAny: AI response has dynamic structure
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const description = (aiResponse as any).response?.trim() || "No description generated"
 
   // Use type assertion to ensure return type matches expected type

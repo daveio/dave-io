@@ -25,8 +25,8 @@ describe("Response Sorting Integration", () => {
     // Type guard to ensure we're dealing with a success response
     if (response.ok) {
       // Use type assertion since we've verified the ok flag
-      // biome-ignore lint/suspicious/noExplicitAny: test response can have any structure
-      const successResponse = response as { ok: true, result: any }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const successResponse = response as { ok: true; result: any }
 
       // Check that data keys are sorted
       const dataKeys = Object.keys(successResponse.result)
@@ -81,8 +81,8 @@ describe("Response Sorting Integration", () => {
     // Type guard to ensure we're dealing with a success response
     if (response.ok) {
       // Use type assertion since we've verified the ok flag
-      // biome-ignore lint/suspicious/noExplicitAny: test response can have any structure
-      const successResponse = response as { ok: true, result: any }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const successResponse = response as { ok: true; result: any }
 
       // Verify nested structures have sorted keys
       expect(Object.keys(successResponse.result.worker.limits)).toEqual(["cpu_time", "memory", "request_timeout"])
@@ -113,8 +113,8 @@ describe("Response Sorting Integration", () => {
     // Type guard to ensure we're dealing with a success response
     if (response.ok) {
       // Use type assertion since we've verified the ok flag
-      // biome-ignore lint/suspicious/noExplicitAny: test response can have any structure
-      const successResponse = response as { ok: true, result: any }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const successResponse = response as { ok: true; result: any }
 
       // Verify that objects inside arrays also have sorted keys
       expect(Object.keys(successResponse.result.items[0])).toEqual(["apple", "zebra"])

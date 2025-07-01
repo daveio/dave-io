@@ -49,19 +49,19 @@ export function createRouteConfig(options: {
     in: "query" | "path" | "header"
     required?: boolean
     description?: string
-    // biome-ignore lint/suspicious/noExplicitAny: OpenAPI schema can be any valid JSON schema
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     schema: any
   }>
   requestBody?: {
     required?: boolean
-    // biome-ignore lint/suspicious/noExplicitAny: OpenAPI schema can be any valid JSON schema
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     content: Record<string, { schema: any }>
   }
   responses: Record<
     string,
     {
       description: string
-      // biome-ignore lint/suspicious/noExplicitAny: OpenAPI schema can be any valid JSON schema
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       content?: Record<string, { schema: any }>
     }
   >
