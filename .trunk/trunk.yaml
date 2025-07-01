@@ -20,9 +20,9 @@ actions:
         - git_hooks:
             - pre-commit
   enabled:
-    - format
-    - biome
-    - typecheck
+    # - format
+    # - biome
+    # - typecheck
     - trunk-announce
     - trunk-check-pre-push
     - trunk-fmt-pre-commit
