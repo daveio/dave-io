@@ -13,7 +13,7 @@
         Ask me about gender identity! (Coming Soon)
         <div
           class="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-neutral-800"
-        ></div>
+        />
       </div>
     </button>
   </div>

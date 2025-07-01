@@ -18,7 +18,8 @@
           <Icon name="i-heroicons-book-open" class="mr-2 text-green font-bold" />
           Dreamwidth
         </span>
-        <NuxtLink href="/go/dreamwidth" class="break-all link-url"
+        <NuxtLink
+href="/go/dreamwidth" class="break-all link-url"
           @click="handleLinkClick('Dreamwidth', '/go/dreamwidth')">
           dave.io/go/dreamwidth
         </NuxtLink>
@@ -49,7 +50,8 @@
           <Icon name="i-simple-icons-instagram" class="mr-2 text-pink font-bold" />
           Instagram
         </span>
-        <NuxtLink href="/go/instagram" class="break-all link-url"
+        <NuxtLink
+href="/go/instagram" class="break-all link-url"
           @click="handleLinkClick('Instagram', '/go/instagram')">
           dave.io/go/instagram
         </NuxtLink>
@@ -80,7 +82,8 @@
           <Icon name="i-heroicons-chat-bubble-left-ellipsis" class="mr-2 text-lavender font-bold" />
           Pillowfort
         </span>
-        <NuxtLink href="/go/pillowfort" class="break-all link-url"
+        <NuxtLink
+href="/go/pillowfort" class="break-all link-url"
           @click="handleLinkClick('Pillowfort', '/go/pillowfort')">
           dave.io/go/pillowfort
         </NuxtLink>

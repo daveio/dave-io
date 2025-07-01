@@ -36,7 +36,7 @@ function decodeEmail(encoded: string): string | null {
     }
 
     // Reverse bit rotation: rotate each byte right by 3 positions
-    const xorBytes = rotatedBytes.map((byte) => ((byte >> 3) | (byte << 5)) & 0xFF)
+    const xorBytes = rotatedBytes.map((byte) => ((byte >> 3) | (byte << 5)) & 0xff)
 
     // Try different keys since we need to brute force the original key
     // The key was generated from the sum of character codes of the original email
@@ -58,7 +58,7 @@ function decodeEmail(encoded: string): string | null {
 }
 
 // Computed property for link classes
-const linkClasses = computed(() => {
+const _linkClasses = computed(() => {
   const defaultClasses = "text-blue-600 hover:text-blue-800 underline transition-colors duration-200"
   return props.linkClass ? `${defaultClasses} ${props.linkClass}` : defaultClasses
 })

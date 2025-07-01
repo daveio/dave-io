@@ -49,7 +49,7 @@ onMounted(() => {
 })
 
 // Log button interactions
-const handleServiceClick = (service: string) => {
+const _handleServiceClick = (service: string) => {
   logInteraction("click", "service-button", { service })
 }
 </script>

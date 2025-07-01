@@ -64,7 +64,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     // Check authorization for token management using helper
-    const authResult = await requireAPIAuth(event, "tokens")
+    const authResult = await requireAPIAuth(event, "token")
     _authToken = authResult?.sub || null
 
     // Validate UUID parameter using helper
@@ -83,7 +83,7 @@ export default defineEventHandler(async (event) => {
     recordAPIMetrics(event, 200)
 
     // Log successful request
-    logRequest(event, "tokens/{uuid}/usage", "GET", 200, {
+    logRequest(event, "token/{uuid}/usage", "GET", 200, {
       tokenId: uuid,
       usage: `requests:${usage.requestCount},max:${usage.maxRequests || "unlimited"}`,
       isRevoked: usage.isRevoked
@@ -101,7 +101,7 @@ export default defineEventHandler(async (event) => {
     // Log error request
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const statusCode = isApiError(error) ? (error as any).statusCode || 500 : 500
-    logRequest(event, "tokens/{uuid}/usage", "GET", statusCode, {
+    logRequest(event, "token/{uuid}/usage", "GET", statusCode, {
       tokenId: uuid || "unknown",
       usage: "error",
       isRevoked: false

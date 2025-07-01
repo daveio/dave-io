@@ -200,7 +200,7 @@ describe("Authentication System", () => {
     it("should allow parent permissions for hierarchical endpoints", () => {
       expect(checkEndpointPermission("api", "api:metrics")).toBe(true)
       expect(checkEndpointPermission("ai", "ai:alt")).toBe(true)
-      expect(checkEndpointPermission("api", "api:tokens")).toBe(true)
+      expect(checkEndpointPermission("api", "api:token")).toBe(true)
     })
 
     it("should allow admin and wildcard permissions", () => {

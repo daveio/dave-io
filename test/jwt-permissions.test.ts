@@ -12,7 +12,7 @@ describe("JWT Hierarchical Permissions", () => {
       const permissions = ["api"]
       expect(hasPermission(permissions, "api:metrics")).toBe(true)
       expect(hasPermission(permissions, "api:auth")).toBe(true)
-      expect(hasPermission(permissions, "api:tokens")).toBe(true)
+      expect(hasPermission(permissions, "api:token")).toBe(true)
     })
 
     it("should grant access with admin permission", () => {
@@ -50,12 +50,12 @@ describe("JWT Hierarchical Permissions", () => {
 
     it("should handle nested hierarchy correctly", () => {
       const permissions = ["api"]
-      expect(hasPermission(permissions, "api:tokens:create")).toBe(true)
+      expect(hasPermission(permissions, "api:token:create")).toBe(true)
       expect(hasPermission(permissions, "api:metrics:view")).toBe(true)
 
-      const specificPermissions = ["api:tokens"]
-      expect(hasPermission(specificPermissions, "api:tokens:create")).toBe(true)
-      expect(hasPermission(specificPermissions, "api:tokens:revoke")).toBe(true)
+      const specificPermissions = ["api:token"]
+      expect(hasPermission(specificPermissions, "api:token:create")).toBe(true)
+      expect(hasPermission(specificPermissions, "api:token:revoke")).toBe(true)
       expect(hasPermission(specificPermissions, "api:metrics:view")).toBe(false)
     })
   })
@@ -143,9 +143,9 @@ describe("JWT Hierarchical Permissions", () => {
     })
 
     it("should handle permissions with multiple colons", () => {
-      const permissions = ["api:tokens:admin"]
-      expect(hasPermission(permissions, "api:tokens:admin:create")).toBe(true)
-      expect(hasPermission(permissions, "api:tokens:user")).toBe(false)
+      const permissions = ["api:token:admin"]
+      expect(hasPermission(permissions, "api:token:admin:create")).toBe(true)
+      expect(hasPermission(permissions, "api:token:user")).toBe(false)
     })
 
     it("should handle permission inheritance correctly", () => {
@@ -207,13 +207,13 @@ describe("JWT Hierarchical Permissions", () => {
     it("should handle token management permissions", () => {
       const tokenAdminToken = {
         sub: "token-admin@example.com",
-        permissions: ["api:tokens"],
+        permissions: ["api:token"],
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(Date.now() / 1000) + 3600
       }
 
-      expect(validateTokenPermissions(tokenAdminToken, "api:tokens:usage")).toBe(true)
-      expect(validateTokenPermissions(tokenAdminToken, "api:tokens:revoke")).toBe(true)
+      expect(validateTokenPermissions(tokenAdminToken, "api:token:usage")).toBe(true)
+      expect(validateTokenPermissions(tokenAdminToken, "api:token:revoke")).toBe(true)
       expect(validateTokenPermissions(tokenAdminToken, "api:metrics")).toBe(false)
     })
   })

@@ -61,7 +61,7 @@ export default defineEventHandler(async (event) => {
     recordAPIMetrics(event, 200)
 
     // Log successful request
-    logRequest(event, "images/optimise", method, 200, {
+    logRequest(event, "image/optimise", method, 200, {
       originalSize: result.originalSize,
       optimisedSize: result.optimisedSize,
       compressionRatio: Math.round((1 - result.optimisedSize / result.originalSize) * 100),
@@ -91,7 +91,7 @@ export default defineEventHandler(async (event) => {
     // Log error request
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const statusCode = isApiError(error) ? (error as any).statusCode || 500 : 500
-    logRequest(event, "images/optimise", method, statusCode, {
+    logRequest(event, "image/optimise", method, statusCode, {
       user: "unknown",
       originalSize: 0,
       optimisedSize: 0,

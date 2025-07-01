@@ -59,7 +59,7 @@
 
 - **Methods**: `Authorization: Bearer <jwt>` + `?token=<jwt>`
 - **JWT**: `{sub, iat, exp?, jti?}` | **Permissions**: `category:resource` (parent grants child) | **Categories**: `api`, `ai`, `dashboard`, `admin`, `*`
-- **Public**: `/api/ping`, `/api/images/optimise`, `/go/{slug}`, `/api/ai/tickets/*`
+- **Public**: `/api/ping`, `/api/images/optimise`, `/go/{slug}`, `/api/ai/ticket/*`
 - **Protected**: `/api/ai/alt` (`ai:alt`+), `/api/tokens/{uuid}/*` (`api:tokens`+)
 
 ## Breaking Changes
@@ -309,7 +309,7 @@ The JWT system uses hierarchical permissions where parent permissions grant acce
 // Permission hierarchy examples:
 "*"           // Grants everything (admin)
 "api"         // Grants api:metrics, api:tokens, etc.
-"ai"          // Grants ai:alt, ai:tickets, etc.
+"ai"          // Grants ai:alt, ai:ticket, etc.
 "api:tokens"  // Grants api:tokens:usage, api:tokens:revoke, etc.
 "ai:alt"      // Grants only ai:alt endpoint
 
@@ -877,7 +877,7 @@ export const config = ConfigSchema.parse(process.env)
 curl http://localhost:3000/api/ping  # Status
 curl -H "Authorization: Bearer <token>" "/api/ai/alt?url=https://example.com/image.jpg"  # Alt-text via URL
 curl -X POST -F "image=@path/to/image.jpg" -H "Authorization: Bearer <token>" http://localhost:3000/api/ai/alt  # Alt-text via form
-curl -X POST -d '{"description": "Fix bug"}' /api/ai/tickets/title  # AI title (public)
+curl -X POST -d '{"description": "Fix bug"}' /api/ai/ticket/title  # AI title (public)
 curl -X POST -d '{"image": "<base64>", "quality": 80}' /api/images/optimise  # Optimize via JSON
 curl -F "image=@path/to/image.jpg" -F "quality=80" http://localhost:3000/api/images/optimise  # Optimize via form
 ```

@@ -4,7 +4,7 @@
     <Background />
 
     <div class="max-w-4xl mx-auto w-full relative z-10">
-      <Interface title="dave.io/api" :useMonospace="false">
+      <Interface title="dave.io/api" :use-monospace="false">
         <ApiContent />
       </Interface>
     </div>

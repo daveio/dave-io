@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     // Check authorization for token management
-    const authFunc = await authorizeEndpoint("api", "tokens")
+    const authFunc = await authorizeEndpoint("api", "token")
     const auth = await authFunc(event)
     if (!auth.success) {
       throw createApiError(401, auth.error || "Unauthorized")

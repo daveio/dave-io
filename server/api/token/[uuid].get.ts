@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     // Check authorization for token management
-    const authFunc = await authorizeEndpoint("api", "tokens")
+    const authFunc = await authorizeEndpoint("api", "token")
     const auth = await authFunc(event)
     if (!auth.success) {
       throw createApiError(401, auth.error || "Unauthorized")
@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
       throw createApiError(400, "Invalid UUID format")
     }
 
-    // GET /api/tokens/{uuid} - Get token usage using simple KV keys
+    // GET /api/token/{uuid} - Get token usage using simple KV keys
     const [usageCountStr, maxRequestsStr, createdAtStr, lastUsedStr] = await Promise.all([
       env.KV.get(`token:${uuid}:usage-count`),
       env.KV.get(`token:${uuid}:max-requests`),

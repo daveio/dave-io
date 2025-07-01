@@ -134,7 +134,7 @@ const tokenId = auth.payload?.jti
 - **CLI**: Removed `bun try internal ping` → use `bun try ping`
 - **API Responses**: Standardized structure with `{ok, result, error, status, timestamp}`, sorted object keys
 - **Endpoints**: Merged `/api/internal/*` → `/api/ping`
-- **API Structure**: Converted all endpoints to singular: `/tokens/` → `/token/`, `/images/` → `/image/`, `/tickets/` → `/ticket/`
+- **API Structure**: Converted all endpoints to singular: `/tokens/` → `/token/`, `/images/` → `/image/`, `/ticket/` → `/ticket/`
 - **Auth**: `--auth` auto-generates tokens, `--token <JWT>` for provided tokens
 - **Dev**: No reset cycle, starts in seconds, `test:all` for full suite
 - **AI Alt**: Raw base64 POST or multipart form upload, 4MB limit with auto-optimization
