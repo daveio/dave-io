@@ -18,7 +18,7 @@
 
 **4. SYNC**: `AGENTS.md` = truth. Update after API/feature/auth changes. `CLAUDE.md` & `README.md` derive from `AGENTS.md`.
 
-**5. VERIFY**: `bun run build` → `bun run lint:biome`, `bun run lint:trunk`, `bun run lint:types`, `bun run test` → `bun run check`. Never continue with errors.
+**5. VERIFY**: `bun run build` → `bun run lint:eslint`, `bun run lint:trunk`, `bun run lint:types`, `bun run test` → `bun run check`. Never continue with errors.
 
 **6. COMMIT**: `git add -A . && oco --fgm --yes` after each feature/fix/refactor.
 
@@ -362,7 +362,7 @@ const name = user.name // Gets the user name ← unnecessary
 ### Build Failures
 
 ```bash
-1. bun run lint:biome    # Fix code style issues
+1. bun run lint:eslint    # Fix code style issues
 2. bun run lint:types    # Fix TypeScript errors
 3. bun run test          # Fix failing tests
 4. Check imports/exports # Resolve module issues

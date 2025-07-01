@@ -20,7 +20,7 @@
 
 **4. SYNC**: `AGENTS.md` = truth. Update after API/feature/auth changes. `CLAUDE.md` & `README.md` = symlinks to `AGENTS.md`.
 
-**5. VERIFY**: `bun run build` → `bun run lint:biome`, `bun run lint:trunk`, `bun run lint:types`, `bun run test` → `bun run check`. Never continue with errors.
+**5. VERIFY**: `bun run build` → `bun run lint:eslint`, `bun run lint:trunk`, `bun run lint:types`, `bun run test` → `bun run check`. Never continue with errors.
 
 **6. COMMIT**: `git add -A . && oco --fgm --yes` after each feature/fix/refactor.
 
@@ -305,7 +305,7 @@ Grep no results → try different pattern → use Task
 ### Build/Test Failures
 
 ```bash
-lint:biome fails → fix code style
+lint:eslint fails → fix code style
 lint:types fails → fix TypeScript errors
 test fails → fix failing tests
 build fails → check imports/syntax
