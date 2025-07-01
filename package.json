@@ -48,7 +48,6 @@
     "@vitest/ui": "^3.2.4",
     "@vue/test-utils": "^2.4.6",
     "boxen": "^8.0.1",
-    "brace-expansion": "^4.0.1",
     "chalk": "^5.4.1",
     "commander": "^14.0.0",
     "daisyui": "^5.0.43",
@@ -81,9 +80,6 @@
   "name": "dave.io",
   "packageManager": "bun@1.2.17",
   "private": true,
-  "resolutions": {
-    "brace-expansion": "^4.0.1"
-  },
   "scripts": {
     "build": "bun run-s init build:nuxt",
     "build:nuxt": "bun run nuxt build",
