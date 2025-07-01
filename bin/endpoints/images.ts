@@ -24,10 +24,10 @@ interface ImageOptimiseResponse {
 }
 
 /**
- * Adapter for image optimization operations (/api/images/*)
+ * Adapter for image optimization operations (/api/image/*)
  * Public endpoint - authentication optional
  */
-export class ImagesAdapter extends BaseAdapter {
+export class ImageAdapter extends BaseAdapter {
   /**
    * Build URL without authentication for public endpoints
    * @param path API endpoint path
@@ -134,7 +134,7 @@ export class ImagesAdapter extends BaseAdapter {
       params.quality = quality
     }
 
-    return this.makePublicRequest("/api/images/optimise", {
+    return this.makePublicRequest("/api/image/optimise", {
       method: "GET",
       params
     }) as Promise<ApiResponse<ImageOptimiseResponse>>
@@ -166,7 +166,7 @@ export class ImagesAdapter extends BaseAdapter {
       body.quality = quality
     }
 
-    return this.makePublicRequest("/api/images/optimise", {
+    return this.makePublicRequest("/api/image/optimise", {
       method: "POST",
       body
     }) as Promise<ApiResponse<ImageOptimiseResponse>>
@@ -184,7 +184,7 @@ export class ImagesAdapter extends BaseAdapter {
       body.quality = quality
     }
 
-    return this.makePublicRequest("/api/images/optimise", {
+    return this.makePublicRequest("/api/image/optimise", {
       method: "POST",
       body
     })

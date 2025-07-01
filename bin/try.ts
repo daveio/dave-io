@@ -6,10 +6,10 @@ import {
   AIAdapter,
   type ApiResponse,
   DashboardAdapter,
-  ImagesAdapter,
+  ImageAdapter,
   InternalAdapter,
   type RequestConfig,
-  TokensAdapter
+  TokenAdapter
 } from "./endpoints"
 import { createToken } from "./jwt"
 import { getJWTSecret } from "./shared/cli-utils"
@@ -247,10 +247,10 @@ aiAltCommand
     await displayResult(result, options, "AI Alt-Text Generation")
   })
 
-// AI Tickets Commands
-const aiTicketsCommand = aiCommand.command("tickets").description("AI-powered Linear ticket operations")
+// AI Ticket Commands
+const aiTicketCommand = aiCommand.command("ticket").description("AI-powered Linear ticket operations")
 
-aiTicketsCommand
+aiTicketCommand
   .command("title")
   .description("Generate a ticket title from description and/or image")
   .option("--description <text>", "Description text to generate title from")
@@ -274,7 +274,7 @@ aiTicketsCommand
     await displayResult(result, options, "AI Ticket Title Generation")
   })
 
-aiTicketsCommand
+aiTicketCommand
   .command("description <title>")
   .description("Generate a ticket description from title")
   .action(async (title, _cmdOptions, command) => {
@@ -291,7 +291,7 @@ aiTicketsCommand
     await displayResult(result, options, "AI Ticket Description Generation")
   })
 
-aiTicketsCommand
+aiTicketCommand
   .command("enrich <title>")
   .description("Enrich a ticket description with additional context")
   .option("--description <text>", "Existing description to enrich")
@@ -315,11 +315,11 @@ aiTicketsCommand
     await displayResult(result, options, "AI Ticket Description Enrichment")
   })
 
-// Images Commands
-const imagesCommand = program.command("images").description("Image optimisation operations")
-const imagesOptimiseCommand = imagesCommand.command("optimise").description("Optimise images for web")
+// Image Commands
+const imageCommand = program.command("image").description("Image optimisation operations")
+const imageOptimiseCommand = imageCommand.command("optimise").description("Optimise images for web")
 
-imagesOptimiseCommand
+imageOptimiseCommand
   .command("url <imageUrl>")
   .description("Optimise image from URL")
   .option("-q, --quality <number>", "Image quality (0-100)", (value) => Number.parseInt(value), 80)
@@ -327,7 +327,7 @@ imagesOptimiseCommand
     const options = command.parent?.parent?.parent?.opts() as GlobalOptions
     const config = await createConfig(options)
 
-    const adapter = new ImagesAdapter(config)
+    const adapter = new ImageAdapter(config)
     const result = await withSpinner(
       adapter.optimiseFromUrl(imageUrl, cmdOptions.quality),
       `Optimising image ${imageUrl}`,
@@ -337,7 +337,7 @@ imagesOptimiseCommand
     await displayResult(result, options, "Image Optimisation")
   })
 
-imagesOptimiseCommand
+imageOptimiseCommand
   .command("file <filePath>")
   .description("Optimise image from file")
   .option("-q, --quality <number>", "Image quality (0-100)", (value) => Number.parseInt(value), 80)
@@ -345,7 +345,7 @@ imagesOptimiseCommand
     const options = command.parent?.parent?.parent?.opts() as GlobalOptions
     const config = await createConfig(options)
 
-    const adapter = new ImagesAdapter(config)
+    const adapter = new ImageAdapter(config)
     const result = await withSpinner(
       adapter.optimiseFromFile(filePath, cmdOptions.quality),
       `Optimising image ${filePath}`,
@@ -355,74 +355,74 @@ imagesOptimiseCommand
     await displayResult(result, options, "Image Optimisation")
   })
 
-// Tokens Commands
-const tokensCommand = program.command("tokens").description("Token management operations")
+// Token Commands
+const tokenCommand = program.command("token").description("Token management operations")
 
-tokensCommand
+tokenCommand
   .command("info <uuid>")
   .description("Get token information")
   .action(async (uuid, _options, command) => {
     const options = command.parent?.opts() as GlobalOptions
-    const config = await createConfig(options, "api:tokens")
-    validateToken(config, "api:tokens", options.auth || false)
+    const config = await createConfig(options, "api:token")
+    validateToken(config, "api:token", options.auth || false)
 
-    const adapter = new TokensAdapter(config)
+    const adapter = new TokenAdapter(config)
     const result = await withSpinner(adapter.getTokenInfo(uuid), `Getting token info for ${uuid}`, options)
 
     await displayResult(result, options, "Token Info")
   })
 
-tokensCommand
+tokenCommand
   .command("usage <uuid>")
   .description("Get token usage statistics")
   .action(async (uuid, _options, command) => {
     const options = command.parent?.opts() as GlobalOptions
-    const config = await createConfig(options, "api:tokens")
-    validateToken(config, "api:tokens", options.auth || false)
+    const config = await createConfig(options, "api:token")
+    validateToken(config, "api:token", options.auth || false)
 
-    const adapter = new TokensAdapter(config)
+    const adapter = new TokenAdapter(config)
     const result = await withSpinner(adapter.getTokenUsage(uuid), `Getting token usage for ${uuid}`, options)
 
     await displayResult(result, options, "Token Usage")
   })
 
-tokensCommand
+tokenCommand
   .command("revoke <uuid>")
   .description("Revoke a token")
   .action(async (uuid, _options, command) => {
     const options = command.parent?.opts() as GlobalOptions
-    const config = await createConfig(options, "api:tokens")
-    validateToken(config, "api:tokens", options.auth || false)
+    const config = await createConfig(options, "api:token")
+    validateToken(config, "api:token", options.auth || false)
 
-    const adapter = new TokensAdapter(config)
+    const adapter = new TokenAdapter(config)
     const result = await withSpinner(adapter.revokeToken(uuid), `Revoking token ${uuid}`, options)
 
     await displayResult(result, options, "Token Revocation")
   })
 
-tokensCommand
+tokenCommand
   .command("unrevoke <uuid>")
   .description("Unrevoke a token")
   .action(async (uuid, _options, command) => {
     const options = command.parent?.opts() as GlobalOptions
-    const config = await createConfig(options, "api:tokens")
-    validateToken(config, "api:tokens", options.auth || false)
+    const config = await createConfig(options, "api:token")
+    validateToken(config, "api:token", options.auth || false)
 
-    const adapter = new TokensAdapter(config)
+    const adapter = new TokenAdapter(config)
     const result = await withSpinner(adapter.unrevokeToken(uuid), `Unrevoking token ${uuid}`, options)
 
     await displayResult(result, options, "Token Unrevocation")
   })
 
-tokensCommand
+tokenCommand
   .command("operation <uuid> <path>")
   .description("Perform dynamic operation on token endpoint")
   .action(async (uuid, path, _options, command) => {
     const options = command.parent?.opts() as GlobalOptions
-    const config = await createConfig(options, "api:tokens")
-    validateToken(config, "api:tokens", options.auth || false)
+    const config = await createConfig(options, "api:token")
+    validateToken(config, "api:token", options.auth || false)
 
-    const adapter = new TokensAdapter(config)
+    const adapter = new TokenAdapter(config)
     const result = await withSpinner(
       adapter.dynamicTokenOperation(uuid, path),
       `Performing operation ${path} on token ${uuid}`,
@@ -475,23 +475,23 @@ ${chalk.bold("Available Commands:")}
 ${chalk.cyan("AI Operations:")}
   bun try ai alt url <imageUrl>          Generate alt-text from image URL
   bun try ai alt file <filePath>         Generate alt-text from local image file
-  bun try ai tickets title --description "text" [--image file.png]    Generate ticket title
-  bun try ai tickets description "title"          Generate ticket description from title
-  bun try ai tickets enrich "title" --description "text" [--image file.png]    Enrich ticket description
+  bun try ai ticket title --description "text" [--image file.png]    Generate ticket title
+  bun try ai ticket description "title"          Generate ticket description from title
+  bun try ai ticket enrich "title" --description "text" [--image file.png]    Enrich ticket description
 
 ${chalk.cyan("Image Optimisation:")}
-  bun try images optimise url <imageUrl> [--quality N]    Optimise image from URL
-  bun try images optimise file <filePath> [--quality N]   Optimise local image file
+  bun try image optimise url <imageUrl> [--quality N]    Optimise image from URL
+  bun try image optimise file <filePath> [--quality N]   Optimise local image file
 
 ${chalk.cyan("System Status:")}
   bun try ping                           Get comprehensive server status (health, auth, headers)
 
 ${chalk.cyan("Token Management:")}
-  bun try tokens info <uuid>             Get token information
-  bun try tokens usage <uuid>            Get token usage statistics
-  bun try tokens revoke <uuid>           Revoke a token
-  bun try tokens unrevoke <uuid>         Unrevoke a token
-  bun try tokens operation <uuid> <path> Perform custom token operation
+  bun try token info <uuid>             Get token information
+  bun try token usage <uuid>            Get token usage statistics
+  bun try token revoke <uuid>           Revoke a token
+  bun try token unrevoke <uuid>         Unrevoke a token
+  bun try token operation <uuid> <path> Perform custom token operation
 
 ${chalk.cyan("Dashboard Data:")}
   bun try dashboard <name>               Get dashboard data by name
@@ -499,19 +499,19 @@ ${chalk.cyan("Dashboard Data:")}
 ${chalk.bold("Examples:")}
   ${chalk.cyan("# Public endpoints (no authentication)")}
   bun try ping
-  bun try images optimise file "./image.png" --quality 75
-  bun try images optimise url "https://example.com/image.jpg"
+  bun try image optimise file "./image.png" --quality 75
+  bun try image optimise url "https://example.com/image.jpg"
 
   ${chalk.cyan("# Authenticated endpoints (requires token)")}
   bun try --auth ai alt url "https://example.com/image.jpg"     # Auto-generate token
   bun try --token "eyJ..." ai alt file "./image.png"           # Use provided token
   bun try --auth dashboard hacker-news                         # Auto-generate token
 
-  ${chalk.cyan("# AI Tickets (public, no authentication)")}
-  bun try ai tickets title --description "Fix the login bug"
-  bun try ai tickets title --image "./screenshot.png"
-  bun try ai tickets description "Fix login authentication"
-  bun try ai tickets enrich "Fix login" --description "Users can't log in" --image "./error.png"
+  ${chalk.cyan("# AI Ticket (public, no authentication)")}
+  bun try ai ticket title --description "Fix the login bug"
+  bun try ai ticket title --image "./screenshot.png"
+  bun try ai ticket description "Fix login authentication"
+  bun try ai ticket enrich "Fix login" --description "Users can't log in" --image "./error.png"
 
   ${chalk.cyan("# Environment selection")}
   bun try --local ping                   # Local development
@@ -532,7 +532,7 @@ ${chalk.bold("Environment Variables:")}
 
 ${chalk.bold("Manual Token Creation:")}
   ${chalk.green("bun jwt create --sub 'ai:alt' --description 'AI testing'")}
-  ${chalk.green("bun jwt create --sub 'api:tokens' --description 'Token management'")}
+  ${chalk.green("bun jwt create --sub 'api:token' --description 'Token management'")}
 `
 )
 

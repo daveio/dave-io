@@ -419,11 +419,11 @@ function getTagFromPath(path: string): string {
   if (path.startsWith("/api/ai")) {
     return "AI"
   }
-  if (path.startsWith("/api/images")) {
-    return "Images"
+  if (path.startsWith("/api/image")) {
+    return "Image"
   }
-  if (path.startsWith("/api/tokens")) {
-    return "Tokens"
+  if (path.startsWith("/api/token")) {
+    return "Token"
   }
   if (path.startsWith("/api/dashboard")) {
     return "Dashboard"
@@ -468,13 +468,13 @@ function generateDescription(path: string, method: string): string {
   if (path.includes("/ai/alt")) {
     return "Generate descriptive alt-text for images using AI"
   }
-  if (path.includes("/ai/tickets")) {
+  if (path.includes("/ai/ticket")) {
     return "AI-powered ticket operations"
   }
-  if (path.includes("/images/optimise")) {
+  if (path.includes("/image/optimise")) {
     return "Optimize images using Cloudflare Images service"
   }
-  if (path.includes("/tokens/")) {
+  if (path.includes("/token/")) {
     return "Token management operations"
   }
   if (path.includes("/dashboard/")) {

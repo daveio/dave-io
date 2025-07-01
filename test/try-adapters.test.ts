@@ -4,10 +4,10 @@ import {
   AIAdapter,
   BaseAdapter,
   DashboardAdapter,
-  ImagesAdapter,
+  ImageAdapter,
   InternalAdapter,
   type RequestConfig,
-  TokensAdapter
+  TokenAdapter
 } from "../bin/endpoints"
 
 // Mock fetch globally
@@ -521,8 +521,8 @@ describe("AIAdapter", () => {
   })
 })
 
-describe("ImagesAdapter", () => {
-  let adapter: ImagesAdapter
+describe("ImageAdapter", () => {
+  let adapter: ImageAdapter
   let config: RequestConfig
 
   beforeEach(() => {
@@ -533,7 +533,7 @@ describe("ImagesAdapter", () => {
       verbose: false,
       dryRun: false
     }
-    adapter = new ImagesAdapter(config)
+    adapter = new ImageAdapter(config)
     mockFetch.mockClear()
   })
 
@@ -650,7 +650,7 @@ describe("ImagesAdapter", () => {
 
   it("should omit token when not provided", async () => {
     const noTokenConfig = { ...config, token: undefined }
-    adapter = new ImagesAdapter(noTokenConfig)
+    adapter = new ImageAdapter(noTokenConfig)
 
     const mockResponse = {
       ok: true,
@@ -749,8 +749,8 @@ describe("InternalAdapter", () => {
   })
 })
 
-describe("TokensAdapter", () => {
-  let adapter: TokensAdapter
+describe("TokenAdapter", () => {
+  let adapter: TokenAdapter
   let config: RequestConfig
 
   beforeEach(() => {
@@ -761,7 +761,7 @@ describe("TokensAdapter", () => {
       verbose: false,
       dryRun: false
     }
-    adapter = new TokensAdapter(config)
+    adapter = new TokenAdapter(config)
     mockFetch.mockClear()
   })
 
@@ -783,7 +783,7 @@ describe("TokensAdapter", () => {
 
     expect(result.ok).toBe(true)
     expect(result.data?.uuid).toBe("test-uuid")
-    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining("/api/tokens/test-uuid"), expect.any(Object))
+    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining("/api/token/test-uuid"), expect.any(Object))
   })
 
   it("should revoke token", async () => {
@@ -802,7 +802,7 @@ describe("TokensAdapter", () => {
     expect(result.ok).toBe(true)
     expect(result.data?.revoked).toBe(true)
     expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining("/api/tokens/test-uuid/revoke"),
+      expect.stringContaining("/api/token/test-uuid/revoke"),
       expect.objectContaining({
         method: "POST",
         body: JSON.stringify({ revoked: true })

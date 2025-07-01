@@ -30,17 +30,17 @@ interface TokenRevokeResponse {
 }
 
 /**
- * Adapter for token management operations (/api/tokens/*)
- * Requires 'api:tokens' scope or higher for authentication
+ * Adapter for token management operations (/api/token/*)
+ * Requires 'api:token' scope or higher for authentication
  */
-export class TokensAdapter extends BaseAdapter {
+export class TokenAdapter extends BaseAdapter {
   /**
    * Get basic token information and metadata
    * @param uuid Token UUID to query
    * @returns Token information including usage stats
    */
   async getTokenInfo(uuid: string): Promise<ApiResponse<TokenUsageResponse>> {
-    return this.makeRequest(`/api/tokens/${uuid}`)
+    return this.makeRequest(`/api/token/${uuid}`)
   }
 
   /**
@@ -49,7 +49,7 @@ export class TokensAdapter extends BaseAdapter {
    * @returns Detailed usage statistics for the token
    */
   async getTokenUsage(uuid: string): Promise<ApiResponse<TokenUsageResponse>> {
-    return this.makeRequest(`/api/tokens/${uuid}/usage`)
+    return this.makeRequest(`/api/token/${uuid}/usage`)
   }
 
   /**
@@ -59,7 +59,7 @@ export class TokensAdapter extends BaseAdapter {
    * @returns Revocation result
    */
   async revokeToken(uuid: string, revoked = true): Promise<ApiResponse<TokenRevokeResponse>> {
-    return this.makeRequest(`/api/tokens/${uuid}/revoke`, {
+    return this.makeRequest(`/api/token/${uuid}/revoke`, {
       method: "POST",
       body: { revoked }
     })
@@ -81,6 +81,6 @@ export class TokensAdapter extends BaseAdapter {
    * @returns Dynamic operation result
    */
   async dynamicTokenOperation(uuid: string, path: string): Promise<ApiResponse> {
-    return this.makeRequest(`/api/tokens/${uuid}/${path}`)
+    return this.makeRequest(`/api/token/${uuid}/${path}`)
   }
 }

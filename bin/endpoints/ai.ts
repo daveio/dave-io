@@ -110,7 +110,7 @@ export class AIAdapter extends BaseAdapter {
       }
     }
 
-    return this.makeRequest("/api/ai/tickets/title", {
+    return this.makeRequest("/api/ai/ticket/title", {
       method: "POST",
       body
     })
@@ -122,7 +122,7 @@ export class AIAdapter extends BaseAdapter {
    * @returns AI-generated ticket description
    */
   async generateTicketDescription(title: string): Promise<ApiResponse<TicketDescriptionResponse>> {
-    return this.makeRequest("/api/ai/tickets/description", {
+    return this.makeRequest("/api/ai/ticket/description", {
       method: "POST",
       body: { title }
     })
@@ -156,7 +156,7 @@ export class AIAdapter extends BaseAdapter {
       }
     }
 
-    return this.makeRequest("/api/ai/tickets/enrich", {
+    return this.makeRequest("/api/ai/ticket/enrich", {
       method: "POST",
       body
     })
