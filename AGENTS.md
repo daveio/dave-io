@@ -90,6 +90,15 @@ worker-configuration.d.ts        # Cloudflare bindings
 5. Verify public/openapi.json updated
 ```
 
+### Redirect Handling
+
+Server-side redirects in `/go/{slug}` routes are handled by:
+
+- **Server Route**: `server/routes/go/[slug].get.ts` performs actual redirects using KV data
+- **Client Plugin**: `plugins/external-redirects.client.ts` forces external navigation for `/go/*` links
+- **Route Rules**: Nuxt config disables caching for `/go/**` routes to ensure fresh redirects
+- **Behavior**: Links bypass client-side routing and trigger full page loads to hit server handlers
+
 ### Error Handling Standards
 
 ```typescript
@@ -140,6 +149,7 @@ const tokenId = auth.payload?.jti
 - **AI Alt**: Raw base64 POST or multipart form upload, 4MB limit with auto-optimization
 - **Images**: Cloudflare Images service, BLAKE3 IDs, global CDN
 - **KV**: Individual keys vs JSON blob, hierarchical colon-separated, YAML anchors
+- **Redirects**: Fixed `/go/*` routes to bypass client-side routing - links now redirect properly on first click instead of requiring a page refresh
 
 ## Core
 
