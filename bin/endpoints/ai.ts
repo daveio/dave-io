@@ -1,4 +1,5 @@
-import { type ApiResponse, BaseAdapter, type RequestConfig } from "./base"
+import { BaseAdapter } from "./base"
+import type { ApiResponse, RequestConfig } from "./base"
 
 /**
  * Response format for AI alt-text generation

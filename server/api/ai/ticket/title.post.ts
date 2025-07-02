@@ -1,6 +1,7 @@
 import { getAIBinding, getCloudflareEnv } from "~/server/utils/cloudflare"
 import { createApiResponse } from "~/server/utils/response"
-import { AiTicketTitleRequestSchema, type AiTicketTitleResponse } from "~/server/utils/schemas"
+import { AiTicketTitleRequestSchema } from "~/server/utils/schemas"
+import type { AiTicketTitleResponse } from "~/server/utils/schemas"
 
 export default defineEventHandler(async (event): Promise<AiTicketTitleResponse> => {
   const env = getCloudflareEnv(event)

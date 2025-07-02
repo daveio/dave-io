@@ -2,15 +2,8 @@
 import boxen from "boxen"
 import chalk from "chalk"
 import { Command } from "commander"
-import {
-  AIAdapter,
-  type ApiResponse,
-  DashboardAdapter,
-  ImageAdapter,
-  InternalAdapter,
-  type RequestConfig,
-  TokenAdapter
-} from "./endpoints"
+import { AIAdapter, DashboardAdapter, ImageAdapter, InternalAdapter, TokenAdapter } from "./endpoints"
+import type { ApiResponse, RequestConfig } from "./endpoints"
 import { createToken } from "./jwt"
 import { getJWTSecret } from "./shared/cli-utils"
 

@@ -1,5 +1,6 @@
 import type { H3Event } from "h3"
-import { type JWTPayload, jwtVerify } from "jose"
+import { jwtVerify } from "jose"
+import type { JWTPayload } from "jose"
 
 // JWT payload structure matching dave-io Worker
 export interface JWTTokenPayload extends JWTPayload {

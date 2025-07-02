@@ -1,14 +1,7 @@
 /// <reference types="bun-types" />
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import {
-  AIAdapter,
-  BaseAdapter,
-  DashboardAdapter,
-  ImageAdapter,
-  InternalAdapter,
-  type RequestConfig,
-  TokenAdapter
-} from "../bin/endpoints"
+import { AIAdapter, BaseAdapter, DashboardAdapter, ImageAdapter, InternalAdapter, TokenAdapter } from "../bin/endpoints"
+import type { RequestConfig } from "../bin/endpoints"
 
 // Mock fetch globally
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

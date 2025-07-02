@@ -1,5 +1,6 @@
 import type { H3Event } from "h3"
-import { type AuthResult, authorizeEndpoint } from "./auth"
+import { authorizeEndpoint } from "./auth"
+import type { AuthResult } from "./auth"
 import { createApiError } from "./response"
 
 /**
