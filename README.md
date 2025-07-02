@@ -105,6 +105,17 @@ bun install && bun run dev  # Starts in ~3s
 
 ---
 
+## Redirect Handling
+
+Server-side redirects in `/go/{slug}` routes are handled by:
+
+- **Server Route**: `server/routes/go/[slug].get.ts` performs actual redirects using KV data
+- **Client Plugin**: `plugins/external-redirects.client.ts` forces external navigation for `/go/*` links
+- **Route Rules**: Nuxt config disables caching for `/go/**` routes to ensure fresh redirects
+- **Behavior**: Links bypass client-side routing and trigger full page loads to hit server handlers
+
+---
+
 ## Creating a New API Endpoint
 
 ### 1. File Naming Convention

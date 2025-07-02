@@ -333,6 +333,15 @@ build fails → check imports/syntax
 - **Public**: `/api/ping`, `/api/image/optimise`, `/go/{slug}`, `/api/ai/ticket/*`
 - **Protected**: `/api/ai/alt` (`ai:alt`+), `/api/tokens/{uuid}/*` (`api:tokens`+)
 
+## Redirect Handling
+
+Server-side redirects in `/go/{slug}` routes are handled by:
+
+- **Server Route**: `server/routes/go/[slug].get.ts` performs actual redirects using KV data
+- **Client Plugin**: `plugins/external-redirects.client.ts` forces external navigation for `/go/*` links
+- **Route Rules**: Nuxt config disables caching for `/go/**` routes to ensure fresh redirects
+- **Behavior**: Links bypass client-side routing and trigger full page loads to hit server handlers
+
 ## Breaking Changes
 
 - **CLI**: Removed `bun try internal ping` → use `bun try ping`
