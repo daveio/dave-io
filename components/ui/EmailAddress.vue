@@ -1,6 +1,6 @@
 <template>
   <span v-if="displayEmail" class="inline-block" :data-encoded-email="props.encodedEmail">
-    <a :href="`mailto:${displayEmail}`" class="link-url" :title="`Send email to ${displayEmail}`">
+    <a :href="`mailto:${displayEmail}`" class="link-url email-link" :title="`Send email to ${displayEmail}`">
       {{ displayEmail }}
     </a>
   </span>
