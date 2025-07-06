@@ -150,7 +150,7 @@ const tokenId = auth.payload?.jti
 - **Images**: Cloudflare Images service, BLAKE3 IDs, global CDN
 - **KV**: Individual keys vs JSON blob, hierarchical colon-separated, YAML anchors
 - **Redirects**: Fixed `/go/*` routes to bypass client-side routing - links now redirect properly on first click instead of requiring a page refresh
-- **AI Social**: New `/api/ai/social` endpoint for splitting text into social media posts using `@cf/meta/llama-4-scout-17b-16e-instruct` with JSON schema support and automatic threading indicators (`🧵 x/y`)
+- **AI Social**: New `/api/ai/social` endpoint for splitting text into social media posts using `@cf/meta/llama-4-scout-17b-16e-instruct` with JSON schema support and automatic threading indicators (`🧵 x/y`). Uses example-based intelligent splitting by default, with strategy-based fallback when explicitly requested.
 
 ## Core
 
@@ -213,7 +213,7 @@ bun jwt init && bun run deploy
 **KV YAML**: `metrics: {ok: 0}` → `metrics:ok = "0"` | AI Social: `ai:social:characters:bluesky = "300"`
 **Linting**: `// eslint-disable-next-line @typescript-eslint/no-explicit-any`
 **Images**: Cloudflare service, BLAKE3 IDs, 4MB limit, global CDN
-**AI Social**: Character limits in KV (`ai:social:characters:{network}`), supports strategies: `sentence_boundary`, `word_boundary`, `paragraph_preserve`, `thread_optimize`, `hashtag_preserve`. Multi-post threads automatically get threading indicators (`🧵 1/3`, `🧵 2/3`, etc.) with 10 chars reserved per post.
+**AI Social**: Character limits in KV (`ai:social:characters:{network}`). Uses intelligent example-based splitting by default (follows SPLIT-POST.md patterns with minimal rewording, logical breaks, `[...]` truncation). Optional fallback strategies: `sentence_boundary`, `word_boundary`, `paragraph_preserve`, `thread_optimize`, `hashtag_preserve`. Multi-post threads automatically get threading indicators (`🧵 1/3`, `🧵 2/3`, etc.) with 10 chars reserved per post.
 
 ## Performance Guidelines
 

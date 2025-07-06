@@ -1,0 +1,357 @@
+[alias]
+  a = add
+  aa = add -A .
+  addp = add --patch
+  b = branch
+  br = branch
+  bump-submodules = submodule update --remote --merge
+  c = commit
+  cam = commit -am
+  ci = commit
+  co = checkout
+  comp = commit --patch
+  d = diff
+  f = fetch
+  l = log --graph --pretty='%Cred%h%Creset - %C(bold blue)<%an>%Creset %s%C(yellow)%d%Creset %Cgreen(%cr)' --abbrev-commit --date=relative
+  p = push
+  pa = add --patch
+  pc = commit --patch
+  pp = !git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)
+  pr = pull --rebase
+  recent-branches = branch --sort=-committerdate
+  rf = reflog
+  s = status
+  unstage = reset HEAD --
+  fci = -c \"core.editor=fast-conventional editor\" commit
+  a = add --all
+  ai = add -i
+  #############
+  ap = apply
+  as = apply --stat
+  ac = apply --check
+  #############
+  ama = am --abort
+  amr = am --resolved
+  ams = am --skip
+  #############
+  b = branch
+  ba = branch -a
+  bd = branch -d
+  bdd = branch -D
+  br = branch -r
+  bc = rev-parse --abbrev-ref HEAD
+  bu = !git rev-parse --abbrev-ref --symbolic-full-name "@{u}"
+  bs = !git-branch-status
+  #############
+  bl = blame -w
+  bll = blame -w -L
+  blm = blame -w -C -C -C
+  blml = blame -w -C -C -C -L
+  #############
+  c = commit
+  ca = commit -a
+  cm = commit -m
+  cam = commit -am
+  cem = commit --allow-empty -m
+  cd = commit --amend
+  cad = commit -a --amend
+  ced = commit --allow-empty --amend
+  #############
+  cl = clone
+  cld = clone --depth 1
+  clg = !sh -c 'git clone https://github.com/$1' -
+  clgp = !sh -c 'git clone git@github.com:$1' -
+  clsp = !sh -c 'git clone git@git.sr.ht:~$1' -
+  clgu = !sh -c 'git clone git@github.com:$(git config --get user.username)/$1' -
+  clsu = !sh -c 'git clone git@git.sr.ht:~$(git config --get user.username)/$1' -
+  #############
+  cp = cherry-pick
+  cpa = cherry-pick --abort
+  cpc = cherry-pick --continue
+  #############
+  d = diff
+  dc = diff --cached
+  dk = diff --check
+  dkc = diff --cached --check
+  dt = difftool
+  dtc = difftool --cached
+  dw = diff --word-diff
+  #############
+  f = fetch
+  fo = fetch origin
+  fu = fetch upstream
+  #############
+  fp = format-patch
+  #############
+  fk = fsck
+  #############
+  g = grep -p
+  #############
+  l = log --oneline
+  lg = log --oneline --graph --decorate
+  ll = log -L
+  lf = log -S
+  #############
+  ls = ls-files
+  lsf = !git ls-files | grep -i
+  #############
+  m = merge
+  ma = merge --abort
+  mc = merge --continue
+  ms = merge --skip
+  #############
+  o = checkout
+  om = checkout master
+  ob = checkout -b
+  #############
+  pr = prune -v
+  #############
+  ps = push
+  psf = push --force-with-lease
+  psu = push -u
+  pst = push --tags
+  #############
+  pso = push origin
+  psao = push --all origin
+  psfo = push --force-with-lease origin
+  psuo = push -u origin
+  #############
+  psom = push origin master
+  psaom = push --all origin master
+  psfom = push --force-with-lease origin master
+  psuom = push -u origin master
+  psoc = !git push origin $(git bc)
+  psaoc = !git push --all origin $(git bc)
+  psfoc = !git push --force-with-lease origin $(git bc)
+  psuoc = !git push -u origin $(git bc)
+  psdc = !git push origin :$(git bc)
+  #############
+  pl = pull
+  pb = pull --rebase
+  #############
+  plo = pull origin
+  pbo = pull --rebase origin
+  plom = pull origin master
+  ploc = !git pull origin $(git bc)
+  pbom = pull --rebase origin master
+  pboc = !git pull --rebase origin $(git bc)
+  #############
+  plu = pull upstream
+  plum = pull upstream master
+  pluc = !git pull upstream $(git bc)
+  pbum = pull --rebase upstream master
+  pbuc = !git pull --rebase upstream $(git bc)
+  #############
+  rb = rebase
+  rba = rebase --abort
+  rbc = rebase --continue
+  rbi = rebase --interactive
+  rbs = rebase --skip
+  #############
+  re = reset
+  rh = reset HEAD
+  reh = reset --hard
+  rem = reset --mixed
+  res = reset --soft
+  rehh = reset --hard HEAD
+  remh = reset --mixed HEAD
+  resh = reset --soft HEAD
+  rehom = reset --hard origin/master
+  #############
+  r = remote
+  ra = remote add
+  rr = remote rm
+  rv = remote -v
+  rn = remote rename
+  rp = remote prune
+  rs = remote show
+  rao = remote add origin
+  rau = remote add upstream
+  rro = remote remove origin
+  rru = remote remove upstream
+  rso = remote show origin
+  rsu = remote show upstream
+  rpo = remote prune origin
+  rpu = remote prune upstream
+  #############
+  rmf = rm -f
+  rmrf = rm -r -f
+  #############
+  s = status
+  sb = status -s -b
+  #############
+  sa = stash apply
+  sc = stash clear
+  sd = stash drop
+  sl = stash list
+  sp = stash pop
+  ss = stash save
+  ssk = stash save -k
+  sw = stash show
+  st = !git stash list | wc -l 2>/dev/null | grep -oEi '[0-9][0-9]*'
+  #############
+  t = tag
+  td = tag -d
+  #############
+  w = show
+  #############
+  wa = worktree add
+  wl = worktree list
+  wp = worktree prune
+  wr = worktree remove
+  wx = worktree repair
+  #############
+  subadd = !sh -c 'git submodule add https://github.com/$1 $2/$(basename $1)' -
+  subrm = !sh -c 'git submodule deinit -f -- $1 && rm -rf .git/modules/$1 && git rm -f $1' -
+  subup = submodule update --init --recursive
+  subpull = submodule foreach 'git pull --tags -f origin master || git pull --tags -f origin main || git pull --tags -f   origin development'
+  subsync = submodule sync --recursive
+  #############
+  assume = update-index --assume-unchanged
+  unassume = update-index --no-assume-unchanged
+  assumed = !git ls -v | grep ^h | cut -c 3-
+  unassumeall = !git assumed | xargs git unassume
+  assumeall = !git status -s | awk {'print $2'} | xargs git assume
+  #############
+  bump = !sh -c 'git commit -am \"Version bump v$1\" && git psuoc && git release $1' -
+  release = !sh -c 'git tag v$1 && git pst' -
+  unrelease = !sh -c 'git tag -d v$1 && git pso :v$1' -
+  merged = !sh -c 'git om && git plom && git trim'
+  aliases = !git config -l | grep alias | cut -c 7-
+  snap = !git stash save 'snapshot: $(date)' && git stash apply 'stash@{0}'
+  bare = !sh -c 'git symbolic-ref HEAD refs/heads/$1 && git rm --cached -r . && git clean -xfd' -
+  whois = !sh -c 'git log -i -1 --author=\"$1\" --pretty=\"format:%an <%ae>\"' -
+  serve = daemon --reuseaddr --verbose --base-path=. --export-all ./.git
+  #############
+  behind = !git rev-list --left-only --count $(git bu)...HEAD
+  ahead = !git rev-list --right-only --count $(git bu)...HEAD
+  #############
+  ours = "!f() { git checkout --ours $@ && git add $@; }; f"
+  theirs = "!f() { git checkout --theirs $@ && git add $@; }; f"
+  subrepo = !sh -c 'git filter-branch --prune-empty --subdirectory-filter $1 master' -
+  human = name-rev --name-only --refs=refs/heads/*
+[branch]
+  sort = -committerdate
+[checkout]
+  defaultRemote = origin
+[color]
+  ui = auto
+[color "diff"]
+  meta = yellow
+  frag = magenta bold
+  func = 146 bold
+  commit = yellow bold
+  old = red bold
+  new = green bold
+  whitespace = red reverse
+[color "diff-highlight"]
+  oldNormal = red bold
+  oldHighlight = red bold 52
+  newNormal = green bold
+  newHighlight = green bold 22
+[column]
+  ui = auto
+[commit]
+  gpgSign = true
+[core]
+  editor = nvim
+  pager = delta # diff-so-fancy | most -w -t2 +u # less --tabs=2 -RFX
+  excludesfile = /Users/dave/.gitignore_global
+  fsmonitor = true
+  whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+[credential "https://dev.azure.com"]
+  useHttpPath = true
+[delta]
+  features = line-numbers decorations
+  line-numbers = true
+[delta "decorations"]
+  minus-style = red bold normal
+  plus-style = green bold normal
+  minus-emph-style = white bold red
+  minus-non-emph-style = red bold normal
+  plus-emph-style = white bold green
+  plus-non-emph-style = green bold normal
+  file-style = yellow bold none
+  file-decoration-style = yellow box
+  hunk-header-style = magenta bold
+  hunk-header-decoration-style = magenta box
+  minus-empty-line-marker-style = normal normal
+  plus-empty-line-marker-style = normal normal
+  line-numbers-right-format = "{np:^4}│ "
+[diff]
+  algorithm = histogram
+  renames = true
+  tool = Kaleidoscope # nvimdiff
+[diff-so-fancy]
+  first-run = false
+[difftool]
+  prompt = false
+  trustExitCode = true
+[fetch]
+  parallel = 8
+  prune = true
+  pruneTags = true
+  all = true
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+[ghq]
+  root = ~/src
+[gpg]
+  program = /usr/local/bin/gpg
+  format = ssh
+[gpg "ssh"]
+  {{ if eq .chezmoi.os "darwin" }}
+    program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+  {{ else if eq .chezmoi.os "linux" }}
+    program = /opt/1Password/op-ssh-sign
+  {{ else }}
+    program = op-ssh-sign
+  {{ end }}
+  allowedsignersfile = ~/.ssh/allowed_signers
+[init]
+  defaultBranch = main
+[interactive]
+  diffFilter = diff-so-fancy --patch
+[lfs]
+  tustransfers = true
+[merge]
+  tool = Kaleidoscope
+[mergetool]
+  prompt = false
+  keepBackup = false
+[pull]
+  rebase = true
+[push]
+  autoSetupRemote = true
+  followTags = true
+[rebase]
+  autoSquash = true
+  updateRefs = true
+[signing]
+  signByDefault = true
+  # key = D8DC6603D9C3515382A1C63C385FD3CEF5E5C6EC # gpg key
+[submodule]
+  fetchJobs = 8
+[tag]
+  forceSignAnnotated = true
+  sort = version:refname
+[user]
+  name = Dave Williams
+  email = dave@dave.io
+  signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO61V6/r/7/D4IGZEZhTNU+JUNeROBbYTuhKKbdWiaOd
+  bitbucket = daveio
+  github = daveio
+  gitlab = dave
+[difftool "Kaleidoscope"]
+  cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[mergetool "Kaleidoscope"]
+  cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+  trustExitCode = true
+[trim]
+  bases = master,main
+  protected = *production
+[sequence]
+  editor = interactive-rebase-tool

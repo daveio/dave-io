@@ -426,11 +426,7 @@ export const AiSocialRequestSchema = z
       .min(1, "At least one network must be specified")
       .max(10, "Maximum 10 networks allowed"),
     markdown: z.boolean().optional().default(false),
-    strategies: z
-      .array(AiSocialStrategyEnum)
-      .max(10, "Maximum 10 strategies allowed")
-      .optional()
-      .default(["sentence_boundary", "thread_optimize"])
+    strategies: z.array(AiSocialStrategyEnum).max(10, "Maximum 10 strategies allowed").optional()
   })
   .openapi({
     title: "AI Social Request",

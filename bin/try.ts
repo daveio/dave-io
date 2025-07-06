@@ -320,14 +320,17 @@ aiSocialCommand
     "bluesky,mastodon"
   )
   .option("-m, --markdown", "Enable markdown formatting for Mastodon", false)
-  .option("-s, --strategies <strategies>", "Comma-separated splitting strategies", "sentence_boundary,thread_optimize")
+  .option(
+    "-s, --strategies <strategies>",
+    "Comma-separated splitting strategies (optional; uses example-based approach if not provided)"
+  )
   .action(async (text, cmdOptions, command) => {
     const options = command.parent?.parent?.parent?.opts() as GlobalOptions
     const config = await createConfig(options, "ai:social")
     validateToken(config, "ai:social", options.auth || false)
 
     const networks = cmdOptions.networks.split(",").map((n: string) => n.trim())
-    const strategies = cmdOptions.strategies.split(",").map((s: string) => s.trim())
+    const strategies = cmdOptions.strategies ? cmdOptions.strategies.split(",").map((s: string) => s.trim()) : undefined
 
     const adapter = new AIAdapter(config)
     const result = await withSpinner(
@@ -543,10 +546,10 @@ ${chalk.bold("Examples:")}
   bun try ai ticket enrich "Fix login" --description "Users can't log in" --image "./error.png"
 
   ${chalk.cyan("# AI Social Media (requires authentication)")}
-  bun try --auth ai social split "Your long text here"                                    # Default: bluesky,mastodon
+  bun try --auth ai social split "Your long text here"                                    # Example-based splitting (default)
   bun try --auth ai social split "Text" --networks "bluesky,mastodon,threads,x"         # All networks
   bun try --auth ai social split "Text" --markdown --networks "mastodon"                # Markdown for Mastodon
-  bun try --auth ai social split "Text" --strategies "word_boundary,hashtag_preserve"   # Custom strategies
+  bun try --auth ai social split "Text" --strategies "word_boundary,hashtag_preserve"   # Explicit strategies (fallback)
 
   ${chalk.cyan("# Environment selection")}
   bun try --local ping                   # Local development

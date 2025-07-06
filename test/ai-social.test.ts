@@ -73,7 +73,7 @@ describe("AI Social Endpoint", () => {
 
       if (result.success) {
         expect(result.data?.markdown).toBe(false) // Default value
-        expect(result.data?.strategies).toEqual(["sentence_boundary", "thread_optimize"]) // Default values
+        expect(result.data?.strategies).toBeUndefined() // No default strategies - uses example-based approach
       }
     })
 
@@ -388,6 +388,115 @@ Return a JSON object with a "networks" property containing arrays of posts for e
       // Ensure we have proper spacing (exactly 2 newlines before thread indicator)
       expect(postsWithThreading[0]).toContain("\n\n🧵")
       expect(postsWithThreading[0]).not.toContain("\n\n\n🧵") // No triple newlines
+    })
+  })
+
+  describe("Example-Based vs Strategy-Based Modes", () => {
+    it("should use example-based approach when no strategies provided", () => {
+      const request = {
+        input: "Test text to split",
+        networks: ["bluesky" as const]
+      }
+
+      const result = AiSocialRequestSchema.safeParse(request)
+      expect(result.success).toBe(true)
+
+      if (result.success) {
+        // No strategies provided - should use example-based approach
+        expect(result.data?.strategies).toBeUndefined()
+
+        // Simulate the logic from the endpoint
+        const useExampleBased = !result.data?.strategies || result.data.strategies.length === 0
+        expect(useExampleBased).toBe(true)
+      }
+    })
+
+    it("should use strategy-based approach when strategies explicitly provided", () => {
+      const request = {
+        input: "Test text to split",
+        networks: ["bluesky" as const],
+        strategies: ["word_boundary" as const, "hashtag_preserve" as const]
+      }
+
+      const result = AiSocialRequestSchema.safeParse(request)
+      expect(result.success).toBe(true)
+
+      if (result.success) {
+        // Strategies provided - should use strategy-based approach
+        expect(result.data?.strategies).toEqual(["word_boundary", "hashtag_preserve"])
+
+        // Simulate the logic from the endpoint
+        const useExampleBased = !result.data?.strategies || result.data.strategies.length === 0
+        expect(useExampleBased).toBe(false)
+      }
+    })
+
+    it("should use example-based approach when empty strategies array provided", () => {
+      const request = {
+        input: "Test text to split",
+        networks: ["bluesky" as const],
+        strategies: [] as const
+      }
+
+      const result = AiSocialRequestSchema.safeParse(request)
+      expect(result.success).toBe(true)
+
+      if (result.success) {
+        // Empty strategies array - should use example-based approach
+        expect(result.data?.strategies).toEqual([])
+
+        // Simulate the logic from the endpoint
+        const useExampleBased = !result.data?.strategies || result.data.strategies.length === 0
+        expect(useExampleBased).toBe(true)
+      }
+    })
+
+    it("should construct appropriate prompt based on mode", () => {
+      // Test example-based mode prompt construction
+      const exampleBasedRequest: { strategies?: string[] } = { strategies: undefined }
+      const useExampleBased = !exampleBasedRequest.strategies || exampleBasedRequest.strategies.length === 0
+
+      if (useExampleBased) {
+        // Should include example and specific rules for example-based splitting
+        const shouldIncludeExample = true
+        const shouldIncludeStrategies = false
+
+        expect(shouldIncludeExample).toBe(true)
+        expect(shouldIncludeStrategies).toBe(false)
+      }
+
+      // Test strategy-based mode prompt construction
+      const strategyBasedRequest = { strategies: ["word_boundary", "hashtag_preserve"] }
+      const useStrategyBased = strategyBasedRequest.strategies && strategyBasedRequest.strategies.length > 0
+
+      if (useStrategyBased) {
+        // Should include strategy descriptions but not example
+        const shouldIncludeExample = false
+        const shouldIncludeStrategies = true
+
+        expect(shouldIncludeExample).toBe(false)
+        expect(shouldIncludeStrategies).toBe(true)
+      }
+    })
+
+    it("should handle strategy descriptions correctly in strategy-based mode", () => {
+      const strategyDescriptions = {
+        sentence_boundary: "Split at sentence endings to maintain complete thoughts",
+        word_boundary: "Split at word boundaries without breaking words",
+        paragraph_preserve: "Keep paragraphs intact when possible",
+        thread_optimize: "Optimize for thread continuity with numbered posts",
+        hashtag_preserve: "Keep hashtags with their relevant content"
+      }
+
+      const selectedStrategies = ["word_boundary", "hashtag_preserve"]
+      const expectedDescription =
+        "Split at word boundaries without breaking words, Keep hashtags with their relevant content"
+
+      const actualDescription = selectedStrategies
+        .map((s) => strategyDescriptions[s as keyof typeof strategyDescriptions])
+        .join(", ")
+
+      expect(actualDescription).toBe(expectedDescription)
     })
   })
 

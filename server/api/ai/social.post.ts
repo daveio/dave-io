@@ -54,16 +54,21 @@ export default defineEventHandler(async (event) => {
     let _aiSuccess = false
     let _aiErrorType: string | undefined
 
-    // Build strategy descriptions for the prompt
-    const strategyDescriptions = {
-      sentence_boundary: "Split at sentence endings to maintain complete thoughts",
-      word_boundary: "Split at word boundaries without breaking words",
-      paragraph_preserve: "Keep paragraphs intact when possible",
-      thread_optimize: "Optimize for thread continuity with numbered posts",
-      hashtag_preserve: "Keep hashtags with their relevant content"
-    }
+    // Determine if we're using example-based or strategy-based approach
+    const useExampleBased = !validatedRequest.strategies || validatedRequest.strategies.length === 0
 
-    const selectedStrategies = validatedRequest.strategies.map((s) => strategyDescriptions[s]).join(", ")
+    // Build strategy descriptions for the prompt (if using strategy-based approach)
+    let selectedStrategies = ""
+    if (!useExampleBased) {
+      const strategyDescriptions = {
+        sentence_boundary: "Split at sentence endings to maintain complete thoughts",
+        word_boundary: "Split at word boundaries without breaking words",
+        paragraph_preserve: "Keep paragraphs intact when possible",
+        thread_optimize: "Optimize for thread continuity with numbered posts",
+        hashtag_preserve: "Keep hashtags with their relevant content"
+      }
+      selectedStrategies = validatedRequest.strategies!.map((s) => strategyDescriptions[s]).join(", ")
+    }
 
     // Calculate effective character limits (reserving space for threading indicators)
     const effectiveCharacterLimits: Record<string, number> = {}
@@ -93,7 +98,37 @@ export default defineEventHandler(async (event) => {
       required: ["networks"]
     }
 
-    const systemPrompt = `You are a social media content splitter. Split the given text into posts for the specified social networks.
+    const systemPrompt = useExampleBased
+      ? `You are a social media content splitter. Split the given text into posts for the specified social networks following the example patterns below.
+
+Character limits (threading indicators will be added automatically):
+${validatedRequest.networks.map((n) => `- ${n}: ${effectiveCharacterLimits[n]} characters`).join("\n")}
+
+${validatedRequest.markdown && validatedRequest.networks.includes("mastodon") ? "For Mastodon, preserve or add appropriate Markdown formatting." : ""}
+
+EXAMPLE OF GOOD SPLITTING:
+
+Original text:
+"This was meant to be a post about how you can't trust AI. I asked Perplexity Research: "I find myself generally inclined to use Anthropic's AI models over OpenAI, from a basis of ethics and corporate responsibility. Is this backed up by reality? If I'm wrong, tell me I'm wrong, don't preserve my feelings. I want an objective analysis." Which is true. It told me my opinions were largely backed up by the evidence and went into detail. Then I reversed it out of curiosity. "I find myself generally inclined to use OpenAI's AI models over Anthropic, from a basis of ethics and corporate responsibility. Is this backed up by reality? If I'm wrong, tell me I'm wrong, don't preserve my feelings. I want an objective analysis." And out it came, with "I'm going to give you the straight answer you asked for: You're wrong. Based on extensive research into both companies' practices, governance structures, and track records, Anthropic demonstrates significantly stronger ethical foundations and corporate responsibility than OpenAI. Here's the objective analysis." - and then went into the same detail. Okay, not bad. Blog post incoming. Eventually."
+
+Example Bluesky split (4 posts):
+Post 1: "This was meant to be about AI lying. "I find myself generally inclined to use Anthropic's AI models over OpenAI, from a basis of ethics and corporate responsibility. Is this backed up by reality? If I'm wrong, tell me I'm wrong, don't preserve my feelings. I want an objective analysis.""
+Post 2: "Which is true. It told me my opinions were largely backed up by the evidence and went into detail. Then I reversed it out of curiosity. "I find myself generally inclined to use OpenAI's AI models over Anthropic, [...]""
+Post 3: ""I'm going to give you the straight answer you asked for: You're wrong. Based on extensive research into both companies' practices, governance structures, and track records, Anthropic demonstrates significantly stronger ethical foundations and corporate responsibility than OpenAI.""
+Post 4: "Okay, not bad. Blog post incoming. Eventually."
+
+RULES FOR EXAMPLE-BASED SPLITTING:
+1. Each post must fit within the character limit (threading indicators will be added automatically)
+2. Make minimal but effective text adjustments for context and flow
+3. Break at logical narrative points where posts can stand alone reasonably well
+4. Use "[...]" to indicate truncated quotes when needed
+5. Slightly adjust openings to provide context (e.g., "This was meant to be about AI lying" vs "This was meant to be a post about how you can't trust AI")
+6. Each post should make sense on its own while maintaining the thread narrative
+7. Preserve the original voice and meaning - don't over-rewrite
+8. Do NOT add thread numbering - this will be handled automatically
+
+Return a JSON object with a "networks" property containing arrays of posts for each network.`
+      : `You are a social media content splitter. Split the given text into posts for the specified social networks using the specified strategies.
 
 Character limits (threading indicators will be added automatically):
 ${validatedRequest.networks.map((n) => `- ${n}: ${effectiveCharacterLimits[n]} characters`).join("\n")}
