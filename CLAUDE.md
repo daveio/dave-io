@@ -1,7 +1,5 @@
 # `dave.io`
 
-<!-- trunk-ignore-all(trunk-toolbox/todo) -->
-
 ## 🛑 MANDATORY RULES - CHECK BEFORE EVERY ACTION
 
 ### PRE-TASK CHECKLIST (Mental Review Required)
@@ -18,7 +16,7 @@
 
 **3. TEST**: Test everything with logic/side effects. Commands: `bun run test`, `bun run test:ui`, `bun run test:api`. Skip only: trivial getters, UI components, config.
 
-**4. SYNC**: `AGENTS.md` = truth. Update after API/feature/auth changes. `CLAUDE.md` & `README.md` = symlinks to `AGENTS.md`.
+**4. SYNC**: `AGENTS.md` = truth. Update after API/feature/auth changes. `CLAUDE.md` & `README.md` derive from `AGENTS.md`.
 
 **5. VERIFY**: `bun run build` → `bun run lint:eslint`, `bun run lint:trunk`, `bun run lint:types`, `bun run test` → `bun run check`. Never continue with errors.
 
@@ -47,293 +45,52 @@
 **ALWAYS**: Break compatibility • Test everything • Real data only • Complete code • Extract duplicates • KV hierarchical keys
 **NEVER**: Migration code (except database migrations) • Mock data • Silent failures • Copy-paste • Outdated docs • Complex KV values
 
----
-
-## Tool Usage Strategy
-
-### Read Before Edit (MANDATORY)
-
-```bash
-# ALWAYS read files before editing
-Read file.ts → understand context → Edit/MultiEdit
-```
-
-**Never edit without reading first** - the Edit tool will error if you haven't read the file.
-
-### Tool Selection Matrix
-
-| Task Type                     | Tool Choice | Reasoning                         |
-| ----------------------------- | ----------- | --------------------------------- |
-| **Find files by name**        | `Glob`      | Fast pattern matching             |
-| **Find code patterns**        | `Grep`      | Content-based search              |
-| **Complex/multi-step search** | `Task`      | When uncertain about search scope |
-| **Single file change**        | `Edit`      | Simple find/replace               |
-| **Multiple changes in file**  | `MultiEdit` | Atomic operations                 |
-| **New file creation**         | `Write`     | Clean slate                       |
-| **Command execution**         | `Bash`      | System operations                 |
-
-### Batching for Performance
-
-```bash
-# Good: Batch independent operations
-Read + Read + Read (parallel)
-Bash + Bash + Bash (parallel)
-
-# Bad: Sequential when unnecessary
-Read → Read → Read (sequential)
-```
-
-## Development Workflow
-
-### 1. Task Planning (Use TodoWrite PROACTIVELY)
-
-```markdown
-# For any non-trivial task:
-
-TodoWrite → plan subtasks → mark in_progress → complete as you go
-```
-
-**Always use TodoWrite for:**
-
-- Multi-step features
-- Bug fixes with multiple files
-- Refactoring tasks
-- When user provides multiple requirements
-
-### 2. File Operations Pattern
-
-```bash
-1. Glob/Grep → find relevant files
-2. Read → understand current state
-3. TodoWrite → plan changes
-4. Edit/MultiEdit/Write → implement
-5. Bash → test/lint/verify
-6. TodoWrite → mark completed
-```
-
-### 3. Schema-First Development
-
-```bash
-1. Read schemas.ts → understand patterns
-2. Add new schemas → with .openapi() metadata
-3. Edit endpoint → use schema.parse()
-4. Bash → run generate:openapi
-5. Verify public/openapi.json updated
-```
-
-## Error Handling & Validation
-
-### Tool Error Recovery
-
-```typescript
-// If Read fails - file might not exist
-try { Read } catch { assume new file, use Write }
-
-// If Edit fails - check Read was called first
-Read → Edit (required sequence)
-
-// If Bash fails - check command syntax
-Bash "bun run test" not Bash "test"
-```
-
-### Validation Flow
-
-```bash
-1. Schema validation FIRST (zod.parse())
-2. Business logic validation
-3. createApiResponse() for output
-4. Never return raw objects
-```
-
-## Testing Integration
-
-### Test Command Patterns
-
-```bash
-# Run tests during development
-Bash "bun run test"           # Unit tests
-Bash "bun run test:api"       # HTTP API tests
-Bash "bun run test:ui"        # UI tests
-Bash "bun run test:all"       # Full suite
-
-# Always run after changes
-Bash "bun run check"          # Full validation
-```
-
-### Test File Patterns
-
-```bash
-# Test file naming
-feature.test.ts               # Unit tests
-api-feature.test.ts          # API integration tests
-
-# Test structure - follow existing patterns in test/
-describe → it → expect
-Mock external services (AI, KV, etc.)
-Real data validation with Zod
-```
-
-## Git & Commit Workflow
-
-### Commit Pattern (MANDATORY)
-
-```bash
-# After completing any feature/fix
-Bash "git add -A . && oco --fgm --yes"
-
-# Never commit without verification
-Bash "bun run check" → MUST pass before commit
-```
-
-### Branch Management
-
-```bash
-# Work on main branch (as per project rules)
-# Breaking changes are allowed and encouraged
-```
-
-## Response Standards for CLI
-
-### Concise Communication
-
-```bash
-# Good: Direct answers
-"4"
-"src/auth.ts:42"
-"npm install missing"
-
-# Bad: Verbose explanations
-"The answer to your question is 4 because..."
-```
-
-### Code References
-
-```bash
-# Always include file:line references
-"Error in server/api/auth.ts:156"
-"Check schemas.ts:245 for pattern"
-```
-
-### Progress Communication
-
-```bash
-# Use TodoWrite to show progress
-# Keep text responses minimal unless asked for detail
-```
-
-## File Structure Awareness
-
-### Endpoint Patterns
-
-```bash
-server/api/example.get.ts     # GET /api/example
-server/api/example.post.ts    # POST /api/example
-server/api/users/[uuid].get.ts # GET /api/users/{uuid}
-server/routes/go/[slug].get.ts # GET /go/{slug}
-```
-
-### Utility Organization
-
-```bash
-server/utils/                 # Shared logic
-├── auth.ts                   # Authentication
-├── response.ts               # API responses
-├── schemas.ts                # Zod schemas
-├── validation.ts             # Input validation
-└── *-helpers.ts              # Specific helpers
-```
-
-### Test Organization
-
-```bash
-test/                         # Test files
-├── *.test.ts                 # Unit tests
-└── api-*.test.ts             # API integration tests
-```
-
-## Common Anti-Patterns to Avoid
-
-### ❌ Never Do This
-
-```typescript
-// Don't edit without reading
-Edit file.ts → ERROR
-
-// Don't create files unless necessary
-Write new-file.ts → prefer editing existing
-
-// Don't use manual responses
-return { success: true } → use createApiResponse()
-
-// Don't skip validation
-body.email → EmailSchema.parse(body).email
-
-// Don't ignore test failures
-test fails → fix before continuing
-```
-
-### ✅ Always Do This
-
-```typescript
-// Read then edit
-Read file.ts → Edit file.ts
-
-// Use existing patterns
-Read similar-endpoint.ts → follow patterns
-
-// Validate everything
-RequestSchema.parse(input)
-
-// Use helpers
-requireAuth(event, "api", "tokens")
-
-// Test changes
-Bash "bun run check"
-```
-
-## Troubleshooting Guide
-
-### Tool Failures
-
-```bash
-Read fails → file doesn't exist → use Write
-Edit fails → didn't Read first → Read then Edit
-Bash fails → check command syntax → use quotes
-Grep no results → try different pattern → use Task
-```
-
-### Build/Test Failures
-
-```bash
-lint:eslint fails → fix code style
-lint:types fails → fix TypeScript errors
-test fails → fix failing tests
-build fails → check imports/syntax
-```
-
-### Common Issues
-
-```bash
-"Cannot read file" → use absolute paths
-"Schema not found" → check imports in schemas.ts
-"Auth required" → add requireAuth() call
-"Invalid UUID" → use getValidatedUUID()
-```
-
----
-
-> The following inherits from `AGENTS.md`.
+## Tech Stack
 
 - **Runtime**: Nuxt 3 + Cloudflare Workers | **Auth**: JWT + JOSE hierarchical | **Validation**: Zod + TypeScript | **Testing**: Vitest + HTTP API | **Tools**: Bun, Biome
 
-## Auth & Endpoints
+## File Naming Conventions
 
-- **Methods**: `Authorization: Bearer <jwt>` + `?token=<jwt>`
-- **JWT**: `{sub, iat, exp?, jti?}` | **Permissions**: `category:resource` (parent grants child) | **Categories**: `api`, `ai`, `dashboard`, `admin`, `*`
-- **Public**: `/api/ping`, `/api/image/optimise`, `/go/{slug}`, `/api/ai/ticket/*`
-- **Protected**: `/api/ai/alt` (`ai:alt`+), `/api/tokens/{uuid}/*` (`api:tokens`+)
+### API Endpoints
 
-## Redirect Handling
+```bash
+server/api/example.get.ts          # GET /api/example
+server/api/example.post.ts         # POST /api/example
+server/api/users/[uuid].get.ts     # GET /api/users/{uuid}
+server/api/users/[uuid]/[...path].get.ts # GET /api/users/{uuid}/{path}
+server/routes/go/[slug].get.ts     # GET /go/{slug}
+```
+
+### Utilities & Tests
+
+```bash
+server/utils/feature-name.ts      # Utility functions
+server/utils/feature-helpers.ts   # Helper functions
+test/feature-name.test.ts         # Unit tests
+test/api-feature.test.ts          # API integration tests
+```
+
+### Schema & Type Files
+
+```bash
+server/utils/schemas.ts           # All Zod schemas + OpenAPI
+types/api.ts                      # Shared type definitions
+worker-configuration.d.ts        # Cloudflare bindings
+```
+
+## Development Patterns
+
+### Schema-First Development
+
+```typescript
+1. Define Zod schema in schemas.ts with .openapi() metadata
+2. Use schema.parse() in endpoint for validation
+3. Export schema type: `export type Example = z.infer<typeof ExampleSchema>`
+4. Run: bun run generate:openapi
+5. Verify public/openapi.json updated
+```
+
+### Redirect Handling
 
 Server-side redirects in `/go/{slug}` routes are handled by:
 
@@ -342,16 +99,58 @@ Server-side redirects in `/go/{slug}` routes are handled by:
 - **Route Rules**: Nuxt config disables caching for `/go/**` routes to ensure fresh redirects
 - **Behavior**: Links bypass client-side routing and trigger full page loads to hit server handlers
 
+### Error Handling Standards
+
+```typescript
+// Always use createApiError for consistent format
+throw createApiError(400, "Validation failed", validationDetails)
+
+// Always use createApiResponse for success
+return createApiResponse({
+  result: data,
+  message: "Operation successful",
+  error: null
+})
+
+// Log errors before throwing
+console.error("Endpoint error:", error)
+recordAPIErrorMetrics(event, error)
+throw error
+```
+
+### Authentication Flow
+
+```typescript
+// Use auth helpers for consistent patterns
+const auth = await requireAPIAuth(event, "resource") // api:resource
+const auth = await requireAIAuth(event, "alt") // ai:alt
+const auth = await requireAdminAuth(event) // admin
+
+// Access user info from auth.payload
+const userId = auth.payload?.sub
+const tokenId = auth.payload?.jti
+```
+
+## Auth & Endpoints
+
+- **Methods**: `Authorization: Bearer <jwt>` + `?token=<jwt>`
+- **JWT**: `{sub, iat, exp?, jti?}` | **Permissions**: `category:resource` (parent grants child) | **Categories**: `api`, `ai`, `dashboard`, `admin`, `*`
+- **Public**: `/api/ping`, `/api/image/optimise`, `/go/{slug}`, `/api/ai/ticket/*`
+- **Protected**: `/api/ai/alt` (`ai:alt`+), `/api/ai/social` (`ai:social`+), `/api/token/{uuid}/*` (`api:token`+)
+
 ## Breaking Changes
 
 - **CLI**: Removed `bun try internal ping` → use `bun try ping`
 - **API Responses**: Standardized structure with `{ok, result, error, status, timestamp}`, sorted object keys
 - **Endpoints**: Merged `/api/internal/*` → `/api/ping`
+- **API Structure**: Converted all endpoints to singular: `/tokens/` → `/token/`, `/images/` → `/image/`, `/ticket/` → `/ticket/`
 - **Auth**: `--auth` auto-generates tokens, `--token <JWT>` for provided tokens
 - **Dev**: No reset cycle, starts in seconds, `test:all` for full suite
 - **AI Alt**: Raw base64 POST or multipart form upload, 4MB limit with auto-optimization
 - **Images**: Cloudflare Images service, BLAKE3 IDs, global CDN
 - **KV**: Individual keys vs JSON blob, hierarchical colon-separated, YAML anchors
+- **Redirects**: Fixed `/go/*` routes to bypass client-side routing - links now redirect properly on first click instead of requiring a page refresh
+- **AI Social**: New `/api/ai/social` endpoint for splitting text into social media posts using `@cf/meta/llama-4-scout-17b-16e-instruct` with JSON schema support
 
 ## Core
 
@@ -390,6 +189,7 @@ curl http://localhost:3000/api/ping  # Status
 curl -H "Authorization: Bearer <token>" "/api/ai/alt?url=https://example.com/image.jpg"  # Alt-text via URL
 curl -X POST -F "image=@path/to/image.jpg" -H "Authorization: Bearer <token>" http://localhost:3000/api/ai/alt  # Alt-text via form
 curl -X POST -d '{"description": "Fix bug"}' /api/ai/ticket/title  # AI title (public)
+curl -X POST -H "Authorization: Bearer <token>" -d '{"input": "Long text...", "networks": ["bluesky", "mastodon"]}' /api/ai/social  # Split text
 curl -X POST -d '{"image": "<base64>", "quality": 80}' /api/image/optimise  # Optimize via JSON
 curl -F "image=@path/to/image.jpg" -F "quality=80" http://localhost:3000/api/image/optimise  # Optimize via form
 ```
@@ -410,9 +210,195 @@ wrangler kv:namespace create KV && wrangler d1 create NEXT_API_AUTH_METADATA
 bun jwt init && bun run deploy
 ```
 
-**KV YAML**: `metrics: {ok: 0}` → `metrics:ok = "0"`
+**KV YAML**: `metrics: {ok: 0}` → `metrics:ok = "0"` | AI Social: `ai:social:characters:bluesky = "300"`
 **Linting**: `// eslint-disable-next-line @typescript-eslint/no-explicit-any
 **Images**: Cloudflare service, BLAKE3 IDs, 4MB limit, global CDN
+**AI Social**: Character limits in KV (`ai:social:characters:{network}`), supports strategies: `sentence_boundary`, `word_boundary`, `paragraph_preserve`, `thread_optimize`, `hashtag_preserve`
+
+## Performance Guidelines
+
+### KV Storage Optimization
+
+```typescript
+// Use hierarchical keys for efficient querying
+"metrics:api:ok" // Good: hierarchical
+"metrics:api:tokens:usage" // Good: specific scope
+"user_data_12345" // Bad: flat structure
+
+// Simple values only, no complex objects
+await kv.put("metrics:api:ok", "42") // Good: simple value
+await kv.put("user:123", JSON.stringify(userObject)) // Bad: complex object
+```
+
+### Async Operation Patterns
+
+```typescript
+// Non-blocking metrics (fire and forget)
+recordAPIMetricsAsync(event, statusCode) // Good: doesn't block response
+await recordAPIMetrics(event, statusCode) // Bad: blocks response
+
+// Real service calls (no mocks except tests)
+const result = await env.AI.run(model, prompt) // Good: real AI call
+const result = mockAI.generate() // Bad: mock data
+```
+
+## Security Standards
+
+### Input Validation (MANDATORY)
+
+```typescript
+// Always validate at API boundaries
+const validated = RequestSchema.parse(await readBody(event))
+
+// Use validation helpers
+const uuid = getValidatedUUID(event, "uuid")
+validateURL(imageUrl, "image URL")
+
+// Never trust external data
+const userInput = sanitizeInput(rawInput)
+```
+
+### Secret Management
+
+```typescript
+// Environment variables only
+const secret = process.env.API_JWT_SECRET // Good
+const secret = "hardcoded-secret" // Bad: never commit secrets
+
+// Check for default secrets in development
+if (secret === "dev-secret-change-in-production") {
+  console.warn("Using default JWT secret - insecure for production!")
+}
+```
+
+### Output Sanitization
+
+```typescript
+// Never expose internal errors in production
+catch (error) {
+  console.error("Internal error:", error)  // Log for debugging
+  throw createApiError(500, "Internal server error")  // Safe public message
+}
+
+// Don't include sensitive fields in responses
+const publicUser = { id: user.id, name: user.name }  // Good: filtered
+return createApiResponse({ result: user })           // Bad: might expose secrets
+```
+
+## Anti-Patterns (DO NOT DO)
+
+### ❌ Code Quality
+
+```typescript
+// Don't copy-paste code
+if (condition1) {
+  /* same logic */
+}
+if (condition2) {
+  /* same logic */
+}
+
+// Extract to shared utility instead
+const sharedLogic = (condition) => {
+  /* logic */
+}
+```
+
+### ❌ Error Handling
+
+```typescript
+// Don't fail silently
+try {
+  riskyOperation()
+} catch {
+  /* ignored */
+}
+
+// Always handle errors explicitly
+try {
+  riskyOperation()
+} catch (error) {
+  console.error("Operation failed:", error)
+  throw createApiError(500, "Operation failed")
+}
+```
+
+### ❌ Response Format
+
+```typescript
+// Don't return inconsistent formats
+return { success: true, data: result }           // Bad: non-standard
+return { ok: true, result, error: null, ... }   // Good: standard format
+```
+
+### ❌ Testing
+
+```typescript
+// Don't skip tests for business logic
+function calculateTotal(items) {
+  /* complex logic */
+} // Needs tests
+
+// Don't test trivial code
+function getName() {
+  return this.name
+} // Skip testing
+```
+
+## Documentation Requirements
+
+### JSDoc Standards
+
+```typescript
+/**
+ * Generate alt-text for images using AI
+ * @param imageBuffer - Raw image data
+ * @param options - Processing options
+ * @returns Promise<string> Generated alt-text
+ * @throws {Error} When AI service is unavailable
+ */
+export async function generateAltText(imageBuffer: Buffer, options: AltTextOptions): Promise<string>
+```
+
+### Inline Comments
+
+```typescript
+// Use comments for business logic, not obvious code
+const tax = subtotal * 0.1 // 10% tax rate for region
+
+// Don't comment obvious code
+const name = user.name // Gets the user name ← unnecessary
+```
+
+## Troubleshooting Checklist
+
+### Build Failures
+
+```bash
+1. bun run lint:eslint    # Fix code style issues
+2. bun run lint:types    # Fix TypeScript errors
+3. bun run test          # Fix failing tests
+4. Check imports/exports # Resolve module issues
+```
+
+### Runtime Errors
+
+```bash
+1. Check environment variables (API_JWT_SECRET, etc.)
+2. Verify Cloudflare bindings (KV, AI, Images)
+3. Check schema validation errors
+4. Review auth token permissions
+```
+
+### Common Issues
+
+```bash
+"Cannot read file" → Use absolute paths
+"Schema not found" → Check imports in schemas.ts
+"Auth required" → Add requireAuth() call
+"Invalid UUID" → Use getValidatedUUID()
+"AI service unavailable" → Check env.AI binding
+```
 
 ## Immediate Plans
 
