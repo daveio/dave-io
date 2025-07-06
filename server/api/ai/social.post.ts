@@ -28,6 +28,10 @@ export default defineEventHandler(async (event) => {
     // Fetch character limits from KV with fallback to defaults
     const characterLimits: Record<AiSocialNetwork, number> = { ...DEFAULT_CHARACTER_LIMITS }
 
+    // Reserve space for threading indicators (e.g., "\n\n🧵 1/5" = 8 chars + max thread count digits)
+    // Assume maximum 99 posts in a thread, so "🧵 99/99" = 8 chars + 2 newlines = 10 chars total
+    const THREAD_INDICATOR_SPACE = 10
+
     if (env?.KV) {
       await Promise.all(
         validatedRequest.networks.map(async (network) => {
@@ -61,6 +65,12 @@ export default defineEventHandler(async (event) => {
 
     const selectedStrategies = validatedRequest.strategies.map((s) => strategyDescriptions[s]).join(", ")
 
+    // Calculate effective character limits (reserving space for threading indicators)
+    const effectiveCharacterLimits: Record<string, number> = {}
+    for (const network of validatedRequest.networks) {
+      effectiveCharacterLimits[network] = characterLimits[network] - THREAD_INDICATOR_SPACE
+    }
+
     // Create JSON schema for structured output
     const jsonSchema = {
       type: "object",
@@ -73,7 +83,7 @@ export default defineEventHandler(async (event) => {
               {
                 type: "array",
                 items: { type: "string" },
-                description: `Posts for ${network} (max ${characterLimits[network]} chars each)`
+                description: `Posts for ${network} (max ${effectiveCharacterLimits[network]} chars each, threading indicators added automatically)`
               }
             ])
           ),
@@ -85,20 +95,20 @@ export default defineEventHandler(async (event) => {
 
     const systemPrompt = `You are a social media content splitter. Split the given text into posts for the specified social networks.
 
-Character limits:
-${validatedRequest.networks.map((n) => `- ${n}: ${characterLimits[n]} characters`).join("\n")}
+Character limits (threading indicators will be added automatically):
+${validatedRequest.networks.map((n) => `- ${n}: ${effectiveCharacterLimits[n]} characters`).join("\n")}
 
 Splitting strategies to use: ${selectedStrategies}
 
 ${validatedRequest.markdown && validatedRequest.networks.includes("mastodon") ? "For Mastodon, preserve or add appropriate Markdown formatting." : ""}
 
 Rules:
-1. Each post must fit within the character limit
+1. Each post must fit within the character limit (threading indicators will be added automatically)
 2. Maintain the flow and coherence of the original content
 3. Don't cut words in the middle
-4. For threads, number the posts (e.g., "1/5", "2/5")
-5. Preserve important context in each post
-6. Keep hashtags with relevant content when possible
+4. Preserve important context in each post
+5. Keep hashtags with relevant content when possible
+6. Do NOT add thread numbering - this will be handled automatically
 
 Return a JSON object with a "networks" property containing arrays of posts for each network.`
 
@@ -128,6 +138,20 @@ Return a JSON object with a "networks" property containing arrays of posts for e
       for (const network of validatedRequest.networks) {
         if (!aiResponse.networks?.[network] || !Array.isArray(aiResponse.networks[network])) {
           throw new Error(`Missing or invalid response for network: ${network}`)
+        }
+      }
+
+      // Add threading indicators for multi-post threads
+      for (const network of validatedRequest.networks) {
+        const posts = aiResponse.networks[network]
+        if (posts.length > 1) {
+          // Add threading indicators to each post
+          for (let i = 0; i < posts.length; i++) {
+            const postNumber = i + 1
+            const totalPosts = posts.length
+            const threadIndicator = `\n\n🧵 ${postNumber}/${totalPosts}`
+            posts[i] = posts[i] + threadIndicator
+          }
         }
       }
 

@@ -186,12 +186,12 @@ describe("AI Social Endpoint", () => {
               bluesky: {
                 type: "array",
                 items: { type: "string" },
-                description: "Posts for bluesky (max 300 chars each)"
+                description: "Posts for bluesky (max 290 chars each, threading indicators added automatically)"
               },
               mastodon: {
                 type: "array",
                 items: { type: "string" },
-                description: "Posts for mastodon (max 4096 chars each)"
+                description: "Posts for mastodon (max 4086 chars each, threading indicators added automatically)"
               }
             },
             required: ["bluesky", "mastodon"]
@@ -200,7 +200,15 @@ describe("AI Social Endpoint", () => {
         required: ["networks"]
       }
 
-      // Test schema construction logic
+      // Test schema construction logic with threading space reserved
+      const THREAD_INDICATOR_SPACE = 10
+      const effectiveCharacterLimits = {
+        bluesky: _characterLimits.bluesky - THREAD_INDICATOR_SPACE,
+        mastodon: _characterLimits.mastodon - THREAD_INDICATOR_SPACE,
+        threads: _characterLimits.threads - THREAD_INDICATOR_SPACE,
+        x: _characterLimits.x - THREAD_INDICATOR_SPACE
+      }
+
       const actualSchema = {
         type: "object",
         properties: {
@@ -212,7 +220,7 @@ describe("AI Social Endpoint", () => {
                 {
                   type: "array",
                   items: { type: "string" },
-                  description: `Posts for ${network} (max ${_characterLimits[network]} chars each)`
+                  description: `Posts for ${network} (max ${effectiveCharacterLimits[network]} chars each, threading indicators added automatically)`
                 }
               ])
             ),
@@ -301,6 +309,85 @@ Return a JSON object with a "networks" property containing arrays of posts for e
           : ""
 
       expect(markdownInstruction).toBe("")
+    })
+
+    it("should reserve space for threading indicators", () => {
+      const THREAD_INDICATOR_SPACE = 10 // "\n\n🧵 99/99" = 10 chars
+      const originalLimit = 300
+      const effectiveLimit = originalLimit - THREAD_INDICATOR_SPACE
+
+      expect(effectiveLimit).toBe(290)
+
+      // Test that threading indicators fit within reserved space
+      const threadIndicator = "\n\n🧵 5/10"
+      expect(threadIndicator.length).toBeLessThanOrEqual(THREAD_INDICATOR_SPACE)
+
+      const maxThreadIndicator = "\n\n🧵 99/99"
+      expect(maxThreadIndicator.length).toBeLessThanOrEqual(THREAD_INDICATOR_SPACE)
+    })
+  })
+
+  describe("Threading Indicators", () => {
+    it("should add threading indicators to multi-post threads", () => {
+      const posts = ["First post content", "Second post content", "Third post content"]
+      const expectedWithThreading = [
+        "First post content\n\n🧵 1/3",
+        "Second post content\n\n🧵 2/3",
+        "Third post content\n\n🧵 3/3"
+      ]
+
+      // Simulate the threading logic
+      const postsWithThreading = posts.map((post, i) => {
+        const postNumber = i + 1
+        const totalPosts = posts.length
+        return post + `\n\n🧵 ${postNumber}/${totalPosts}`
+      })
+
+      expect(postsWithThreading).toEqual(expectedWithThreading)
+    })
+
+    it("should not add threading indicators to single posts", () => {
+      const posts = ["Single post content"]
+
+      // Simulate the threading logic - only add if more than 1 post
+      const postsWithThreading =
+        posts.length > 1 ? posts.map((post, i) => post + `\n\n🧵 ${i + 1}/${posts.length}`) : posts
+
+      expect(postsWithThreading).toEqual(["Single post content"])
+    })
+
+    it("should handle large thread numbers correctly", () => {
+      // Create a large thread to test formatting
+      const posts = Array.from({ length: 25 }, (_, i) => `Post ${i + 1} content`)
+
+      const postsWithThreading = posts.map((post, i) => {
+        const postNumber = i + 1
+        const totalPosts = posts.length
+        return post + `\n\n🧵 ${postNumber}/${totalPosts}`
+      })
+
+      expect(postsWithThreading[0]).toBe("Post 1 content\n\n🧵 1/25")
+      expect(postsWithThreading[24]).toBe("Post 25 content\n\n🧵 25/25")
+
+      // Verify threading indicator length is within our reserved space
+      const threadIndicator = "\n\n🧵 25/25"
+      expect(threadIndicator.length).toBeLessThanOrEqual(10)
+    })
+
+    it("should preserve original post content with proper spacing", () => {
+      const originalPost = "This is my original post content with\nmultiple lines\n\nand paragraphs."
+      const expectedWithThreading = originalPost + "\n\n🧵 1/2"
+
+      const posts = [originalPost, "Second post"]
+      const postsWithThreading = posts.map((post, i) => {
+        return post + `\n\n🧵 ${i + 1}/${posts.length}`
+      })
+
+      expect(postsWithThreading[0]).toBe(expectedWithThreading)
+
+      // Ensure we have proper spacing (exactly 2 newlines before thread indicator)
+      expect(postsWithThreading[0]).toContain("\n\n🧵")
+      expect(postsWithThreading[0]).not.toContain("\n\n\n🧵") // No triple newlines
     })
   })
 
