@@ -95,8 +95,10 @@ async function displayResult<T>(result: ApiResponse<T>, options: GlobalOptions, 
   }
 
   if (quiet && result.ok) {
-    if (result.data && typeof result.data === "object") {
-      console.log(JSON.stringify(result.data, null, 2))
+    // Handle both server format (result) and expected format (data)
+    const responseData = (result as any).result || result.data
+    if (responseData && typeof responseData === "object") {
+      console.log(JSON.stringify(responseData, null, 2))
     } else if (result.message) {
       console.log(result.message)
     }
@@ -114,8 +116,26 @@ async function displayResult<T>(result: ApiResponse<T>, options: GlobalOptions, 
     if (result.message) {
       content.push(`Message: ${result.message}`)
     }
-    if (result.data) {
-      content.push(`Data: ${JSON.stringify(result.data, null, 2)}`)
+
+    // Handle both server format (result) and expected format (data)
+    const responseData = (result as any).result || result.data
+    if (responseData) {
+      // Special handling for social media results
+      if (title?.includes("Social Media") && responseData.networks) {
+        content.push("") // Add spacing
+        for (const [network, posts] of Object.entries(responseData.networks)) {
+          content.push(chalk.cyan(`${network.toUpperCase()}:`))
+          const postArray = posts as string[]
+          postArray.forEach((post, index) => {
+            content.push(chalk.gray(`Post ${index + 1}:`))
+            content.push(chalk.white(post))
+            if (index < postArray.length - 1) content.push("") // Add spacing between posts
+          })
+          content.push("") // Add spacing between networks
+        }
+      } else {
+        content.push(`Data: ${JSON.stringify(responseData, null, 2)}`)
+      }
     }
   } else {
     content.push(statusColor("Success: false"))
