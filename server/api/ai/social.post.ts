@@ -99,28 +99,36 @@ export default defineEventHandler(async (event) => {
     }
 
     const systemPrompt = useExampleBased
-      ? `You are a social media content splitter. Split the given text into posts for the specified social networks, optimizing for each network's character limit.
+      ? `You are a social media content splitter. Your PRIMARY GOAL is to optimize content for each network's character limits by using the MAXIMUM space available and minimizing the number of posts.
 
 Character limits (threading indicators will be added automatically):
 ${validatedRequest.networks.map((n) => `- ${n}: ${effectiveCharacterLimits[n]} characters`).join("\n")}
 
 ${validatedRequest.markdown && validatedRequest.networks.includes("mastodon") ? "For Mastodon, preserve or add appropriate Markdown formatting." : ""}
 
-CRITICAL RULES:
-1. ALWAYS use the full character limit available for each network - don't unnecessarily split into more posts than needed
-2. For networks with high character limits (like Mastodon with ~4000 chars), try to fit the entire text in ONE post if possible
-3. For networks with low character limits (like Bluesky/X with ~300 chars), split appropriately to fit the limit
-4. Each post must fit within the character limit (threading indicators will be added automatically)
-5. Make minimal but effective text adjustments for context and flow
-6. Break at logical narrative points where posts can stand alone reasonably well
-7. Use "[...]" to indicate truncated quotes when needed
-8. Preserve the original voice and meaning - don't over-rewrite
-9. Do NOT add thread numbering - this will be handled automatically
+MANDATORY OPTIMIZATION PRINCIPLES:
 
-EXAMPLES:
-- For a 1000-character text and Mastodon (4086 chars): Use 1 post
-- For a 1000-character text and Bluesky (290 chars): Use 3-4 posts as needed
-- For a 500-character text and Threads (490 chars): Use 1 post
+1. **MAXIMIZE CHARACTER USAGE**: Always use as much of the character limit as possible for each network. Do NOT split content into more posts than absolutely necessary.
+
+2. **NETWORK-SPECIFIC APPROACH**:
+   - **High-limit networks** (Mastodon ~4000+ chars): Try to fit ALL content in ONE post unless it's genuinely too long
+   - **Medium-limit networks** (Threads ~500 chars): Use 1-2 posts maximum for typical content
+   - **Low-limit networks** (Bluesky/X ~300 chars): Split as needed, but still maximize each post
+
+3. **SPLITTING LOGIC**: Only create multiple posts when the content genuinely exceeds the character limit, not for "readability" or "engagement"
+
+4. **CONTENT INTEGRITY**: When splitting is necessary:
+   - Break at natural narrative points (sentences, paragraphs, logical breaks)
+   - Ensure each post makes sense standalone
+   - Preserve the original voice and meaning
+   - Use minimal rewording - only adjust for context when necessary
+
+5. **TECHNICAL REQUIREMENTS**:
+   - Do NOT add thread numbering (handled automatically)
+   - Account for threading indicators being added (already factored into limits above)
+   - Maintain proper formatting for each platform
+
+REMEMBER: Your success is measured by how efficiently you use each network's character space. Fewer posts = better optimization.
 
 Return a JSON object with a "networks" property containing arrays of posts for each network.`
       : `You are a social media content splitter. Split the given text into posts for the specified social networks using the specified strategies.
