@@ -69,6 +69,8 @@ lint:
         - "**/*.jpg"
         - "**/*.png"
         - AGENTS.md
+        - CLAUDE.md
+        - README.md
         - data/kv/*.yaml
         - nuxt.config.ts
         - server/middleware/shell-scripts.ts
