@@ -164,10 +164,16 @@ Return a JSON object with a "networks" property containing arrays of posts for e
           json_schema: jsonSchema
         },
         max_tokens: 4096
-      })) as { response: string }
+      })) as { response: string | object }
 
-      // Parse the AI response
-      const aiResponse = JSON.parse(result.response)
+      // Handle AI response - it might be already parsed or need parsing
+      let aiResponse: { networks: Record<string, string[]> }
+      if (typeof result.response === "string") {
+        aiResponse = JSON.parse(result.response)
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        aiResponse = result.response as any
+      }
 
       // Validate that all requested networks are present
       for (const network of validatedRequest.networks) {
@@ -179,7 +185,7 @@ Return a JSON object with a "networks" property containing arrays of posts for e
       // Add threading indicators for multi-post threads
       for (const network of validatedRequest.networks) {
         const posts = aiResponse.networks[network]
-        if (posts.length > 1) {
+        if (posts && posts.length > 1) {
           // Add threading indicators to each post
           for (let i = 0; i < posts.length; i++) {
             const postNumber = i + 1
