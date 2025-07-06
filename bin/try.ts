@@ -309,10 +309,8 @@ aiTicketCommand
   })
 
 // AI Social Commands
-const aiSocialCommand = aiCommand.command("social").description("AI-powered social media text splitting")
-
-aiSocialCommand
-  .command("split <text>")
+aiCommand
+  .command("social [text]")
   .description("Split text into social media posts")
   .option(
     "-n, --networks <networks>",
@@ -325,16 +323,31 @@ aiSocialCommand
     "Comma-separated splitting strategies (optional; uses example-based approach if not provided)"
   )
   .action(async (text, cmdOptions, command) => {
-    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
+    const options = command.parent?.parent?.opts() as GlobalOptions
     const config = await createConfig(options, "ai:social")
     validateToken(config, "ai:social", options.auth || false)
+
+    // Read from STDIN if no text parameter provided
+    let inputText = text
+    if (!inputText) {
+      const chunks: Buffer[] = []
+      for await (const chunk of process.stdin) {
+        chunks.push(chunk)
+      }
+      inputText = Buffer.concat(chunks).toString().trim()
+
+      if (!inputText) {
+        console.error(chalk.red("❌ No text provided via parameter or STDIN"))
+        process.exit(1)
+      }
+    }
 
     const networks = cmdOptions.networks.split(",").map((n: string) => n.trim())
     const strategies = cmdOptions.strategies ? cmdOptions.strategies.split(",").map((s: string) => s.trim()) : undefined
 
     const adapter = new AIAdapter(config)
     const result = await withSpinner(
-      adapter.splitTextForSocial(text, networks, {
+      adapter.splitTextForSocial(inputText, networks, {
         markdown: cmdOptions.markdown,
         strategies
       }),
@@ -505,7 +518,7 @@ ${chalk.bold("Available Commands:")}
 ${chalk.cyan("AI Operations:")}
   bun try ai alt url <imageUrl>          Generate alt-text from image URL
   bun try ai alt file <filePath>         Generate alt-text from local image file
-  bun try ai social split "text"         Split text into social media posts
+  bun try ai social "text"               Split text into social media posts
   bun try ai ticket title --description "text" [--image file.png]    Generate ticket title
   bun try ai ticket description "title"          Generate ticket description from title
   bun try ai ticket enrich "title" --description "text" [--image file.png]    Enrich ticket description
@@ -536,7 +549,7 @@ ${chalk.bold("Examples:")}
   ${chalk.cyan("# Authenticated endpoints (requires token)")}
   bun try --auth ai alt url "https://example.com/image.jpg"     # Auto-generate token
   bun try --token "eyJ..." ai alt file "./image.png"           # Use provided token
-  bun try --auth ai social split "Long text to split into posts" # Auto-generate token
+  bun try --auth ai social "Long text to split into posts"        # Auto-generate token
   bun try --auth dashboard hacker-news                         # Auto-generate token
 
   ${chalk.cyan("# AI Ticket (public, no authentication)")}
@@ -546,10 +559,12 @@ ${chalk.bold("Examples:")}
   bun try ai ticket enrich "Fix login" --description "Users can't log in" --image "./error.png"
 
   ${chalk.cyan("# AI Social Media (requires authentication)")}
-  bun try --auth ai social split "Your long text here"                                    # Example-based splitting (default)
-  bun try --auth ai social split "Text" --networks "bluesky,mastodon,threads,x"         # All networks
-  bun try --auth ai social split "Text" --markdown --networks "mastodon"                # Markdown for Mastodon
-  bun try --auth ai social split "Text" --strategies "word_boundary,hashtag_preserve"   # Explicit strategies (fallback)
+  bun try --auth ai social "Your long text here"                                        # Example-based splitting (default)
+  bun try --auth ai social "Text" --networks "bluesky,mastodon,threads,x"               # All networks
+  bun try --auth ai social "Text" --markdown --networks "mastodon"                      # Markdown for Mastodon
+  bun try --auth ai social "Text" --strategies "word_boundary,hashtag_preserve"         # Explicit strategies (fallback)
+  echo "Multiline text here" | bun try --auth ai social                                 # Read from STDIN
+  cat longtext.txt | bun try --auth ai social --networks "bluesky"                      # File input via STDIN
 
   ${chalk.cyan("# Environment selection")}
   bun try --local ping                   # Local development
