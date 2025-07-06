@@ -185,7 +185,7 @@ Return a JSON object with a "networks" property containing arrays of posts for e
             const postNumber = i + 1
             const totalPosts = posts.length
             const threadIndicator = `\n\n🧵 ${postNumber}/${totalPosts}`
-            posts[i] = posts[i] + threadIndicator
+            posts[i] += threadIndicator
           }
         }
       }

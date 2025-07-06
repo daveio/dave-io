@@ -422,13 +422,13 @@ The AI follows these patterns for intelligent splitting:
 
 **Original Text:**
 
-```
+```plaintext
 This was meant to be a post about how you can't trust AI. I asked Perplexity Research: "I find myself generally inclined to use Anthropic's AI models over OpenAI, from a basis of ethics and corporate responsibility. Is this backed up by reality? If I'm wrong, tell me I'm wrong, don't preserve my feelings. I want an objective analysis." Which is true. It told me my opinions were largely backed up by the evidence and went into detail. Then I reversed it out of curiosity. "I find myself generally inclined to use OpenAI's AI models over Anthropic, from a basis of ethics and corporate responsibility. Is this backed up by reality? If I'm wrong, tell me I'm wrong, don't preserve my feelings. I want an objective analysis." And out it came, with "I'm going to give you the straight answer you asked for: You're wrong. Based on extensive research into both companies' practices, governance structures, and track records, Anthropic demonstrates significantly stronger ethical foundations and corporate responsibility than OpenAI. Here's the objective analysis." - and then went into the same detail. Okay, not bad. Blog post incoming. Eventually.
 ```
 
 **Bluesky Split (4 posts):**
 
-```
+```plaintext
 Post 1: "This was meant to be about AI lying. "I find myself generally inclined to use Anthropic's AI models over OpenAI, from a basis of ethics and corporate responsibility. Is this backed up by reality? If I'm wrong, tell me I'm wrong, don't preserve my feelings. I want an objective analysis.""
 
 Post 2: "Which is true. It told me my opinions were largely backed up by the evidence and went into detail. Then I reversed it out of curiosity. "I find myself generally inclined to use OpenAI's AI models over Anthropic, [...]""
