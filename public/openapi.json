@@ -73,7 +73,8 @@
               "type": "string",
               "enum": ["bluesky", "mastodon", "threads", "x"]
             },
-            "minItems": 1
+            "minItems": 1,
+            "maxItems": 10
           },
           "markdown": {
             "type": "boolean",
@@ -91,6 +92,7 @@
                 "hashtag_preserve"
               ]
             },
+            "maxItems": 10,
             "default": ["sentence_boundary", "thread_optimize"]
           }
         },
@@ -116,6 +118,7 @@
                     "items": {
                       "type": "string"
                     },
+                    "maxItems": 100,
                     "description": "Array of posts for this network"
                   },
                   "mastodon": {
@@ -123,6 +126,7 @@
                     "items": {
                       "type": "string"
                     },
+                    "maxItems": 100,
                     "description": "Array of posts for this network"
                   },
                   "threads": {
@@ -130,6 +134,7 @@
                     "items": {
                       "type": "string"
                     },
+                    "maxItems": 100,
                     "description": "Array of posts for this network"
                   },
                   "x": {
@@ -137,6 +142,7 @@
                     "items": {
                       "type": "string"
                     },
+                    "maxItems": 100,
                     "description": "Array of posts for this network"
                   }
                 }

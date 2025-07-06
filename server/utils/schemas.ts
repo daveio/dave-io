@@ -421,9 +421,16 @@ export const AiSocialStrategyEnum = z.enum([
 export const AiSocialRequestSchema = z
   .object({
     input: z.string().min(1, "Input text is required"),
-    networks: z.array(AiSocialNetworkEnum).min(1, "At least one network must be specified"),
+    networks: z
+      .array(AiSocialNetworkEnum)
+      .min(1, "At least one network must be specified")
+      .max(10, "Maximum 10 networks allowed"),
     markdown: z.boolean().optional().default(false),
-    strategies: z.array(AiSocialStrategyEnum).optional().default(["sentence_boundary", "thread_optimize"])
+    strategies: z
+      .array(AiSocialStrategyEnum)
+      .max(10, "Maximum 10 strategies allowed")
+      .optional()
+      .default(["sentence_boundary", "thread_optimize"])
   })
   .openapi({
     title: "AI Social Request",
@@ -434,7 +441,10 @@ export const AiSocialResponseSchema = z
   .object({
     ok: z.literal(true),
     result: z.object({
-      networks: z.record(AiSocialNetworkEnum, z.array(z.string()).describe("Array of posts for this network"))
+      networks: z.record(
+        AiSocialNetworkEnum,
+        z.array(z.string()).max(100, "Maximum 100 posts per network").describe("Array of posts for this network")
+      )
     }),
     status: z.object({ message: z.string() }).nullable(),
     error: z.null(),

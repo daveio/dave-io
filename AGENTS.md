@@ -211,7 +211,7 @@ bun jwt init && bun run deploy
 ```
 
 **KV YAML**: `metrics: {ok: 0}` → `metrics:ok = "0"` | AI Social: `ai:social:characters:bluesky = "300"`
-**Linting**: `// eslint-disable-next-line @typescript-eslint/no-explicit-any
+**Linting**: `// eslint-disable-next-line @typescript-eslint/no-explicit-any`
 **Images**: Cloudflare service, BLAKE3 IDs, 4MB limit, global CDN
 **AI Social**: Character limits in KV (`ai:social:characters:{network}`), supports strategies: `sentence_boundary`, `word_boundary`, `paragraph_preserve`, `thread_optimize`, `hashtag_preserve`. Multi-post threads automatically get threading indicators (`🧵 1/3`, `🧵 2/3`, etc.) with 10 chars reserved per post.
 
