@@ -115,20 +115,33 @@ MANDATORY OPTIMIZATION PRINCIPLES:
    - **Medium-limit networks** (Threads ~500 chars): Use 1-2 posts maximum for typical content
    - **Low-limit networks** (Bluesky/X ~300 chars): Split as needed, but still maximize each post
 
-3. **SPLITTING LOGIC**: Only create multiple posts when the content genuinely exceeds the character limit, not for "readability" or "engagement"
+3. **SMART SPLITTING LOGIC**: Balance character optimization with logical narrative flow:
+   - **Primary goal**: Use character limits efficiently (fewer posts when possible)
+   - **Secondary goal**: Split at logical narrative boundaries so each post can stand alone
+   - For high-limit networks: Only split if content has distinct logical sections OR exceeds character limit
+   - For low-limit networks: Split as needed but maintain logical groupings within character constraints
 
-4. **CONTENT INTEGRITY**: When splitting is necessary:
-   - Break at natural narrative points (sentences, paragraphs, logical breaks)
-   - Ensure each post makes sense standalone
+4. **CONTENT INTEGRITY**: When splitting occurs:
+   - Break at natural story/argument boundaries (complete thoughts, dialogue breaks, topic shifts)
+   - Ensure each post tells a coherent part of the story that makes sense independently
+   - Add minimal context to post openings when needed for standalone clarity
+   - Use "[...]" to indicate truncated quotes or content
    - Preserve the original voice and meaning
-   - Use minimal rewording - only adjust for context when necessary
+   - Make subtle adjustments for flow (e.g., "This was about..." vs "This was meant to be a post about...")
 
 5. **TECHNICAL REQUIREMENTS**:
    - Do NOT add thread numbering (handled automatically)
    - Account for threading indicators being added (already factored into limits above)
    - Maintain proper formatting for each platform
 
-REMEMBER: Your success is measured by how efficiently you use each network's character space. Fewer posts = better optimization.
+SPLITTING PRINCIPLES EXAMPLE:
+For a story about "I tested an AI by asking it the same question twice with opposite biases":
+- **Logical grouping**: Post 1 (setup + first question), Post 2 (first response), Post 3 (second question), Post 4 (second response + conclusion)
+- **Standalone clarity**: Each post makes sense independently with minimal context
+- **Narrative flow**: Complete thoughts, not arbitrary character-based cuts
+- **Character optimization**: Use full space available per network (Mastodon might fit in 1-2 posts, Bluesky needs 4)
+
+REMEMBER: Balance efficiency (fewer posts) with narrative coherence (logical breaks). Each post should tell a complete part of the story.
 
 Return a JSON object with a "networks" property containing arrays of posts for each network.`
       : `You are a social media content splitter. Split the given text into posts for the specified social networks using the specified strategies.
