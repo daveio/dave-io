@@ -155,7 +155,7 @@ const tokenId = auth.payload?.jti
 ## Core
 
 - **Response**: Success `{ok: true, result, error: null, status: {message}, timestamp}` | Error `{ok: false, error, status: {message}?, timestamp}`
-- **Environment**: `API_JWT_SECRET`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Bindings: KV(KV), D1(D1), AI, Images
+- **Environment**: `API_JWT_SECRET`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Bindings: KV(KV), D1(D1), AI, Images, BROWSER
 - **CLI**: JWT(`init|create|verify|list|revoke`) | API-Test(`--auth-only|--ai-only`) | Try(`--auth|--token`) | KV(`export|import|list|wipe --local`)
 - **Testing**: Unit(`bun run test|test:ui`) | HTTP(`bun run test:api`) | Remote(`--url https://example.com`)
 
@@ -174,7 +174,7 @@ const tokenId = auth.payload?.jti
 
 ## Setup
 
-**Prerequisites**: Node.js 18+, Bun, Cloudflare Images subscription
+**Prerequisites**: Node.js 22.17.0+, Bun, Cloudflare Images subscription
 
 ```bash
 bun install && bun run dev  # Starts in ~3s
@@ -215,253 +215,57 @@ bun jwt init && bun run deploy
 **Images**: Cloudflare service, BLAKE3 IDs, 4MB limit, global CDN
 **AI Social**: Character limits in KV (`ai:social:characters:{network}`). Uses intelligent example-based splitting by default with minimal rewording, logical breaks, and `[...]` truncation. Optional fallback strategies: `sentence_boundary`, `word_boundary`, `paragraph_preserve`, `thread_optimize`, `hashtag_preserve`. Multi-post threads automatically get threading indicators (`🧵 1/3`, `🧵 2/3`, etc.) with 10 chars reserved per post.
 
-## Performance Guidelines
+## Best Practices
 
-### KV Storage Optimization
+### KV Storage
 
-```typescript
-// Use hierarchical keys for efficient querying
-"metrics:api:ok" // Good: hierarchical
-"metrics:api:tokens:usage" // Good: specific scope
-"user_data_12345" // Bad: flat structure
+- **Keys**: Hierarchical `metrics:api:ok`, kebab-case `auth:token-uuid`
+- **Values**: Simple only, no complex objects
+- **Pattern**: `await kv.put("metrics:api:ok", "42")` ✅ vs `JSON.stringify(object)` ❌
 
-// Simple values only, no complex objects
-await kv.put("metrics:api:ok", "42") // Good: simple value
-await kv.put("user:123", JSON.stringify(userObject)) // Bad: complex object
-```
+### Security (MANDATORY)
 
-### Async Operation Patterns
+- **Input**: Always validate with `RequestSchema.parse()`, use `getValidatedUUID()`, `validateURL()`
+- **Secrets**: Environment variables only, never hardcode
+- **Output**: Log internally, return safe public messages via `createApiError()`
+- **Responses**: Filter sensitive fields before returning
 
-```typescript
-// Non-blocking metrics (fire and forget)
-recordAPIMetricsAsync(event, statusCode) // Good: doesn't block response
-await recordAPIMetrics(event, statusCode) // Bad: blocks response
+### Performance
 
-// Real service calls (no mocks except tests)
-const result = await env.AI.run(model, prompt) // Good: real AI call
-const result = mockAI.generate() // Bad: mock data
-```
+- **Async**: Non-blocking metrics with `recordAPIMetricsAsync()`
+- **Services**: Real calls only (`env.AI.run()`, `env.KV.get()`), no mocks except tests
 
-## Security Standards
+### Code Quality
 
-### Input Validation (MANDATORY)
+- **DRY**: Extract duplicated logic immediately to `server/utils/`
+- **Errors**: Always handle explicitly, never fail silently
+- **Responses**: Use `createApiResponse()` for consistent format
+- **Tests**: Test business logic, skip trivial getters/UI components
 
-```typescript
-// Always validate at API boundaries
-const validated = RequestSchema.parse(await readBody(event))
+### Code Standards
 
-// Use validation helpers
-const uuid = getValidatedUUID(event, "uuid")
-validateURL(imageUrl, "image URL")
+- **JSDoc**: All exported functions need full JSDoc with `@param`, `@returns`, `@throws`
+- **Comments**: Business logic only, not obvious code
+- **Linting**: Use `// eslint-disable-next-line @typescript-eslint/no-explicit-any` when needed
 
-// Never trust external data
-const userInput = sanitizeInput(rawInput)
-```
+## Troubleshooting
 
-### Secret Management
-
-```typescript
-// Environment variables only
-const secret = process.env.API_JWT_SECRET // Good
-const secret = "hardcoded-secret" // Bad: never commit secrets
-
-// Check for default secrets in development
-if (secret === "dev-secret-change-in-production") {
-  console.warn("Using default JWT secret - insecure for production!")
-}
-```
-
-### Output Sanitization
-
-```typescript
-// Never expose internal errors in production
-catch (error) {
-  console.error("Internal error:", error)  // Log for debugging
-  throw createApiError(500, "Internal server error")  // Safe public message
-}
-
-// Don't include sensitive fields in responses
-const publicUser = { id: user.id, name: user.name }  // Good: filtered
-return createApiResponse({ result: user })           // Bad: might expose secrets
-```
-
-## Anti-Patterns (DO NOT DO)
-
-### ❌ Code Quality
-
-```typescript
-// Don't copy-paste code
-if (condition1) {
-  /* same logic */
-}
-if (condition2) {
-  /* same logic */
-}
-
-// Extract to shared utility instead
-const sharedLogic = (condition) => {
-  /* logic */
-}
-```
-
-### ❌ Error Handling
-
-```typescript
-// Don't fail silently
-try {
-  riskyOperation()
-} catch {
-  /* ignored */
-}
-
-// Always handle errors explicitly
-try {
-  riskyOperation()
-} catch (error) {
-  console.error("Operation failed:", error)
-  throw createApiError(500, "Operation failed")
-}
-```
-
-### ❌ Response Format
-
-```typescript
-// Don't return inconsistent formats
-return { success: true, data: result }           // Bad: non-standard
-return { ok: true, result, error: null, ... }   // Good: standard format
-```
-
-### ❌ Testing
-
-```typescript
-// Don't skip tests for business logic
-function calculateTotal(items) {
-  /* complex logic */
-} // Needs tests
-
-// Don't test trivial code
-function getName() {
-  return this.name
-} // Skip testing
-```
-
-## Documentation Requirements
-
-### JSDoc Standards
-
-```typescript
-/**
- * Generate alt-text for images using AI
- * @param imageBuffer - Raw image data
- * @param options - Processing options
- * @returns Promise<string> Generated alt-text
- * @throws {Error} When AI service is unavailable
- */
-export async function generateAltText(imageBuffer: Buffer, options: AltTextOptions): Promise<string>
-```
-
-### Inline Comments
-
-```typescript
-// Use comments for business logic, not obvious code
-const tax = subtotal * 0.1 // 10% tax rate for region
-
-// Don't comment obvious code
-const name = user.name // Gets the user name ← unnecessary
-```
-
-## Troubleshooting Checklist
-
-### Build Failures
-
-```bash
-1. bun run lint:eslint    # Fix code style issues
-2. bun run lint:types    # Fix TypeScript errors
-3. bun run test          # Fix failing tests
-4. Check imports/exports # Resolve module issues
-```
-
-### Runtime Errors
-
-```bash
-1. Check environment variables (API_JWT_SECRET, etc.)
-2. Verify Cloudflare bindings (KV, AI, Images)
-3. Check schema validation errors
-4. Review auth token permissions
-```
-
-### Common Issues
-
-```bash
-"Cannot read file" → Use absolute paths
-"Schema not found" → Check imports in schemas.ts
-"Auth required" → Add requireAuth() call
-"Invalid UUID" → Use getValidatedUUID()
-"AI service unavailable" → Check env.AI binding
-```
+- **Build**: `bun run lint:eslint` → `bun run lint:types` → `bun run test`
+- **Runtime**: Check env vars (`API_JWT_SECRET`), Cloudflare bindings (KV, AI, Images), auth permissions
+- **Common**: Use absolute paths, check schema imports, add `requireAuth()`, use `getValidatedUUID()`
 
 ## AI Social Media Text Splitting
 
-The `/api/ai/social` endpoint intelligently splits long text into social media posts optimized for different networks.
+**Endpoint**: `/api/ai/social` - Splits long text for social networks with character limits in KV (`ai:social:characters:{network}`)
 
-### Dual-Mode Operation
+**Modes**:
 
-**Example-Based Splitting (Default)**: Uses intelligent text adaptation with minimal rewording, logical breaking points, and strategic quote truncation. Each post can stand alone while maintaining thread narrative.
+- **Example-Based (Default)**: Intelligent adaptation, minimal rewording, logical breaks, `[...]` truncation
+- **Strategy-Based**: `sentence_boundary`, `word_boundary`, `paragraph_preserve`, `thread_optimize`, `hashtag_preserve`
 
-**Strategy-Based Splitting (Fallback)**: Uses explicit algorithmic strategies when provided:
+**Features**: Auto threading (`🧵 1/3`), voice preservation, standalone posts, network optimization
 
-- `sentence_boundary` - Split at sentence endings
-- `word_boundary` - Split at word boundaries
-- `paragraph_preserve` - Keep paragraphs intact
-- `thread_optimize` - Optimize for thread continuity
-- `hashtag_preserve` - Keep hashtags with relevant content
-
-### Example-Based Splitting Patterns
-
-The AI follows these patterns for intelligent splitting:
-
-**Original Text:**
-
-```plaintext
-This was meant to be a post about how you can't trust AI. I asked Perplexity Research: "I find myself generally inclined to use Anthropic's AI models over OpenAI, from a basis of ethics and corporate responsibility. Is this backed up by reality? If I'm wrong, tell me I'm wrong, don't preserve my feelings. I want an objective analysis." Which is true. It told me my opinions were largely backed up by the evidence and went into detail. Then I reversed it out of curiosity. "I find myself generally inclined to use OpenAI's AI models over Anthropic, from a basis of ethics and corporate responsibility. Is this backed up by reality? If I'm wrong, tell me I'm wrong, don't preserve my feelings. I want an objective analysis." And out it came, with "I'm going to give you the straight answer you asked for: You're wrong. Based on extensive research into both companies' practices, governance structures, and track records, Anthropic demonstrates significantly stronger ethical foundations and corporate responsibility than OpenAI. Here's the objective analysis." - and then went into the same detail. Okay, not bad. Blog post incoming. Eventually.
-```
-
-**Bluesky Split (4 posts):**
-
-```plaintext
-Post 1: "This was meant to be about AI lying. "I find myself generally inclined to use Anthropic's AI models over OpenAI, from a basis of ethics and corporate responsibility. Is this backed up by reality? If I'm wrong, tell me I'm wrong, don't preserve my feelings. I want an objective analysis.""
-
-Post 2: "Which is true. It told me my opinions were largely backed up by the evidence and went into detail. Then I reversed it out of curiosity. "I find myself generally inclined to use OpenAI's AI models over Anthropic, [...]""
-
-Post 3: ""I'm going to give you the straight answer you asked for: You're wrong. Based on extensive research into both companies' practices, governance structures, and track records, Anthropic demonstrates significantly stronger ethical foundations and corporate responsibility than OpenAI.""
-
-Post 4: "Okay, not bad. Blog post incoming. Eventually."
-```
-
-### Key Principles
-
-1. **Minimal Rewording**: Make only essential adjustments for context and flow
-2. **Logical Breaks**: Split at narrative points where posts can stand alone
-3. **Quote Truncation**: Use `[...]` to indicate truncated quotes when needed
-4. **Context Preservation**: Slightly adjust openings to provide necessary context
-5. **Voice Preservation**: Maintain original author's voice and meaning
-6. **Threading Indicators**: Automatically added (`🧵 1/3`, `🧵 2/3`, etc.) with 10 chars reserved
-
-### Usage
-
-```bash
-# Example-based splitting (default)
-bun try --auth ai social split "Your long text here"
-
-# Strategy-based splitting (explicit fallback)
-bun try --auth ai social split "Text" --strategies "word_boundary,hashtag_preserve"
-
-# Multiple networks
-bun try --auth ai social split "Text" --networks "bluesky,mastodon,threads,x"
-
-# Markdown formatting for Mastodon
-bun try --auth ai social split "Text" --markdown --networks "mastodon"
-```
+**Usage**: `bun try --auth ai social split "text" --networks "bluesky,mastodon"`
 
 ## Immediate Plans
 
