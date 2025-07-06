@@ -105,6 +105,7 @@ Character limits (threading indicators will be added automatically):
 ${validatedRequest.networks.map((n) => `- ${n}: ${effectiveCharacterLimits[n]} characters`).join("\n")}
 
 ${validatedRequest.markdown && validatedRequest.networks.includes("mastodon") ? "For Mastodon, preserve or add appropriate Markdown formatting." : ""}
+${validatedRequest.networks.includes("threads") ? "For Threads, you can use basic formatting like **bold** and *italic* when appropriate." : ""}
 
 MANDATORY OPTIMIZATION PRINCIPLES:
 
@@ -139,7 +140,7 @@ For a story about "I tested an AI by asking it the same question twice with oppo
 - **Logical grouping**: Post 1 (setup + first question), Post 2 (first response), Post 3 (second question), Post 4 (second response + conclusion)
 - **Standalone clarity**: Each post makes sense independently with minimal context
 - **Narrative flow**: Complete thoughts, not arbitrary character-based cuts
-- **Character optimization**: Use full space available per network (Mastodon might fit in 1-2 posts, Bluesky needs 4)
+- **Character optimization**: Use full space available per network (Mastodon might fit in 1-2 posts, Threads in 2-3 posts, Bluesky needs 4)
 
 REMEMBER: Balance efficiency (fewer posts) with narrative coherence (logical breaks). Each post should tell a complete part of the story.
 
