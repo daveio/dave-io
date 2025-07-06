@@ -136,7 +136,7 @@ const tokenId = auth.payload?.jti
 - **Methods**: `Authorization: Bearer <jwt>` + `?token=<jwt>`
 - **JWT**: `{sub, iat, exp?, jti?}` | **Permissions**: `category:resource` (parent grants child) | **Categories**: `api`, `ai`, `dashboard`, `admin`, `*`
 - **Public**: `/api/ping`, `/api/image/optimise`, `/go/{slug}`, `/api/ai/ticket/*`
-- **Protected**: `/api/ai/alt` (`ai:alt`+), `/api/token/{uuid}/*` (`api:token`+)
+- **Protected**: `/api/ai/alt` (`ai:alt`+), `/api/ai/social` (`ai:social`+), `/api/token/{uuid}/*` (`api:token`+)
 
 ## Breaking Changes
 
@@ -150,6 +150,7 @@ const tokenId = auth.payload?.jti
 - **Images**: Cloudflare Images service, BLAKE3 IDs, global CDN
 - **KV**: Individual keys vs JSON blob, hierarchical colon-separated, YAML anchors
 - **Redirects**: Fixed `/go/*` routes to bypass client-side routing - links now redirect properly on first click instead of requiring a page refresh
+- **AI Social**: New `/api/ai/social` endpoint for splitting text into social media posts using `@cf/meta/llama-4-scout-17b-16e-instruct` with JSON schema support
 
 ## Core
 
@@ -188,6 +189,7 @@ curl http://localhost:3000/api/ping  # Status
 curl -H "Authorization: Bearer <token>" "/api/ai/alt?url=https://example.com/image.jpg"  # Alt-text via URL
 curl -X POST -F "image=@path/to/image.jpg" -H "Authorization: Bearer <token>" http://localhost:3000/api/ai/alt  # Alt-text via form
 curl -X POST -d '{"description": "Fix bug"}' /api/ai/ticket/title  # AI title (public)
+curl -X POST -H "Authorization: Bearer <token>" -d '{"input": "Long text...", "networks": ["bluesky", "mastodon"]}' /api/ai/social  # Split text
 curl -X POST -d '{"image": "<base64>", "quality": 80}' /api/image/optimise  # Optimize via JSON
 curl -F "image=@path/to/image.jpg" -F "quality=80" http://localhost:3000/api/image/optimise  # Optimize via form
 ```
@@ -208,9 +210,10 @@ wrangler kv:namespace create KV && wrangler d1 create NEXT_API_AUTH_METADATA
 bun jwt init && bun run deploy
 ```
 
-**KV YAML**: `metrics: {ok: 0}` → `metrics:ok = "0"`
+**KV YAML**: `metrics: {ok: 0}` → `metrics:ok = "0"` | AI Social: `ai:social:characters:bluesky = "300"`
 **Linting**: `// eslint-disable-next-line @typescript-eslint/no-explicit-any
 **Images**: Cloudflare service, BLAKE3 IDs, 4MB limit, global CDN
+**AI Social**: Character limits in KV (`ai:social:characters:{network}`), supports strategies: `sentence_boundary`, `word_boundary`, `paragraph_preserve`, `thread_optimize`, `hashtag_preserve`
 
 ## Performance Guidelines
 

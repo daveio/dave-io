@@ -102,3 +102,9 @@ metrics:
 
 # Redirect mappings (slug -> URL)
 redirect: *redirects
+
+# AI Social character limits
+ai:social:characters:bluesky: "300"
+ai:social:characters:mastodon: "4096"
+ai:social:characters:threads: "500"
+ai:social:characters:x: "280"

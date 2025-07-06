@@ -407,6 +407,44 @@ export const AiTicketEnrichResponseSchema = z.object({
   timestamp: z.string()
 })
 
+// AI Social schemas
+export const AiSocialNetworkEnum = z.enum(["bluesky", "mastodon", "threads", "x"])
+
+export const AiSocialStrategyEnum = z.enum([
+  "sentence_boundary",
+  "word_boundary",
+  "paragraph_preserve",
+  "thread_optimize",
+  "hashtag_preserve"
+])
+
+export const AiSocialRequestSchema = z
+  .object({
+    input: z.string().min(1, "Input text is required"),
+    networks: z.array(AiSocialNetworkEnum).min(1, "At least one network must be specified"),
+    markdown: z.boolean().optional().default(false),
+    strategies: z.array(AiSocialStrategyEnum).optional().default(["sentence_boundary", "thread_optimize"])
+  })
+  .openapi({
+    title: "AI Social Request",
+    description: "Request to split text into social media posts"
+  })
+
+export const AiSocialResponseSchema = z
+  .object({
+    ok: z.literal(true),
+    result: z.object({
+      networks: z.record(AiSocialNetworkEnum, z.array(z.string()).describe("Array of posts for this network"))
+    }),
+    status: z.object({ message: z.string() }).nullable(),
+    error: z.null(),
+    timestamp: z.string()
+  })
+  .openapi({
+    title: "AI Social Response",
+    description: "Response containing split text for each social network"
+  })
+
 // Export commonly used types
 export type ApiSuccessResponse = z.infer<typeof ApiSuccessResponseSchema>
 export type ApiErrorResponse = z.infer<typeof ApiErrorResponseSchema>
@@ -435,6 +473,10 @@ export type AiTicketDescriptionRequest = z.infer<typeof AiTicketDescriptionReque
 export type AiTicketDescriptionResponse = z.infer<typeof AiTicketDescriptionResponseSchema>
 export type AiTicketEnrichRequest = z.infer<typeof AiTicketEnrichRequestSchema>
 export type AiTicketEnrichResponse = z.infer<typeof AiTicketEnrichResponseSchema>
+export type AiSocialNetwork = z.infer<typeof AiSocialNetworkEnum>
+export type AiSocialStrategy = z.infer<typeof AiSocialStrategyEnum>
+export type AiSocialRequest = z.infer<typeof AiSocialRequestSchema>
+export type AiSocialResponse = z.infer<typeof AiSocialResponseSchema>
 
 // New KV schema types
 export type KVTimeMetrics = z.infer<typeof KVTimeMetricsSchema>
