@@ -308,6 +308,40 @@ aiTicketCommand
     await displayResult(result, options, "AI Ticket Description Enrichment")
   })
 
+// AI Social Commands
+const aiSocialCommand = aiCommand.command("social").description("AI-powered social media text splitting")
+
+aiSocialCommand
+  .command("split <text>")
+  .description("Split text into social media posts")
+  .option(
+    "-n, --networks <networks>",
+    "Comma-separated list of networks (bluesky,mastodon,threads,x)",
+    "bluesky,mastodon"
+  )
+  .option("-m, --markdown", "Enable markdown formatting for Mastodon", false)
+  .option("-s, --strategies <strategies>", "Comma-separated splitting strategies", "sentence_boundary,thread_optimize")
+  .action(async (text, cmdOptions, command) => {
+    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
+    const config = await createConfig(options, "ai:social")
+    validateToken(config, "ai:social", options.auth || false)
+
+    const networks = cmdOptions.networks.split(",").map((n: string) => n.trim())
+    const strategies = cmdOptions.strategies.split(",").map((s: string) => s.trim())
+
+    const adapter = new AIAdapter(config)
+    const result = await withSpinner(
+      adapter.splitTextForSocial(text, networks, {
+        markdown: cmdOptions.markdown,
+        strategies
+      }),
+      `Splitting text for ${networks.join(", ")}`,
+      options
+    )
+
+    await displayResult(result, options, "AI Social Media Text Splitting")
+  })
+
 // Image Commands
 const imageCommand = program.command("image").description("Image optimisation operations")
 const imageOptimiseCommand = imageCommand.command("optimise").description("Optimise images for web")
@@ -468,6 +502,7 @@ ${chalk.bold("Available Commands:")}
 ${chalk.cyan("AI Operations:")}
   bun try ai alt url <imageUrl>          Generate alt-text from image URL
   bun try ai alt file <filePath>         Generate alt-text from local image file
+  bun try ai social split "text"         Split text into social media posts
   bun try ai ticket title --description "text" [--image file.png]    Generate ticket title
   bun try ai ticket description "title"          Generate ticket description from title
   bun try ai ticket enrich "title" --description "text" [--image file.png]    Enrich ticket description
@@ -498,6 +533,7 @@ ${chalk.bold("Examples:")}
   ${chalk.cyan("# Authenticated endpoints (requires token)")}
   bun try --auth ai alt url "https://example.com/image.jpg"     # Auto-generate token
   bun try --token "eyJ..." ai alt file "./image.png"           # Use provided token
+  bun try --auth ai social split "Long text to split into posts" # Auto-generate token
   bun try --auth dashboard hacker-news                         # Auto-generate token
 
   ${chalk.cyan("# AI Ticket (public, no authentication)")}
@@ -505,6 +541,12 @@ ${chalk.bold("Examples:")}
   bun try ai ticket title --image "./screenshot.png"
   bun try ai ticket description "Fix login authentication"
   bun try ai ticket enrich "Fix login" --description "Users can't log in" --image "./error.png"
+
+  ${chalk.cyan("# AI Social Media (requires authentication)")}
+  bun try --auth ai social split "Your long text here"                                    # Default: bluesky,mastodon
+  bun try --auth ai social split "Text" --networks "bluesky,mastodon,threads,x"         # All networks
+  bun try --auth ai social split "Text" --markdown --networks "mastodon"                # Markdown for Mastodon
+  bun try --auth ai social split "Text" --strategies "word_boundary,hashtag_preserve"   # Custom strategies
 
   ${chalk.cyan("# Environment selection")}
   bun try --local ping                   # Local development
@@ -524,7 +566,8 @@ ${chalk.bold("Environment Variables:")}
   ${chalk.yellow("API_JWT_SECRET")}      JWT secret for authentication (required for --auth)
 
 ${chalk.bold("Manual Token Creation:")}
-  ${chalk.green("bun jwt create --sub 'ai:alt' --description 'AI testing'")}
+  ${chalk.green("bun jwt create --sub 'ai:alt' --description 'AI alt-text testing'")}
+  ${chalk.green("bun jwt create --sub 'ai:social' --description 'AI social media testing'")}
   ${chalk.green("bun jwt create --sub 'api:token' --description 'Token management'")}
 `
 )
