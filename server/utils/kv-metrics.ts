@@ -384,7 +384,7 @@ export async function getKVAggregatedTimings(kv: KVNamespace): Promise<Record<st
 /**
  * Helper to detect bot user agents
  */
-export function isBot(userAgent: string): boolean {
+export function isBotUserAgent(userAgent: string): boolean {
   return classifyVisitor(userAgent) === "bot"
 }
 
