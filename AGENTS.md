@@ -213,7 +213,7 @@ bun jwt init && bun run deploy
 **KV YAML**: `metrics: {ok: 0}` → `metrics:ok = "0"` | AI Social: `ai:social:characters:bluesky = "300"`
 **Linting**: `// eslint-disable-next-line @typescript-eslint/no-explicit-any`
 **Images**: Cloudflare service, BLAKE3 IDs, 4MB limit, global CDN
-**AI Social**: Character limits in KV (`ai:social:characters:{network}`). Uses intelligent example-based splitting by default (follows SPLIT-POST.md patterns with minimal rewording, logical breaks, `[...]` truncation). Optional fallback strategies: `sentence_boundary`, `word_boundary`, `paragraph_preserve`, `thread_optimize`, `hashtag_preserve`. Multi-post threads automatically get threading indicators (`🧵 1/3`, `🧵 2/3`, etc.) with 10 chars reserved per post.
+**AI Social**: Character limits in KV (`ai:social:characters:{network}`). Uses intelligent example-based splitting by default with minimal rewording, logical breaks, and `[...]` truncation. Optional fallback strategies: `sentence_boundary`, `word_boundary`, `paragraph_preserve`, `thread_optimize`, `hashtag_preserve`. Multi-post threads automatically get threading indicators (`🧵 1/3`, `🧵 2/3`, etc.) with 10 chars reserved per post.
 
 ## Performance Guidelines
 
@@ -398,6 +398,69 @@ const name = user.name // Gets the user name ← unnecessary
 "Auth required" → Add requireAuth() call
 "Invalid UUID" → Use getValidatedUUID()
 "AI service unavailable" → Check env.AI binding
+```
+
+## AI Social Media Text Splitting
+
+The `/api/ai/social` endpoint intelligently splits long text into social media posts optimized for different networks.
+
+### Dual-Mode Operation
+
+**Example-Based Splitting (Default)**: Uses intelligent text adaptation with minimal rewording, logical breaking points, and strategic quote truncation. Each post can stand alone while maintaining thread narrative.
+
+**Strategy-Based Splitting (Fallback)**: Uses explicit algorithmic strategies when provided:
+
+- `sentence_boundary` - Split at sentence endings
+- `word_boundary` - Split at word boundaries
+- `paragraph_preserve` - Keep paragraphs intact
+- `thread_optimize` - Optimize for thread continuity
+- `hashtag_preserve` - Keep hashtags with relevant content
+
+### Example-Based Splitting Patterns
+
+The AI follows these patterns for intelligent splitting:
+
+**Original Text:**
+
+```
+This was meant to be a post about how you can't trust AI. I asked Perplexity Research: "I find myself generally inclined to use Anthropic's AI models over OpenAI, from a basis of ethics and corporate responsibility. Is this backed up by reality? If I'm wrong, tell me I'm wrong, don't preserve my feelings. I want an objective analysis." Which is true. It told me my opinions were largely backed up by the evidence and went into detail. Then I reversed it out of curiosity. "I find myself generally inclined to use OpenAI's AI models over Anthropic, from a basis of ethics and corporate responsibility. Is this backed up by reality? If I'm wrong, tell me I'm wrong, don't preserve my feelings. I want an objective analysis." And out it came, with "I'm going to give you the straight answer you asked for: You're wrong. Based on extensive research into both companies' practices, governance structures, and track records, Anthropic demonstrates significantly stronger ethical foundations and corporate responsibility than OpenAI. Here's the objective analysis." - and then went into the same detail. Okay, not bad. Blog post incoming. Eventually.
+```
+
+**Bluesky Split (4 posts):**
+
+```
+Post 1: "This was meant to be about AI lying. "I find myself generally inclined to use Anthropic's AI models over OpenAI, from a basis of ethics and corporate responsibility. Is this backed up by reality? If I'm wrong, tell me I'm wrong, don't preserve my feelings. I want an objective analysis.""
+
+Post 2: "Which is true. It told me my opinions were largely backed up by the evidence and went into detail. Then I reversed it out of curiosity. "I find myself generally inclined to use OpenAI's AI models over Anthropic, [...]""
+
+Post 3: ""I'm going to give you the straight answer you asked for: You're wrong. Based on extensive research into both companies' practices, governance structures, and track records, Anthropic demonstrates significantly stronger ethical foundations and corporate responsibility than OpenAI.""
+
+Post 4: "Okay, not bad. Blog post incoming. Eventually."
+```
+
+### Key Principles
+
+1. **Minimal Rewording**: Make only essential adjustments for context and flow
+2. **Logical Breaks**: Split at narrative points where posts can stand alone
+3. **Quote Truncation**: Use `[...]` to indicate truncated quotes when needed
+4. **Context Preservation**: Slightly adjust openings to provide necessary context
+5. **Voice Preservation**: Maintain original author's voice and meaning
+6. **Threading Indicators**: Automatically added (`🧵 1/3`, `🧵 2/3`, etc.) with 10 chars reserved
+
+### Usage
+
+```bash
+# Example-based splitting (default)
+bun try --auth ai social split "Your long text here"
+
+# Strategy-based splitting (explicit fallback)
+bun try --auth ai social split "Text" --strategies "word_boundary,hashtag_preserve"
+
+# Multiple networks
+bun try --auth ai social split "Text" --networks "bluesky,mastodon,threads,x"
+
+# Markdown formatting for Mastodon
+bun try --auth ai social split "Text" --markdown --networks "mastodon"
 ```
 
 ## Immediate Plans
