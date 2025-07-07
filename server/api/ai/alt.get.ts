@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     let _aiSuccess = false
     let _aiErrorType: string | undefined
 
-    const systemPrompt = `You are an expert at creating descriptive, accessible alt text for images. 
+    const systemPrompt = `You are an expert at creating descriptive, accessible alt text for images.
 
 Your task is to analyze the provided image and generate concise, descriptive alt text that:
 1. Describes the main subject and action in the image
@@ -59,6 +59,8 @@ The confidence score should be between 0 and 1, representing how confident you a
         anthropic,
         systemPrompt,
         "Please generate alt text for this image.",
+        3.5,
+        "haiku",
         base64Data,
         mimeType
       )
