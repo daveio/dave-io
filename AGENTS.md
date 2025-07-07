@@ -150,12 +150,13 @@ const tokenId = auth.payload?.jti
 - **Images**: Cloudflare Images service, BLAKE3 IDs, global CDN
 - **KV**: Individual keys vs JSON blob, hierarchical colon-separated, YAML anchors
 - **Redirects**: Fixed `/go/*` routes to bypass client-side routing - links now redirect properly on first click instead of requiring a page refresh
-- **AI Social**: New `/api/ai/social` endpoint for splitting text into social media posts using `@cf/meta/llama-4-scout-17b-16e-instruct` with JSON schema support and automatic threading indicators (`🧵 x/y`). Uses example-based intelligent splitting by default, with strategy-based fallback when explicitly requested.
+- **AI Social**: New `/api/ai/social` endpoint for splitting text into social media posts using Anthropic Claude 4 Sonnet via AI Gateway with automatic threading indicators (`🧵 x/y`). Uses strategy-based intelligent splitting with configurable strategies for optimal text processing.
+- **AI Model Migration**: Migrated `/api/ai/social` from Cloudflare AI Llama model to Anthropic Claude 4 Sonnet via AI Gateway for improved text processing quality and observability.
 
 ## Core
 
 - **Response**: Success `{ok: true, result, error: null, status: {message}, timestamp}` | Error `{ok: false, error, status: {message}?, timestamp}`
-- **Environment**: `API_JWT_SECRET`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Bindings: KV(KV), D1(D1), AI, Images, BROWSER
+- **Environment**: `API_JWT_SECRET`, `ANTHROPIC_API_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Bindings: KV(KV), D1(D1), AI, Images, BROWSER
 - **CLI**: JWT(`init|create|verify|list|revoke`) | API-Test(`--auth-only|--ai-only`) | Try(`--auth|--token`) | KV(`export|import|list|wipe --local`)
 - **Testing**: Unit(`bun run test|test:ui`) | HTTP(`bun run test:api`) | Remote(`--url https://example.com`)
 
@@ -251,19 +252,21 @@ bun jwt init && bun run deploy
 ## Troubleshooting
 
 - **Build**: `bun run lint:eslint` → `bun run lint:types` → `bun run test`
-- **Runtime**: Check env vars (`API_JWT_SECRET`), Cloudflare bindings (KV, AI, Images), auth permissions
+- **Runtime**: Check env vars (`API_JWT_SECRET`, `ANTHROPIC_API_KEY`), Cloudflare bindings (KV, AI, Images), auth permissions
 - **Common**: Use absolute paths, check schema imports, add `requireAuth()`, use `getValidatedUUID()`
 
 ## AI Social Media Text Splitting
 
 **Endpoint**: `/api/ai/social` - Splits long text for social networks with character limits in KV (`ai:social:characters:{network}`)
 
+**AI Model**: Uses Anthropic Claude 4 Sonnet via Cloudflare AI Gateway for intelligent text processing
+
 **Strategy-Based Processing**: Uses configurable splitting strategies with sensible defaults
 
 - **Default strategies**: `["sentence_boundary", "paragraph_preserve"]` (applied when no strategies specified)
 - **Available strategies**: `sentence_boundary`, `word_boundary`, `paragraph_preserve`, `thread_optimize`, `hashtag_preserve`
 
-**Features**: Auto threading (`🧵 1/3`), voice preservation, standalone posts, network optimization
+**Features**: Auto threading (`🧵 1/3`), voice preservation, standalone posts, network optimization, AI Gateway observability
 
 **Usage**: `bun try --auth ai social split "text" --networks "bluesky,mastodon"`
 

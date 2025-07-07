@@ -1,3 +1,4 @@
+import Anthropic from "@anthropic-ai/sdk"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAIAuth } from "~/server/utils/auth-helpers"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
@@ -44,12 +45,20 @@ export default defineEventHandler(async (event) => {
       )
     }
 
-    // Use Cloudflare AI for text splitting
-    const aiModel = "@cf/meta/llama-4-scout-17b-16e-instruct"
-
-    if (!env?.AI) {
-      throw createApiError(503, "AI service not available")
+    // Validate Anthropic API key
+    if (!env?.ANTHROPIC_API_KEY) {
+      throw createApiError(503, "Anthropic API key not available")
     }
+
+    if (!env?.CLOUDFLARE_ACCOUNT_ID) {
+      throw createApiError(503, "Cloudflare account ID not available")
+    }
+
+    // Configure Anthropic SDK with AI Gateway
+    const anthropic = new Anthropic({
+      apiKey: env.ANTHROPIC_API_KEY,
+      baseURL: `https://gateway.ai.cloudflare.com/v1/${env.CLOUDFLARE_ACCOUNT_ID}/ai-dave-io/anthropic`
+    })
 
     let _aiSuccess = false
     let _aiErrorType: string | undefined
@@ -69,28 +78,6 @@ export default defineEventHandler(async (event) => {
     const effectiveCharacterLimits: Record<string, number> = {}
     for (const network of validatedRequest.networks) {
       effectiveCharacterLimits[network] = characterLimits[network] - THREAD_INDICATOR_SPACE
-    }
-
-    // Create JSON schema for structured output
-    const jsonSchema = {
-      type: "object",
-      properties: {
-        networks: {
-          type: "object",
-          properties: Object.fromEntries(
-            validatedRequest.networks.map((network) => [
-              network,
-              {
-                type: "array",
-                items: { type: "string" },
-                description: `Posts for ${network} (max ${effectiveCharacterLimits[network]} chars each, threading indicators added automatically)`
-              }
-            ])
-          ),
-          required: validatedRequest.networks
-        }
-      },
-      required: ["networks"]
     }
 
     const systemPrompt = `You are a social media content splitter. Split the given text into posts for the specified social networks.
@@ -113,31 +100,31 @@ Rules:
 Return a JSON object with a "networks" property containing arrays of posts for each network.`
 
     try {
-      const result = (await env.AI.run(aiModel as "@cf/meta/llama-4-scout-17b-16e-instruct", {
+      const result = await anthropic.messages.create({
+        model: "claude-3-5-sonnet-20241022",
+        max_tokens: 4096,
+        system: systemPrompt,
         messages: [
-          {
-            role: "system",
-            content: systemPrompt
-          },
           {
             role: "user",
             content: validatedRequest.input
           }
-        ],
-        response_format: {
-          type: "json_schema",
-          json_schema: jsonSchema
-        },
-        max_tokens: 4096
-      })) as { response: string }
+        ]
+      })
 
-      // Handle AI response - it might be already parsed or need parsing
+      // Extract text content from Claude's response
+      const textContent = result.content.find((block) => block.type === "text")?.text
+      if (!textContent) {
+        throw new Error("No text content in Claude response")
+      }
+
+      // Parse the JSON response
       let aiResponse: { networks: Record<string, string[]> }
-      if (typeof result.response === "string") {
-        aiResponse = JSON.parse(result.response)
-      } else {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        aiResponse = result.response as any
+      try {
+        aiResponse = JSON.parse(textContent)
+      } catch {
+        console.error("Failed to parse Claude response as JSON:", textContent)
+        throw new Error("Invalid JSON response from Claude")
       }
 
       // Validate that all requested networks are present
@@ -185,10 +172,10 @@ Return a JSON object with a "networks" property containing arrays of posts for e
         error: null
       })
     } catch (error) {
-      console.error("AI processing failed:", error)
+      console.error("Anthropic Claude processing failed:", error)
       _aiSuccess = false
       _aiErrorType = error instanceof Error ? error.name : "UnknownError"
-      throw createApiError(500, "Failed to process text with AI")
+      throw createApiError(500, "Failed to process text with Anthropic Claude")
     }
   } catch (error: unknown) {
     console.error("AI social error:", error)
