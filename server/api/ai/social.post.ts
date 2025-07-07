@@ -140,7 +140,9 @@ For a story about "I tested an AI by asking it the same question twice with oppo
 - **Logical grouping**: Post 1 (setup + first question), Post 2 (first response), Post 3 (second question), Post 4 (second response + conclusion)
 - **Standalone clarity**: Each post makes sense independently with minimal context
 - **Narrative flow**: Complete thoughts, not arbitrary character-based cuts
-- **Character optimization**: Use full space available per network (Mastodon might fit in 1-2 posts, Threads in 2-3 posts, Bluesky needs 4)
+- **Network adaptation**: Different networks will need different post counts based on their character limits - Mastodon might fit the whole story in 1-2 posts, Threads might need 2-3 posts, Bluesky might need all 4 logical sections as separate posts
+
+IMPORTANT: Post counts vary with content length and complexity. Don't target specific numbers - optimize for each network's character limits and logical narrative structure.
 
 REMEMBER: Balance efficiency (fewer posts) with narrative coherence (logical breaks). Each post should tell a complete part of the story.
 
