@@ -131,8 +131,11 @@ async function displayResult<T>(result: ApiResponse<T>, options: GlobalOptions, 
           const postArray = posts as string[]
           postArray.forEach((post, index) => {
             content.push(chalk.gray(`Post ${index + 1}:`))
+            content.push(chalk.white(post.length))
             content.push(chalk.white(post))
-            if (index < postArray.length - 1) content.push("") // Add spacing between posts
+            if (index < postArray.length - 1) {
+              content.push("")
+            } // Add spacing between posts
           })
           content.push("") // Add spacing between networks
         }

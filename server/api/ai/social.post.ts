@@ -80,7 +80,7 @@ export default defineEventHandler(async (event) => {
       effectiveCharacterLimits[network] = characterLimits[network] - THREAD_INDICATOR_SPACE
     }
 
-    const systemPrompt = `You are a social media content splitter. Split the given text into posts for the specified social networks.
+    const systemPrompt = `You are a social media contsent splitter. Split the given text into posts for the specified social networks.
 
 Character limits (threading indicators will be added automatically):
 ${validatedRequest.networks.map((n) => `- ${n}: ${effectiveCharacterLimits[n]} characters`).join("\n")}
@@ -120,12 +120,29 @@ Return a JSON object with a "networks" property containing arrays of posts for e
         throw new Error("No text content in Claude response")
       }
 
+      // Strip out Markdown code blocks and other non-JSON data
+      let cleanedContent = textContent.trim()
+
+      // Remove markdown code blocks (```json...``` or ```...```)
+      // Remove markdown code blocks (```json...``` or ```...```)
+      cleanedContent = cleanedContent.replace(/```(?:json)?[\r\n]?([\s\S]*?)[\r\n]?```/g, "$1")
+
+      // Remove any remaining markdown or extra whitespace
+      cleanedContent = cleanedContent.trim()
+
+      // If there are multiple JSON objects, try to find the first valid one
+      const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/)
+      if (jsonMatch) {
+        cleanedContent = jsonMatch[0]
+      }
+
       // Parse the JSON response
       let aiResponse: { networks: Record<string, string[]> }
       try {
-        aiResponse = JSON.parse(textContent)
+        aiResponse = JSON.parse(cleanedContent)
       } catch {
-        console.error("Failed to parse Claude response as JSON:", textContent)
+        console.error("Failed to parse Claude response as JSON:", cleanedContent)
+        console.error("Original response:", textContent)
         throw new Error("Invalid JSON response from Claude")
       }
 
@@ -145,7 +162,7 @@ Return a JSON object with a "networks" property containing arrays of posts for e
             const postNumber = i + 1
             const totalPosts = posts.length
             const threadIndicator = `\n\n🧵 ${postNumber}/${totalPosts}`
-            posts[i] = posts[i] + threadIndicator
+            posts[i] += threadIndicator
           }
         }
       }
