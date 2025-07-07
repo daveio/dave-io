@@ -124,6 +124,8 @@ async function displayResult<T>(result: ApiResponse<T>, options: GlobalOptions, 
     if (responseData) {
       // Special handling for social media results
       const socialData = responseData as { networks?: Record<string, string[]> }
+      const altTextData = responseData as { alt_text?: string; confidence?: number }
+
       if (title?.includes("Social Media") && socialData.networks) {
         content.push("") // Add spacing
         for (const [network, posts] of Object.entries(socialData.networks)) {
@@ -138,6 +140,17 @@ async function displayResult<T>(result: ApiResponse<T>, options: GlobalOptions, 
             } // Add spacing between posts
           })
           content.push("") // Add spacing between networks
+        }
+      } else if (title?.includes("Alt Text") && altTextData.alt_text) {
+        content.push("") // Add spacing
+        content.push(chalk.cyan("Generated Alt Text:"))
+        content.push(chalk.white(`"${altTextData.alt_text}"`))
+        if (altTextData.confidence !== undefined) {
+          const confidencePercent = (altTextData.confidence * 100).toFixed(1)
+          const confidenceColor =
+            altTextData.confidence >= 0.8 ? chalk.green : altTextData.confidence >= 0.6 ? chalk.yellow : chalk.red
+          content.push("")
+          content.push(chalk.gray("Confidence:"), confidenceColor(`${confidencePercent}%`))
         }
       } else {
         content.push(`Data: ${JSON.stringify(responseData, null, 2)}`)
@@ -279,6 +292,44 @@ aiCommand
     await displayResult(result, options, "AI Social Media Text Splitting")
   })
 
+// AI Alt Text Commands
+const altCommand = aiCommand.command("alt").description("AI alt text generation for images")
+
+altCommand
+  .command("url <imageUrl>")
+  .description("Generate alt text for an image from URL")
+  .action(async (imageUrl, _cmdOptions, command) => {
+    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
+    const config = await createConfig(options, "ai:alt")
+    validateToken(config, "ai:alt", options.auth || false)
+
+    const adapter = new AIAdapter(config)
+    const result = await withSpinner(adapter.generateAltTextFromUrl(imageUrl), `Generating alt text for image`, options)
+
+    await displayResult(result, options, "AI Alt Text Generation")
+  })
+
+altCommand
+  .command("file <imagePath>")
+  .description("Generate alt text for an image file")
+  .action(async (imagePath, _cmdOptions, command) => {
+    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
+    const config = await createConfig(options, "ai:alt")
+    validateToken(config, "ai:alt", options.auth || false)
+
+    const path = await import("node:path")
+    const filename = path.basename(imagePath)
+
+    const adapter = new AIAdapter(config)
+    const result = await withSpinner(
+      adapter.generateAltTextFromFile(imagePath),
+      `Generating alt text for ${filename}`,
+      options
+    )
+
+    await displayResult(result, options, "AI Alt Text Generation")
+  })
+
 // Token Commands
 const tokenCommand = program.command("token").description("Token management operations")
 
@@ -398,6 +449,8 @@ ${chalk.bold("Available Commands:")}
 
 ${chalk.cyan("AI Operations:")}
   bun try ai social "text"               Split text into social media posts
+  bun try ai alt url <imageUrl>          Generate alt text from image URL
+  bun try ai alt file <imagePath>        Generate alt text from image file
 
 ${chalk.cyan("System Status:")}
   bun try ping                           Get comprehensive server status (health, auth, headers)
@@ -428,6 +481,10 @@ ${chalk.bold("Examples:")}
   echo "Multiline text here" | bun try --auth ai social                                 # Read from STDIN
   cat longtext.txt | bun try --auth ai social --networks "bluesky"                      # File input via STDIN
 
+  ${chalk.cyan("# AI Alt Text Generation (requires authentication)")}
+  bun try --auth ai alt url "https://example.com/image.jpg"                             # Generate alt text from URL
+  bun try --auth ai alt file "./path/to/image.png"                                      # Generate alt text from local file
+
   ${chalk.cyan("# Environment selection")}
   bun try --local ping                   # Local development
   bun try --remote ping                  # Remote production [default]
@@ -447,6 +504,7 @@ ${chalk.bold("Environment Variables:")}
 
 ${chalk.bold("Manual Token Creation:")}
   ${chalk.green("bun jwt create --sub 'ai:social' --description 'AI social media testing'")}
+  ${chalk.green("bun jwt create --sub 'ai:alt' --description 'AI alt text generation'")}
   ${chalk.green("bun jwt create --sub 'api:token' --description 'Token management'")}
 `
 )

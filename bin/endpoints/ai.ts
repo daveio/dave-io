@@ -9,8 +9,17 @@ interface SocialResponse {
 }
 
 /**
+ * Response format for AI alt text generation
+ */
+interface AltTextResponse {
+  alt_text: string
+  confidence: number
+}
+
+/**
  * Adapter for AI-powered operations (/api/ai/*)
  * Social operations require 'ai:social' scope or higher for authentication
+ * Alt text operations require 'ai:alt' scope or higher for authentication
  */
 export class AIAdapter extends BaseAdapter {
   constructor(config: RequestConfig = { baseUrl: "http://localhost:3000" }) {
@@ -44,5 +53,26 @@ export class AIAdapter extends BaseAdapter {
       method: "POST",
       body
     })
+  }
+
+  /**
+   * Generate alt text for an image from a URL
+   * @param imageUrl URL of the image to analyze
+   * @returns AI-generated alt text and confidence score
+   */
+  async generateAltTextFromUrl(imageUrl: string): Promise<ApiResponse<AltTextResponse>> {
+    return this.makeRequest("/api/ai/alt", {
+      method: "GET",
+      params: { image: imageUrl }
+    })
+  }
+
+  /**
+   * Generate alt text for an uploaded image file
+   * @param filePath Path to the image file
+   * @returns AI-generated alt text and confidence score
+   */
+  async generateAltTextFromFile(filePath: string): Promise<ApiResponse<AltTextResponse>> {
+    return this.uploadFile("/api/ai/alt", filePath) as Promise<ApiResponse<AltTextResponse>>
   }
 }
