@@ -150,6 +150,7 @@ const tokenId = auth.payload?.jti
 - **Redirects**: Fixed `/go/*` routes to bypass client-side routing - links now redirect properly on first click instead of requiring a page refresh
 - **AI Social**: New `/api/ai/social` endpoint for splitting text into social media posts using Anthropic Claude 4 Sonnet via AI Gateway with automatic threading indicators (`🧵 x/y`). Uses strategy-based intelligent splitting with configurable strategies for optimal text processing.
 - **AI Model Migration**: Migrated `/api/ai/social` from Cloudflare AI Llama model to Anthropic Claude 4 Sonnet via AI Gateway for improved text processing quality and observability.
+- **AI Alt Text**: New `/api/ai/alt` endpoint for generating alt text for images using Anthropic Claude 4 Sonnet via AI Gateway. Supports both GET (with image URL) and POST (with image upload) methods. Includes image size validation and SSRF protection.
 
 ## Core
 
@@ -261,6 +262,61 @@ bun jwt init && bun run deploy
 **Features**: Auto threading (`🧵 1/3`), voice preservation, standalone posts, network optimization, AI Gateway observability
 
 **Usage**: `bun try --auth ai social split "text" --networks "bluesky,mastodon"`
+
+## AI Alt Text Generation
+
+**Endpoints**:
+
+- `GET /api/ai/alt?image=<url>` - Generate alt text from image URL
+- `POST /api/ai/alt` - Generate alt text from uploaded image file
+
+**AI Model**: Uses Anthropic Claude 4 Sonnet via Cloudflare AI Gateway for intelligent image analysis
+
+**Features**:
+
+- **Image URL Processing**: Fetch and analyze images from URLs with SSRF protection
+- **File Upload**: Accept direct image uploads via multipart form data
+- **Size Validation**: Automatic validation against Claude's 5MB limit
+- **Format Detection**: Supports JPEG, PNG, GIF, WebP image formats
+- **Security**: URL validation prevents localhost/private network access
+- **AI Gateway**: Full observability and monitoring via Cloudflare AI Gateway
+
+**Authentication**: Requires `ai:alt` permission
+
+**Response Format**:
+
+```json
+{
+  "ok": true,
+  "result": {
+    "alt_text": "Generated descriptive alt text for the image",
+    "confidence": 0.95
+  },
+  "status": { "message": "Alt text generated successfully" },
+  "error": null,
+  "timestamp": "2025-01-07T..."
+}
+```
+
+**Error Handling**:
+
+- `400`: Invalid image format, malformed URL, or missing image data
+- `413`: Image exceeds 5MB size limit
+- `500`: Claude API failures or processing errors
+- `503`: Missing API keys or service unavailable
+
+**Usage Examples**:
+
+```bash
+# GET with image URL
+curl "https://dave.io/api/ai/alt?image=https://example.com/image.jpg" \
+  -H "Authorization: Bearer <token>"
+
+# POST with file upload
+curl -X POST "https://dave.io/api/ai/alt" \
+  -H "Authorization: Bearer <token>" \
+  -F "image=@/path/to/image.jpg"
+```
 
 ## Immediate Plans
 

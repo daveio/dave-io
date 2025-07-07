@@ -1,6 +1,6 @@
-import Anthropic from "@anthropic-ai/sdk"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAIAuth } from "~/server/utils/auth-helpers"
+import { createAnthropicClient, parseClaudeResponse, sendClaudeMessage } from "~/server/utils/ai-helpers"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
 import { AiSocialRequestSchema } from "~/server/utils/schemas"
 import type { AiSocialNetwork } from "~/server/utils/schemas"
@@ -45,23 +45,8 @@ export default defineEventHandler(async (event) => {
       )
     }
 
-    // Validate Anthropic API key
-    if (!env?.ANTHROPIC_API_KEY) {
-      throw createApiError(503, "Anthropic API key not available")
-    }
-
-    if (!env?.CLOUDFLARE_ACCOUNT_ID) {
-      throw createApiError(503, "Cloudflare account ID not available")
-    }
-
-    // Configure Anthropic SDK with AI Gateway
-    const anthropic = new Anthropic({
-      apiKey: env.ANTHROPIC_API_KEY,
-      baseURL: `https://gateway.ai.cloudflare.com/v1/${env.CLOUDFLARE_ACCOUNT_ID}/ai-dave-io/anthropic`,
-      defaultHeaders: {
-        "cf-aig-authorization": env.AI_GATEWAY_TOKEN || ""
-      }
-    })
+    // Create Anthropic client using shared helper
+    const anthropic = createAnthropicClient(env)
 
     let _aiSuccess = false
     let _aiErrorType: string | undefined
@@ -105,49 +90,11 @@ Rules:
 Return a JSON object with a "networks" property containing arrays of posts for each network.`
 
     try {
-      const result = await anthropic.messages.create({
-        model: "claude-4-sonnet-20250514",
-        max_tokens: 4096,
-        system: systemPrompt,
-        messages: [
-          {
-            role: "user",
-            content: validatedRequest.input
-          }
-        ]
-      })
+      // Send message to Claude using shared helper
+      const textContent = await sendClaudeMessage(anthropic, systemPrompt, validatedRequest.input)
 
-      // Extract text content from Claude's response
-      const textContent = result.content.find((block) => block.type === "text")?.text
-      if (!textContent) {
-        throw new Error("No text content in Claude response")
-      }
-
-      // Strip out Markdown code blocks and other non-JSON data
-      let cleanedContent = textContent.trim()
-
-      // Remove markdown code blocks (```json...``` or ```...```)
-      // Remove markdown code blocks (```json...``` or ```...```)
-      cleanedContent = cleanedContent.replace(/```(?:json)?[\r\n]?([\s\S]*?)[\r\n]?```/g, "$1")
-
-      // Remove any remaining markdown or extra whitespace
-      cleanedContent = cleanedContent.trim()
-
-      // If there are multiple JSON objects, try to find the first valid one
-      const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/)
-      if (jsonMatch) {
-        cleanedContent = jsonMatch[0]
-      }
-
-      // Parse the JSON response
-      let aiResponse: { networks: Record<string, string[]> }
-      try {
-        aiResponse = JSON.parse(cleanedContent)
-      } catch {
-        console.error("Failed to parse Claude response as JSON:", cleanedContent)
-        console.error("Original response:", textContent)
-        throw new Error("Invalid JSON response from Claude")
-      }
+      // Parse Claude's response using shared helper
+      const aiResponse = parseClaudeResponse<{ networks: Record<string, string[]> }>(textContent)
 
       // Validate that all requested networks are present
       for (const network of validatedRequest.networks) {

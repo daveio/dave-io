@@ -26,6 +26,71 @@
       }
     },
     "schemas": {
+      "AiAltRequestGetSchema": {
+        "type": "object",
+        "properties": {
+          "image": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": ["image"],
+        "description": "Request to generate alt text from an image URL",
+        "title": "AI Alt Text GET Request"
+      },
+      "AiAltRequestPostSchema": {
+        "type": "object",
+        "properties": {
+          "image": {
+            "description": "Image file (multipart form data)"
+          }
+        },
+        "description": "Request to generate alt text from an uploaded image file",
+        "title": "AI Alt Text POST Request"
+      },
+      "AiAltResponseSchema": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "enum": [true]
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "alt_text": {
+                "type": "string",
+                "description": "Generated alt text for the image"
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Confidence score for the generated alt text"
+              }
+            },
+            "required": ["alt_text"]
+          },
+          "status": {
+            "type": ["object", "null"],
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": ["message"]
+          },
+          "error": {
+            "type": "null"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": ["ok", "result", "status", "error", "timestamp"],
+        "description": "Response containing generated alt text for an image",
+        "title": "AI Alt Text Response"
+      },
       "AiSocialRequestSchema": {
         "type": "object",
         "properties": {
@@ -2829,6 +2894,353 @@
           },
           "400": {
             "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {},
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/alt": {
+      "post": {
+        "tags": ["AI"],
+        "summary": "Create/Update alt",
+        "description": "Generate descriptive alt-text for images using AI",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [true]
+                    },
+                    "result": {},
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "message", "error", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {},
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {},
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["AI"],
+        "summary": "Get alt",
+        "description": "Generate descriptive alt-text for images using AI",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "_def": {
+                  "unknownKeys": "strip",
+                  "catchall": {
+                    "_def": {
+                      "typeName": "ZodNever"
+                    },
+                    "~standard": {
+                      "version": 1,
+                      "vendor": "zod"
+                    }
+                  },
+                  "typeName": "ZodObject",
+                  "openapi": {
+                    "metadata": {
+                      "title": "AI Alt Text GET Request",
+                      "description": "Request to generate alt text from an image URL"
+                    }
+                  }
+                },
+                "~standard": {
+                  "version": 1,
+                  "vendor": "zod"
+                },
+                "_cached": null
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [true]
+                    },
+                    "result": {},
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "message", "error", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {},
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
             "content": {
               "application/json": {
                 "schema": {

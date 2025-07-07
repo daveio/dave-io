@@ -326,6 +326,41 @@ export const AiSocialResponseSchema = z
     description: "Response containing split text for each social network"
   })
 
+// AI Alt schemas
+export const AiAltRequestGetSchema = z
+  .object({
+    image: z.string().url("Must be a valid image URL")
+  })
+  .openapi({
+    title: "AI Alt Text GET Request",
+    description: "Request to generate alt text from an image URL"
+  })
+
+export const AiAltRequestPostSchema = z
+  .object({
+    image: z.any().describe("Image file (multipart form data)")
+  })
+  .openapi({
+    title: "AI Alt Text POST Request",
+    description: "Request to generate alt text from an uploaded image file"
+  })
+
+export const AiAltResponseSchema = z
+  .object({
+    ok: z.literal(true),
+    result: z.object({
+      alt_text: z.string().describe("Generated alt text for the image"),
+      confidence: z.number().min(0).max(1).optional().describe("Confidence score for the generated alt text")
+    }),
+    status: z.object({ message: z.string() }).nullable(),
+    error: z.null(),
+    timestamp: z.string()
+  })
+  .openapi({
+    title: "AI Alt Text Response",
+    description: "Response containing generated alt text for an image"
+  })
+
 // Export commonly used types
 export type ApiSuccessResponse = z.infer<typeof ApiSuccessResponseSchema>
 export type ApiErrorResponse = z.infer<typeof ApiErrorResponseSchema>
@@ -346,6 +381,9 @@ export type AiSocialNetwork = z.infer<typeof AiSocialNetworkEnum>
 export type AiSocialStrategy = z.infer<typeof AiSocialStrategyEnum>
 export type AiSocialRequest = z.infer<typeof AiSocialRequestSchema>
 export type AiSocialResponse = z.infer<typeof AiSocialResponseSchema>
+export type AiAltRequestGet = z.infer<typeof AiAltRequestGetSchema>
+export type AiAltRequestPost = z.infer<typeof AiAltRequestPostSchema>
+export type AiAltResponse = z.infer<typeof AiAltResponseSchema>
 
 // New KV schema types
 export type KVTimeMetrics = z.infer<typeof KVTimeMetricsSchema>
