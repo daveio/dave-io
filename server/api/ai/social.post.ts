@@ -54,8 +54,11 @@ export default defineEventHandler(async (event) => {
     let _aiSuccess = false
     let _aiErrorType: string | undefined
 
-    // Use strategy-based approach with defaults if no strategies provided
-    const strategies = validatedRequest.strategies || ["sentence_boundary", "paragraph_preserve"]
+    // Use strategy-based approach with defaults if no strategies provided or empty array
+    const strategies =
+      validatedRequest.strategies && validatedRequest.strategies.length > 0
+        ? validatedRequest.strategies
+        : ["sentence_boundary", "paragraph_preserve"]
 
     // Build strategy descriptions for the prompt
     const strategyDescriptions = {
@@ -65,7 +68,9 @@ export default defineEventHandler(async (event) => {
       thread_optimize: "Optimize for thread continuity with numbered posts",
       hashtag_preserve: "Keep hashtags with their relevant content"
     }
-    const selectedStrategies = strategies.map((s) => strategyDescriptions[s]).join(", ")
+    const selectedStrategies = strategies
+      .map((s) => strategyDescriptions[s as keyof typeof strategyDescriptions])
+      .join(", ")
 
     // Calculate effective character limits (reserving space for threading indicators)
     const effectiveCharacterLimits: Record<string, number> = {}

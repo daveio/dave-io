@@ -213,7 +213,7 @@ bun jwt init && bun run deploy
 **KV YAML**: `metrics: {ok: 0}` → `metrics:ok = "0"` | AI Social: `ai:social:characters:bluesky = "300"`
 **Linting**: `// eslint-disable-next-line @typescript-eslint/no-explicit-any`
 **Images**: Cloudflare service, BLAKE3 IDs, 4MB limit, global CDN
-**AI Social**: Character limits in KV (`ai:social:characters:{network}`). Uses intelligent example-based splitting by default with minimal rewording, logical breaks, and `[...]` truncation. Optional fallback strategies: `sentence_boundary`, `word_boundary`, `paragraph_preserve`, `thread_optimize`, `hashtag_preserve`. Multi-post threads automatically get threading indicators (`🧵 1/3`, `🧵 2/3`, etc.) with 10 chars reserved per post.
+**AI Social**: Character limits in KV (`ai:social:characters:{network}`). Uses strategy-based splitting with default strategies `["sentence_boundary", "paragraph_preserve"]`. Available strategies: `sentence_boundary` (split at sentences), `word_boundary` (split at words), `paragraph_preserve` (keep paragraphs intact), `thread_optimize` (optimize threading), `hashtag_preserve` (keep hashtags with content). Multi-post threads automatically get threading indicators (`🧵 1/3`, `🧵 2/3`, etc.) with 10 chars reserved per post.
 
 ## Best Practices
 
@@ -258,10 +258,10 @@ bun jwt init && bun run deploy
 
 **Endpoint**: `/api/ai/social` - Splits long text for social networks with character limits in KV (`ai:social:characters:{network}`)
 
-**Modes**:
+**Strategy-Based Processing**: Uses configurable splitting strategies with sensible defaults
 
-- **Example-Based (Default)**: Intelligent adaptation, minimal rewording, logical breaks, `[...]` truncation
-- **Strategy-Based**: `sentence_boundary`, `word_boundary`, `paragraph_preserve`, `thread_optimize`, `hashtag_preserve`
+- **Default strategies**: `["sentence_boundary", "paragraph_preserve"]` (applied when no strategies specified)
+- **Available strategies**: `sentence_boundary`, `word_boundary`, `paragraph_preserve`, `thread_optimize`, `hashtag_preserve`
 
 **Features**: Auto threading (`🧵 1/3`), voice preservation, standalone posts, network optimization
 

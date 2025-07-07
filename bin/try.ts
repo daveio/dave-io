@@ -340,7 +340,7 @@ aiCommand
   .option("-m, --markdown", "Enable markdown formatting for Mastodon", false)
   .option(
     "-s, --strategies <strategies>",
-    "Comma-separated splitting strategies (optional; uses example-based approach if not provided)"
+    "Comma-separated splitting strategies (optional; defaults to sentence_boundary,paragraph_preserve)"
   )
   .action(async (text, cmdOptions, command) => {
     const options = command.parent?.parent?.opts() as GlobalOptions
@@ -579,10 +579,10 @@ ${chalk.bold("Examples:")}
   bun try ai ticket enrich "Fix login" --description "Users can't log in" --image "./error.png"
 
   ${chalk.cyan("# AI Social Media (requires authentication)")}
-  bun try --auth ai social "Your long text here"                                        # Example-based splitting (default)
+  bun try --auth ai social "Your long text here"                                        # Default strategies (sentence_boundary,paragraph_preserve)
   bun try --auth ai social "Text" --networks "bluesky,mastodon,threads,x"               # All networks
   bun try --auth ai social "Text" --markdown --networks "mastodon"                      # Markdown for Mastodon
-  bun try --auth ai social "Text" --strategies "word_boundary,hashtag_preserve"         # Explicit strategies (fallback)
+  bun try --auth ai social "Text" --strategies "word_boundary,hashtag_preserve"         # Custom strategies
   echo "Multiline text here" | bun try --auth ai social                                 # Read from STDIN
   cat longtext.txt | bun try --auth ai social --networks "bluesky"                      # File input via STDIN
 

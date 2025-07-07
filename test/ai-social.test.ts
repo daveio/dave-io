@@ -249,29 +249,30 @@ describe("AI Social Endpoint", () => {
 
       const selectedStrategies = strategies.map((s) => strategyDescriptions[s]).join(", ")
 
-      const expectedPrompt = `You are a social media content splitter. Split the given text into posts for the specified social networks.
+      const expectedPrompt = `You are a social media content splitter. Split the given text into posts for the specified social networks using the specified strategies.
 
-Character limits:
-- bluesky: 300 characters
-- mastodon: 4096 characters
+Character limits (threading indicators will be added automatically):
+- bluesky: 290 characters
+- mastodon: 4086 characters
 
-Splitting strategies to use: ${selectedStrategies}
+Splitting strategies: ${selectedStrategies}
 
-${markdown && networks.includes("mastodon") ? "For Mastodon, preserve or add appropriate Markdown formatting." : ""}
+
 
 Rules:
-1. Each post must fit within the character limit
-2. Maintain the flow and coherence of the original content
-3. Don't cut words in the middle
-4. For threads, number the posts (e.g., "1/5", "2/5")
-5. Preserve important context in each post
+1. Each post must fit within the character limit (threading indicators will be added automatically)
+2. Use the full character space available for each network - don't create unnecessary splits
+3. Apply the specified splitting strategies to maintain content coherence
+4. Don't cut words in the middle unless using word_boundary strategy
+5. Preserve important context in each post so they can stand alone reasonably well
 6. Keep hashtags with relevant content when possible
+7. Do NOT add thread numbering - this will be handled automatically
 
 Return a JSON object with a "networks" property containing arrays of posts for each network.`
 
-      expect(expectedPrompt).toContain("Character limits:")
-      expect(expectedPrompt).toContain("bluesky: 300 characters")
-      expect(expectedPrompt).toContain("mastodon: 4096 characters")
+      expect(expectedPrompt).toContain("Character limits (threading indicators will be added automatically):")
+      expect(expectedPrompt).toContain("bluesky: 290 characters")
+      expect(expectedPrompt).toContain("mastodon: 4086 characters")
       expect(expectedPrompt).toContain(selectedStrategies)
     })
 
@@ -402,12 +403,15 @@ Return a JSON object with a "networks" property containing arrays of posts for e
       expect(result.success).toBe(true)
 
       if (result.success) {
-        // No strategies provided - should use example-based approach
+        // No strategies provided - should use default strategies
         expect(result.data?.strategies).toBeUndefined()
 
         // Simulate the logic from the endpoint
-        const useExampleBased = !result.data?.strategies || result.data.strategies.length === 0
-        expect(useExampleBased).toBe(true)
+        const strategies =
+          result.data?.strategies && result.data.strategies.length > 0
+            ? result.data.strategies
+            : ["sentence_boundary", "paragraph_preserve"]
+        expect(strategies).toEqual(["sentence_boundary", "paragraph_preserve"])
       }
     })
 
@@ -422,16 +426,19 @@ Return a JSON object with a "networks" property containing arrays of posts for e
       expect(result.success).toBe(true)
 
       if (result.success) {
-        // Strategies provided - should use strategy-based approach
+        // Strategies provided - should use specified strategies
         expect(result.data?.strategies).toEqual(["word_boundary", "hashtag_preserve"])
 
         // Simulate the logic from the endpoint
-        const useExampleBased = !result.data?.strategies || result.data.strategies.length === 0
-        expect(useExampleBased).toBe(false)
+        const strategies =
+          result.data?.strategies && result.data.strategies.length > 0
+            ? result.data.strategies
+            : ["sentence_boundary", "paragraph_preserve"]
+        expect(strategies).toEqual(["word_boundary", "hashtag_preserve"])
       }
     })
 
-    it("should use example-based approach when empty strategies array provided", () => {
+    it("should use default strategies when empty strategies array provided", () => {
       const request = {
         input: "Test text to split",
         networks: ["bluesky" as const],
@@ -442,12 +449,15 @@ Return a JSON object with a "networks" property containing arrays of posts for e
       expect(result.success).toBe(true)
 
       if (result.success) {
-        // Empty strategies array - should use example-based approach
+        // Empty strategies array - should use default strategies
         expect(result.data?.strategies).toEqual([])
 
         // Simulate the logic from the endpoint
-        const useExampleBased = !result.data?.strategies || result.data.strategies.length === 0
-        expect(useExampleBased).toBe(true)
+        const strategies =
+          result.data?.strategies && result.data.strategies.length > 0
+            ? result.data.strategies
+            : ["sentence_boundary", "paragraph_preserve"]
+        expect(strategies).toEqual(["sentence_boundary", "paragraph_preserve"])
       }
     })
 
