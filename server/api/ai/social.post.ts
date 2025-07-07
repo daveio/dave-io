@@ -54,12 +54,6 @@ export default defineEventHandler(async (event) => {
     let _aiSuccess = false
     let _aiErrorType: string | undefined
 
-    // Use strategy-based approach with defaults if no strategies provided or empty array
-    const strategies =
-      validatedRequest.strategies && validatedRequest.strategies.length > 0
-        ? validatedRequest.strategies
-        : ["sentence_boundary", "paragraph_preserve"]
-
     // Build strategy descriptions for the prompt
     const strategyDescriptions = {
       sentence_boundary: "Split at sentence endings to maintain complete thoughts",
@@ -68,9 +62,8 @@ export default defineEventHandler(async (event) => {
       thread_optimize: "Optimize for thread continuity with numbered posts",
       hashtag_preserve: "Keep hashtags with their relevant content"
     }
-    const selectedStrategies = strategies
-      .map((s) => strategyDescriptions[s as keyof typeof strategyDescriptions])
-      .join(", ")
+
+    const selectedStrategies = validatedRequest.strategies.map((s) => strategyDescriptions[s]).join(", ")
 
     // Calculate effective character limits (reserving space for threading indicators)
     const effectiveCharacterLimits: Record<string, number> = {}
@@ -100,24 +93,22 @@ export default defineEventHandler(async (event) => {
       required: ["networks"]
     }
 
-    const systemPrompt = `You are a social media content splitter. Split the given text into posts for the specified social networks using the specified strategies.
+    const systemPrompt = `You are a social media content splitter. Split the given text into posts for the specified social networks.
 
 Character limits (threading indicators will be added automatically):
 ${validatedRequest.networks.map((n) => `- ${n}: ${effectiveCharacterLimits[n]} characters`).join("\n")}
 
-Splitting strategies: ${selectedStrategies}
+Splitting strategies to use: ${selectedStrategies}
 
 ${validatedRequest.markdown && validatedRequest.networks.includes("mastodon") ? "For Mastodon, preserve or add appropriate Markdown formatting." : ""}
-${validatedRequest.networks.includes("threads") ? "For Threads, you can use basic formatting like **bold** and *italic* when appropriate." : ""}
 
 Rules:
 1. Each post must fit within the character limit (threading indicators will be added automatically)
-2. Use the full character space available for each network - don't create unnecessary splits
-3. Apply the specified splitting strategies to maintain content coherence
-4. Don't cut words in the middle unless using word_boundary strategy
-5. Preserve important context in each post so they can stand alone reasonably well
-6. Keep hashtags with relevant content when possible
-7. Do NOT add thread numbering - this will be handled automatically
+2. Maintain the flow and coherence of the original content
+3. Don't cut words in the middle
+4. Preserve important context in each post
+5. Keep hashtags with relevant content when possible
+6. Do NOT add thread numbering - this will be handled automatically
 
 Return a JSON object with a "networks" property containing arrays of posts for each network.`
 
@@ -138,7 +129,7 @@ Return a JSON object with a "networks" property containing arrays of posts for e
           json_schema: jsonSchema
         },
         max_tokens: 4096
-      })) as { response: string | object }
+      })) as { response: string }
 
       // Handle AI response - it might be already parsed or need parsing
       let aiResponse: { networks: Record<string, string[]> }
@@ -159,13 +150,13 @@ Return a JSON object with a "networks" property containing arrays of posts for e
       // Add threading indicators for multi-post threads
       for (const network of validatedRequest.networks) {
         const posts = aiResponse.networks[network]
-        if (posts && posts.length > 1) {
+        if (posts.length > 1) {
           // Add threading indicators to each post
           for (let i = 0; i < posts.length; i++) {
             const postNumber = i + 1
             const totalPosts = posts.length
             const threadIndicator = `\n\n🧵 ${postNumber}/${totalPosts}`
-            posts[i] += threadIndicator
+            posts[i] = posts[i] + threadIndicator
           }
         }
       }
