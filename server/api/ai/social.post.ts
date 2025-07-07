@@ -54,21 +54,18 @@ export default defineEventHandler(async (event) => {
     let _aiSuccess = false
     let _aiErrorType: string | undefined
 
-    // Determine if we're using example-based or strategy-based approach
-    const useExampleBased = !validatedRequest.strategies || validatedRequest.strategies.length === 0
+    // Use strategy-based approach with defaults if no strategies provided
+    const strategies = validatedRequest.strategies || ["sentence_boundary", "paragraph_preserve"]
 
-    // Build strategy descriptions for the prompt (if using strategy-based approach)
-    let selectedStrategies = ""
-    if (!useExampleBased) {
-      const strategyDescriptions = {
-        sentence_boundary: "Split at sentence endings to maintain complete thoughts",
-        word_boundary: "Split at word boundaries without breaking words",
-        paragraph_preserve: "Keep paragraphs intact when possible",
-        thread_optimize: "Optimize for thread continuity with numbered posts",
-        hashtag_preserve: "Keep hashtags with their relevant content"
-      }
-      selectedStrategies = validatedRequest.strategies!.map((s) => strategyDescriptions[s]).join(", ")
+    // Build strategy descriptions for the prompt
+    const strategyDescriptions = {
+      sentence_boundary: "Split at sentence endings to maintain complete thoughts",
+      word_boundary: "Split at word boundaries without breaking words",
+      paragraph_preserve: "Keep paragraphs intact when possible",
+      thread_optimize: "Optimize for thread continuity with numbered posts",
+      hashtag_preserve: "Keep hashtags with their relevant content"
     }
+    const selectedStrategies = strategies.map((s) => strategyDescriptions[s]).join(", ")
 
     // Calculate effective character limits (reserving space for threading indicators)
     const effectiveCharacterLimits: Record<string, number> = {}
@@ -98,71 +95,24 @@ export default defineEventHandler(async (event) => {
       required: ["networks"]
     }
 
-    const systemPrompt = useExampleBased
-      ? `You are a social media content splitter. Your PRIMARY GOAL is to optimize content for each network's character limits by using the MAXIMUM space available and minimizing the number of posts.
+    const systemPrompt = `You are a social media content splitter. Split the given text into posts for the specified social networks using the specified strategies.
 
 Character limits (threading indicators will be added automatically):
 ${validatedRequest.networks.map((n) => `- ${n}: ${effectiveCharacterLimits[n]} characters`).join("\n")}
+
+Splitting strategies: ${selectedStrategies}
 
 ${validatedRequest.markdown && validatedRequest.networks.includes("mastodon") ? "For Mastodon, preserve or add appropriate Markdown formatting." : ""}
 ${validatedRequest.networks.includes("threads") ? "For Threads, you can use basic formatting like **bold** and *italic* when appropriate." : ""}
 
-MANDATORY OPTIMIZATION PRINCIPLES:
-
-1. **MAXIMIZE CHARACTER USAGE**: Always use as much of the character limit as possible for each network. Do NOT split content into more posts than absolutely necessary.
-
-2. **NETWORK-SPECIFIC APPROACH**:
-   - **High-limit networks** (Mastodon ~4000+ chars): Try to fit ALL content in ONE post unless it's genuinely too long
-   - **Medium-limit networks** (Threads ~500 chars): Use 1-2 posts maximum for typical content
-   - **Low-limit networks** (Bluesky/X ~300 chars): Split as needed, but still maximize each post
-
-3. **SMART SPLITTING LOGIC**: Balance character optimization with logical narrative flow:
-   - **Primary goal**: Use character limits efficiently (fewer posts when possible)
-   - **Secondary goal**: Split at logical narrative boundaries so each post can stand alone
-   - For high-limit networks: Only split if content has distinct logical sections OR exceeds character limit
-   - For low-limit networks: Split as needed but maintain logical groupings within character constraints
-
-4. **CONTENT INTEGRITY**: When splitting occurs:
-   - Break at natural story/argument boundaries (complete thoughts, dialogue breaks, topic shifts)
-   - Ensure each post tells a coherent part of the story that makes sense independently
-   - Add minimal context to post openings when needed for standalone clarity
-   - Use "[...]" to indicate truncated quotes or content
-   - Preserve the original voice and meaning
-   - Make subtle adjustments for flow (e.g., "This was about..." vs "This was meant to be a post about...")
-
-5. **TECHNICAL REQUIREMENTS**:
-   - Do NOT add thread numbering (handled automatically)
-   - Account for threading indicators being added (already factored into limits above)
-   - Maintain proper formatting for each platform
-
-SPLITTING PRINCIPLES EXAMPLE:
-For a story about "I tested an AI by asking it the same question twice with opposite biases":
-- **Logical grouping**: Post 1 (setup + first question), Post 2 (first response), Post 3 (second question), Post 4 (second response + conclusion)
-- **Standalone clarity**: Each post makes sense independently with minimal context
-- **Narrative flow**: Complete thoughts, not arbitrary character-based cuts
-- **Network adaptation**: Different networks will need different post counts based on their character limits - Mastodon might fit the whole story in 1-2 posts, Threads might need 2-3 posts, Bluesky might need all 4 logical sections as separate posts
-
-IMPORTANT: Post counts vary with content length and complexity. Don't target specific numbers - optimize for each network's character limits and logical narrative structure.
-
-REMEMBER: Balance efficiency (fewer posts) with narrative coherence (logical breaks). Each post should tell a complete part of the story.
-
-Return a JSON object with a "networks" property containing arrays of posts for each network.`
-      : `You are a social media content splitter. Split the given text into posts for the specified social networks using the specified strategies.
-
-Character limits (threading indicators will be added automatically):
-${validatedRequest.networks.map((n) => `- ${n}: ${effectiveCharacterLimits[n]} characters`).join("\n")}
-
-Splitting strategies to use: ${selectedStrategies}
-
-${validatedRequest.markdown && validatedRequest.networks.includes("mastodon") ? "For Mastodon, preserve or add appropriate Markdown formatting." : ""}
-
 Rules:
 1. Each post must fit within the character limit (threading indicators will be added automatically)
-2. Maintain the flow and coherence of the original content
-3. Don't cut words in the middle
-4. Preserve important context in each post
-5. Keep hashtags with relevant content when possible
-6. Do NOT add thread numbering - this will be handled automatically
+2. Use the full character space available for each network - don't create unnecessary splits
+3. Apply the specified splitting strategies to maintain content coherence
+4. Don't cut words in the middle unless using word_boundary strategy
+5. Preserve important context in each post so they can stand alone reasonably well
+6. Keep hashtags with relevant content when possible
+7. Do NOT add thread numbering - this will be handled automatically
 
 Return a JSON object with a "networks" property containing arrays of posts for each network.`
 
