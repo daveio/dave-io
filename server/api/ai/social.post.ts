@@ -96,12 +96,14 @@ Rules:
 4. Preserve important context in each post
 5. Keep hashtags with relevant content when possible
 6. Do NOT add thread numbering - this will be handled automatically
+7. You may need to re-word the text. Try to do this minimally. Ensure each post is coherent and complete.
+8. Ensure you have a full understanding of the entire text before you start splitting it.
 
 Return a JSON object with a "networks" property containing arrays of posts for each network.`
 
     try {
       const result = await anthropic.messages.create({
-        model: "claude-3-5-sonnet-20241022",
+        model: "claude-4-sonnet-20250514",
         max_tokens: 4096,
         system: systemPrompt,
         messages: [
