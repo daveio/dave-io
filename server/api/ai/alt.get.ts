@@ -59,8 +59,7 @@ The confidence score should be between 0 and 1, representing how confident you a
         anthropic,
         systemPrompt,
         "Please generate alt text for this image.",
-        3.5,
-        "haiku",
+        "claude-4-sonnet-20250514",
         base64Data,
         mimeType
       )

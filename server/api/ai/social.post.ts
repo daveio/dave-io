@@ -91,7 +91,12 @@ Return a JSON object with a "networks" property containing arrays of posts for e
 
     try {
       // Send message to Claude using shared helper
-      const textContent = await sendClaudeMessage(anthropic, systemPrompt, validatedRequest.input, 4, "sonnet")
+      const textContent = await sendClaudeMessage(
+        anthropic,
+        systemPrompt,
+        validatedRequest.input,
+        "claude-4-sonnet-20250514"
+      )
 
       // Parse Claude's response using shared helper
       const aiResponse = parseClaudeResponse<{ networks: Record<string, string[]> }>(textContent)

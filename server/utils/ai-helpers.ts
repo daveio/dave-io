@@ -68,70 +68,12 @@ export type ClaudeModel =
   | "claude-3-sonnet-20240229"
   | "claude-3-haiku-20240307"
 
-export function resolveClaudeVersion(version?: number, variant?: "haiku" | "sonnet" | "opus"): ClaudeModel {
-  switch (variant ?? "sonnet") {
-    case "opus":
-      switch (version) {
-        case 4:
-          return "claude-4-opus-20250514"
-        case 3:
-          return "claude-3-opus-20240229"
-        default:
-          return "claude-4-opus-20250514"
-      }
-    case "sonnet":
-      switch (version) {
-        case 4:
-          return "claude-4-sonnet-20250514"
-        case 3:
-          return "claude-3-7-sonnet-20250219"
-        case 3.0:
-          return "claude-3-sonnet-20240229"
-        case 3.5:
-          return "claude-3-5-sonnet-20241022"
-        case 3.7:
-          return "claude-3-7-sonnet-20250219"
-        default:
-          return "claude-4-sonnet-20250514"
-      }
-    case "haiku":
-      switch (version) {
-        case 3:
-          return "claude-3-5-haiku-20241022"
-        case 3.0:
-          return "claude-3-haiku-20240307"
-        case 3.5:
-          return "claude-3-5-haiku-20241022"
-        default:
-          return "claude-3-5-haiku-20241022"
-      }
-    default:
-      switch (version) {
-        case 4:
-          return "claude-4-sonnet-20250514"
-        case 3:
-          return "claude-3-7-sonnet-20250219"
-        case 3.0:
-          return "claude-3-sonnet-20240229"
-        case 3.5:
-          return "claude-3-5-sonnet-20241022"
-        case 3.7:
-          return "claude-3-7-sonnet-20250219"
-        default:
-          return "claude-4-sonnet-20250514"
-      }
-  }
-}
-
-export type ClaudeVariant = "haiku" | "sonnet" | "opus"
-
 /**
  * Sends a message to Claude with optional image attachment
  * @param anthropic - Configured Anthropic client
  * @param systemPrompt - System prompt for Claude
  * @param userMessage - User message content
- * @param version - Optional Claude version (e.g., 3, 3.5, 4)
- * @param variant - Optional Claude variant ("haiku", "sonnet", "opus")
+ * @param model - Optional Claude model to use (defaults to "claude-4-sonnet-20250514")
  * @param imageData - Optional image data (base64 encoded)
  * @param imageType - Optional image type (e.g., "image/jpeg")
  * @returns Claude's response content
@@ -141,15 +83,12 @@ export async function sendClaudeMessage(
   anthropic: Anthropic,
   systemPrompt: string,
   userMessage: string,
-  version?: number,
-  variant?: ClaudeVariant,
+  model?: ClaudeModel,
   imageData?: string,
   imageType?: string
 ): Promise<string> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const messageContent: Array<any> = []
-
-  const claudeModel = resolveClaudeVersion(version, variant)
 
   // Add text content
   if (userMessage) {
@@ -172,7 +111,7 @@ export async function sendClaudeMessage(
   }
 
   const result = await anthropic.messages.create({
-    model: claudeModel,
+    model: model ?? "claude-4-sonnet-20250514",
     max_tokens: 4096,
     system: systemPrompt,
     messages: [

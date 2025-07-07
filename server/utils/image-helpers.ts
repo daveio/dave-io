@@ -98,13 +98,15 @@ export async function fetchImageFromUrl(url: string): Promise<{ buffer: Buffer; 
 
 /**
  * Optimizes image to fit within Claude's limits
- * TODO: (29fa91) Implement image optimization to reduce size to under 5MB
  * For now, this function throws an error as a stub
  * @param imageData - Image data to optimize
  * @param _targetSize - Target size in bytes (unused for now)
  * @returns Promise resolving to optimized image data
  * @throws {Error} Always throws as this is a stub implementation
  */
+
+// TODO: (29fa91) Implement image optimization to reduce size to under 5MB. Use Cloudflare Images... somehow.
+
 export async function optimizeImageStub(imageData: Buffer, _targetSize: number = 5 * 1024 * 1024): Promise<Buffer> {
   // Stub implementation - will be replaced with actual optimization later
   throw createApiError(
