@@ -143,7 +143,13 @@ export abstract class BaseAdapter {
       }
 
       if (body && method !== "GET") {
-        requestInit.body = JSON.stringify(body)
+        if (body instanceof FormData) {
+          requestInit.body = body
+          // Remove Content-Type header for FormData to let fetch set it automatically
+          delete headers["Content-Type"]
+        } else {
+          requestInit.body = JSON.stringify(body)
+        }
       }
 
       const response = await fetch(url, requestInit)

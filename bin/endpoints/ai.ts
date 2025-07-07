@@ -73,6 +73,24 @@ export class AIAdapter extends BaseAdapter {
    * @returns AI-generated alt text and confidence score
    */
   async generateAltTextFromFile(filePath: string): Promise<ApiResponse<AltTextResponse>> {
-    return this.uploadFile("/api/ai/alt", filePath) as Promise<ApiResponse<AltTextResponse>>
+    const file = Bun.file(filePath)
+
+    if (!(await file.exists())) {
+      return {
+        ok: false,
+        error: `File not found: ${filePath}`
+      }
+    }
+
+    const formData = new FormData()
+    formData.append("image", file)
+
+    return this.makeRequest("/api/ai/alt", {
+      method: "POST",
+      body: formData,
+      headers: {
+        // Don't set Content-Type for FormData - let the browser set it
+      }
+    })
   }
 }
