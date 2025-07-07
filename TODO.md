@@ -2,6 +2,7 @@
 
 - **TODO:** _29fa91_ Implement `/ai/alt` to generate alt text for an image and create AI helpers.
   - ⚠️ VERY IMPORTANT THROUGHOUT: Read the rules in @CLAUDE.md. Follow them RELIGIOUSLY. Remind yourself of them regularly and ensure you're sticking by them.
+  - Use context7 and the cloudflare documentation tool to understand services, libraries, and tools.
   - Step 0: specification
     - Invoke via POST to send image directly the way `curl -X POST -F "image=@/path/to/yourfile.jpg` would.
     - Invoke via GET with `image` GET param to supply an image URL.
