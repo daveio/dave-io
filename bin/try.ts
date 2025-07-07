@@ -96,7 +96,8 @@ async function displayResult<T>(result: ApiResponse<T>, options: GlobalOptions, 
 
   if (quiet && result.ok) {
     // Handle both server format (result) and expected format (data)
-    const responseData = (result as any).result || result.data
+    const response = result as ApiResponse<unknown> & { result?: unknown }
+    const responseData = response.result || response.data
     if (responseData && typeof responseData === "object") {
       console.log(JSON.stringify(responseData, null, 2))
     } else if (result.message) {
@@ -118,12 +119,14 @@ async function displayResult<T>(result: ApiResponse<T>, options: GlobalOptions, 
     }
 
     // Handle both server format (result) and expected format (data)
-    const responseData = (result as any).result || result.data
+    const response = result as ApiResponse<unknown> & { result?: unknown }
+    const responseData = response.result || response.data
     if (responseData) {
       // Special handling for social media results
-      if (title?.includes("Social Media") && responseData.networks) {
+      const socialData = responseData as { networks?: Record<string, string[]> }
+      if (title?.includes("Social Media") && socialData.networks) {
         content.push("") // Add spacing
-        for (const [network, posts] of Object.entries(responseData.networks)) {
+        for (const [network, posts] of Object.entries(socialData.networks)) {
           content.push(chalk.cyan(`${network.toUpperCase()}:`))
           const postArray = posts as string[]
           postArray.forEach((post, index) => {

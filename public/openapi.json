@@ -92,7 +92,8 @@
                 "hashtag_preserve"
               ]
             },
-            "maxItems": 10
+            "maxItems": 10,
+            "default": ["sentence_boundary", "thread_optimize"]
           }
         },
         "required": ["input", "networks"],

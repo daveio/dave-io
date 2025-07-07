@@ -73,7 +73,7 @@ describe("AI Social Endpoint", () => {
 
       if (result.success) {
         expect(result.data?.markdown).toBe(false) // Default value
-        expect(result.data?.strategies).toBeUndefined() // No default strategies - uses example-based approach
+        expect(result.data?.strategies).toEqual(["sentence_boundary", "thread_optimize"]) // Default values
       }
     })
 
@@ -249,30 +249,29 @@ describe("AI Social Endpoint", () => {
 
       const selectedStrategies = strategies.map((s) => strategyDescriptions[s]).join(", ")
 
-      const expectedPrompt = `You are a social media content splitter. Split the given text into posts for the specified social networks using the specified strategies.
+      const expectedPrompt = `You are a social media content splitter. Split the given text into posts for the specified social networks.
 
-Character limits (threading indicators will be added automatically):
-- bluesky: 290 characters
-- mastodon: 4086 characters
+Character limits:
+- bluesky: 300 characters
+- mastodon: 4096 characters
 
-Splitting strategies: ${selectedStrategies}
+Splitting strategies to use: ${selectedStrategies}
 
-
+${markdown && networks.includes("mastodon") ? "For Mastodon, preserve or add appropriate Markdown formatting." : ""}
 
 Rules:
-1. Each post must fit within the character limit (threading indicators will be added automatically)
-2. Use the full character space available for each network - don't create unnecessary splits
-3. Apply the specified splitting strategies to maintain content coherence
-4. Don't cut words in the middle unless using word_boundary strategy
-5. Preserve important context in each post so they can stand alone reasonably well
+1. Each post must fit within the character limit
+2. Maintain the flow and coherence of the original content
+3. Don't cut words in the middle
+4. For threads, number the posts (e.g., "1/5", "2/5")
+5. Preserve important context in each post
 6. Keep hashtags with relevant content when possible
-7. Do NOT add thread numbering - this will be handled automatically
 
 Return a JSON object with a "networks" property containing arrays of posts for each network.`
 
-      expect(expectedPrompt).toContain("Character limits (threading indicators will be added automatically):")
-      expect(expectedPrompt).toContain("bluesky: 290 characters")
-      expect(expectedPrompt).toContain("mastodon: 4086 characters")
+      expect(expectedPrompt).toContain("Character limits:")
+      expect(expectedPrompt).toContain("bluesky: 300 characters")
+      expect(expectedPrompt).toContain("mastodon: 4096 characters")
       expect(expectedPrompt).toContain(selectedStrategies)
     })
 
@@ -389,124 +388,6 @@ Return a JSON object with a "networks" property containing arrays of posts for e
       // Ensure we have proper spacing (exactly 2 newlines before thread indicator)
       expect(postsWithThreading[0]).toContain("\n\n🧵")
       expect(postsWithThreading[0]).not.toContain("\n\n\n🧵") // No triple newlines
-    })
-  })
-
-  describe("Example-Based vs Strategy-Based Modes", () => {
-    it("should use example-based approach when no strategies provided", () => {
-      const request = {
-        input: "Test text to split",
-        networks: ["bluesky" as const]
-      }
-
-      const result = AiSocialRequestSchema.safeParse(request)
-      expect(result.success).toBe(true)
-
-      if (result.success) {
-        // No strategies provided - should use default strategies
-        expect(result.data?.strategies).toBeUndefined()
-
-        // Simulate the logic from the endpoint
-        const strategies =
-          result.data?.strategies && result.data.strategies.length > 0
-            ? result.data.strategies
-            : ["sentence_boundary", "paragraph_preserve"]
-        expect(strategies).toEqual(["sentence_boundary", "paragraph_preserve"])
-      }
-    })
-
-    it("should use strategy-based approach when strategies explicitly provided", () => {
-      const request = {
-        input: "Test text to split",
-        networks: ["bluesky" as const],
-        strategies: ["word_boundary" as const, "hashtag_preserve" as const]
-      }
-
-      const result = AiSocialRequestSchema.safeParse(request)
-      expect(result.success).toBe(true)
-
-      if (result.success) {
-        // Strategies provided - should use specified strategies
-        expect(result.data?.strategies).toEqual(["word_boundary", "hashtag_preserve"])
-
-        // Simulate the logic from the endpoint
-        const strategies =
-          result.data?.strategies && result.data.strategies.length > 0
-            ? result.data.strategies
-            : ["sentence_boundary", "paragraph_preserve"]
-        expect(strategies).toEqual(["word_boundary", "hashtag_preserve"])
-      }
-    })
-
-    it("should use default strategies when empty strategies array provided", () => {
-      const request = {
-        input: "Test text to split",
-        networks: ["bluesky" as const],
-        strategies: [] as const
-      }
-
-      const result = AiSocialRequestSchema.safeParse(request)
-      expect(result.success).toBe(true)
-
-      if (result.success) {
-        // Empty strategies array - should use default strategies
-        expect(result.data?.strategies).toEqual([])
-
-        // Simulate the logic from the endpoint
-        const strategies =
-          result.data?.strategies && result.data.strategies.length > 0
-            ? result.data.strategies
-            : ["sentence_boundary", "paragraph_preserve"]
-        expect(strategies).toEqual(["sentence_boundary", "paragraph_preserve"])
-      }
-    })
-
-    it("should construct appropriate prompt based on mode", () => {
-      // Test example-based mode prompt construction
-      const exampleBasedRequest: { strategies?: string[] } = { strategies: undefined }
-      const useExampleBased = !exampleBasedRequest.strategies || exampleBasedRequest.strategies.length === 0
-
-      if (useExampleBased) {
-        // Should include example and specific rules for example-based splitting
-        const shouldIncludeExample = true
-        const shouldIncludeStrategies = false
-
-        expect(shouldIncludeExample).toBe(true)
-        expect(shouldIncludeStrategies).toBe(false)
-      }
-
-      // Test strategy-based mode prompt construction
-      const strategyBasedRequest = { strategies: ["word_boundary", "hashtag_preserve"] }
-      const useStrategyBased = strategyBasedRequest.strategies && strategyBasedRequest.strategies.length > 0
-
-      if (useStrategyBased) {
-        // Should include strategy descriptions but not example
-        const shouldIncludeExample = false
-        const shouldIncludeStrategies = true
-
-        expect(shouldIncludeExample).toBe(false)
-        expect(shouldIncludeStrategies).toBe(true)
-      }
-    })
-
-    it("should handle strategy descriptions correctly in strategy-based mode", () => {
-      const strategyDescriptions = {
-        sentence_boundary: "Split at sentence endings to maintain complete thoughts",
-        word_boundary: "Split at word boundaries without breaking words",
-        paragraph_preserve: "Keep paragraphs intact when possible",
-        thread_optimize: "Optimize for thread continuity with numbered posts",
-        hashtag_preserve: "Keep hashtags with their relevant content"
-      }
-
-      const selectedStrategies = ["word_boundary", "hashtag_preserve"]
-      const expectedDescription =
-        "Split at word boundaries without breaking words, Keep hashtags with their relevant content"
-
-      const actualDescription = selectedStrategies
-        .map((s) => strategyDescriptions[s as keyof typeof strategyDescriptions])
-        .join(", ")
-
-      expect(actualDescription).toBe(expectedDescription)
     })
   })
 

@@ -150,7 +150,7 @@ Return a JSON object with a "networks" property containing arrays of posts for e
       // Add threading indicators for multi-post threads
       for (const network of validatedRequest.networks) {
         const posts = aiResponse.networks[network]
-        if (posts.length > 1) {
+        if (posts && posts.length > 1) {
           // Add threading indicators to each post
           for (let i = 0; i < posts.length; i++) {
             const postNumber = i + 1
