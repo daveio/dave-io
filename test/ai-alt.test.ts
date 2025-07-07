@@ -56,6 +56,10 @@ vi.mock("~/server/utils/ai-helpers", () => ({
   validateAndPrepareImage: vi.fn().mockReturnValue({
     base64Data: "base64-image-data",
     mimeType: "image/jpeg"
+  }),
+  validateAndPrepareImageWithOptimization: vi.fn().mockResolvedValue({
+    base64Data: "base64-image-data",
+    mimeType: "image/jpeg"
   })
 }))
 

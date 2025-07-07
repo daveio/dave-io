@@ -4,8 +4,9 @@ import {
   createAnthropicClient,
   parseClaudeResponse,
   sendClaudeMessage,
-  validateAndPrepareImage
+  validateAndPrepareImageWithOptimization
 } from "~/server/utils/ai-helpers"
+import { getCloudflareEnv } from "~/server/utils/cloudflare"
 import { fetchImageFromUrl } from "~/server/utils/image-helpers"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
 import { AiAltRequestGetSchema } from "~/server/utils/schemas"
@@ -51,8 +52,12 @@ The confidence score should be between 0 and 1, representing how confident you a
       // Fetch image from URL
       const { buffer, contentType } = await fetchImageFromUrl(validatedRequest.image)
 
-      // Validate and prepare image for Claude
-      const { base64Data, mimeType } = validateAndPrepareImage(buffer, contentType)
+      // Validate and prepare image for Claude with optimization if needed
+      const { base64Data, mimeType } = await validateAndPrepareImageWithOptimization(
+        buffer,
+        contentType,
+        env // Pass environment for Images binding access
+      )
 
       // Send image to Claude for alt text generation
       const textContent = await sendClaudeMessage(

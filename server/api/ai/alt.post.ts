@@ -4,9 +4,10 @@ import {
   createAnthropicClient,
   parseClaudeResponse,
   sendClaudeMessage,
-  validateAndPrepareImage
+  validateAndPrepareImageWithOptimization
 } from "~/server/utils/ai-helpers"
-import { validateImageFormat, validateImageSize } from "~/server/utils/image-helpers"
+import { getCloudflareEnv } from "~/server/utils/cloudflare"
+import { validateImageFormat } from "~/server/utils/image-helpers"
 import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
 
 export default defineEventHandler(async (event) => {
@@ -33,10 +34,7 @@ export default defineEventHandler(async (event) => {
       throw createApiError(400, "No image file provided in 'image' field")
     }
 
-    // Validate image size
-    validateImageSize(imageFile.data)
-
-    // Validate image format
+    // Validate image format (size validation will be handled by optimization function)
     const contentType = imageFile.type || imageFile.filename?.split(".").pop() || "image/jpeg"
     validateImageFormat(imageFile.data, contentType.startsWith("image/") ? contentType : undefined)
 
@@ -64,8 +62,12 @@ Return your response as a JSON object with this exact format:
 The confidence score should be between 0 and 1, representing how confident you are in the accuracy and quality of the alt text.`
 
     try {
-      // Validate and prepare image for Claude
-      const { base64Data, mimeType } = validateAndPrepareImage(imageFile.data, contentType)
+      // Validate and prepare image for Claude with optimization if needed
+      const { base64Data, mimeType } = await validateAndPrepareImageWithOptimization(
+        imageFile.data,
+        contentType,
+        env // Pass environment for Images binding access
+      )
 
       // Send image to Claude for alt text generation
       const textContent = await sendClaudeMessage(

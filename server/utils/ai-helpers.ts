@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk"
+import type { CloudflareEnv } from "./cloudflare"
 import { createApiError } from "./response"
 
 /**
@@ -182,6 +183,62 @@ export function validateAndPrepareImage(
 
   return {
     base64Data: buffer.toString("base64"),
+    mimeType
+  }
+}
+
+/**
+ * Validates image data and converts to base64 if needed, with optimization support
+ * @param imageData - Raw image data (Buffer, Uint8Array, or string)
+ * @param contentType - Image content type
+ * @param env - Cloudflare environment bindings (optional, for optimization)
+ * @returns Object with base64 data and validated content type
+ * @throws {Error} If image is invalid or too large
+ */
+export async function validateAndPrepareImageWithOptimization(
+  imageData: Buffer | Uint8Array | string,
+  contentType?: string,
+  env?: CloudflareEnv
+): Promise<{
+  base64Data: string
+  mimeType: string
+}> {
+  // Convert to Buffer if needed
+  let buffer: Buffer
+  if (typeof imageData === "string") {
+    // Assume base64 if string
+    buffer = Buffer.from(imageData, "base64")
+  } else if (imageData instanceof Uint8Array) {
+    buffer = Buffer.from(imageData)
+  } else {
+    buffer = imageData
+  }
+
+  // Validate and potentially optimize size
+  const { validateImageSizeWithOptimization } = await import("./image-helpers")
+  const optimizedBuffer = await validateImageSizeWithOptimization(buffer, env)
+
+  // Determine MIME type (may have changed during optimization)
+  let mimeType = contentType || "image/jpeg"
+
+  // Re-detect format from optimized buffer if needed
+  const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"]
+  if (!allowedTypes.includes(mimeType.toLowerCase())) {
+    if (optimizedBuffer[0] === 0xff && optimizedBuffer[1] === 0xd8) {
+      mimeType = "image/jpeg"
+    } else if (optimizedBuffer[0] === 0x89 && optimizedBuffer[1] === 0x50) {
+      mimeType = "image/png"
+    } else if (optimizedBuffer[0] === 0x47 && optimizedBuffer[1] === 0x49) {
+      mimeType = "image/gif"
+    } else if (optimizedBuffer.slice(8, 12).toString() === "WEBP") {
+      mimeType = "image/webp"
+    } else {
+      mimeType = "image/jpeg"
+    }
+  }
+
+  return {
+    base64Data: optimizedBuffer.toString("base64"),
     mimeType
   }
 }

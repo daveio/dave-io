@@ -151,6 +151,7 @@ const tokenId = auth.payload?.jti
 - **AI Social**: New `/api/ai/social` endpoint for splitting text into social media posts using Anthropic Claude 4 Sonnet via AI Gateway with automatic threading indicators (`🧵 x/y`). Uses strategy-based intelligent splitting with configurable strategies for optimal text processing.
 - **AI Model Migration**: Migrated `/api/ai/social` from Cloudflare AI Llama model to Anthropic Claude 4 Sonnet via AI Gateway for improved text processing quality and observability.
 - **AI Alt Text**: New `/api/ai/alt` endpoint for generating alt text for images using Anthropic Claude 4 Sonnet via AI Gateway. Supports both GET (with image URL) and POST (with image upload) methods. Includes image size validation and SSRF protection.
+- **AI Alt Text Image Optimization**: Added automatic image optimization to `/api/ai/alt` using Cloudflare Images API. Images exceeding 5MB are automatically resized and compressed to fit within Claude's limits while maintaining quality.
 
 ## Core
 
@@ -277,6 +278,7 @@ bun jwt init && bun run deploy
 - **Image URL Processing**: Fetch and analyze images from URLs with SSRF protection
 - **File Upload**: Accept direct image uploads via multipart form data
 - **Size Validation**: Automatic validation against Claude's 5MB limit
+- **Image Optimization**: Automatic image optimization using Cloudflare Images API when images exceed 5MB
 - **Format Detection**: Supports JPEG, PNG, GIF, WebP image formats
 - **Security**: URL validation prevents localhost/private network access
 - **AI Gateway**: Full observability and monitoring via Cloudflare AI Gateway
