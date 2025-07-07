@@ -1,32 +1,3 @@
 # Pending Tasks
 
-- **TODO:** _29fa91_ Implement `/ai/alt` to generate alt text for an image and create AI helpers.
-  - ⚠️ VERY IMPORTANT THROUGHOUT: Read the rules in @CLAUDE.md. Follow them RELIGIOUSLY. Remind yourself of them regularly and ensure you're sticking by them.
-  - Use context7 and the cloudflare documentation tool to understand services, libraries, and tools.
-  - Step 0: specification
-    - Invoke via POST to send image directly the way `curl -X POST -F "image=@/path/to/yourfile.jpg` would.
-    - Invoke via GET with `image` GET param to supply an image URL.
-    - Call Claude API to generate alt text for image.
-      - Error without calling Claude if the input image is over 5 MB.
-        - Claude rejects images over 5 MB.
-        - Stub out a function which we will use later to optimise the image down to 5 MB.
-        - For now, return the error in the stubbed function. The image data should be passed to the stub, even if we don't use it.
-    - Return using standard patterns.
-  - Step 1: Design implementation.
-    - Use `@anthropic-ai/sdk` as in `/ai/social`.
-    - Use Claude 4 Sonnet, as used in `/ai/social`.
-    - Claude 4 likes to return Markdown, even for single JSON objects. Make sure we ask for JSON, then strip the JSON out the same way we do for `/ai/social`.
-    - Make sure the `cf-aig-authorization` is set, as per `/ai/social`.
-  - Step 2: Extract shared code between `/ai/social` and the design for the new `/ai/alt` to a helper.
-    - Recommended functions (add more if you notice opportunities for deduplication):
-      - Claude API setup with `cf-aig-authorization` header and model selection
-      - Parsing a response from Claude
-        - Output stripping to valid JSON
-      - Sending a query to Claude with standard wrapper prompt to request output format
-        - Option to attach an arbitrary file which we will use for images but may use for other files in future
-  - Step 3: implement `/ai/alt` using the shared functions.
-  - Step 4: Configure `/ai/social` to use the shared functions.
-  - Step 5: Update documentation. Remember that `AGENTS.md` is the only file to update, the others are symlinks to it.
-  - Step 6: Ensure tests are updated and pass.
-  - Step 7: Ensure `bun lint` passes (run the linters individually if you like).
-  - Step 8: Boogie.
+_None._
