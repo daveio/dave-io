@@ -26,15 +26,41 @@
 
 **8. COMPLETE**: Finish all code or mark `TODO: [description]`. Fail explicitly, never silently.
 
-**9. TRACK**: TODOs use 6-hex IDs. Update TODO.md:
+**9. TRACK**: Use Linear tickets for TODO tracking. Team "Dave IO" (DIO), tickets begin "DIO-":
 
 ```typescript
-// TODO: (37c7b2) Skip Bun mocking - test separately
+// TODO: (DIO-118) Skip Bun mocking - test separately
 ```
 
-```markdown
-- **TODO:** _37c7b2_ `test/file.ts:18` Description
+_IMPORTANT_: Put TODO comments on their own line, with a `//` comment, so my tooling can find them.
+
+This is wrong:
+
+```typescript
+/*
+ * foo bar baz
+ * TODO: (DIO-118) Skip Bun mocking - test separately
+ * foo bar baz
+ */
 ```
+
+This is correct:
+
+```typescript
+/*
+ * foo bar baz
+ * foo bar baz
+ */
+
+// TODO: (DIO-118) Skip Bun mocking - test separately
+```
+
+Useful IDs:
+
+- Team ID: `5b759ac2-279b-4e9f-9e66-de66af7ba4bd`
+- TODO Label ID: `1dff83f6-65fa-40cf-944d-7323653d49a4`
+
+Workflow: Create tickets for TODOs with "TODO" label. Check Linear for existing tickets. Reference ticket IDs in code comments as shown in example.
 
 **10. KV**: Simple values only. Hierarchical keys: `metrics:api:ok`. Kebab-case: `auth:token-uuid`. Update `data/kv/_init.yaml`.
 
@@ -42,7 +68,7 @@
 
 ### ⚡ QUICK REFERENCE
 
-**ALWAYS**: Break compatibility • Test everything • Real data only • Complete code • Extract duplicates • KV hierarchical keys
+**ALWAYS**: Break compatibility • Test everything • Real data only • Complete code • Extract duplicates • KV hierarchical keys • Linear tickets for TODOs
 **NEVER**: Migration code (except database migrations) • Mock data • Silent failures • Copy-paste • Outdated docs • Complex KV values
 
 ## Tech Stack
@@ -322,4 +348,4 @@ curl -X POST "https://dave.io/api/ai/alt" \
 
 ## Immediate Plans
 
-- Implement runtime validation for API responses using Zod schemas, to ensure all responses conform to standardized structure with `createApiResponse()`.
+- [DIO-118](https://linear.app/dave-io/issue/DIO-118/implement-runtime-validation-for-api-responses-using-zod-schemas): Implement runtime validation for API responses using Zod schemas, to ensure all responses conform to standardized structure with `createApiResponse()`.
