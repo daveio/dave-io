@@ -57,7 +57,10 @@ export default defineEventHandler(async (event) => {
     // Configure Anthropic SDK with AI Gateway
     const anthropic = new Anthropic({
       apiKey: env.ANTHROPIC_API_KEY,
-      baseURL: `https://gateway.ai.cloudflare.com/v1/${env.CLOUDFLARE_ACCOUNT_ID}/ai-dave-io/anthropic`
+      baseURL: `https://gateway.ai.cloudflare.com/v1/${env.CLOUDFLARE_ACCOUNT_ID}/ai-dave-io/anthropic`,
+      defaultHeaders: {
+        "cf-aig-authorization": env.AI_GATEWAY_TOKEN || ""
+      }
     })
 
     let _aiSuccess = false
@@ -80,7 +83,7 @@ export default defineEventHandler(async (event) => {
       effectiveCharacterLimits[network] = characterLimits[network] - THREAD_INDICATOR_SPACE
     }
 
-    const systemPrompt = `You are a social media contsent splitter. Split the given text into posts for the specified social networks.
+    const systemPrompt = `You are a social media content splitter. Split the given text into posts for the specified social networks.
 
 Character limits (threading indicators will be added automatically):
 ${validatedRequest.networks.map((n) => `- ${n}: ${effectiveCharacterLimits[n]} characters`).join("\n")}

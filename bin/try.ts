@@ -131,7 +131,7 @@ async function displayResult<T>(result: ApiResponse<T>, options: GlobalOptions, 
           const postArray = posts as string[]
           postArray.forEach((post, index) => {
             content.push(chalk.gray(`Post ${index + 1}:`))
-            content.push(chalk.white(post.length))
+            content.push(chalk.grey(`Length: ${post.length}`))
             content.push(chalk.white(post))
             if (index < postArray.length - 1) {
               content.push("")
@@ -341,7 +341,7 @@ aiCommand
   .option(
     "-n, --networks <networks>",
     "Comma-separated list of networks (bluesky,mastodon,threads,x)",
-    "bluesky,mastodon"
+    "bluesky,threads"
   )
   .option("-m, --markdown", "Enable markdown formatting for Mastodon", false)
   .option(
