@@ -1,6 +1,6 @@
 /// <reference types="bun-types" />
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import { AIAdapter, BaseAdapter, DashboardAdapter, ImageAdapter, InternalAdapter, TokenAdapter } from "../bin/endpoints"
+import { AIAdapter, BaseAdapter, DashboardAdapter, InternalAdapter, TokenAdapter } from "../bin/endpoints"
 import type { RequestConfig } from "../bin/endpoints"
 
 // Mock fetch globally
@@ -411,251 +411,36 @@ describe("AIAdapter", () => {
     mockFetch.mockClear()
   })
 
-  it("should generate alt text from URL", async () => {
-    const mockResponse = {
-      ok: true,
-      status: 200,
-      json: async () => ({
-        ok: true,
-        data: { altText: "A beautiful landscape", confidence: 0.95 }
-      })
-    }
-    mockFetch.mockResolvedValueOnce(mockResponse)
-
-    const result = await adapter.generateAltTextFromUrl("https://example.com/image.jpg")
-
-    expect(result.ok).toBe(true)
-    expect(result.data?.altText).toBe("A beautiful landscape")
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining("/api/ai/alt"),
-      expect.objectContaining({ method: "GET" })
-    )
-  })
-
-  it("should generate alt text from base64", async () => {
-    const mockResponse = {
-      ok: true,
-      status: 200,
-      json: async () => ({
-        ok: true,
-        data: { altText: "A test image" }
-      })
-    }
-    mockFetch.mockResolvedValueOnce(mockResponse)
-
-    const result = await adapter.generateAltTextFromBase64("base64data")
-
-    expect(result.ok).toBe(true)
-    expect(result.data?.altText).toBe("A test image")
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({
-        method: "POST",
-        body: JSON.stringify({ image: "base64data" })
-      })
-    )
-  })
-
-  it("should generate alt text from file", async () => {
-    // Mock Bun.file
-    const mockFile = {
-      exists: vi.fn().mockResolvedValue(true),
-      arrayBuffer: vi.fn().mockResolvedValue(Buffer.from("image file content"))
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
-    global.Bun = mockBun
-
-    const mockResponse = {
-      ok: true,
-      status: 200,
-      json: async () => ({
-        ok: true,
-        data: { altText: "An uploaded image", confidence: 0.89 }
-      })
-    }
-    mockFetch.mockResolvedValueOnce(mockResponse)
-
-    const result = await adapter.generateAltTextFromFile("/path/to/image.png")
-
-    expect(result.ok).toBe(true)
-    expect(result.data?.altText).toBe("An uploaded image")
-    expect(result.data?.confidence).toBe(0.89)
-    expect(mockBun.file).toHaveBeenCalledWith("/path/to/image.png")
-    expect(mockFile.exists).toHaveBeenCalled()
-    expect(mockFile.arrayBuffer).toHaveBeenCalled()
-    expect(mockFetch).toHaveBeenCalledWith(
-      "https://test.example.com/api/ai/alt?token=test-token",
-      expect.objectContaining({
-        method: "POST",
-        body: JSON.stringify({
-          image: Buffer.from("image file content").toString("base64")
-        })
-      })
-    )
-  })
-
-  it("should handle file not found in generateAltTextFromFile", async () => {
-    // Mock Bun.file for non-existent file
-    const mockFile = {
-      exists: vi.fn().mockResolvedValue(false)
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
-    global.Bun = mockBun
-
-    const result = await adapter.generateAltTextFromFile("/path/to/missing.jpg")
-
-    expect(result.ok).toBe(false)
-    expect(result.error).toBe("File not found: /path/to/missing.jpg")
-    expect(mockBun.file).toHaveBeenCalledWith("/path/to/missing.jpg")
-    expect(mockFile.exists).toHaveBeenCalled()
-    expect(mockFetch).not.toHaveBeenCalled()
-  })
-})
-
-describe("ImageAdapter", () => {
-  let adapter: ImageAdapter
-  let config: RequestConfig
-
-  beforeEach(() => {
-    config = {
-      token: "test-token",
-      baseUrl: "https://test.example.com",
-      timeout: 5000,
-      verbose: false,
-      dryRun: false
-    }
-    adapter = new ImageAdapter(config)
-    mockFetch.mockClear()
-  })
-
-  it("should optimize image from URL", async () => {
+  it("should split text for social media", async () => {
     const mockResponse = {
       ok: true,
       status: 200,
       json: async () => ({
         ok: true,
         data: {
-          optimisedImage: "optimized-base64",
-          originalSize: 1000,
-          optimisedSize: 500,
-          compressionRatio: 0.5
+          networks: {
+            bluesky: ["Test post for Bluesky"],
+            mastodon: ["Test post for Mastodon"]
+          }
         }
       })
     }
     mockFetch.mockResolvedValueOnce(mockResponse)
 
-    const result = await adapter.optimiseFromUrl("https://example.com/image.jpg", 80)
+    const result = await adapter.splitTextForSocial("Test text", ["bluesky", "mastodon"])
 
     expect(result.ok).toBe(true)
-    expect(result.data?.compressionRatio).toBe(0.5)
+    expect(result.data?.networks?.bluesky).toEqual(["Test post for Bluesky"])
     expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining("quality=80"),
-      expect.objectContaining({ method: "GET" })
-    )
-  })
-
-  it("should optimize image from file", async () => {
-    // Mock Bun.file
-    const mockFile = {
-      exists: vi.fn().mockResolvedValue(true),
-      arrayBuffer: vi.fn().mockResolvedValue(Buffer.from("jpeg file content"))
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
-    global.Bun = mockBun
-
-    const mockResponse = {
-      ok: true,
-      status: 200,
-      json: async () => ({
-        ok: true,
-        data: {
-          optimisedImage: "optimized-base64",
-          originalSize: 2000,
-          optimisedSize: 800,
-          compressionRatio: 0.6
-        }
-      })
-    }
-    mockFetch.mockResolvedValueOnce(mockResponse)
-
-    const result = await adapter.optimiseFromFile("/path/to/image.jpg", 90)
-
-    expect(result.ok).toBe(true)
-    expect(result.data?.compressionRatio).toBe(0.6)
-    expect(mockBun.file).toHaveBeenCalledWith("/path/to/image.jpg")
-    expect(mockFile.exists).toHaveBeenCalled()
-    expect(mockFile.arrayBuffer).toHaveBeenCalled()
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.any(String),
+      expect.stringContaining("/api/ai/social"),
       expect.objectContaining({
         method: "POST",
         body: JSON.stringify({
-          image: Buffer.from("jpeg file content").toString("base64"),
-          quality: 90
+          input: "Test text",
+          networks: ["bluesky", "mastodon"]
         })
       })
     )
-  })
-
-  it("should handle file not found in optimiseFromFile", async () => {
-    // Mock Bun.file for non-existent file
-    const mockFile = {
-      exists: vi.fn().mockResolvedValue(false)
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const mockBun = { file: vi.fn().mockReturnValue(mockFile) } as any
-    global.Bun = mockBun
-
-    const result = await adapter.optimiseFromFile("/path/to/nonexistent.jpg")
-
-    expect(result.ok).toBe(false)
-    expect(result.error).toBe("File not found: /path/to/nonexistent.jpg")
-    expect(mockBun.file).toHaveBeenCalledWith("/path/to/nonexistent.jpg")
-    expect(mockFile.exists).toHaveBeenCalled()
-    expect(mockFetch).not.toHaveBeenCalled()
-  })
-
-  it("should optimize image from base64", async () => {
-    const mockResponse = {
-      ok: true,
-      status: 200,
-      json: async () => ({
-        ok: true,
-        data: { optimisedImage: "optimized-base64" }
-      })
-    }
-    mockFetch.mockResolvedValueOnce(mockResponse)
-
-    const result = await adapter.optimiseFromBase64("base64data", 75)
-
-    expect(result.ok).toBe(true)
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({
-        method: "POST",
-        body: JSON.stringify({ image: "base64data", quality: 75 })
-      })
-    )
-  })
-
-  it("should omit token when not provided", async () => {
-    const noTokenConfig = { ...config, token: undefined }
-    adapter = new ImageAdapter(noTokenConfig)
-
-    const mockResponse = {
-      ok: true,
-      status: 200,
-      json: async () => ({ ok: true })
-    }
-    mockFetch.mockResolvedValueOnce(mockResponse)
-
-    await adapter.optimiseFromUrl("https://example.com/test.png")
-
-    const calledUrl = mockFetch.mock.calls[0][0] as string
-    expect(calledUrl).not.toContain("token=")
   })
 })
 

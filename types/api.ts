@@ -1,7 +1,5 @@
 // Re-export all types from schemas for compatibility
 export type {
-  AiAltTextRequest,
-  AiAltTextResponse,
   ApiErrorResponse,
   ApiSuccessResponse,
   AuthSuccessResponse,

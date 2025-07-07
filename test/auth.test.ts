@@ -194,30 +194,30 @@ describe("Authentication System", () => {
   describe("checkEndpointPermission", () => {
     it("should allow exact match permissions", () => {
       expect(checkEndpointPermission("api:metrics", "api:metrics")).toBe(true)
-      expect(checkEndpointPermission("ai:alt", "ai:alt")).toBe(true)
+      expect(checkEndpointPermission("ai:social", "ai:social")).toBe(true)
     })
 
     it("should allow parent permissions for hierarchical endpoints", () => {
       expect(checkEndpointPermission("api", "api:metrics")).toBe(true)
-      expect(checkEndpointPermission("ai", "ai:alt")).toBe(true)
+      expect(checkEndpointPermission("ai", "ai:social")).toBe(true)
       expect(checkEndpointPermission("api", "api:token")).toBe(true)
     })
 
     it("should allow admin and wildcard permissions", () => {
       expect(checkEndpointPermission("admin", "api:metrics")).toBe(true)
-      expect(checkEndpointPermission("*", "ai:alt")).toBe(true)
+      expect(checkEndpointPermission("*", "ai:social")).toBe(true)
       expect(checkEndpointPermission("admin", "any:endpoint")).toBe(true)
     })
 
     it("should reject insufficient permissions", () => {
-      expect(checkEndpointPermission("ai:alt", "api:metrics")).toBe(false)
-      expect(checkEndpointPermission("api:metrics", "ai:alt")).toBe(false)
+      expect(checkEndpointPermission("ai:social", "api:metrics")).toBe(false)
+      expect(checkEndpointPermission("api:metrics", "ai:social")).toBe(false)
       expect(checkEndpointPermission("user", "admin:panel")).toBe(false)
     })
 
     it("should not allow child permissions for parent endpoints", () => {
       expect(checkEndpointPermission("api:metrics", "api")).toBe(false)
-      expect(checkEndpointPermission("ai:alt", "ai")).toBe(false)
+      expect(checkEndpointPermission("ai:social", "ai")).toBe(false)
     })
   })
 

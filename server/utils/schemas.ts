@@ -1,6 +1,5 @@
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi"
 import { z } from "zod"
-import { PRESETS } from "./image-presets"
 
 extendZodWithOpenApi(z)
 
@@ -258,29 +257,6 @@ export const CreateRedirectSchema = z.object({
   description: z.string().optional()
 })
 
-// AI service schemas
-export const AiAltTextRequestSchema = z
-  .object({
-    url: z.string().url().optional(),
-    image: z
-      .string()
-      .refine((val) => !val.startsWith("data:"), {
-        message: "Image must be raw base64 without data URL"
-      })
-      .optional() // base64 encoded image
-  })
-  .refine((data) => data.url || data.image, {
-    message: "Either url or image must be provided"
-  })
-
-export const AiAltTextResponseSchema = z.object({
-  ok: z.literal(true),
-  alt_text: z.string(),
-  confidence: z.number().optional(),
-  processing_time_ms: z.number().optional(),
-  timestamp: z.string()
-})
-
 // Token management schemas
 export const TokenUsageSchema = z.object({
   token_id: z.string(),
@@ -299,111 +275,6 @@ export const TokenMetricsSchema = z.object({
     redirect_clicks: z.number(),
     kv_timings_ms: z.record(z.string(), z.number()).optional()
   }),
-  timestamp: z.string()
-})
-
-// Image optimisation schemas
-export const ImageOptimisationRequestSchema = z
-  .object({
-    image: z
-      .string()
-      .refine((val) => !val.startsWith("data:"), {
-        message: "Image must be raw base64 without data URL"
-      })
-      .optional(),
-    quality: z.number().min(0).max(100).optional()
-  })
-  .refine((data) => data.image, {
-    message: "Image field is required for POST requests"
-  })
-
-export const ImageOptimisationQuerySchema = z.object({
-  url: z.string().url("Image URL must be a valid URL"),
-  quality: z.number().min(0).max(100).optional()
-})
-
-export const ImageOptimisationResponseSchema = z.object({
-  ok: z.literal(true),
-  data: z.object({
-    url: z.string().url(),
-    originalSizeBytes: z.number(),
-    optimisedSizeBytes: z.number(),
-    compressionRatio: z.number(),
-    format: z.literal("webp"),
-    hash: z.string(),
-    quality: z.number().optional(),
-    preset: z
-      .object({
-        name: z.enum(Object.keys(PRESETS) as [string, ...string[]]),
-        description: z.string(),
-        maxSizeBytes: z.number()
-      })
-      .optional(),
-    imageSource: z.string(),
-    timestamp: z.string()
-  }),
-  message: z.string(),
-  timestamp: z.string()
-})
-
-// AI Ticket schemas
-export const AiTicketImageDataSchema = z.object({
-  data: z.string().refine((val) => !val.startsWith("data:"), {
-    message: "Image must be raw base64 without data URL"
-  }),
-  filename: z.string()
-})
-
-export const AiTicketTitleRequestSchema = z
-  .object({
-    description: z.string().optional(),
-    image: AiTicketImageDataSchema.optional()
-  })
-  .refine((data) => data.description || data.image, {
-    message: "Either description or image must be provided"
-  })
-
-export const AiTicketTitleResponseSchema = z.object({
-  ok: z.literal(true),
-  result: z.object({
-    title: z.string()
-  }),
-  status: z.object({ message: z.string() }).nullable(),
-  error: z.null(),
-  timestamp: z.string()
-})
-
-export const AiTicketDescriptionRequestSchema = z.object({
-  title: z.string()
-})
-
-export const AiTicketDescriptionResponseSchema = z.object({
-  ok: z.literal(true),
-  result: z.object({
-    description: z.string()
-  }),
-  status: z.object({ message: z.string() }).nullable(),
-  error: z.null(),
-  timestamp: z.string()
-})
-
-export const AiTicketEnrichRequestSchema = z
-  .object({
-    title: z.string(),
-    description: z.string().optional(),
-    image: AiTicketImageDataSchema.optional()
-  })
-  .refine((data) => data.description || data.image, {
-    message: "Either description or image must be provided in addition to title"
-  })
-
-export const AiTicketEnrichResponseSchema = z.object({
-  ok: z.literal(true),
-  result: z.object({
-    description: z.string()
-  }),
-  status: z.object({ message: z.string() }).nullable(),
-  error: z.null(),
   timestamp: z.string()
 })
 
@@ -469,20 +340,8 @@ export type PingResponse = z.infer<typeof PingResponseSchema>
 export type EnhancedPingResponse = z.infer<typeof EnhancedPingResponseSchema>
 export type UrlRedirect = z.infer<typeof UrlRedirectSchema>
 export type CreateRedirect = z.infer<typeof CreateRedirectSchema>
-export type AiAltTextRequest = z.infer<typeof AiAltTextRequestSchema>
-export type AiAltTextResponse = z.infer<typeof AiAltTextResponseSchema>
 export type TokenUsage = z.infer<typeof TokenUsageSchema>
 export type TokenMetrics = z.infer<typeof TokenMetricsSchema>
-export type ImageOptimisationRequest = z.infer<typeof ImageOptimisationRequestSchema>
-export type ImageOptimisationQuery = z.infer<typeof ImageOptimisationQuerySchema>
-export type ImageOptimisationResponse = z.infer<typeof ImageOptimisationResponseSchema>
-export type AiTicketImageData = z.infer<typeof AiTicketImageDataSchema>
-export type AiTicketTitleRequest = z.infer<typeof AiTicketTitleRequestSchema>
-export type AiTicketTitleResponse = z.infer<typeof AiTicketTitleResponseSchema>
-export type AiTicketDescriptionRequest = z.infer<typeof AiTicketDescriptionRequestSchema>
-export type AiTicketDescriptionResponse = z.infer<typeof AiTicketDescriptionResponseSchema>
-export type AiTicketEnrichRequest = z.infer<typeof AiTicketEnrichRequestSchema>
-export type AiTicketEnrichResponse = z.infer<typeof AiTicketEnrichResponseSchema>
 export type AiSocialNetwork = z.infer<typeof AiSocialNetworkEnum>
 export type AiSocialStrategy = z.infer<typeof AiSocialStrategyEnum>
 export type AiSocialRequest = z.infer<typeof AiSocialRequestSchema>

@@ -2,7 +2,7 @@
 import boxen from "boxen"
 import chalk from "chalk"
 import { Command } from "commander"
-import { AIAdapter, DashboardAdapter, ImageAdapter, InternalAdapter, TokenAdapter } from "./endpoints"
+import { AIAdapter, DashboardAdapter, InternalAdapter, TokenAdapter } from "./endpoints"
 import type { ApiResponse, RequestConfig } from "./endpoints"
 import { createToken } from "./jwt"
 import { getJWTSecret } from "./shared/cli-utils"
@@ -228,111 +228,6 @@ program
 
 // AI Commands
 const aiCommand = program.command("ai").description("AI-powered operations")
-const aiAltCommand = aiCommand.command("alt").description("Generate alt-text for images")
-
-aiAltCommand
-  .command("url <imageUrl>")
-  .description("Generate alt-text from image URL")
-  .action(async (imageUrl, _options, command) => {
-    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
-    const config = await createConfig(options, "ai:alt")
-    validateToken(config, "ai:alt", options.auth || false)
-
-    const adapter = new AIAdapter(config)
-    const result = await withSpinner(
-      adapter.generateAltTextFromUrl(imageUrl),
-      `Generating alt-text for ${imageUrl}`,
-      options
-    )
-
-    await displayResult(result, options, "AI Alt-Text Generation")
-  })
-
-aiAltCommand
-  .command("file <filePath>")
-  .description("Generate alt-text from image file")
-  .action(async (filePath, _options, command) => {
-    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
-    const config = await createConfig(options, "ai:alt")
-    validateToken(config, "ai:alt", options.auth || false)
-
-    const adapter = new AIAdapter(config)
-    const result = await withSpinner(
-      adapter.generateAltTextFromFile(filePath),
-      `Generating alt-text for ${filePath}`,
-      options
-    )
-
-    await displayResult(result, options, "AI Alt-Text Generation")
-  })
-
-// AI Ticket Commands
-const aiTicketCommand = aiCommand.command("ticket").description("AI-powered Linear ticket operations")
-
-aiTicketCommand
-  .command("title")
-  .description("Generate a ticket title from description and/or image")
-  .option("--description <text>", "Description text to generate title from")
-  .option("--image <filePath>", "Image file to analyze for title generation")
-  .action(async (cmdOptions, command) => {
-    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
-    const config = await createConfig(options)
-
-    if (!cmdOptions.description && !cmdOptions.image) {
-      console.error(chalk.red("❌ Either --description or --image must be provided"))
-      process.exit(1)
-    }
-
-    const adapter = new AIAdapter(config)
-    const result = await withSpinner(
-      adapter.generateTicketTitle(cmdOptions.description, cmdOptions.image),
-      "Generating ticket title",
-      options
-    )
-
-    await displayResult(result, options, "AI Ticket Title Generation")
-  })
-
-aiTicketCommand
-  .command("description <title>")
-  .description("Generate a ticket description from title")
-  .action(async (title, _cmdOptions, command) => {
-    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
-    const config = await createConfig(options)
-
-    const adapter = new AIAdapter(config)
-    const result = await withSpinner(
-      adapter.generateTicketDescription(title),
-      `Generating description for "${title}"`,
-      options
-    )
-
-    await displayResult(result, options, "AI Ticket Description Generation")
-  })
-
-aiTicketCommand
-  .command("enrich <title>")
-  .description("Enrich a ticket description with additional context")
-  .option("--description <text>", "Existing description to enrich")
-  .option("--image <filePath>", "Image file for additional context")
-  .action(async (title, cmdOptions, command) => {
-    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
-    const config = await createConfig(options)
-
-    if (!cmdOptions.description && !cmdOptions.image) {
-      console.error(chalk.red("❌ Either --description or --image must be provided in addition to title"))
-      process.exit(1)
-    }
-
-    const adapter = new AIAdapter(config)
-    const result = await withSpinner(
-      adapter.enrichTicketDescription(title, cmdOptions.description, cmdOptions.image),
-      `Enriching description for "${title}"`,
-      options
-    )
-
-    await displayResult(result, options, "AI Ticket Description Enrichment")
-  })
 
 // AI Social Commands
 aiCommand
@@ -382,46 +277,6 @@ aiCommand
     )
 
     await displayResult(result, options, "AI Social Media Text Splitting")
-  })
-
-// Image Commands
-const imageCommand = program.command("image").description("Image optimisation operations")
-const imageOptimiseCommand = imageCommand.command("optimise").description("Optimise images for web")
-
-imageOptimiseCommand
-  .command("url <imageUrl>")
-  .description("Optimise image from URL")
-  .option("-q, --quality <number>", "Image quality (0-100)", (value) => Number.parseInt(value), 80)
-  .action(async (imageUrl, cmdOptions, command) => {
-    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
-    const config = await createConfig(options)
-
-    const adapter = new ImageAdapter(config)
-    const result = await withSpinner(
-      adapter.optimiseFromUrl(imageUrl, cmdOptions.quality),
-      `Optimising image ${imageUrl}`,
-      options
-    )
-
-    await displayResult(result, options, "Image Optimisation")
-  })
-
-imageOptimiseCommand
-  .command("file <filePath>")
-  .description("Optimise image from file")
-  .option("-q, --quality <number>", "Image quality (0-100)", (value) => Number.parseInt(value), 80)
-  .action(async (filePath, cmdOptions, command) => {
-    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
-    const config = await createConfig(options)
-
-    const adapter = new ImageAdapter(config)
-    const result = await withSpinner(
-      adapter.optimiseFromFile(filePath, cmdOptions.quality),
-      `Optimising image ${filePath}`,
-      options
-    )
-
-    await displayResult(result, options, "Image Optimisation")
   })
 
 // Token Commands
@@ -542,16 +397,7 @@ ${chalk.bold("Command Structure:")}
 ${chalk.bold("Available Commands:")}
 
 ${chalk.cyan("AI Operations:")}
-  bun try ai alt url <imageUrl>          Generate alt-text from image URL
-  bun try ai alt file <filePath>         Generate alt-text from local image file
   bun try ai social "text"               Split text into social media posts
-  bun try ai ticket title --description "text" [--image file.png]    Generate ticket title
-  bun try ai ticket description "title"          Generate ticket description from title
-  bun try ai ticket enrich "title" --description "text" [--image file.png]    Enrich ticket description
-
-${chalk.cyan("Image Optimisation:")}
-  bun try image optimise url <imageUrl> [--quality N]    Optimise image from URL
-  bun try image optimise file <filePath> [--quality N]   Optimise local image file
 
 ${chalk.cyan("System Status:")}
   bun try ping                           Get comprehensive server status (health, auth, headers)
@@ -569,20 +415,10 @@ ${chalk.cyan("Dashboard Data:")}
 ${chalk.bold("Examples:")}
   ${chalk.cyan("# Public endpoints (no authentication)")}
   bun try ping
-  bun try image optimise file "./image.png" --quality 75
-  bun try image optimise url "https://example.com/image.jpg"
 
   ${chalk.cyan("# Authenticated endpoints (requires token)")}
-  bun try --auth ai alt url "https://example.com/image.jpg"     # Auto-generate token
-  bun try --token "eyJ..." ai alt file "./image.png"           # Use provided token
   bun try --auth ai social "Long text to split into posts"        # Auto-generate token
   bun try --auth dashboard hacker-news                         # Auto-generate token
-
-  ${chalk.cyan("# AI Ticket (public, no authentication)")}
-  bun try ai ticket title --description "Fix the login bug"
-  bun try ai ticket title --image "./screenshot.png"
-  bun try ai ticket description "Fix login authentication"
-  bun try ai ticket enrich "Fix login" --description "Users can't log in" --image "./error.png"
 
   ${chalk.cyan("# AI Social Media (requires authentication)")}
   bun try --auth ai social "Your long text here"                                        # Default strategies (sentence_boundary,paragraph_preserve)
@@ -610,7 +446,6 @@ ${chalk.bold("Environment Variables:")}
   ${chalk.yellow("API_JWT_SECRET")}      JWT secret for authentication (required for --auth)
 
 ${chalk.bold("Manual Token Creation:")}
-  ${chalk.green("bun jwt create --sub 'ai:alt' --description 'AI alt-text testing'")}
   ${chalk.green("bun jwt create --sub 'ai:social' --description 'AI social media testing'")}
   ${chalk.green("bun jwt create --sub 'api:token' --description 'Token management'")}
 `

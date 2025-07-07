@@ -26,8 +26,8 @@ describe("try.ts Auth Integration", () => {
         token: "generated-token",
         metadata: {
           uuid: "test-uuid",
-          sub: "ai:alt",
-          description: "Temporary token for try.ts (ai:alt)",
+          sub: "ai:social",
+          description: "Temporary token for try.ts (ai:social)",
           createdAt: new Date().toISOString(),
           expiresAt: new Date(Date.now() + 3600000).toISOString()
         }
@@ -37,13 +37,13 @@ describe("try.ts Auth Integration", () => {
       const { generateTokenForScope } = await import("../bin/try")
 
       const options = { auth: true, script: false, quiet: false, dryRun: false }
-      const token = await generateTokenForScope("ai:alt", options)
+      const token = await generateTokenForScope("ai:social", options)
 
       expect(token).toBe("generated-token")
       expect(createToken).toHaveBeenCalledWith(
         {
-          sub: "ai:alt",
-          description: "Temporary token for try.ts (ai:alt)",
+          sub: "ai:social",
+          description: "Temporary token for try.ts (ai:social)",
           expiresIn: "1h"
         },
         "test-secret",
@@ -65,7 +65,7 @@ describe("try.ts Auth Integration", () => {
 
       const options = { auth: true, script: false, quiet: false, dryRun: false }
 
-      await expect(generateTokenForScope("ai:alt", options)).rejects.toThrow("process.exit called")
+      await expect(generateTokenForScope("ai:social", options)).rejects.toThrow("process.exit called")
 
       mockExit.mockRestore()
     })
@@ -86,7 +86,7 @@ describe("try.ts Auth Integration", () => {
 
       const options = { auth: true, script: false, quiet: false, dryRun: false }
 
-      await expect(generateTokenForScope("ai:alt", options)).rejects.toThrow("process.exit called")
+      await expect(generateTokenForScope("ai:social", options)).rejects.toThrow("process.exit called")
 
       mockExit.mockRestore()
     })
@@ -152,7 +152,7 @@ describe("try.ts Auth Integration", () => {
       }
 
       // Should not throw
-      expect(() => validateToken(config, "ai:alt", false)).not.toThrow()
+      expect(() => validateToken(config, "ai:social", false)).not.toThrow()
     })
 
     it("should fail validation when token is missing", async () => {
@@ -165,7 +165,7 @@ describe("try.ts Auth Integration", () => {
         throw new Error("process.exit called")
       })
 
-      expect(() => validateToken(config, "ai:alt", false)).toThrow("process.exit called")
+      expect(() => validateToken(config, "ai:social", false)).toThrow("process.exit called")
 
       mockExit.mockRestore()
     })

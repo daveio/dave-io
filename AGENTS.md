@@ -123,7 +123,7 @@ throw error
 ```typescript
 // Use auth helpers for consistent patterns
 const auth = await requireAPIAuth(event, "resource") // api:resource
-const auth = await requireAIAuth(event, "alt") // ai:alt
+const auth = await requireAIAuth(event, "social") // ai:social
 const auth = await requireAdminAuth(event) // admin
 
 // Access user info from auth.payload
@@ -135,19 +135,17 @@ const tokenId = auth.payload?.jti
 
 - **Methods**: `Authorization: Bearer <jwt>` + `?token=<jwt>`
 - **JWT**: `{sub, iat, exp?, jti?}` | **Permissions**: `category:resource` (parent grants child) | **Categories**: `api`, `ai`, `dashboard`, `admin`, `*`
-- **Public**: `/api/ping`, `/api/image/optimise`, `/go/{slug}`, `/api/ai/ticket/*`
-- **Protected**: `/api/ai/alt` (`ai:alt`+), `/api/ai/social` (`ai:social`+), `/api/token/{uuid}/*` (`api:token`+)
+- **Public**: `/api/ping`, `/go/{slug}`
+- **Protected**: `/api/ai/social` (`ai:social`+), `/api/token/{uuid}/*` (`api:token`+)
 
 ## Breaking Changes
 
 - **CLI**: Removed `bun try internal ping` → use `bun try ping`
 - **API Responses**: Standardized structure with `{ok, result, error, status, timestamp}`, sorted object keys
 - **Endpoints**: Merged `/api/internal/*` → `/api/ping`
-- **API Structure**: Converted all endpoints to singular: `/tokens/` → `/token/`, `/images/` → `/image/`, `/ticket/` → `/ticket/`
+- **API Structure**: Converted all endpoints to singular: `/tokens/` → `/token/`
 - **Auth**: `--auth` auto-generates tokens, `--token <JWT>` for provided tokens
 - **Dev**: No reset cycle, starts in seconds, `test:all` for full suite
-- **AI Alt**: Raw base64 POST or multipart form upload, 4MB limit with auto-optimization
-- **Images**: Cloudflare Images service, BLAKE3 IDs, global CDN
 - **KV**: Individual keys vs JSON blob, hierarchical colon-separated, YAML anchors
 - **Redirects**: Fixed `/go/*` routes to bypass client-side routing - links now redirect properly on first click instead of requiring a page refresh
 - **AI Social**: New `/api/ai/social` endpoint for splitting text into social media posts using Anthropic Claude 4 Sonnet via AI Gateway with automatic threading indicators (`🧵 x/y`). Uses strategy-based intelligent splitting with configurable strategies for optimal text processing.
@@ -156,7 +154,7 @@ const tokenId = auth.payload?.jti
 ## Core
 
 - **Response**: Success `{ok: true, result, error: null, status: {message}, timestamp}` | Error `{ok: false, error, status: {message}?, timestamp}`
-- **Environment**: `API_JWT_SECRET`, `ANTHROPIC_API_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Bindings: KV(KV), D1(D1), AI, Images, BROWSER
+- **Environment**: `API_JWT_SECRET`, `ANTHROPIC_API_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Bindings: KV(KV), D1(D1), AI, BROWSER
 - **CLI**: JWT(`init|create|verify|list|revoke`) | API-Test(`--auth-only|--ai-only`) | Try(`--auth|--token`) | KV(`export|import|list|wipe --local`)
 - **Testing**: Unit(`bun run test|test:ui`) | HTTP(`bun run test:api`) | Remote(`--url https://example.com`)
 
@@ -175,7 +173,7 @@ const tokenId = auth.payload?.jti
 
 ## Setup
 
-**Prerequisites**: Node.js 22.17.0+, Bun, Cloudflare Images subscription
+**Prerequisites**: Node.js 22.17.0+, Bun
 
 ```bash
 bun install && bun run dev  # Starts in ~3s
@@ -187,12 +185,7 @@ bun install && bun run dev  # Starts in ~3s
 
 ```bash
 curl http://localhost:3000/api/ping  # Status
-curl -H "Authorization: Bearer <token>" "/api/ai/alt?url=https://example.com/image.jpg"  # Alt-text via URL
-curl -X POST -F "image=@path/to/image.jpg" -H "Authorization: Bearer <token>" http://localhost:3000/api/ai/alt  # Alt-text via form
-curl -X POST -d '{"description": "Fix bug"}' /api/ai/ticket/title  # AI title (public)
 curl -X POST -H "Authorization: Bearer <token>" -d '{"input": "Long text...", "networks": ["bluesky", "mastodon"]}' /api/ai/social  # Split text
-curl -X POST -d '{"image": "<base64>", "quality": 80}' /api/image/optimise  # Optimize via JSON
-curl -F "image=@path/to/image.jpg" -F "quality=80" http://localhost:3000/api/image/optimise  # Optimize via form
 ```
 
 ## CLI Usage
@@ -200,7 +193,7 @@ curl -F "image=@path/to/image.jpg" -F "quality=80" http://localhost:3000/api/ima
 ```bash
 bun jwt init && bun jwt create --sub "api:metrics" --expiry "30d"  # JWT
 bun run kv export --all && bun run kv --local import backup.yaml  # KV
-bun try --auth ai alt url "https://example.com/image.jpg"  # Try
+bun try --auth ai social "Long text to split"  # Try
 bun run test:api --ai-only --url https://dave.io  # Test
 ```
 
@@ -213,7 +206,6 @@ bun jwt init && bun run deploy
 
 **KV YAML**: `metrics: {ok: 0}` → `metrics:ok = "0"` | AI Social: `ai:social:characters:bluesky = "300"`
 **Linting**: `// eslint-disable-next-line @typescript-eslint/no-explicit-any`
-**Images**: Cloudflare service, BLAKE3 IDs, 4MB limit, global CDN
 **AI Social**: Character limits in KV (`ai:social:characters:{network}`). Uses strategy-based splitting with default strategies `["sentence_boundary", "paragraph_preserve"]`. Available strategies: `sentence_boundary` (split at sentences), `word_boundary` (split at words), `paragraph_preserve` (keep paragraphs intact), `thread_optimize` (optimize threading), `hashtag_preserve` (keep hashtags with content). Multi-post threads automatically get threading indicators (`🧵 1/3`, `🧵 2/3`, etc.) with 10 chars reserved per post.
 
 ## Best Practices
@@ -252,7 +244,7 @@ bun jwt init && bun run deploy
 ## Troubleshooting
 
 - **Build**: `bun run lint:eslint` → `bun run lint:types` → `bun run test`
-- **Runtime**: Check env vars (`API_JWT_SECRET`, `ANTHROPIC_API_KEY`), Cloudflare bindings (KV, AI, Images), auth permissions
+- **Runtime**: Check env vars (`API_JWT_SECRET`, `ANTHROPIC_API_KEY`), Cloudflare bindings (KV, AI), auth permissions
 - **Common**: Use absolute paths, check schema imports, add `requireAuth()`, use `getValidatedUUID()`
 
 ## AI Social Media Text Splitting

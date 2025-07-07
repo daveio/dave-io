@@ -4,10 +4,14 @@ import { describe, expect, it } from "vitest"
 const spec = JSON.parse(readFileSync("public/openapi.json", "utf8"))
 
 describe("OpenAPI spec", () => {
-  it("includes AI ticket endpoints", () => {
+  it("includes remaining AI endpoints", () => {
     const paths = Object.keys(spec.paths)
-    expect(paths).toContain("/api/ai/ticket/title")
-    expect(paths).toContain("/api/ai/ticket/description")
-    expect(paths).toContain("/api/ai/ticket/enrich")
+    expect(paths).toContain("/api/ai/social")
+  })
+
+  it("includes core endpoints", () => {
+    const paths = Object.keys(spec.paths)
+    expect(paths).toContain("/api/ping")
+    expect(paths).toContain("/go/{slug}")
   })
 })
