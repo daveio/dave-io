@@ -218,22 +218,23 @@ export async function validateAndPrepareImageWithOptimization(
   const { validateImageSizeWithOptimization } = await import("./image-helpers")
   const optimizedBuffer = await validateImageSizeWithOptimization(buffer, env)
 
-  // Determine MIME type (may have changed during optimization)
-  let mimeType = contentType || "image/jpeg"
+  // After optimization, the output is always WebP
+  // The optimization function always outputs WebP format
+  let mimeType = "image/webp"
 
-  // Re-detect format from optimized buffer if needed
-  const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"]
-  if (!allowedTypes.includes(mimeType.toLowerCase())) {
+  // Verify the optimized buffer is actually WebP
+  if (optimizedBuffer.length >= 12 && optimizedBuffer.slice(8, 12).toString() === "WEBP") {
+    mimeType = "image/webp"
+  } else {
+    // Fallback detection in case optimization didn't work as expected
     if (optimizedBuffer[0] === 0xff && optimizedBuffer[1] === 0xd8) {
       mimeType = "image/jpeg"
     } else if (optimizedBuffer[0] === 0x89 && optimizedBuffer[1] === 0x50) {
       mimeType = "image/png"
     } else if (optimizedBuffer[0] === 0x47 && optimizedBuffer[1] === 0x49) {
       mimeType = "image/gif"
-    } else if (optimizedBuffer.slice(8, 12).toString() === "WEBP") {
-      mimeType = "image/webp"
     } else {
-      mimeType = "image/jpeg"
+      mimeType = "image/webp" // Default to WebP since that's what we expect
     }
   }
 
