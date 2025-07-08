@@ -125,7 +125,12 @@ export async function validateImageSizeWithOptimization(
 
   // Always optimize images to ensure consistent 1024px max dimensions for Claude
   if (env?.IMAGES) {
-    return await optimizeImageForClaude(buffer, env)
+    const optimizedBuffer = await optimizeImageForClaude(buffer, env)
+
+    // Validate optimized image meets Claude's 5MB limit
+    validateImageSize(optimizedBuffer)
+
+    return optimizedBuffer
   }
 
   // If no optimization available, throw error since we always want to resize

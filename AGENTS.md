@@ -178,6 +178,7 @@ const tokenId = auth.payload?.jti
 - **AI Model Migration**: Migrated `/api/ai/social` from Cloudflare AI Llama model to Anthropic Claude 4 Sonnet via AI Gateway for improved text processing quality and observability.
 - **AI Alt Text**: New `/api/ai/alt` endpoint for generating alt text for images using Anthropic Claude 4 Sonnet via AI Gateway. Supports both GET (with image URL) and POST (with image upload) methods. Includes image size validation and SSRF protection.
 - **AI Alt Text Image Optimization**: Enhanced image optimization to always process images via Cloudflare Images API. All images up to 10MB are automatically resized to max 1024px on long edge and converted to lossy WebP (quality 60) for optimal size and Claude compatibility.
+- **AI Image Size Validation Fix**: Fixed potential issue where optimized images between 5-10MB could bypass Claude's 5MB limit. Now validates optimized image size against Claude's 5MB limit after Cloudflare Images processing to ensure compatibility.
 
 ## Core
 
