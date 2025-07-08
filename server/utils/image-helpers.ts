@@ -82,11 +82,15 @@ export async function fetchImageFromUrl(url: string): Promise<{ buffer: Buffer; 
       throw createApiError(400, "URL does not point to an image")
     }
 
-    // Convert to buffer and validate size
+    // Convert to buffer and validate size against 10MB limit
     const arrayBuffer = await response.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
-    validateImageSize(buffer)
+    // Check against 10MB limit (same as Cloudflare Images limit)
+    const MAX_SIZE = 10 * 1024 * 1024 // 10MB
+    if (buffer.length > MAX_SIZE) {
+      throw createApiError(413, `Image size ${buffer.length} bytes exceeds maximum allowed size of ${MAX_SIZE} bytes`)
+    }
 
     return { buffer, contentType }
   } catch (error) {
@@ -100,54 +104,49 @@ export async function fetchImageFromUrl(url: string): Promise<{ buffer: Buffer; 
 /**
  * Validates image size with optimization support
  * @param imageData - Image data as Buffer or Uint8Array
- * @param env - Cloudflare environment bindings (optional, for optimization)
- * @returns Promise<Buffer> - Original buffer if valid, or optimized buffer if needed
- * @throws {Error} If image cannot be made valid
+ * @param env - Cloudflare environment bindings (required for optimization when needed)
+ * @returns Promise<Buffer> - Original buffer if within limits, or optimized buffer if size reduction was needed
+ * @throws {Error} If image cannot be made valid due to optimization failure or missing IMAGES binding
  */
 export async function validateImageSizeWithOptimization(
   imageData: Buffer | Uint8Array,
-  env?: CloudflareEnv
+  env: CloudflareEnv
 ): Promise<Buffer> {
-  const MAX_SIZE = 5 * 1024 * 1024 // 5MB limit for Claude
+  const MAX_CLOUDFLARE_SIZE = 10 * 1024 * 1024 // 10MB limit for Cloudflare Images
   const buffer = Buffer.from(imageData)
 
-  // If already within limits, return as-is
-  if (buffer.length <= MAX_SIZE) {
-    return buffer
+  // Check against Cloudflare Images limit first
+  if (buffer.length > MAX_CLOUDFLARE_SIZE) {
+    throw createApiError(
+      413,
+      `Image size ${buffer.length} bytes exceeds maximum allowed size of ${MAX_CLOUDFLARE_SIZE} bytes (10MB limit for image processing)`
+    )
   }
 
-  // If environment is available and image exceeds limit, try optimization
+  // Always optimize images to ensure consistent 1024px max dimensions for Claude
   if (env?.IMAGES) {
-    return await optimizeImageForClaude(buffer, env)
+    const optimizedBuffer = await optimizeImageForClaude(buffer, env)
+
+    // Validate optimized image meets Claude's 5MB limit
+    validateImageSize(optimizedBuffer)
+
+    return optimizedBuffer
   }
 
-  // If no optimization available, throw error
-  throw createApiError(
-    413,
-    `Image size ${buffer.length} bytes exceeds maximum allowed size of ${MAX_SIZE} bytes and optimization is not available`
-  )
+  // If no optimization available, throw error since we always want to resize
+  throw createApiError(503, "Image optimization service not available - required for processing images")
 }
 
 /**
- * Optimizes image using Cloudflare Images to reduce size for Claude
+ * Optimizes image using Cloudflare Images to ensure max 1024px on long edge for Claude
  * @param imageData - Original image data as Buffer
  * @param env - Cloudflare environment bindings (for IMAGES binding)
- * @param targetSize - Target size in bytes (default 4MB to leave headroom)
- * @returns Promise resolving to optimized image buffer
- * @throws {Error} If optimization fails or image is still too large
+ * @returns Promise resolving to optimized WebP image buffer (max 1024px on long edge, quality 60)
+ * @throws {Error} If optimization fails
  */
-export async function optimizeImageForClaude(
-  imageData: Buffer,
-  env: CloudflareEnv,
-  targetSize: number = 4 * 1024 * 1024 // 4MB to leave headroom under Claude's 5MB limit
-): Promise<Buffer> {
+export async function optimizeImageForClaude(imageData: Buffer, env: CloudflareEnv): Promise<Buffer> {
   if (!env.IMAGES) {
     throw createApiError(503, "Image optimization service not available")
-  }
-
-  // If already within target size, return as-is
-  if (imageData.length <= targetSize) {
-    return imageData
   }
 
   try {
@@ -163,48 +162,31 @@ export async function optimizeImageForClaude(
 
     console.log(`Optimizing image: original size ${(imageData.length / (1024 * 1024)).toFixed(2)}MB`)
 
-    // Progressive optimization strategy
-    const strategies = [
-      // Strategy 1: Moderate compression with WebP
-      { width: 2048, height: 2048, format: "image/webp" as const, quality: 85 },
-      // Strategy 2: More aggressive WebP compression
-      { width: 1536, height: 1536, format: "image/webp" as const, quality: 75 },
-      // Strategy 3: JPEG with reduced dimensions
-      { width: 1536, height: 1536, format: "image/jpeg" as const, quality: 85 },
-      // Strategy 4: Aggressive JPEG compression
-      { width: 1024, height: 1024, format: "image/jpeg" as const, quality: 70 }
-    ]
+    // Always resize to max 1024px on long edge with lossy WebP
+    // Using scale-down ensures the image is never enlarged, only shrunk if needed
+    // Setting both width and height to 1024 with scale-down preserves aspect ratio
+    const stream = createStream(imageData)
+    const result = await env.IMAGES.input(stream)
+      .transform({
+        width: 1024,
+        height: 1024,
+        fit: "scale-down", // Preserves aspect ratio, never enlarges
+        background: "#FFFFFF" // White background for transparent areas
+      })
+      .output({
+        format: "image/webp", // Always output as WebP for better compression
+        quality: 60 // Lossy WebP at quality 60 for optimal size/quality balance
+      })
 
-    for (const strategy of strategies) {
-      console.log(`Trying optimization: ${strategy.width}x${strategy.height} ${strategy.format} q${strategy.quality}`)
+    const response = result.response()
+    const arrayBuffer = await response.arrayBuffer()
+    const optimizedBuffer = Buffer.from(arrayBuffer)
 
-      const stream = createStream(imageData)
-      const result = await env.IMAGES.input(stream)
-        .transform({
-          width: strategy.width,
-          height: strategy.height,
-          fit: "scale-down", // Don't enlarge, only shrink
-          background: "#FFFFFF" // White background for transparency
-        })
-        .output({ format: strategy.format, quality: strategy.quality })
-
-      const response = result.response()
-      const arrayBuffer = await response.arrayBuffer()
-      const optimizedBuffer = Buffer.from(arrayBuffer)
-
-      console.log(`Optimized size: ${(optimizedBuffer.length / (1024 * 1024)).toFixed(2)}MB`)
-
-      if (optimizedBuffer.length <= targetSize) {
-        return optimizedBuffer
-      }
-    }
-
-    // If we still can't get it small enough, throw an error
-    throw createApiError(
-      413,
-      `Unable to optimize image below ${(targetSize / (1024 * 1024)).toFixed(2)}MB. ` +
-        `Original size: ${(imageData.length / (1024 * 1024)).toFixed(2)}MB`
+    console.log(
+      `Optimized image: final size ${(optimizedBuffer.length / (1024 * 1024)).toFixed(2)}MB, max 1024px on long edge, WebP format`
     )
+
+    return optimizedBuffer
   } catch (error) {
     // If it's already our API error, re-throw it
     if (error instanceof Error && error.name === "ApiError") {

@@ -177,12 +177,13 @@ const tokenId = auth.payload?.jti
 - **AI Social**: New `/api/ai/social` endpoint for splitting text into social media posts using Anthropic Claude 4 Sonnet via AI Gateway with automatic threading indicators (`🧵 x/y`). Uses strategy-based intelligent splitting with configurable strategies for optimal text processing.
 - **AI Model Migration**: Migrated `/api/ai/social` from Cloudflare AI Llama model to Anthropic Claude 4 Sonnet via AI Gateway for improved text processing quality and observability.
 - **AI Alt Text**: New `/api/ai/alt` endpoint for generating alt text for images using Anthropic Claude 4 Sonnet via AI Gateway. Supports both GET (with image URL) and POST (with image upload) methods. Includes image size validation and SSRF protection.
-- **AI Alt Text Image Optimization**: Added automatic image optimization to `/api/ai/alt` using Cloudflare Images API. Images exceeding 5MB are automatically resized and compressed to fit within Claude's limits while maintaining quality.
+- **AI Alt Text Image Optimization**: Enhanced image optimization to always process images via Cloudflare Images API. All images up to 10MB are automatically resized to max 1024px on long edge and converted to lossy WebP (quality 60) for optimal size and Claude compatibility.
+- **AI Image Size Validation Fix**: Fixed potential issue where optimized images between 5-10MB could bypass Claude's 5MB limit. Now validates optimized image size against Claude's 5MB limit after Cloudflare Images processing to ensure compatibility.
 
 ## Core
 
 - **Response**: Success `{ok: true, result, error: null, status: {message}, timestamp}` | Error `{ok: false, error, status: {message}?, timestamp}`
-- **Environment**: `API_JWT_SECRET`, `ANTHROPIC_API_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Bindings: KV(KV), D1(D1), AI, BROWSER
+- **Environment**: `API_JWT_SECRET`, `ANTHROPIC_API_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Bindings: KV(KV), D1(D1), AI, BROWSER, IMAGES
 - **CLI**: JWT(`init|create|verify|list|revoke`) | API-Test(`--auth-only|--ai-only`) | Try(`--auth|--token`) | KV(`export|import|list|wipe --local`)
 - **Testing**: Unit(`bun run test|test:ui`) | HTTP(`bun run test:api`) | Remote(`--url https://example.com`)
 
@@ -303,9 +304,9 @@ bun jwt init && bun run deploy
 
 - **Image URL Processing**: Fetch and analyze images from URLs with SSRF protection
 - **File Upload**: Accept direct image uploads via multipart form data
-- **Size Validation**: Automatic validation against Claude's 5MB limit
-- **Image Optimization**: Automatic image optimization using Cloudflare Images API when images exceed 5MB
-- **Format Detection**: Supports JPEG, PNG, GIF, WebP image formats
+- **Size Validation**: Automatic validation against 10MB limit (Cloudflare Images max)
+- **Image Optimization**: All images are automatically processed via Cloudflare Images API - resized to max 1024px on long edge and converted to lossy WebP (quality 60)
+- **Format Detection**: Supports JPEG, PNG, GIF, WebP image formats (input)
 - **Security**: URL validation prevents localhost/private network access
 - **AI Gateway**: Full observability and monitoring via Cloudflare AI Gateway
 
@@ -329,7 +330,7 @@ bun jwt init && bun run deploy
 **Error Handling**:
 
 - `400`: Invalid image format, malformed URL, or missing image data
-- `413`: Image exceeds 5MB size limit
+- `413`: Image exceeds 10MB size limit
 - `500`: Claude API failures or processing errors
 - `503`: Missing API keys or service unavailable
 

@@ -65,8 +65,8 @@ The confidence score should be between 0 and 1, representing how confident you a
       // Validate and prepare image for Claude with optimization if needed
       const { base64Data, mimeType } = await validateAndPrepareImageWithOptimization(
         imageFile.data,
-        contentType,
-        env // Pass environment for Images binding access
+        env, // Pass environment for Images binding access
+        contentType
       )
 
       // Send image to Claude for alt text generation
