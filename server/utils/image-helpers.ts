@@ -100,13 +100,13 @@ export async function fetchImageFromUrl(url: string): Promise<{ buffer: Buffer; 
 /**
  * Validates image size with optimization support
  * @param imageData - Image data as Buffer or Uint8Array
- * @param env - Cloudflare environment bindings (optional, for optimization)
- * @returns Promise<Buffer> - Original buffer if valid, or optimized buffer if needed
- * @throws {Error} If image cannot be made valid
+ * @param env - Cloudflare environment bindings (required for optimization when needed)
+ * @returns Promise<Buffer> - Original buffer if within limits, or optimized buffer if size reduction was needed
+ * @throws {Error} If image cannot be made valid due to optimization failure or missing IMAGES binding
  */
 export async function validateImageSizeWithOptimization(
   imageData: Buffer | Uint8Array,
-  env?: CloudflareEnv
+  env: CloudflareEnv
 ): Promise<Buffer> {
   const MAX_SIZE = 5 * 1024 * 1024 // 5MB limit for Claude
   const buffer = Buffer.from(imageData)
@@ -116,16 +116,12 @@ export async function validateImageSizeWithOptimization(
     return buffer
   }
 
-  // If environment is available and image exceeds limit, try optimization
-  if (env?.IMAGES) {
-    return await optimizeImageForClaude(buffer, env)
+  // Image exceeds limit, attempt optimization
+  if (!env.IMAGES) {
+    throw createApiError(503, "Image optimization service not available - required for images larger than 5MB")
   }
 
-  // If no optimization available, throw error
-  throw createApiError(
-    413,
-    `Image size ${buffer.length} bytes exceeds maximum allowed size of ${MAX_SIZE} bytes and optimization is not available`
-  )
+  return await optimizeImageForClaude(buffer, env)
 }
 
 /**
