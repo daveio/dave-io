@@ -190,15 +190,15 @@ export function validateAndPrepareImage(
 /**
  * Validates image data and converts to base64 if needed, with optimization support
  * @param imageData - Raw image data (Buffer, Uint8Array, or string)
+ * @param env - Cloudflare environment bindings (required for optimization when needed)
  * @param contentType - Image content type
- * @param env - Cloudflare environment bindings (optional, for optimization)
  * @returns Object with base64 data and validated content type
  * @throws {Error} If image is invalid or too large
  */
 export async function validateAndPrepareImageWithOptimization(
   imageData: Buffer | Uint8Array | string,
-  contentType?: string,
-  env?: CloudflareEnv
+  env: CloudflareEnv,
+  contentType?: string
 ): Promise<{
   base64Data: string
   mimeType: string

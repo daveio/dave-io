@@ -104,13 +104,13 @@ export async function fetchImageFromUrl(url: string): Promise<{ buffer: Buffer; 
 /**
  * Validates image size with optimization support
  * @param imageData - Image data as Buffer or Uint8Array
- * @param env - Cloudflare environment bindings (optional, for optimization)
- * @returns Promise<Buffer> - Always returns optimized buffer resized to max 1024px on long edge
- * @throws {Error} If image cannot be processed or exceeds 10MB
+ * @param env - Cloudflare environment bindings (required for optimization when needed)
+ * @returns Promise<Buffer> - Original buffer if within limits, or optimized buffer if size reduction was needed
+ * @throws {Error} If image cannot be made valid due to optimization failure or missing IMAGES binding
  */
 export async function validateImageSizeWithOptimization(
   imageData: Buffer | Uint8Array,
-  env?: CloudflareEnv
+  env: CloudflareEnv
 ): Promise<Buffer> {
   const MAX_CLOUDFLARE_SIZE = 10 * 1024 * 1024 // 10MB limit for Cloudflare Images
   const buffer = Buffer.from(imageData)
