@@ -329,7 +329,7 @@ export const AiSocialResponseSchema = z
 // AI Alt schemas
 export const AiAltRequestGetSchema = z
   .object({
-    image: z.string().min(1, "Image URL is required").openapi({
+    image: z.string().min(1, "Image URL is required").url("Must be a valid image URL").openapi({
       type: "string",
       format: "uri",
       description: "URL of the image to analyze"
