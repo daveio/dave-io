@@ -223,7 +223,9 @@ curl -X POST -H "Authorization: Bearer <token>" -d '{"input": "Long text...", "n
 ```bash
 bun jwt init && bun jwt create --sub "api:metrics" --expiry "30d"  # JWT
 bun run kv export --all && bun run kv --local import backup.yaml  # KV
-bun try --auth ai social "Long text to split"  # Try
+bun try --auth ai social "Long text to split"  # AI Social
+bun try --auth ai word "happy"  # AI Word (single mode)
+bun try --auth ai word context "I am happy" "happy"  # AI Word (context mode)
 bun run test:api --ai-only --url https://dave.io  # Test
 ```
 

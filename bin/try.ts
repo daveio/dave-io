@@ -125,6 +125,7 @@ async function displayResult<T>(result: ApiResponse<T>, options: GlobalOptions, 
       // Special handling for social media results
       const socialData = responseData as { networks?: Record<string, string[]> }
       const altTextData = responseData as { alt_text?: string; confidence?: number }
+      const wordData = responseData as { suggestions?: Array<{ word: string; confidence?: number }> }
 
       if (title?.includes("Social Media") && socialData.networks) {
         content.push("") // Add spacing
@@ -152,6 +153,21 @@ async function displayResult<T>(result: ApiResponse<T>, options: GlobalOptions, 
           content.push("")
           content.push(chalk.gray("Confidence:"), confidenceColor(`${confidencePercent}%`))
         }
+      } else if (title?.includes("Word Alternatives") && wordData.suggestions) {
+        content.push("") // Add spacing
+        content.push(chalk.cyan("Word Suggestions:"))
+        wordData.suggestions.forEach((suggestion, index) => {
+          const { word, confidence } = suggestion
+          let suggestionLine = `${index + 1}. ${chalk.white(word)}`
+
+          if (confidence !== undefined) {
+            const confidencePercent = (confidence * 100).toFixed(1)
+            const confidenceColor = confidence >= 0.8 ? chalk.green : confidence >= 0.6 ? chalk.yellow : chalk.red
+            suggestionLine += chalk.gray(` (${confidenceColor(`${confidencePercent}%`)})`)
+          }
+
+          content.push(suggestionLine)
+        })
       } else {
         content.push(`Data: ${JSON.stringify(responseData, null, 2)}`)
       }
@@ -330,6 +346,56 @@ altCommand
     await displayResult(result, options, "AI Alt Text Generation")
   })
 
+// AI Word Commands
+const wordCommand = aiCommand.command("word").description("AI word alternative finding")
+
+wordCommand
+  .command("single <word>")
+  .description("Find alternatives for a single word")
+  .action(async (word, _cmdOptions, command) => {
+    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
+    const config = await createConfig(options, "ai:word")
+    validateToken(config, "ai:word", options.auth || false)
+
+    const adapter = new AIAdapter(config)
+    const result = await withSpinner(adapter.findWordAlternatives(word), `Finding alternatives for "${word}"`, options)
+
+    await displayResult(result, options, "AI Word Alternatives")
+  })
+
+wordCommand
+  .command("context <text> <targetWord>")
+  .description("Find better word within a specific text context")
+  .action(async (text, targetWord, _cmdOptions, command) => {
+    const options = command.parent?.parent?.parent?.opts() as GlobalOptions
+    const config = await createConfig(options, "ai:word")
+    validateToken(config, "ai:word", options.auth || false)
+
+    const adapter = new AIAdapter(config)
+    const result = await withSpinner(
+      adapter.findWordAlternativesInContext(text, targetWord),
+      `Finding alternatives for "${targetWord}" in context`,
+      options
+    )
+
+    await displayResult(result, options, "AI Word Alternatives")
+  })
+
+// Convenience command for backward compatibility and ease of use
+wordCommand
+  .argument("<word>")
+  .description("Find alternatives for a single word (default single mode)")
+  .action(async (word, _cmdOptions, command) => {
+    const options = command.parent?.parent?.opts() as GlobalOptions
+    const config = await createConfig(options, "ai:word")
+    validateToken(config, "ai:word", options.auth || false)
+
+    const adapter = new AIAdapter(config)
+    const result = await withSpinner(adapter.findWordAlternatives(word), `Finding alternatives for "${word}"`, options)
+
+    await displayResult(result, options, "AI Word Alternatives")
+  })
+
 // Token Commands
 const tokenCommand = program.command("token").description("Token management operations")
 
@@ -451,6 +517,9 @@ ${chalk.cyan("AI Operations:")}
   bun try ai social "text"               Split text into social media posts
   bun try ai alt url <imageUrl>          Generate alt text from image URL
   bun try ai alt file <imagePath>        Generate alt text from image file
+  bun try ai word <word>                 Find alternatives for a single word
+  bun try ai word single <word>          Find alternatives for a single word
+  bun try ai word context <text> <word>  Find better word within text context
 
 ${chalk.cyan("System Status:")}
   bun try ping                           Get comprehensive server status (health, auth, headers)
@@ -485,6 +554,11 @@ ${chalk.bold("Examples:")}
   bun try --auth ai alt url "https://example.com/image.jpg"                             # Generate alt text from URL
   bun try --auth ai alt file "./path/to/image.png"                                      # Generate alt text from local file
 
+  ${chalk.cyan("# AI Word Alternative Finding (requires authentication)")}
+  bun try --auth ai word "happy"                                                        # Find alternatives for single word
+  bun try --auth ai word single "delighted"                                             # Explicit single mode
+  bun try --auth ai word context "I am very happy about this" "happy"                   # Find better word in context
+
   ${chalk.cyan("# Environment selection")}
   bun try --local ping                   # Local development
   bun try --remote ping                  # Remote production [default]
@@ -505,6 +579,7 @@ ${chalk.bold("Environment Variables:")}
 ${chalk.bold("Manual Token Creation:")}
   ${chalk.green("bun jwt create --sub 'ai:social' --description 'AI social media testing'")}
   ${chalk.green("bun jwt create --sub 'ai:alt' --description 'AI alt text generation'")}
+  ${chalk.green("bun jwt create --sub 'ai:word' --description 'AI word alternative finding'")}
   ${chalk.green("bun jwt create --sub 'api:token' --description 'Token management'")}
 `
 )
