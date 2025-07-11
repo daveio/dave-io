@@ -16,7 +16,7 @@
 
 **3. TEST**: Test everything with logic/side effects. Commands: `bun run test`, `bun run test:ui`, `bun run test:api`. Skip only: trivial getters, UI components, config.
 
-**4. SYNC**: `AGENTS.md` = truth. Update after API/feature/auth changes. `CLAUDE.md` & `README.md` derive from `AGENTS.md`.
+**4. SYNC**: `AGENTS.md` = agent context. `README.md` = human documentation. Update both after API/feature/auth changes, or anything which should be documented. `CLAUDE.md` is a symbolic link to `AGENTS.md`, so you only need to update `AGENTS.md`.
 
 **5. VERIFY**: `bun run build` → `bun run lint:eslint`, `bun run lint:trunk`, `bun run lint:types`, `bun run test` → `bun run check`. Never continue with errors.
 
