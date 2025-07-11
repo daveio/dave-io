@@ -4,11 +4,11 @@
 
 ### PRE-TASK CHECKLIST (Mental Review Required)
 
-□ Am I following ALL 11 rules below?
+□ Am I following ALL 10 rules below?
 □ Have I checked `AGENTS.md` for latest specs?
 □ Will my code be production-ready?
 
-### THE 11 COMMANDMENTS
+### THE 10 COMMANDMENTS
 
 **1. BREAK**: Ship breaking changes freely. Document in `AGENTS.md`. Never add migration code. THIS DOES NOT APPLY TO DATABASE MIGRATIONS.
 
@@ -16,17 +16,15 @@
 
 **3. TEST**: Test everything with logic/side effects. Commands: `bun run test`, `bun run test:ui`, `bun run test:api`. Skip only: trivial getters, UI components, config.
 
-**4. SYNC**: `AGENTS.md` = truth. Update after API/feature/auth changes. `CLAUDE.md` & `README.md` derive from `AGENTS.md`.
+**4. VERIFY**: `bun run build` → `bun run lint:eslint`, `bun run lint:trunk`, `bun run lint:types`, `bun run test` → `bun run check`. Never continue with errors.
 
-**5. VERIFY**: `bun run build` → `bun run lint:eslint`, `bun run lint:trunk`, `bun run lint:types`, `bun run test` → `bun run check`. Never continue with errors.
+**5. COMMIT**: `git add -A . && oco --fgm --yes` after each feature/fix/refactor.
 
-**6. COMMIT**: `git add -A . && oco --fgm --yes` after each feature/fix/refactor.
+**6. REAL**: Use actual service calls only (`env.AI.run()`, `env.KV.get/put()`). Crash on failure. No mocks/randoms/delays (except tests).
 
-**7. REAL**: Use actual service calls only (`env.AI.run()`, `env.KV.get/put()`). Crash on failure. No mocks/randoms/delays (except tests).
+**7. COMPLETE**: Finish all code or mark `TODO: [description]`. Fail explicitly, never silently.
 
-**8. COMPLETE**: Finish all code or mark `TODO: [description]`. Fail explicitly, never silently.
-
-**9. TRACK**: Use Linear tickets for TODO tracking. Team "Dave IO" (DIO), tickets begin "DIO-":
+**8. TRACK**: Use Linear tickets for TODO tracking. Team "Dave IO" (DIO), tickets begin "DIO-":
 
 ```typescript
 // TODO: (DIO-118) Skip Bun mocking - test separately
@@ -62,9 +60,9 @@ Useful IDs:
 
 Workflow: Create tickets for TODOs with "TODO" label. Check Linear for existing tickets. Reference ticket IDs in code comments as shown in example.
 
-**10. KV**: Simple values only. Hierarchical keys: `metrics:api:ok`. Kebab-case: `auth:token-uuid`. Update `data/kv/_init.yaml`.
+**9. KV**: Simple values only. Hierarchical keys: `metrics:api:ok`. Kebab-case: `auth:token-uuid`. Update `data/kv/_init.yaml`.
 
-**11. SHARE**: Extract duplicated logic to `server/utils/` immediately. Add JSDoc+tests+types.
+**10. SHARE**: Extract duplicated logic to `server/utils/` immediately. Add JSDoc+tests+types.
 
 ### ⚡ QUICK REFERENCE
 
