@@ -162,7 +162,7 @@ const tokenId = auth.payload?.jti
 - **Methods**: `Authorization: Bearer <jwt>` + `?token=<jwt>`
 - **JWT**: `{sub, iat, exp?, jti?}` | **Permissions**: `category:resource` (parent grants child) | **Categories**: `api`, `ai`, `dashboard`, `admin`, `*`
 - **Public**: `/api/ping`, `/go/{slug}`
-- **Protected**: `/api/ai/social` (`ai:social`+), `/api/token/{uuid}/*` (`api:token`+)
+- **Protected**: `/api/ai/social` (`ai:social`+), `/api/ai/alt` (`ai:alt`+), `/api/ai/word` (`ai:word`+), `/api/token/{uuid}/*` (`api:token`+)
 
 ## Breaking Changes
 
@@ -179,6 +179,7 @@ const tokenId = auth.payload?.jti
 - **AI Alt Text**: New `/api/ai/alt` endpoint for generating alt text for images using Anthropic Claude 4 Sonnet via AI Gateway. Supports both GET (with image URL) and POST (with image upload) methods. Includes image size validation and SSRF protection.
 - **AI Alt Text Image Optimization**: Enhanced image optimization to always process images via Cloudflare Images API. All images up to 10MB are automatically resized to max 1024px on long edge and converted to lossy WebP (quality 60) for optimal size and Claude compatibility.
 - **AI Image Size Validation Fix**: Fixed potential issue where optimized images between 5-10MB could bypass Claude's 5MB limit. Now validates optimized image size against Claude's 5MB limit after Cloudflare Images processing to ensure compatibility.
+- **AI Word Alternative Finding**: New `/api/ai/word` endpoint for finding word alternatives using Anthropic Claude 4 Sonnet via AI Gateway. Supports two modes: single word alternatives and context-based word replacement suggestions. Returns 5-10 ordered suggestions with confidence scores.
 
 ## Core
 
@@ -345,6 +346,86 @@ curl "https://dave.io/api/ai/alt?image=https://example.com/image.jpg" \
 curl -X POST "https://dave.io/api/ai/alt" \
   -H "Authorization: Bearer <token>" \
   -F "image=@/path/to/image.jpg"
+```
+
+## AI Word Alternative Finding
+
+**Endpoint**: `/api/ai/word` - Find word alternatives and synonyms using AI assistance
+
+**AI Model**: Uses Anthropic Claude 4 Sonnet via Cloudflare AI Gateway for intelligent word analysis
+
+**Modes**:
+
+- **Single Mode**: Find alternatives for a single word
+- **Context Mode**: Find better word within a specific text block
+
+**Features**:
+
+- **Intelligent Suggestions**: 5-10 word alternatives ordered by likelihood
+- **Context Awareness**: Considers context when suggesting replacements
+- **Confidence Scoring**: Optional confidence scores for each suggestion
+- **Multiple Contexts**: Handles various use cases and writing styles
+- **AI Gateway**: Full observability and monitoring via Cloudflare AI Gateway
+
+**Authentication**: Requires `ai:word` permission
+
+**Request Format**:
+
+```json
+// Single word mode
+{
+  "mode": "single",
+  "word": "happy"
+}
+
+// Context mode
+{
+  "mode": "context",
+  "text": "I am very happy about the result.",
+  "target_word": "happy"
+}
+```
+
+**Response Format**:
+
+```json
+{
+  "ok": true,
+  "result": {
+    "suggestions": [
+      { "word": "delighted", "confidence": 0.95 },
+      { "word": "pleased", "confidence": 0.9 },
+      { "word": "satisfied", "confidence": 0.85 },
+      { "word": "content", "confidence": 0.8 },
+      { "word": "thrilled", "confidence": 0.75 }
+    ]
+  },
+  "status": { "message": "Word alternatives generated successfully" },
+  "error": null,
+  "timestamp": "2025-07-11T..."
+}
+```
+
+**Error Handling**:
+
+- `400`: Invalid mode, missing word/text, or validation errors
+- `500`: Claude API failures or processing errors
+- `503`: Missing API keys or service unavailable
+
+**Usage Examples**:
+
+```bash
+# Single word mode
+curl -X POST "https://dave.io/api/ai/word" \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"mode": "single", "word": "happy"}'
+
+# Context mode
+curl -X POST "https://dave.io/api/ai/word" \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"mode": "context", "text": "I am very happy about the result.", "target_word": "happy"}'
 ```
 
 ## Immediate Plans

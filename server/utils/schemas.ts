@@ -6,7 +6,7 @@ extendZodWithOpenApi(z)
 // Common response schemas
 export const ApiSuccessResponseSchema = z.object({
   ok: z.literal(true),
-  result: z.any(),
+  result: z.any().openapi({ type: "object" }),
   message: z.string(),
   error: z.null(),
   status: z.object({ message: z.string() }).nullable(),
@@ -27,7 +27,7 @@ export const ApiErrorResponseSchema = z.object({
   error: z.string(),
   message: z.string(),
   status: z.object({ message: z.string() }).nullable(),
-  details: z.any().optional(),
+  details: z.any().openapi({ type: "object" }).optional(),
   meta: z
     .object({
       request_id: z.string().optional()
@@ -329,7 +329,7 @@ export const AiSocialResponseSchema = z
 // AI Alt schemas
 export const AiAltRequestGetSchema = z
   .object({
-    image: z.string().url("Must be a valid image URL")
+    image: z.string().url("Must be a valid image URL").openapi({ format: "uri" })
   })
   .openapi({
     title: "AI Alt Text GET Request",
@@ -338,7 +338,7 @@ export const AiAltRequestGetSchema = z
 
 export const AiAltRequestPostSchema = z
   .object({
-    image: z.any().describe("Image file (multipart form data)")
+    image: z.any().openapi({ type: "string", format: "binary" }).describe("Image file (multipart form data)")
   })
   .openapi({
     title: "AI Alt Text POST Request",
@@ -359,6 +359,48 @@ export const AiAltResponseSchema = z
   .openapi({
     title: "AI Alt Text Response",
     description: "Response containing generated alt text for an image"
+  })
+
+// AI Word schemas
+export const AiWordRequestSchema = z
+  .discriminatedUnion("mode", [
+    z.object({
+      mode: z.literal("single"),
+      word: z.string().min(1, "Word is required").max(100, "Word too long")
+    }),
+    z.object({
+      mode: z.literal("context"),
+      text: z.string().min(1, "Text is required").max(5000, "Text too long"),
+      target_word: z.string().min(1, "Target word is required").max(100, "Target word too long")
+    })
+  ])
+  .openapi({
+    title: "AI Word Request",
+    description: "Request to find alternative words"
+  })
+
+export const AiWordSuggestionSchema = z.object({
+  word: z.string().describe("Suggested alternative word"),
+  confidence: z.number().min(0).max(1).optional().describe("Confidence score for this suggestion")
+})
+
+export const AiWordResponseSchema = z
+  .object({
+    ok: z.literal(true),
+    result: z.object({
+      suggestions: z
+        .array(AiWordSuggestionSchema)
+        .min(5)
+        .max(10)
+        .describe("Array of word suggestions ordered by likelihood")
+    }),
+    status: z.object({ message: z.string() }).nullable(),
+    error: z.null(),
+    timestamp: z.string()
+  })
+  .openapi({
+    title: "AI Word Response",
+    description: "Response containing alternative word suggestions"
   })
 
 // Export commonly used types
@@ -384,6 +426,9 @@ export type AiSocialResponse = z.infer<typeof AiSocialResponseSchema>
 export type AiAltRequestGet = z.infer<typeof AiAltRequestGetSchema>
 export type AiAltRequestPost = z.infer<typeof AiAltRequestPostSchema>
 export type AiAltResponse = z.infer<typeof AiAltResponseSchema>
+export type AiWordRequest = z.infer<typeof AiWordRequestSchema>
+export type AiWordSuggestion = z.infer<typeof AiWordSuggestionSchema>
+export type AiWordResponse = z.infer<typeof AiWordResponseSchema>
 
 // New KV schema types
 export type KVTimeMetrics = z.infer<typeof KVTimeMetricsSchema>
