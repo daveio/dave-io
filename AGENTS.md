@@ -4,11 +4,11 @@
 
 ### PRE-TASK CHECKLIST (Mental Review Required)
 
-□ Am I following ALL 10 rules below?
+□ Am I following ALL 11 rules below?
 □ Have I checked `AGENTS.md` for latest specs?
 □ Will my code be production-ready?
 
-### THE 10 COMMANDMENTS
+### THE 11 COMMANDMENTS
 
 **1. BREAK**: Ship breaking changes freely. Document in `AGENTS.md`. Never add migration code. THIS DOES NOT APPLY TO DATABASE MIGRATIONS.
 
@@ -16,15 +16,17 @@
 
 **3. TEST**: Test everything with logic/side effects. Commands: `bun run test`, `bun run test:ui`, `bun run test:api`. Skip only: trivial getters, UI components, config.
 
-**4. VERIFY**: `bun run build` → `bun run lint:eslint`, `bun run lint:trunk`, `bun run lint:types`, `bun run test` → `bun run check`. Never continue with errors.
+**4. SYNC**: `AGENTS.md` = truth. Update after API/feature/auth changes. `CLAUDE.md` & `README.md` derive from `AGENTS.md`.
 
-**5. COMMIT**: `git add -A . && oco --fgm --yes` after each feature/fix/refactor.
+**5. VERIFY**: `bun run build` → `bun run lint:eslint`, `bun run lint:trunk`, `bun run lint:types`, `bun run test` → `bun run check`. Never continue with errors.
 
-**6. REAL**: Use actual service calls only (`env.AI.run()`, `env.KV.get/put()`). Crash on failure. No mocks/randoms/delays (except tests).
+**6. COMMIT**: `git add -A . && oco --fgm --yes` after each feature/fix/refactor.
 
-**7. COMPLETE**: Finish all code or mark `TODO: [description]`. Fail explicitly, never silently.
+**7. REAL**: Use actual service calls only (`env.AI.run()`, `env.KV.get/put()`). Crash on failure. No mocks/randoms/delays (except tests).
 
-**8. TRACK**: Use Linear tickets for TODO tracking. Team "Dave IO" (DIO), tickets begin "DIO-":
+**8. COMPLETE**: Finish all code or mark `TODO: [description]`. Fail explicitly, never silently.
+
+**9. TRACK**: Use Linear tickets for TODO tracking. Team "Dave IO" (DIO), tickets begin "DIO-":
 
 ```typescript
 // TODO: (DIO-118) Skip Bun mocking - test separately
@@ -60,9 +62,9 @@ Useful IDs:
 
 Workflow: Create tickets for TODOs with "TODO" label. Check Linear for existing tickets. Reference ticket IDs in code comments as shown in example.
 
-**9. KV**: Simple values only. Hierarchical keys: `metrics:api:ok`. Kebab-case: `auth:token-uuid`. Update `data/kv/_init.yaml`.
+**10. KV**: Simple values only. Hierarchical keys: `metrics:api:ok`. Kebab-case: `auth:token-uuid`. Update `data/kv/_init.yaml`.
 
-**10. SHARE**: Extract duplicated logic to `server/utils/` immediately. Add JSDoc+tests+types.
+**11. SHARE**: Extract duplicated logic to `server/utils/` immediately. Add JSDoc+tests+types.
 
 ### ⚡ QUICK REFERENCE
 
@@ -160,7 +162,7 @@ const tokenId = auth.payload?.jti
 - **Methods**: `Authorization: Bearer <jwt>` + `?token=<jwt>`
 - **JWT**: `{sub, iat, exp?, jti?}` | **Permissions**: `category:resource` (parent grants child) | **Categories**: `api`, `ai`, `dashboard`, `admin`, `*`
 - **Public**: `/api/ping`, `/go/{slug}`
-- **Protected**: `/api/ai/social` (`ai:social`+), `/api/token/{uuid}/*` (`api:token`+)
+- **Protected**: `/api/ai/social` (`ai:social`+), `/api/ai/alt` (`ai:alt`+), `/api/ai/word` (`ai:word`+), `/api/token/{uuid}/*` (`api:token`+)
 
 ## Breaking Changes
 
@@ -177,6 +179,7 @@ const tokenId = auth.payload?.jti
 - **AI Alt Text**: New `/api/ai/alt` endpoint for generating alt text for images using Anthropic Claude 4 Sonnet via AI Gateway. Supports both GET (with image URL) and POST (with image upload) methods. Includes image size validation and SSRF protection.
 - **AI Alt Text Image Optimization**: Enhanced image optimization to always process images via Cloudflare Images API. All images up to 10MB are automatically resized to max 1024px on long edge and converted to lossy WebP (quality 60) for optimal size and Claude compatibility.
 - **AI Image Size Validation Fix**: Fixed potential issue where optimized images between 5-10MB could bypass Claude's 5MB limit. Now validates optimized image size against Claude's 5MB limit after Cloudflare Images processing to ensure compatibility.
+- **AI Word Alternative Finding**: New `/api/ai/word` endpoint for finding word alternatives using Anthropic Claude 4 Sonnet via AI Gateway. Supports two modes: single word alternatives and context-based word replacement suggestions. Returns 5-10 ordered suggestions with confidence scores.
 
 ## Core
 
@@ -220,7 +223,9 @@ curl -X POST -H "Authorization: Bearer <token>" -d '{"input": "Long text...", "n
 ```bash
 bun jwt init && bun jwt create --sub "api:metrics" --expiry "30d"  # JWT
 bun run kv export --all && bun run kv --local import backup.yaml  # KV
-bun try --auth ai social "Long text to split"  # Try
+bun try --auth ai social "Long text to split"  # AI Social
+bun try --auth ai word "happy"  # AI Word (single mode)
+bun try --auth ai word context "I am happy" "happy"  # AI Word (context mode)
 bun run test:api --ai-only --url https://dave.io  # Test
 ```
 
@@ -343,6 +348,86 @@ curl "https://dave.io/api/ai/alt?image=https://example.com/image.jpg" \
 curl -X POST "https://dave.io/api/ai/alt" \
   -H "Authorization: Bearer <token>" \
   -F "image=@/path/to/image.jpg"
+```
+
+## AI Word Alternative Finding
+
+**Endpoint**: `/api/ai/word` - Find word alternatives and synonyms using AI assistance
+
+**AI Model**: Uses Anthropic Claude 4 Sonnet via Cloudflare AI Gateway for intelligent word analysis
+
+**Modes**:
+
+- **Single Mode**: Find alternatives for a single word
+- **Context Mode**: Find better word within a specific text block
+
+**Features**:
+
+- **Intelligent Suggestions**: 5-10 word alternatives ordered by likelihood
+- **Context Awareness**: Considers context when suggesting replacements
+- **Confidence Scoring**: Optional confidence scores for each suggestion
+- **Multiple Contexts**: Handles various use cases and writing styles
+- **AI Gateway**: Full observability and monitoring via Cloudflare AI Gateway
+
+**Authentication**: Requires `ai:word` permission
+
+**Request Format**:
+
+```json
+// Single word mode
+{
+  "mode": "single",
+  "word": "happy"
+}
+
+// Context mode
+{
+  "mode": "context",
+  "text": "I am very happy about the result.",
+  "target_word": "happy"
+}
+```
+
+**Response Format**:
+
+```json
+{
+  "ok": true,
+  "result": {
+    "suggestions": [
+      { "word": "delighted", "confidence": 0.95 },
+      { "word": "pleased", "confidence": 0.9 },
+      { "word": "satisfied", "confidence": 0.85 },
+      { "word": "content", "confidence": 0.8 },
+      { "word": "thrilled", "confidence": 0.75 }
+    ]
+  },
+  "status": { "message": "Word alternatives generated successfully" },
+  "error": null,
+  "timestamp": "2025-07-11T..."
+}
+```
+
+**Error Handling**:
+
+- `400`: Invalid mode, missing word/text, or validation errors
+- `500`: Claude API failures or processing errors
+- `503`: Missing API keys or service unavailable
+
+**Usage Examples**:
+
+```bash
+# Single word mode
+curl -X POST "https://dave.io/api/ai/word" \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"mode": "single", "word": "happy"}'
+
+# Context mode
+curl -X POST "https://dave.io/api/ai/word" \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"mode": "context", "text": "I am very happy about the result.", "target_word": "happy"}'
 ```
 
 ## Immediate Plans

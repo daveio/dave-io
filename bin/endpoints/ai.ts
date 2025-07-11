@@ -17,9 +17,20 @@ interface AltTextResponse {
 }
 
 /**
+ * Response format for AI word alternative finding
+ */
+interface WordAlternativesResponse {
+  suggestions: Array<{
+    word: string
+    confidence?: number
+  }>
+}
+
+/**
  * Adapter for AI-powered operations (/api/ai/*)
  * Social operations require 'ai:social' scope or higher for authentication
  * Alt text operations require 'ai:alt' scope or higher for authentication
+ * Word alternative operations require 'ai:word' scope or higher for authentication
  */
 export class AIAdapter extends BaseAdapter {
   constructor(config: RequestConfig = { baseUrl: "http://localhost:3000" }) {
@@ -91,6 +102,45 @@ export class AIAdapter extends BaseAdapter {
       headers: {
         // Don't set Content-Type for FormData - let the browser set it
       }
+    })
+  }
+
+  /**
+   * Find word alternatives for a single word
+   * @param word Word to find alternatives for
+   * @returns AI-generated word suggestions with confidence scores
+   */
+  async findWordAlternatives(word: string): Promise<ApiResponse<WordAlternativesResponse>> {
+    const body = {
+      mode: "single",
+      word
+    }
+
+    return this.makeRequest("/api/ai/word", {
+      method: "POST",
+      body
+    })
+  }
+
+  /**
+   * Find word alternatives within a specific context
+   * @param text The text context containing the word
+   * @param targetWord The specific word to find alternatives for
+   * @returns AI-generated word suggestions with confidence scores
+   */
+  async findWordAlternativesInContext(
+    text: string,
+    targetWord: string
+  ): Promise<ApiResponse<WordAlternativesResponse>> {
+    const body = {
+      mode: "context",
+      text,
+      target_word: targetWord
+    }
+
+    return this.makeRequest("/api/ai/word", {
+      method: "POST",
+      body
     })
   }
 }

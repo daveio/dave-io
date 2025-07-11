@@ -104,7 +104,7 @@ describe("AI Social Endpoint", () => {
       expect(result.success).toBe(false)
 
       if (!result.success) {
-        expect(result.error.errors[0]?.message).toBe("Input text is required")
+        expect(result.error.issues[0]?.message).toBe("Input text is required")
       }
     })
 
@@ -118,7 +118,7 @@ describe("AI Social Endpoint", () => {
       expect(result.success).toBe(false)
 
       if (!result.success) {
-        expect(result.error.errors[0]?.message).toBe("At least one network must be specified")
+        expect(result.error.issues[0]?.message).toBe("At least one network must be specified")
       }
     })
 
