@@ -2,6 +2,7 @@ import type { H3Event } from "h3"
 import { createError } from "h3"
 import { getCloudflareRequestInfo } from "./cloudflare"
 import { prepareSortedApiResponse } from "./json-utils"
+import { ApiErrorResponseSchema, ApiSuccessResponseSchema } from "./schemas"
 import type { ApiErrorResponse, ApiSuccessResponse } from "./schemas"
 
 export interface ApiResponse<T = unknown> {
@@ -29,26 +30,79 @@ export interface ApiResponseOptions<T> {
   code?: number
 }
 
+/**
+ * Validates an API response against the appropriate schema
+ * @param response - The response object to validate
+ * @returns The validated response
+ * @throws Error if validation fails
+ */
+function validateApiResponse(response: ApiSuccessResponse | ApiErrorResponse): ApiSuccessResponse | ApiErrorResponse {
+  const isDevelopment = process.env.NODE_ENV === "development"
+
+  try {
+    if (response.ok) {
+      const result = ApiSuccessResponseSchema.safeParse(response)
+      if (!result.success) {
+        console.error("API Success Response validation failed:", result.error.format())
+        if (isDevelopment) {
+          console.error("Invalid response:", JSON.stringify(response, null, 2))
+        }
+        throw new Error("Response validation failed")
+      }
+      return result.data
+    } else {
+      const result = ApiErrorResponseSchema.safeParse(response)
+      if (!result.success) {
+        console.error("API Error Response validation failed:", result.error.format())
+        if (isDevelopment) {
+          console.error("Invalid response:", JSON.stringify(response, null, 2))
+        }
+        throw new Error("Response validation failed")
+      }
+      return result.data
+    }
+  } catch (error) {
+    // Log the validation error but don't expose details to client
+    console.error("Response validation error:", error)
+    // Throw a generic error that will be caught by the error handler
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Internal server error",
+      data: prepareSortedApiResponse({
+        ok: false,
+        error: "Internal server error",
+        message: "An unexpected error occurred",
+        status: null,
+        timestamp: new Date().toISOString()
+      })
+    })
+  }
+}
+
 export function createApiResponse<T>(options: ApiResponseOptions<T>): ApiSuccessResponse | ApiErrorResponse {
   // Handle redirects
   if (options.redirect) {
     // For redirects, we need to use h3's built-in redirect capabilities
     // But we need to construct a proper response object first
-    const responseObj: ApiSuccessResponse = prepareSortedApiResponse({
+    const responseObj: ApiSuccessResponse = {
       ok: true,
       result: {} as T, // Empty result for redirects
       message: `Redirecting to ${options.redirect}`,
       error: null,
       status: { message: `Redirecting to ${options.redirect}` },
       timestamp: new Date().toISOString()
-    })
+    }
+
+    // Validate and prepare the redirect response
+    const sortedResponse = prepareSortedApiResponse(responseObj)
+    const validatedResponse = validateApiResponse(sortedResponse)
 
     // Then throw an error with the redirect status code
     // This is how H3 expects redirects to be handled
     throw createError({
       statusCode: options.code || 302,
       statusMessage: `Redirect to ${options.redirect}`,
-      data: responseObj
+      data: validatedResponse
     })
   }
   const timestamp = new Date().toISOString()
@@ -69,12 +123,16 @@ export function createApiResponse<T>(options: ApiResponseOptions<T>): ApiSuccess
       response.meta = meta
     }
 
+    // Validate and prepare the error response
+    const sortedResponse = prepareSortedApiResponse(response)
+    const validatedResponse = validateApiResponse(sortedResponse)
+
     // Handle custom status code for errors
     if (code) {
       throw createError({
         statusCode: code,
         statusMessage: error,
-        data: prepareSortedApiResponse(response)
+        data: validatedResponse
       })
     }
 
@@ -82,7 +140,7 @@ export function createApiResponse<T>(options: ApiResponseOptions<T>): ApiSuccess
     throw createError({
       statusCode: 500,
       statusMessage: error,
-      data: prepareSortedApiResponse(response)
+      data: validatedResponse
     })
   }
   // Success response
@@ -99,16 +157,20 @@ export function createApiResponse<T>(options: ApiResponseOptions<T>): ApiSuccess
     response.meta = meta
   }
 
+  // Validate and prepare the success response
+  const sortedResponse = prepareSortedApiResponse(response)
+  const validatedResponse = validateApiResponse(sortedResponse)
+
   // Handle custom status code for success
   if (code) {
     throw createError({
       statusCode: code,
       statusMessage: message || "OK",
-      data: prepareSortedApiResponse(response)
+      data: validatedResponse
     })
   }
 
-  return prepareSortedApiResponse(response)
+  return validatedResponse
 }
 
 export function createApiError(statusCode: number, message: string, details?: unknown): never {
@@ -124,10 +186,14 @@ export function createApiError(statusCode: number, message: string, details?: un
     timestamp: new Date().toISOString()
   }
 
+  // Validate and prepare the error response
+  const sortedResponse = prepareSortedApiResponse(errorData)
+  const validatedResponse = validateApiResponse(sortedResponse)
+
   throw createError({
     statusCode,
     statusMessage: message,
-    data: prepareSortedApiResponse(errorData)
+    data: validatedResponse
   })
 }
 
