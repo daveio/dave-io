@@ -144,10 +144,11 @@ export default defineEventHandler(async (event) => {
       ])
 
       const metricsData = {
-        total_requests: totalRequests,
-        successful_requests: successfulRequests,
-        failed_requests: failedRequests,
-        redirect_clicks: 0
+        uuid,
+        totalRequests,
+        successfulRequests,
+        failedRequests,
+        createdAt: createdAtStr
       }
 
       // Record successful metrics
