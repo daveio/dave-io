@@ -166,7 +166,7 @@ bun try --auth ai word "happy"                  # Test AI word alternatives
 
 ## 📁 Project Structure
 
-```
+```text
 server/
 ├── api/           # API endpoint handlers
 ├── routes/        # Server-side routes (redirects)

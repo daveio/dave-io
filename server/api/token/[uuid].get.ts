@@ -1,7 +1,8 @@
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { authorizeEndpoint } from "~/server/utils/auth"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
-import { createApiError, createApiResponse, isApiError } from "~/server/utils/response"
+import { createApiError, isApiError } from "~/server/utils/response"
+import { createTypedApiResponse } from "~/server/utils/response-types"
 import { TokenUsageSchema } from "~/server/utils/schemas"
 
 interface TokenUsageData {
@@ -71,10 +72,11 @@ export default defineEventHandler(async (event) => {
     // Record successful metrics
     recordAPIMetrics(event, 200)
 
-    return createApiResponse({
+    return createTypedApiResponse({
       result: validatedUsage,
       message: "Token usage retrieved successfully",
-      error: null
+      error: null,
+      resultSchema: TokenUsageSchema
     })
   } catch (error: unknown) {
     console.error("Token management error:", error)

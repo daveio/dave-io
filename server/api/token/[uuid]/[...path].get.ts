@@ -1,7 +1,9 @@
+import { z } from "zod"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { authorizeEndpoint } from "~/server/utils/auth"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
-import { createApiError, createApiResponse, isApiError } from "~/server/utils/response"
+import { createApiError, isApiError } from "~/server/utils/response"
+import { createTypedApiResponse } from "~/server/utils/response-types"
 import { TokenUsageSchema } from "~/server/utils/schemas"
 
 interface TokenUsageData {
@@ -11,6 +13,20 @@ interface TokenUsageData {
   created_at: string
   last_used: string
 }
+
+// Define schemas for different endpoints
+const TokenRevokeDataSchema = z.object({
+  revoked: z.boolean(),
+  token_id: z.string(),
+  revoked_at: z.string()
+})
+
+const TokenMetricsDataSchema = z.object({
+  total_requests: z.number(),
+  successful_requests: z.number(),
+  failed_requests: z.number(),
+  redirect_clicks: z.number()
+})
 
 export default defineEventHandler(async (event) => {
   const _startTime = Date.now()
@@ -75,10 +91,11 @@ export default defineEventHandler(async (event) => {
       // Record successful metrics
       recordAPIMetrics(event, 200)
 
-      return createApiResponse({
+      return createTypedApiResponse({
         result: validatedUsage,
         message: "Token usage retrieved successfully",
-        error: null
+        error: null,
+        resultSchema: TokenUsageSchema
       })
     }
     if (path === "revoke") {
@@ -103,10 +120,11 @@ export default defineEventHandler(async (event) => {
       // Record successful metrics
       recordAPIMetrics(event, 200)
 
-      return createApiResponse({
+      return createTypedApiResponse({
         result: revokeData,
         message: "Token revoked successfully",
-        error: null
+        error: null,
+        resultSchema: TokenRevokeDataSchema
       })
     }
     if (path === "metrics") {
@@ -118,26 +136,28 @@ export default defineEventHandler(async (event) => {
       }
 
       // Get real metrics data from KV counters for this specific token
-      const [totalRequests, successfulRequests, failedRequests] = await Promise.all([
+      const [totalRequests, successfulRequests, failedRequests, redirectClicks] = await Promise.all([
         env.KV.get(`metrics:token:${uuid}:requests:total`).then((v) => Number.parseInt(v || "0")),
         env.KV.get(`metrics:token:${uuid}:requests:successful`).then((v) => Number.parseInt(v || "0")),
-        env.KV.get(`metrics:token:${uuid}:requests:failed`).then((v) => Number.parseInt(v || "0"))
+        env.KV.get(`metrics:token:${uuid}:requests:failed`).then((v) => Number.parseInt(v || "0")),
+        env.KV.get(`metrics:token:${uuid}:redirects:total`).then((v) => Number.parseInt(v || "0"))
       ])
 
       const metricsData = {
         total_requests: totalRequests,
         successful_requests: successfulRequests,
         failed_requests: failedRequests,
-        redirect_clicks: 0
+        redirect_clicks: redirectClicks
       }
 
       // Record successful metrics
       recordAPIMetrics(event, 200)
 
-      return createApiResponse({
+      return createTypedApiResponse({
         result: metricsData,
         message: "Token metrics retrieved successfully",
-        error: null
+        error: null,
+        resultSchema: TokenMetricsDataSchema
       })
     }
     throw createApiError(404, `Unknown token endpoint: ${path}`)

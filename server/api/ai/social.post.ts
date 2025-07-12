@@ -1,8 +1,10 @@
+import { z } from "zod"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAIAuth } from "~/server/utils/auth-helpers"
 import { createAnthropicClient, parseClaudeResponse, sendClaudeMessage } from "~/server/utils/ai-helpers"
-import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
-import { AiSocialRequestSchema } from "~/server/utils/schemas"
+import { createApiError, isApiError, logRequest } from "~/server/utils/response"
+import { createTypedApiResponse } from "~/server/utils/response-types"
+import { AiSocialRequestSchema, AiSocialNetworkEnum } from "~/server/utils/schemas"
 import type { AiSocialNetwork } from "~/server/utils/schemas"
 
 const DEFAULT_CHARACTER_LIMITS: Record<AiSocialNetwork, number> = {
@@ -11,6 +13,11 @@ const DEFAULT_CHARACTER_LIMITS: Record<AiSocialNetwork, number> = {
   threads: 500,
   x: 280
 }
+
+// Define the result schema for the AI social endpoint
+const AiSocialResultSchema = z.object({
+  networks: z.record(AiSocialNetworkEnum, z.array(z.string()).max(100, "Maximum 100 posts per network"))
+})
 
 export default defineEventHandler(async (event) => {
   try {
@@ -138,12 +145,13 @@ Return a JSON object with a "networks" property containing arrays of posts for e
         success: true
       })
 
-      return createApiResponse({
+      return createTypedApiResponse({
         result: {
           networks: aiResponse.networks
         },
         message: "Text split successfully for social media",
-        error: null
+        error: null,
+        resultSchema: AiSocialResultSchema
       })
     } catch (error) {
       console.error("Anthropic Claude processing failed:", error)
