@@ -16,18 +16,16 @@ interface TokenUsageData {
 
 // Define schemas for different endpoints
 const TokenRevokeDataSchema = z.object({
-  uuid: z.string(),
   revoked: z.boolean(),
-  revokedAt: z.string(),
-  message: z.string()
+  token_id: z.string(),
+  revoked_at: z.string()
 })
 
 const TokenMetricsDataSchema = z.object({
-  uuid: z.string(),
-  totalRequests: z.number(),
-  successfulRequests: z.number(),
-  failedRequests: z.number(),
-  createdAt: z.string()
+  total_requests: z.number(),
+  successful_requests: z.number(),
+  failed_requests: z.number(),
+  redirect_clicks: z.number()
 })
 
 export default defineEventHandler(async (event) => {
