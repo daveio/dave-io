@@ -26,7 +26,7 @@
 
 **8. COMPLETE**: Finish all code or mark `TODO: [description]`. Fail explicitly, never silently.
 
-**9. TRACK**: Use Linear tickets for TODO tracking. Team "Dave IO" (DIO), tickets begin "DIO-":
+**9. TRACK**: Use Linear tickets (NOT `TODO.md`) for TODO tracking. Team "Dave IO" (DIO), tickets begin "DIO-":
 
 ```typescript
 // TODO: (DIO-118) Skip Bun mocking - test separately
