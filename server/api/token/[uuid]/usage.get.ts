@@ -1,7 +1,9 @@
+import { z } from "zod"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAPIAuth } from "~/server/utils/auth-helpers"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
-import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
+import { createApiError, isApiError, logRequest } from "~/server/utils/response"
+import { createTypedApiResponse } from "~/server/utils/response-types"
 import { getValidatedUUID } from "~/server/utils/validation"
 
 interface TokenUsage {
@@ -12,6 +14,16 @@ interface TokenUsage {
   maxRequests?: number
   createdAt: string
 }
+
+// Define the result schema for the token usage endpoint
+const TokenUsageResultSchema = z.object({
+  uuid: z.string(),
+  requestCount: z.number(),
+  lastUsed: z.string().nullable(),
+  isRevoked: z.boolean(),
+  maxRequests: z.number().optional(),
+  createdAt: z.string()
+})
 
 // Get token usage from KV storage using simple keys
 async function getTokenUsageFromKV(uuid: string, kv?: KVNamespace): Promise<TokenUsage> {
@@ -90,10 +102,11 @@ export default defineEventHandler(async (event) => {
     })
 
     // Return success with result and success message
-    return createApiResponse({
+    return createTypedApiResponse({
       result: usage,
       message: "Token usage retrieved successfully",
-      error: null
+      error: null,
+      resultSchema: TokenUsageResultSchema
     })
   } catch (error: unknown) {
     console.error("Token usage error:", error)

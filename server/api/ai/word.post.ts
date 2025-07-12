@@ -1,9 +1,20 @@
+import { z } from "zod"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAIAuth } from "~/server/utils/auth-helpers"
 import { createAnthropicClient, parseClaudeResponse, sendClaudeMessage } from "~/server/utils/ai-helpers"
-import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
-import { AiWordRequestSchema } from "~/server/utils/schemas"
+import { createApiError, isApiError, logRequest } from "~/server/utils/response"
+import { createTypedApiResponse } from "~/server/utils/response-types"
+import { AiWordRequestSchema, AiWordSuggestionSchema } from "~/server/utils/schemas"
 import type { AiWordSuggestion } from "~/server/utils/schemas"
+
+// Define the result schema for the AI word endpoint
+const AiWordResultSchema = z.object({
+  suggestions: z
+    .array(AiWordSuggestionSchema)
+    .min(5)
+    .max(10)
+    .describe("Array of word suggestions ordered by likelihood")
+})
 
 export default defineEventHandler(async (event) => {
   try {
@@ -128,12 +139,13 @@ The word "${validatedRequest.target_word}" needs a better alternative. What woul
         success: true
       })
 
-      return createApiResponse({
+      return createTypedApiResponse({
         result: {
           suggestions: aiResponse.suggestions
         },
         message: "Word alternatives generated successfully",
-        error: null
+        error: null,
+        resultSchema: AiWordResultSchema
       })
     } catch (error) {
       console.error("Anthropic Claude processing failed:", error)

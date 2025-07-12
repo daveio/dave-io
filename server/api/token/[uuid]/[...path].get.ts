@@ -1,7 +1,9 @@
+import { z } from "zod"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { authorizeEndpoint } from "~/server/utils/auth"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
-import { createApiError, createApiResponse, isApiError } from "~/server/utils/response"
+import { createApiError, isApiError } from "~/server/utils/response"
+import { createTypedApiResponse } from "~/server/utils/response-types"
 import { TokenUsageSchema } from "~/server/utils/schemas"
 
 interface TokenUsageData {
@@ -11,6 +13,22 @@ interface TokenUsageData {
   created_at: string
   last_used: string
 }
+
+// Define schemas for different endpoints
+const TokenRevokeDataSchema = z.object({
+  uuid: z.string(),
+  revoked: z.boolean(),
+  revokedAt: z.string(),
+  message: z.string()
+})
+
+const TokenMetricsDataSchema = z.object({
+  uuid: z.string(),
+  totalRequests: z.number(),
+  successfulRequests: z.number(),
+  failedRequests: z.number(),
+  createdAt: z.string()
+})
 
 export default defineEventHandler(async (event) => {
   const _startTime = Date.now()
@@ -75,10 +93,11 @@ export default defineEventHandler(async (event) => {
       // Record successful metrics
       recordAPIMetrics(event, 200)
 
-      return createApiResponse({
+      return createTypedApiResponse({
         result: validatedUsage,
         message: "Token usage retrieved successfully",
-        error: null
+        error: null,
+        resultSchema: TokenUsageSchema
       })
     }
     if (path === "revoke") {
@@ -103,10 +122,11 @@ export default defineEventHandler(async (event) => {
       // Record successful metrics
       recordAPIMetrics(event, 200)
 
-      return createApiResponse({
+      return createTypedApiResponse({
         result: revokeData,
         message: "Token revoked successfully",
-        error: null
+        error: null,
+        resultSchema: TokenRevokeDataSchema
       })
     }
     if (path === "metrics") {
@@ -134,10 +154,11 @@ export default defineEventHandler(async (event) => {
       // Record successful metrics
       recordAPIMetrics(event, 200)
 
-      return createApiResponse({
+      return createTypedApiResponse({
         result: metricsData,
         message: "Token metrics retrieved successfully",
-        error: null
+        error: null,
+        resultSchema: TokenMetricsDataSchema
       })
     }
     throw createApiError(404, `Unknown token endpoint: ${path}`)

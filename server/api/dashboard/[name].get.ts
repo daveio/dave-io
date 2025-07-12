@@ -1,7 +1,9 @@
+import { z } from "zod"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { getCloudflareEnv, getKVNamespace } from "~/server/utils/cloudflare"
 import { parseRSSFeed } from "~/server/utils/formatters"
-import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
+import { createApiError, isApiError, logRequest } from "~/server/utils/response"
+import { createTypedApiResponse } from "~/server/utils/response-types"
 
 interface DashboardItem {
   title: string
@@ -17,6 +19,22 @@ interface DashboardResponse {
   timestamp: number
   source?: "kv" | "mock" | "live" | "cache"
 }
+
+// Define the result schema for the dashboard endpoint
+const DashboardResultSchema = z.object({
+  dashboard: z.string(),
+  error: z.string().nullable(),
+  items: z.array(
+    z.object({
+      title: z.string(),
+      subtitle: z.string(),
+      linkURL: z.string().optional(),
+      imageURL: z.string().optional()
+    })
+  ),
+  timestamp: z.number(),
+  source: z.enum(["kv", "mock", "live", "cache"]).optional()
+})
 
 async function fetchHackerNews(kv: KVNamespace): Promise<{ items: DashboardItem[]; source: "cache" | "live" }> {
   const lastUpdatedKey = "dashboard:hackernews:last-updated"
@@ -162,10 +180,11 @@ export default defineEventHandler(async (event) => {
       itemCount: items.length
     })
 
-    return createApiResponse({
+    return createTypedApiResponse({
       result: response,
       message: `Dashboard '${name}' retrieved successfully`,
-      error: null
+      error: null,
+      resultSchema: DashboardResultSchema
     })
   } catch (error: unknown) {
     console.error("Dashboard error:", error)

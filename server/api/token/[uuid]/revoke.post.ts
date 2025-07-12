@@ -1,7 +1,9 @@
+import { z } from "zod"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { authorizeEndpoint } from "~/server/utils/auth"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
-import { createApiError, createApiResponse, isApiError } from "~/server/utils/response"
+import { createApiError, isApiError } from "~/server/utils/response"
+import { createTypedApiResponse } from "~/server/utils/response-types"
 
 interface RevokeRequest {
   revoked: boolean
@@ -13,6 +15,14 @@ interface RevokeResponse {
   revokedAt?: string
   message: string
 }
+
+// Define the result schema for the token revoke endpoint
+const TokenRevokeResultSchema = z.object({
+  uuid: z.string(),
+  revoked: z.boolean(),
+  revokedAt: z.string().optional(),
+  message: z.string()
+})
 
 export default defineEventHandler(async (event) => {
   const _startTime = Date.now()
@@ -106,10 +116,11 @@ export default defineEventHandler(async (event) => {
     // Record successful metrics
     recordAPIMetrics(event, 200)
 
-    return createApiResponse({
+    return createTypedApiResponse({
       result: response,
       message: body.revoked ? "Token revoked successfully" : "Token revocation removed successfully",
-      error: null
+      error: null,
+      resultSchema: TokenRevokeResultSchema
     })
   } catch (error: unknown) {
     console.error("Token revocation error:", error)

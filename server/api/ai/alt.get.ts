@@ -1,3 +1,4 @@
+import { z } from "zod"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAIAuth } from "~/server/utils/auth-helpers"
 import {
@@ -8,8 +9,15 @@ import {
 } from "~/server/utils/ai-helpers"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
 import { fetchImageFromUrl } from "~/server/utils/image-helpers"
-import { createApiError, createApiResponse, isApiError, logRequest } from "~/server/utils/response"
+import { createApiError, isApiError, logRequest } from "~/server/utils/response"
+import { createTypedApiResponse } from "~/server/utils/response-types"
 import { AiAltRequestGetSchema } from "~/server/utils/schemas"
+
+// Define the result schema for the AI alt endpoint
+const AiAltResultSchema = z.object({
+  alt_text: z.string().describe("Generated alt text for the image"),
+  confidence: z.number().min(0).max(1).optional().describe("Confidence score for the generated alt text")
+})
 
 export default defineEventHandler(async (event) => {
   try {
@@ -99,13 +107,14 @@ The confidence score should be between 0 and 1, representing how confident you a
         success: true
       })
 
-      return createApiResponse({
+      return createTypedApiResponse({
         result: {
           alt_text: aiResponse.alt_text,
           confidence: aiResponse.confidence
         },
         message: "Alt text generated successfully",
-        error: null
+        error: null,
+        resultSchema: AiAltResultSchema
       })
     } catch (error) {
       console.error("AI alt text generation failed:", error)
