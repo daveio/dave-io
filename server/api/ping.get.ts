@@ -1,9 +1,39 @@
 import { getHeaders } from "h3"
+import { z } from "zod"
 import { recordAPIMetrics } from "~/server/middleware/metrics"
 import { extractToken, getUserFromPayload, verifyJWT } from "~/server/utils/auth"
 import { getCloudflareRequestInfo } from "~/server/utils/cloudflare"
-import { createApiResponse, logRequest } from "~/server/utils/response"
+import { logRequest } from "~/server/utils/response"
+import { createTypedApiResponse } from "~/server/utils/response-types"
 import { PingResponseSchema } from "~/server/utils/schemas"
+
+// Define the result schema for the ping endpoint
+const PingResultSchema = z.object({
+  pingData: PingResponseSchema,
+  auth: z.object({
+    supplied: z.boolean(),
+    token: z
+      .object({
+        value: z.string(),
+        valid: z.boolean(),
+        payload: z
+          .object({
+            subject: z.string(),
+            tokenId: z.string().nullable(),
+            issuedAt: z.string(),
+            expiresAt: z.string().nullable()
+          })
+          .optional()
+      })
+      .optional()
+  }),
+  headers: z.object({
+    count: z.number(),
+    cloudflare: z.record(z.string(), z.string()),
+    forwarding: z.record(z.string(), z.string()),
+    other: z.record(z.string(), z.string())
+  })
+})
 
 export default defineEventHandler(async (event) => {
   const startTime = Date.now()
@@ -184,13 +214,14 @@ export default defineEventHandler(async (event) => {
     headerCount: headersInfo.count
   })
 
-  return createApiResponse({
+  return createTypedApiResponse({
     result: {
       pingData,
       auth: authInfo,
       headers: headersInfo
     },
     message: "Ping successful",
-    error: null
+    error: null,
+    resultSchema: PingResultSchema
   })
 })
