@@ -180,6 +180,7 @@ const tokenId = auth.payload?.jti
 - **AI Alt Text Image Optimization**: Enhanced image optimization to always process images via Cloudflare Images API. All images up to 10MB are automatically resized to max 1024px on long edge and converted to lossy WebP (quality 60) for optimal size and Claude compatibility.
 - **AI Image Size Validation Fix**: Fixed potential issue where optimized images between 5-10MB could bypass Claude's 5MB limit. Now validates optimized image size against Claude's 5MB limit after Cloudflare Images processing to ensure compatibility.
 - **AI Word Alternative Finding**: New `/api/ai/word` endpoint for finding word alternatives using Anthropic Claude 4 Sonnet via AI Gateway. Supports two modes: single word alternatives and context-based word replacement suggestions. Returns 5-10 ordered suggestions with confidence scores.
+- **API Response Validation**: All API responses now undergo runtime validation using Zod schemas. Responses are validated against `ApiSuccessResponseSchema` or `ApiErrorResponseSchema` before being returned. Validation errors are logged server-side but return generic 500 errors to clients for security. New typed response system with `createTypedApiResponse()` provides compile-time and runtime type safety.
 
 ## Core
 
@@ -432,4 +433,4 @@ curl -X POST "https://dave.io/api/ai/word" \
 
 ## Immediate Plans
 
-- [DIO-118](https://linear.app/dave-io/issue/DIO-118/implement-runtime-validation-for-api-responses-using-zod-schemas): Implement runtime validation for API responses using Zod schemas, to ensure all responses conform to standardized structure with `createApiResponse()`.
+- None currently. DIO-118 has been completed - runtime validation for API responses is now implemented.
