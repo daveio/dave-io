@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { authorizeEndpoint } from "~/server/utils/auth"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"

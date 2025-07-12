@@ -20,7 +20,7 @@ describe("Response Sorting Integration", () => {
 
     // Check that top-level keys are sorted
     const topKeys = Object.keys(response)
-    expect(topKeys).toEqual(["error", "message", "ok", "result", "status", "timestamp"])
+    expect(topKeys).toEqual(["ok", "result", "message", "error", "status", "timestamp"])
 
     // Type guard to ensure we're dealing with a success response
     if (response.ok) {
@@ -76,7 +76,7 @@ describe("Response Sorting Integration", () => {
     })
 
     // Verify top level sorting
-    expect(Object.keys(response)).toEqual(["error", "message", "ok", "result", "status", "timestamp"])
+    expect(Object.keys(response)).toEqual(["ok", "result", "message", "error", "status", "timestamp"])
 
     // Type guard to ensure we're dealing with a success response
     if (response.ok) {
@@ -149,6 +149,6 @@ describe("Response Sorting Integration", () => {
     expect(response.meta).toEqual(meta)
 
     // Keys should be alphabetically sorted
-    expect(Object.keys(response)).toEqual(["error", "message", "meta", "ok", "result", "status", "timestamp"])
+    expect(Object.keys(response)).toEqual(["ok", "result", "message", "error", "status", "meta", "timestamp"])
   })
 })

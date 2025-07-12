@@ -1,4 +1,4 @@
-import { z } from "zod"
+import type { z } from "zod"
 import { ApiErrorResponseSchema, ApiSuccessResponseSchema } from "./schemas"
 import { createApiResponse } from "./response"
 import type { ApiResponseOptions } from "./response"

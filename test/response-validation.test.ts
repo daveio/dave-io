@@ -1,12 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { z } from "zod"
 import { createApiError, createApiResponse } from "~/server/utils/response"
+import type { TypedApiResponse, TypedApiErrorResponse } from "~/server/utils/response-types"
 import {
   createTypedApiResponse,
   createTypedSuccessResponseSchema,
-  createTypedErrorResponseSchema,
-  type TypedApiResponse,
-  type TypedApiErrorResponse
+  createTypedErrorResponseSchema
 } from "~/server/utils/response-types"
 
 // Mock console.error to test error logging
@@ -65,7 +64,7 @@ describe("Response Validation", () => {
 
     it("should fail validation for malformed success response", () => {
       // Directly test the validation by creating a malformed response
-      const malformedResponse = {
+      const _malformedResponse = {
         ok: true,
         // Missing required fields: result, message, error, timestamp
         extraField: "should not be here"
@@ -76,8 +75,8 @@ describe("Response Validation", () => {
       expect(() => {
         // This would normally fail validation internally
         createApiResponse({
-          result: undefined as any, // Invalid - result should not be undefined
-          message: null as any // Invalid - message should be string
+          result: undefined as unknown, // Invalid - result should not be undefined
+          message: null as unknown as string // Invalid - message should be string
         })
       }).not.toThrow() // createApiResponse handles undefined result by converting to {}
     })
@@ -165,7 +164,7 @@ describe("Response Validation", () => {
       })
 
       expect(response.ok).toBe(true)
-      expect((response as any).result.price).toBe(99.99)
+      expect((response as unknown as { result: { price: number } }).result.price).toBe(99.99)
     })
 
     it("should fail typed response validation for invalid data", () => {
@@ -176,7 +175,7 @@ describe("Response Validation", () => {
 
       expect(() => {
         createTypedApiResponse({
-          result: { id: "not a number" as any, required: null as any },
+          result: { id: "not a number" as unknown as number, required: null as unknown as string },
           message: "Invalid data",
           resultSchema: StrictSchema
         })
@@ -208,14 +207,16 @@ describe("Response Validation", () => {
       })
 
       expect(response.ok).toBe(true)
-      expect((response as any).result.user.profile.age).toBe(25)
+      expect((response as unknown as { result: { user: { profile: { age: number } } } }).result.user.profile.age).toBe(
+        25
+      )
     })
   })
 
   describe("Type inference", () => {
     it("should correctly infer response types", () => {
-      const TestSchema = z.object({ test: z.boolean() })
-      type TestResponse = TypedApiResponse<typeof TestSchema>
+      const _TestSchema = z.object({ test: z.boolean() })
+      type TestResponse = TypedApiResponse<typeof _TestSchema>
 
       // This is a compile-time test - if it compiles, types are correct
       const _response: TestResponse = {
@@ -231,8 +232,8 @@ describe("Response Validation", () => {
     })
 
     it("should correctly infer error response types", () => {
-      const DetailsSchema = z.object({ errors: z.array(z.string()) })
-      type ErrorResponse = TypedApiErrorResponse<typeof DetailsSchema>
+      const _DetailsSchema = z.object({ errors: z.array(z.string()) })
+      type ErrorResponse = TypedApiErrorResponse<typeof _DetailsSchema>
 
       // This is a compile-time test
       const _response: ErrorResponse = {
@@ -256,18 +257,18 @@ describe("Response Validation", () => {
       })
 
       expect(response.ok).toBe(true)
-      expect((response as any).result).toEqual({})
+      expect((response as unknown as { result: object }).result).toEqual({})
     })
 
     it("should handle null/undefined in result gracefully", () => {
       const response = createApiResponse({
-        result: null as any,
+        result: null as unknown,
         message: "Null result"
       })
 
       // createApiResponse converts null/undefined to {}
       expect(response.ok).toBe(true)
-      expect((response as any).result).toEqual({})
+      expect((response as unknown as { result: object }).result).toEqual({})
     })
 
     it("should validate timestamps are ISO strings", () => {
@@ -288,7 +289,7 @@ describe("Response Validation", () => {
       })
 
       expect(response.ok).toBe(true)
-      expect((response as any).result.items).toHaveLength(1000)
+      expect((response as unknown as { result: { items: unknown[] } }).result.items).toHaveLength(1000)
     })
   })
 
@@ -306,7 +307,7 @@ describe("Response Validation", () => {
           result: { data: "valid" },
           message: "Test"
         })
-      } catch (error) {
+      } catch {
         // Expected to succeed
       }
 
@@ -322,10 +323,10 @@ describe("Response Validation", () => {
           result: { data: "test" },
           message: "Test"
         })
-      } catch (error: any) {
+      } catch (error: unknown) {
         // If validation fails, should get generic error
-        expect(error.data?.error).toBe("Internal server error")
-        expect(error.data?.message).toBe("An unexpected error occurred")
+        expect((error as { data?: { error?: string } }).data?.error).toBe("Internal server error")
+        expect((error as { data?: { message?: string } }).data?.message).toBe("An unexpected error occurred")
       }
 
       process.env.NODE_ENV = originalEnv
