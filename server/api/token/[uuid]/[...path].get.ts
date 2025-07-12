@@ -114,9 +114,10 @@ export default defineEventHandler(async (event) => {
       console.log(`Token revoked: ${uuid}`)
 
       const revokeData = {
+        uuid: uuid,
         revoked: true,
-        token_id: uuid,
-        revoked_at: new Date().toISOString()
+        revokedAt: new Date().toISOString(),
+        message: "Token revoked successfully"
       }
 
       // Record successful metrics
