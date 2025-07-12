@@ -112,10 +112,9 @@ export default defineEventHandler(async (event) => {
       console.log(`Token revoked: ${uuid}`)
 
       const revokeData = {
-        uuid: uuid,
         revoked: true,
-        revokedAt: new Date().toISOString(),
-        message: "Token revoked successfully"
+        token_id: uuid,
+        revoked_at: new Date().toISOString()
       }
 
       // Record successful metrics
@@ -137,18 +136,18 @@ export default defineEventHandler(async (event) => {
       }
 
       // Get real metrics data from KV counters for this specific token
-      const [totalRequests, successfulRequests, failedRequests] = await Promise.all([
+      const [totalRequests, successfulRequests, failedRequests, redirectClicks] = await Promise.all([
         env.KV.get(`metrics:token:${uuid}:requests:total`).then((v) => Number.parseInt(v || "0")),
         env.KV.get(`metrics:token:${uuid}:requests:successful`).then((v) => Number.parseInt(v || "0")),
-        env.KV.get(`metrics:token:${uuid}:requests:failed`).then((v) => Number.parseInt(v || "0"))
+        env.KV.get(`metrics:token:${uuid}:requests:failed`).then((v) => Number.parseInt(v || "0")),
+        env.KV.get(`metrics:token:${uuid}:redirects:total`).then((v) => Number.parseInt(v || "0"))
       ])
 
       const metricsData = {
-        uuid,
-        totalRequests,
-        successfulRequests,
-        failedRequests,
-        createdAt: createdAtStr
+        total_requests: totalRequests,
+        successful_requests: successfulRequests,
+        failed_requests: failedRequests,
+        redirect_clicks: redirectClicks
       }
 
       // Record successful metrics
