@@ -32,7 +32,7 @@ export function createOpenRouterClient(env: any): OpenAI {
 /**
  * OpenRouter model type for Claude 4 Sonnet
  */
-export type OpenRouterModel = "anthropic/claude-sonnet-4"
+export type OpenRouterModel = string
 
 /**
  * Sends a message to AI with optional image attachment via OpenRouter
@@ -222,19 +222,17 @@ export async function validateAndPrepareImageWithOptimization(
   let mimeType = "image/webp"
 
   // Verify the optimized buffer is actually WebP
-  if (optimizedBuffer.length >= 12 && optimizedBuffer.slice(8, 12).toString() === "WEBP") {
+  if (optimizedBuffer.length >= 12 && optimizedBuffer.subarray(8, 12).toString() === "WEBP") {
     mimeType = "image/webp"
-  } else {
+  } else if (optimizedBuffer[0] === 0xff && optimizedBuffer[1] === 0xd8) {
     // Fallback detection in case optimization didn't work as expected
-    if (optimizedBuffer[0] === 0xff && optimizedBuffer[1] === 0xd8) {
-      mimeType = "image/jpeg"
-    } else if (optimizedBuffer[0] === 0x89 && optimizedBuffer[1] === 0x50) {
-      mimeType = "image/png"
-    } else if (optimizedBuffer[0] === 0x47 && optimizedBuffer[1] === 0x49) {
-      mimeType = "image/gif"
-    } else {
-      mimeType = "image/webp" // Default to WebP since that's what we expect
-    }
+    mimeType = "image/jpeg"
+  } else if (optimizedBuffer[0] === 0x89 && optimizedBuffer[1] === 0x50) {
+    mimeType = "image/png"
+  } else if (optimizedBuffer[0] === 0x47 && optimizedBuffer[1] === 0x49) {
+    mimeType = "image/gif"
+  } else {
+    mimeType = "image/webp" // Default to WebP since that's what we expect
   }
 
   return {
@@ -242,8 +240,3 @@ export async function validateAndPrepareImageWithOptimization(
     mimeType
   }
 }
-
-// Keep legacy exports for backward compatibility during migration
-export const createAnthropicClient = createOpenRouterClient
-export const sendClaudeMessage = sendAIMessage
-export const parseClaudeResponse = parseAIResponse
