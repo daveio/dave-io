@@ -6,9 +6,18 @@ import { createApiError } from "./response"
  * Creates an OpenRouter client configured with AI Gateway
  * @param env - Cloudflare environment bindings
  * @returns Configured OpenAI client for OpenRouter
+ * @throws {Error} If required environment variables are missing
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function createOpenRouterClient(env: any): OpenAI {
+  if (!env?.OPENROUTER_API_KEY) {
+    throw createApiError(503, "OpenRouter API key not available")
+  }
+
+  if (!env?.CLOUDFLARE_ACCOUNT_ID) {
+    throw createApiError(503, "Cloudflare account ID not available")
+  }
+
   return new OpenAI({
     apiKey: env.OPENROUTER_API_KEY,
     baseURL: `https://gateway.ai.cloudflare.com/v1/${env.CLOUDFLARE_ACCOUNT_ID}/ai-dave-io/openrouter`,
@@ -75,7 +84,7 @@ export async function sendAIMessage(
       },
       {
         role: "user",
-        content: messageContent.length === 1 && !imageData ? userMessage : messageContent
+        content: imageData ? messageContent : userMessage
       }
     ]
   })
@@ -147,7 +156,7 @@ export function validateAndPrepareImage(
     buffer = imageData
   }
 
-  // Check size (5MB limit for Claude compatibility across all models)
+  // Check size (5MB limit for Claude via OpenRouter)
   const MAX_SIZE = 5 * 1024 * 1024 // 5MB
   if (buffer.length > MAX_SIZE) {
     throw createApiError(413, `Image size ${buffer.length} bytes exceeds maximum allowed size of ${MAX_SIZE} bytes`)
