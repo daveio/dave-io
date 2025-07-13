@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAIAuth } from "~/server/utils/auth-helpers"
-import { createAnthropicClient, parseClaudeResponse, sendClaudeMessage } from "~/server/utils/ai-helpers"
+import { createOpenRouterClient, parseAIResponse, sendAIMessage } from "~/server/utils/ai-helpers"
 import { createApiError, isApiError, logRequest } from "~/server/utils/response"
 import { createTypedApiResponse } from "~/server/utils/response-types"
 import { AiSocialRequestSchema, AiSocialNetworkEnum } from "~/server/utils/schemas"
@@ -52,8 +52,8 @@ export default defineEventHandler(async (event) => {
       )
     }
 
-    // Create Anthropic client using shared helper
-    const anthropic = createAnthropicClient(env)
+    // Create OpenRouter client using shared helper
+    const openai = createOpenRouterClient(env)
 
     let _aiSuccess = false
     let _aiErrorType: string | undefined
@@ -97,16 +97,11 @@ Rules:
 Return a JSON object with a "networks" property containing arrays of posts for each network.`
 
     try {
-      // Send message to Claude using shared helper
-      const textContent = await sendClaudeMessage(
-        anthropic,
-        systemPrompt,
-        validatedRequest.input,
-        "claude-4-sonnet-20250514"
-      )
+      // Send message to AI using shared helper
+      const textContent = await sendAIMessage(openai, systemPrompt, validatedRequest.input, "anthropic/claude-sonnet-4")
 
-      // Parse Claude's response using shared helper
-      const aiResponse = parseClaudeResponse<{ networks: Record<string, string[]> }>(textContent)
+      // Parse AI's response using shared helper
+      const aiResponse = parseAIResponse<{ networks: Record<string, string[]> }>(textContent)
 
       // Validate that all requested networks are present
       for (const network of validatedRequest.networks) {
@@ -154,10 +149,10 @@ Return a JSON object with a "networks" property containing arrays of posts for e
         resultSchema: AiSocialResultSchema
       })
     } catch (error) {
-      console.error("Anthropic Claude processing failed:", error)
+      console.error("OpenRouter AI processing failed:", error)
       _aiSuccess = false
       _aiErrorType = error instanceof Error ? error.name : "UnknownError"
-      throw createApiError(500, "Failed to process text with Anthropic Claude")
+      throw createApiError(500, "Failed to process text with OpenRouter AI")
     }
   } catch (error: unknown) {
     console.error("AI social error:", error)

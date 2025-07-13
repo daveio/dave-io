@@ -174,18 +174,19 @@ const tokenId = auth.payload?.jti
 - **Dev**: No reset cycle, starts in seconds, `test:all` for full suite
 - **KV**: Individual keys vs JSON blob, hierarchical colon-separated, YAML anchors
 - **Redirects**: Fixed `/go/*` routes to bypass client-side routing - links now redirect properly on first click instead of requiring a page refresh
-- **AI Social**: New `/api/ai/social` endpoint for splitting text into social media posts using Anthropic Claude 4 Sonnet via AI Gateway with automatic threading indicators (`🧵 x/y`). Uses strategy-based intelligent splitting with configurable strategies for optimal text processing.
+- **AI Social**: New `/api/ai/social` endpoint for splitting text into social media posts using Claude 4 Sonnet via OpenRouter and AI Gateway with automatic threading indicators (`🧵 x/y`). Uses strategy-based intelligent splitting with configurable strategies for optimal text processing.
 - **AI Model Migration**: Migrated `/api/ai/social` from Cloudflare AI Llama model to Anthropic Claude 4 Sonnet via AI Gateway for improved text processing quality and observability.
-- **AI Alt Text**: New `/api/ai/alt` endpoint for generating alt text for images using Anthropic Claude 4 Sonnet via AI Gateway. Supports both GET (with image URL) and POST (with image upload) methods. Includes image size validation and SSRF protection.
+- **AI Alt Text**: New `/api/ai/alt` endpoint for generating alt text for images using Claude 4 Sonnet via OpenRouter and AI Gateway. Supports both GET (with image URL) and POST (with image upload) methods. Includes image size validation and SSRF protection.
 - **AI Alt Text Image Optimization**: Enhanced image optimization to always process images via Cloudflare Images API. All images up to 10MB are automatically resized to max 1024px on long edge and converted to lossy WebP (quality 60) for optimal size and Claude compatibility.
 - **AI Image Size Validation Fix**: Fixed potential issue where optimized images between 5-10MB could bypass Claude's 5MB limit. Now validates optimized image size against Claude's 5MB limit after Cloudflare Images processing to ensure compatibility.
-- **AI Word Alternative Finding**: New `/api/ai/word` endpoint for finding word alternatives using Anthropic Claude 4 Sonnet via AI Gateway. Supports two modes: single word alternatives and context-based word replacement suggestions. Returns 5-10 ordered suggestions with confidence scores.
+- **AI Word Alternative Finding**: New `/api/ai/word` endpoint for finding word alternatives using Claude 4 Sonnet via OpenRouter and AI Gateway. Supports two modes: single word alternatives and context-based word replacement suggestions. Returns 5-10 ordered suggestions with confidence scores.
+- **OpenRouter Integration**: Migrated all AI operations from direct Anthropic API to OpenRouter via Cloudflare AI Gateway. This enables dynamic model selection without frontend changes. All AI endpoints now use OpenRouter with the `openai` library for improved flexibility while maintaining Claude 4 Sonnet (`anthropic/claude-sonnet-4`) as the default model.
 - **API Response Validation**: All API responses now undergo runtime validation using Zod schemas. Responses are validated against `ApiSuccessResponseSchema` or `ApiErrorResponseSchema` before being returned. Validation errors are logged server-side but return generic 500 errors to clients for security. New typed response system with `createTypedApiResponse()` provides compile-time and runtime type safety.
 
 ## Core
 
 - **Response**: Success `{ok: true, result, error: null, status: {message}, timestamp}` | Error `{ok: false, error, status: {message}?, timestamp}`
-- **Environment**: `API_JWT_SECRET`, `ANTHROPIC_API_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Bindings: KV(KV), D1(D1), AI, BROWSER, IMAGES
+- **Environment**: `API_JWT_SECRET`, `OPENROUTER_API_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Bindings: KV(KV), D1(D1), AI, BROWSER, IMAGES
 - **CLI**: JWT(`init|create|verify|list|revoke`) | API-Test(`--auth-only|--ai-only`) | Try(`--auth|--token`) | KV(`export|import|list|wipe --local`)
 - **Testing**: Unit(`bun run test|test:ui`) | HTTP(`bun run test:api`) | Remote(`--url https://example.com`)
 
@@ -277,14 +278,14 @@ bun jwt init && bun run deploy
 ## Troubleshooting
 
 - **Build**: `bun run lint:eslint` → `bun run lint:types` → `bun run test`
-- **Runtime**: Check env vars (`API_JWT_SECRET`, `ANTHROPIC_API_KEY`), Cloudflare bindings (KV, AI), auth permissions
+- **Runtime**: Check env vars (`API_JWT_SECRET`, `OPENROUTER_API_KEY`), Cloudflare bindings (KV, AI), auth permissions
 - **Common**: Use absolute paths, check schema imports, add `requireAuth()`, use `getValidatedUUID()`
 
 ## AI Social Media Text Splitting
 
 **Endpoint**: `/api/ai/social` - Splits long text for social networks with character limits in KV (`ai:social:characters:{network}`)
 
-**AI Model**: Uses Anthropic Claude 4 Sonnet via Cloudflare AI Gateway for intelligent text processing
+**AI Model**: Uses Claude 4 Sonnet via OpenRouter and Cloudflare AI Gateway for intelligent text processing
 
 **Strategy-Based Processing**: Uses configurable splitting strategies with sensible defaults
 
@@ -302,7 +303,7 @@ bun jwt init && bun run deploy
 - `GET /api/ai/alt?image=<url>` - Generate alt text from image URL
 - `POST /api/ai/alt` - Generate alt text from uploaded image file
 
-**AI Model**: Uses Anthropic Claude 4 Sonnet via Cloudflare AI Gateway for intelligent image analysis
+**AI Model**: Uses Claude 4 Sonnet via OpenRouter and Cloudflare AI Gateway for intelligent image analysis
 
 **Features**:
 
@@ -355,7 +356,7 @@ curl -X POST "https://dave.io/api/ai/alt" \
 
 **Endpoint**: `/api/ai/word` - Find word alternatives and synonyms using AI assistance
 
-**AI Model**: Uses Anthropic Claude 4 Sonnet via Cloudflare AI Gateway for intelligent word analysis
+**AI Model**: Uses Claude 4 Sonnet via OpenRouter and Cloudflare AI Gateway for intelligent word analysis
 
 **Modes**:
 

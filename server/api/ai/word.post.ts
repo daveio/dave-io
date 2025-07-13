@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAIAuth } from "~/server/utils/auth-helpers"
-import { createAnthropicClient, parseClaudeResponse, sendClaudeMessage } from "~/server/utils/ai-helpers"
+import { createOpenRouterClient, parseAIResponse, sendAIMessage } from "~/server/utils/ai-helpers"
 import { createApiError, isApiError, logRequest } from "~/server/utils/response"
 import { createTypedApiResponse } from "~/server/utils/response-types"
 import { AiWordRequestSchema, AiWordSuggestionSchema } from "~/server/utils/schemas"
@@ -30,8 +30,8 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event)
     const validatedRequest = AiWordRequestSchema.parse(body)
 
-    // Create Anthropic client using shared helper
-    const anthropic = createAnthropicClient(env)
+    // Create OpenRouter client using shared helper
+    const openai = createOpenRouterClient(env)
 
     let _aiSuccess = false
     let _aiErrorType: string | undefined
@@ -93,15 +93,15 @@ The word "${validatedRequest.target_word}" needs a better alternative. What woul
     }
 
     try {
-      // Send message to Claude using shared helper
-      const textContent = await sendClaudeMessage(anthropic, systemPrompt, userMessage, "claude-4-sonnet-20250514")
+      // Send message to AI using shared helper
+      const textContent = await sendAIMessage(openai, systemPrompt, userMessage, "anthropic/claude-sonnet-4")
 
-      // Parse Claude's response using shared helper
-      const aiResponse = parseClaudeResponse<{ suggestions: AiWordSuggestion[] }>(textContent)
+      // Parse AI's response using shared helper
+      const aiResponse = parseAIResponse<{ suggestions: AiWordSuggestion[] }>(textContent)
 
       // Validate that we got the expected response format
       if (!aiResponse.suggestions || !Array.isArray(aiResponse.suggestions)) {
-        throw new Error("Invalid response format from Claude: missing or invalid suggestions array")
+        throw new Error("Invalid response format from AI: missing or invalid suggestions array")
       }
 
       // Validate each suggestion
@@ -148,10 +148,10 @@ The word "${validatedRequest.target_word}" needs a better alternative. What woul
         resultSchema: AiWordResultSchema
       })
     } catch (error) {
-      console.error("Anthropic Claude processing failed:", error)
+      console.error("OpenRouter AI processing failed:", error)
       _aiSuccess = false
       _aiErrorType = error instanceof Error ? error.name : "UnknownError"
-      throw createApiError(500, "Failed to process word alternatives with Anthropic Claude")
+      throw createApiError(500, "Failed to process word alternatives with OpenRouter AI")
     }
   } catch (error: unknown) {
     console.error("AI word error:", error)
