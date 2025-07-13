@@ -1,40 +1,111 @@
-import Anthropic from "@anthropic-ai/sdk"
+import OpenAI from "openai"
 import type { CloudflareEnv } from "./cloudflare"
 import { createApiError } from "./response"
 
 /**
- * Creates an Anthropic client configured with AI Gateway
+ * Creates an OpenRouter client configured with AI Gateway
  * @param env - Cloudflare environment bindings
- * @returns Configured Anthropic client
+ * @returns Configured OpenAI client for OpenRouter
  * @throws {Error} If required environment variables are missing
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function createAnthropicClient(env: any): Anthropic {
-  if (!env?.ANTHROPIC_API_KEY) {
-    throw createApiError(503, "Anthropic API key not available")
+export function createOpenRouterClient(env: any): OpenAI {
+  if (!env?.OPENROUTER_API_KEY) {
+    throw createApiError(503, "OpenRouter API key not available")
   }
 
   if (!env?.CLOUDFLARE_ACCOUNT_ID) {
     throw createApiError(503, "Cloudflare account ID not available")
   }
 
-  return new Anthropic({
-    apiKey: env.ANTHROPIC_API_KEY,
-    baseURL: `https://gateway.ai.cloudflare.com/v1/${env.CLOUDFLARE_ACCOUNT_ID}/ai-dave-io/anthropic`,
+  return new OpenAI({
+    apiKey: env.OPENROUTER_API_KEY,
+    baseURL: `https://gateway.ai.cloudflare.com/v1/${env.CLOUDFLARE_ACCOUNT_ID}/ai-dave-io/openrouter`,
     defaultHeaders: {
-      "cf-aig-authorization": env.AI_GATEWAY_TOKEN || ""
+      "cf-aig-authorization": env.AI_GATEWAY_TOKEN || "",
+      "HTTP-Referer": "https://dave.io",
+      "X-Title": "dave.io"
     }
   })
 }
 
 /**
- * Parses Claude's response, stripping markdown and extracting JSON
- * @param textContent - Raw text content from Claude's response
+ * OpenRouter model type for Claude 4 Sonnet
+ */
+export type OpenRouterModel = "anthropic/claude-sonnet-4"
+
+/**
+ * Sends a message to AI with optional image attachment via OpenRouter
+ * @param openai - Configured OpenAI client
+ * @param systemPrompt - System prompt for the AI
+ * @param userMessage - User message content
+ * @param model - OpenRouter model to use (defaults to "anthropic/claude-sonnet-4")
+ * @param imageData - Optional image data (base64 encoded)
+ * @param imageType - Optional image type (e.g., "image/jpeg")
+ * @returns AI's response content
+ * @throws {Error} If the request fails
+ */
+export async function sendAIMessage(
+  openai: OpenAI,
+  systemPrompt: string,
+  userMessage: string,
+  model?: OpenRouterModel,
+  imageData?: string,
+  imageType?: string
+): Promise<string> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const messageContent: Array<any> = []
+
+  // Add text content
+  if (userMessage) {
+    messageContent.push({
+      type: "text",
+      text: userMessage
+    })
+  }
+
+  // Add image if provided
+  if (imageData && imageType) {
+    messageContent.push({
+      type: "image_url",
+      image_url: {
+        url: `data:${imageType};base64,${imageData}`
+      }
+    })
+  }
+
+  const completion = await openai.chat.completions.create({
+    model: model ?? "anthropic/claude-sonnet-4",
+    max_tokens: 4096,
+    messages: [
+      {
+        role: "system",
+        content: systemPrompt
+      },
+      {
+        role: "user",
+        content: imageData ? messageContent : userMessage
+      }
+    ]
+  })
+
+  // Extract text content from response
+  const textContent = completion.choices[0]?.message?.content
+  if (!textContent) {
+    throw new Error("No text content in AI response")
+  }
+
+  return textContent
+}
+
+/**
+ * Parses AI's response, stripping markdown and extracting JSON
+ * @param textContent - Raw text content from AI's response
  * @returns Parsed JSON object
  * @throws {Error} If JSON parsing fails
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function parseClaudeResponse<T = any>(textContent: string): T {
+export function parseAIResponse<T = any>(textContent: string): T {
   // Strip out Markdown code blocks and other non-JSON data
   let cleanedContent = textContent.trim()
 
@@ -54,82 +125,10 @@ export function parseClaudeResponse<T = any>(textContent: string): T {
   try {
     return JSON.parse(cleanedContent) as T
   } catch {
-    console.error("Failed to parse Claude response as JSON:", cleanedContent)
+    console.error("Failed to parse AI response as JSON:", cleanedContent)
     console.error("Original response:", textContent)
-    throw new Error("Invalid JSON response from Claude")
+    throw new Error("Invalid JSON response from AI")
   }
-}
-export type ClaudeModel =
-  | "claude-4-opus-20250514"
-  | "claude-4-sonnet-20250514"
-  | "claude-3-7-sonnet-20250219"
-  | "claude-3-5-sonnet-20241022"
-  | "claude-3-5-haiku-20241022"
-  | "claude-3-opus-20240229"
-  | "claude-3-sonnet-20240229"
-  | "claude-3-haiku-20240307"
-
-/**
- * Sends a message to Claude with optional image attachment
- * @param anthropic - Configured Anthropic client
- * @param systemPrompt - System prompt for Claude
- * @param userMessage - User message content
- * @param model - Optional Claude model to use (defaults to "claude-4-sonnet-20250514")
- * @param imageData - Optional image data (base64 encoded)
- * @param imageType - Optional image type (e.g., "image/jpeg")
- * @returns Claude's response content
- * @throws {Error} If the request fails
- */
-export async function sendClaudeMessage(
-  anthropic: Anthropic,
-  systemPrompt: string,
-  userMessage: string,
-  model?: ClaudeModel,
-  imageData?: string,
-  imageType?: string
-): Promise<string> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const messageContent: Array<any> = []
-
-  // Add text content
-  if (userMessage) {
-    messageContent.push({
-      type: "text",
-      text: userMessage
-    })
-  }
-
-  // Add image if provided
-  if (imageData && imageType) {
-    messageContent.push({
-      type: "image",
-      source: {
-        type: "base64",
-        media_type: imageType,
-        data: imageData
-      }
-    })
-  }
-
-  const result = await anthropic.messages.create({
-    model: model ?? "claude-4-sonnet-20250514",
-    max_tokens: 4096,
-    system: systemPrompt,
-    messages: [
-      {
-        role: "user",
-        content: messageContent.length === 1 && !imageData ? userMessage : messageContent
-      }
-    ]
-  })
-
-  // Extract text content from Claude's response
-  const textContent = result.content.find((block) => block.type === "text")?.text
-  if (!textContent) {
-    throw new Error("No text content in Claude response")
-  }
-
-  return textContent
 }
 
 /**
@@ -157,7 +156,7 @@ export function validateAndPrepareImage(
     buffer = imageData
   }
 
-  // Check size (5MB limit for Claude)
+  // Check size (5MB limit for Claude via OpenRouter)
   const MAX_SIZE = 5 * 1024 * 1024 // 5MB
   if (buffer.length > MAX_SIZE) {
     throw createApiError(413, `Image size ${buffer.length} bytes exceeds maximum allowed size of ${MAX_SIZE} bytes`)
@@ -243,3 +242,8 @@ export async function validateAndPrepareImageWithOptimization(
     mimeType
   }
 }
+
+// Keep legacy exports for backward compatibility during migration
+export const createAnthropicClient = createOpenRouterClient
+export const sendClaudeMessage = sendAIMessage
+export const parseClaudeResponse = parseAIResponse

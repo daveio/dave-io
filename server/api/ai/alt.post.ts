@@ -2,9 +2,9 @@ import { z } from "zod"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAIAuth } from "~/server/utils/auth-helpers"
 import {
-  createAnthropicClient,
-  parseClaudeResponse,
-  sendClaudeMessage,
+  createOpenRouterClient,
+  parseAIResponse,
+  sendAIMessage,
   validateAndPrepareImageWithOptimization
 } from "~/server/utils/ai-helpers"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
@@ -46,8 +46,8 @@ export default defineEventHandler(async (event) => {
     const contentType = imageFile.type || imageFile.filename?.split(".").pop() || "image/jpeg"
     validateImageFormat(imageFile.data, contentType.startsWith("image/") ? contentType : undefined)
 
-    // Create Anthropic client
-    const anthropic = createAnthropicClient(env)
+    // Create OpenRouter client
+    const openai = createOpenRouterClient(env)
 
     let _aiSuccess = false
     let _aiErrorType: string | undefined
@@ -70,29 +70,29 @@ Return your response as a JSON object with this exact format:
 The confidence score should be between 0 and 1, representing how confident you are in the accuracy and quality of the alt text.`
 
     try {
-      // Validate and prepare image for Claude with optimization if needed
+      // Validate and prepare image for AI with optimization if needed
       const { base64Data, mimeType } = await validateAndPrepareImageWithOptimization(
         imageFile.data,
         env, // Pass environment for Images binding access
         contentType
       )
 
-      // Send image to Claude for alt text generation
-      const textContent = await sendClaudeMessage(
-        anthropic,
+      // Send image to AI for alt text generation
+      const textContent = await sendAIMessage(
+        openai,
         systemPrompt,
         "Please generate alt text for this image.",
-        "claude-4-sonnet-20250514",
+        "anthropic/claude-sonnet-4",
         base64Data,
         mimeType
       )
 
-      // Parse Claude's response
-      const aiResponse = parseClaudeResponse<{ alt_text: string; confidence?: number }>(textContent)
+      // Parse AI's response
+      const aiResponse = parseAIResponse<{ alt_text: string; confidence?: number }>(textContent)
 
       // Validate that we got the expected response format
       if (!aiResponse.alt_text || typeof aiResponse.alt_text !== "string") {
-        throw new Error("Invalid response format from Claude: missing or invalid alt_text")
+        throw new Error("Invalid response format from AI: missing or invalid alt_text")
       }
 
       // Ensure confidence is within valid range if provided
