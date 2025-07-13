@@ -33,17 +33,14 @@ Effective organization is crucial for maintainability and collaboration. While P
 ## 2. Common Patterns and Anti-patterns
 
 - **Environment-Specific Variables:** Use environment variables to store values that change based on the environment (e.g., API URLs, authentication tokens). Create separate environments for development, staging, and production.
-
   - **Pattern:** Create environment variables for the base URL, API keys, and other environment-specific settings.
   - **Anti-pattern:** Hardcoding URLs or API keys directly into requests.
 
 - **Data-Driven Testing:** Use data-driven testing to run the same request multiple times with different data sets. This can be achieved by importing data from CSV or JSON files.
-
   - **Pattern:** Use the Collection Runner to iterate through data files and automatically populate request parameters.
   - **Anti-pattern:** Manually creating multiple requests with slightly different data.
 
 - **Reusing Code with Pre-request Scripts and Tests:** Use pre-request scripts to dynamically generate request parameters or perform setup tasks. Use test scripts to validate API responses and set variables for subsequent requests.
-
   - **Pattern:** Use pre-request scripts to generate authentication tokens or timestamps. Use test scripts to extract data from responses and store them in environment variables for use in other requests.
   - **Anti-pattern:** Duplicating the same code in multiple requests.
 
@@ -61,11 +58,9 @@ Effective organization is crucial for maintainability and collaboration. While P
 ## 4. Security Best Practices
 
 - **Input Validation:** While Postman itself doesn't directly handle server-side input validation, your tests should validate that the API responds appropriately to invalid input.
-
   - **Pattern:** Send requests with invalid or malicious input and verify that the API returns appropriate error messages and status codes.
 
 - **Authentication and Authorization:** Implement secure authentication and authorization mechanisms to protect your APIs.
-
   - **Pattern:** Use environment variables to store API keys, tokens, and other credentials. Implement authentication flows (e.g., OAuth 2.0) in your collections.
   - **Anti-pattern:** Hardcoding credentials directly into requests or storing them in plain text.
 
@@ -78,7 +73,6 @@ Effective organization is crucial for maintainability and collaboration. While P
 - **Integration Testing:** Use collections to test the integration between different API endpoints. This verifies that data is passed correctly between different parts of your application.
 - **End-to-End Testing:** Create workflows to test the entire user experience, from start to finish. This verifies that all parts of your application are working together correctly.
 - **Test Organization:**
-
   - Group tests by functionality.
   - Use descriptive names for tests.
   - Keep tests small and focused.

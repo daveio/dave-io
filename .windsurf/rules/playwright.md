@@ -5,13 +5,11 @@ globs: *.spec.ts
 ---
 
 - **General Principles**
-
   - **Test User-Visible Behavior:** Focus tests on how users interact with your application, not on internal implementation details.
   - **Isolate Tests:** Ensure tests are independent of each other to prevent cascading failures and ensure predictable results.
   - **Avoid Testing Third-Party Dependencies:** Mock or stub external services and APIs to isolate your application's behavior.
 
 - **Code Organization and Structure**
-
   - **Directory Structure:**
     - `tests/`: Contains all test files.
     - `tests/e2e/`: End-to-end tests.
@@ -28,9 +26,7 @@ globs: *.spec.ts
     - Not directly applicable to tests, but keep test files concise and focused.
 
 - **Common Patterns and Anti-patterns**
-
   - **Design Patterns:**
-
     - **Page Object Model (POM):** A common pattern where each page is represented as a class, with methods for interacting with the page's elements. This improves reusability and maintainability. Example:
       typescript
       class LoginPage {
@@ -70,7 +66,6 @@ globs: *.spec.ts
     - Use `expect.soft()` for non-critical assertions that shouldn't fail the test immediately.
 
 - **Performance Considerations**
-
   - **Optimization Techniques:**
     - Run tests in parallel to reduce overall test execution time.
     - Use `reuseExistingServer: true` in `playwright.config.ts` during development to speed up debugging.
@@ -85,7 +80,6 @@ globs: *.spec.ts
     - Not directly applicable to tests.
 
 - **Security Best Practices**
-
   - **Common Vulnerabilities:**
     - Avoid exposing sensitive data (e.g., passwords, API keys) in test code or logs.
   - **Input Validation:**
@@ -98,7 +92,6 @@ globs: *.spec.ts
     - Test that API calls are made over HTTPS.
 
 - **Testing Approaches**
-
   - **Unit Testing:**
     - While Playwright primarily focuses on E2E testing, unit tests can be written for utility functions or components.
   - **Integration Testing:**
@@ -113,7 +106,6 @@ globs: *.spec.ts
     - Use `locator.evaluate` to stub JavaScript functions.
 
 - **Common Pitfalls and Gotchas**
-
   - **Frequent Mistakes:**
     - Using XPath instead of CSS selectors.
     - Not using auto-waiting features.
@@ -131,7 +123,6 @@ globs: *.spec.ts
     - Use `pause()` to halt test execution and inspect the page.
 
 - **Tooling and Environment**
-
   - **Recommended Development Tools:**
     - VS Code with the Playwright extension.
   - **Build Configuration:**
@@ -144,7 +135,6 @@ globs: *.spec.ts
     - Integrate Playwright with CI/CD tools like GitHub Actions, Jenkins, or GitLab CI.
 
 - **Specific Best Practices & Details**
-
   - **Stable Selectors:** Prefer CSS selectors based on attributes like `data-testid` or `data-test-id` over XPath or fragile CSS classnames.
   - **Leverage Auto-waiting:** Playwright automatically waits for elements to be actionable before performing actions. Avoid explicit waits where possible. However, use explicit waits (e.g. `waitForSelector`) when necessary.
   - **Web-First Assertions:** Use `expect` assertions, which retry and wait for conditions to be met. They help to avoid flakiness.

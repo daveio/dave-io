@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAIAuth } from "~/server/utils/auth-helpers"
-import { createOpenRouterClient, parseAIResponse, sendAIMessage } from "~/server/utils/ai-helpers"
+import { createOpenRouterClient, parseAIResponse, sendAIMessage, getAIModelFromKV } from "~/server/utils/ai-helpers"
 import { createApiError, isApiError, logRequest } from "~/server/utils/response"
 import { createTypedApiResponse } from "~/server/utils/response-types"
 import { AiSocialRequestSchema, AiSocialNetworkEnum } from "~/server/utils/schemas"
@@ -55,6 +55,9 @@ export default defineEventHandler(async (event) => {
     // Create OpenRouter client using shared helper
     const openai = createOpenRouterClient(env)
 
+    // Get AI model from KV with fallback
+    const aiModel = await getAIModelFromKV(env, "social")
+
     let _aiSuccess = false
     let _aiErrorType: string | undefined
 
@@ -98,7 +101,7 @@ Return a JSON object with a "networks" property containing arrays of posts for e
 
     try {
       // Send message to AI using shared helper
-      const textContent = await sendAIMessage(openai, systemPrompt, validatedRequest.input, "anthropic/claude-sonnet-4")
+      const textContent = await sendAIMessage(openai, systemPrompt, validatedRequest.input, aiModel)
 
       // Parse AI's response using shared helper
       const aiResponse = parseAIResponse<{ networks: Record<string, string[]> }>(textContent)

@@ -11,7 +11,6 @@ This document outlines best practices and coding standards for developing TypeSc
 ## 1. Code Organization and Structure
 
 - **Directory Structure:**
-
   - **Feature-based:** Group files related to a specific feature within a dedicated directory.
 
   src/
@@ -32,7 +31,6 @@ This document outlines best practices and coding standards for developing TypeSc
   │ └── api.service.ts
   └── types/
   └── global.d.ts
-
   - **Type-based:** Separate files based on their role (components, services, types, etc.).
 
   src/
@@ -48,11 +46,9 @@ This document outlines best practices and coding standards for developing TypeSc
   └── modules/
   ├── feature1.module.ts
   └── feature2.module.ts
-
   - Choose the structure that best fits your project's complexity and team's preferences. Consistency is key.
 
 - **File Naming Conventions:**
-
   - Use descriptive and consistent file names.
   - Components: `ComponentName.tsx`
   - Services: `serviceName.service.ts`
@@ -61,14 +57,12 @@ This document outlines best practices and coding standards for developing TypeSc
   - Interfaces: `IInterfaceName.ts` (or `interfaceName.interface.ts` if preferred and consistent throughout the codebase)
 
 - **Module Organization:**
-
   - Use ES Modules (`import`/`export`) for modularity and reusability.
   - Favor named exports over default exports for better discoverability and refactoring.
   - Group related functionality into modules.
   - Avoid circular dependencies.
 
 - **Component Architecture:**
-
   - Consider using component-based architectures like React, Angular, or Vue.js.
   - Follow component design principles: Single Responsibility Principle, separation of concerns.
   - Use composition over inheritance.
@@ -83,7 +77,6 @@ This document outlines best practices and coding standards for developing TypeSc
 ## 2. Common Patterns and Anti-patterns
 
 - **Design Patterns:**
-
   - **Factory Pattern:** Use factories to create objects with complex initialization logic.
   - **Singleton Pattern:** Use sparingly, and only when a single instance is truly required.
   - **Observer Pattern:** Implement reactive patterns for handling events and data changes.
@@ -91,13 +84,11 @@ This document outlines best practices and coding standards for developing TypeSc
   - **Dependency Injection:** Reduce coupling by injecting dependencies into components and services.
 
 - **Recommended Approaches:**
-
   - **Data Fetching:** Use libraries like `axios` or `fetch` for making API requests.
   - **State Management:** Choose a state management solution appropriate for your application's complexity (e.g., React Context, Redux, Zustand, MobX).
   - **Form Handling:** Use libraries like `react-hook-form` or `formik` for managing form state and validation.
 
 - **Anti-patterns and Code Smells:**
-
   - **`any` type overuse:** Avoid using `any` as much as possible. Use more specific types or generics.
   - **Long methods/functions:** Break down large functions into smaller, more manageable units.
   - **Deeply nested code:** Refactor deeply nested code to improve readability.
@@ -107,7 +98,6 @@ This document outlines best practices and coding standards for developing TypeSc
   - **Over-commenting:** Write self-documenting code and use comments only when necessary to explain complex logic.
 
 - **State Management Best Practices:**
-
   - Choose a state management library based on project needs: React Context API, Redux, Zustand, MobX.
   - Keep state minimal and derive values where possible.
   - Follow immutable update patterns (especially with Redux).
@@ -124,27 +114,23 @@ This document outlines best practices and coding standards for developing TypeSc
 ## 3. Performance Considerations
 
 - **Optimization Techniques:**
-
   - **Memoization:** Use memoization techniques (e.g., `React.memo`, `useMemo`) to avoid unnecessary re-renders.
   - **Debouncing and Throttling:** Limit the rate at which functions are executed in response to user input.
   - **Virtualization:** Use virtualization for rendering large lists or tables.
   - **Code Splitting:** Split your code into smaller chunks to reduce initial load time.
 
 - **Memory Management:**
-
   - Avoid memory leaks by properly cleaning up resources (e.g., event listeners, timers).
   - Use weak references to avoid circular dependencies that can prevent garbage collection.
   - Profile your application to identify memory leaks.
 
 - **Rendering Optimization:**
-
   - Minimize DOM manipulations.
   - Use CSS transforms and animations instead of JavaScript animations.
   - Optimize images and other assets.
   - Use the `shouldComponentUpdate` lifecycle method or `React.memo` to prevent unnecessary re-renders.
 
 - **Bundle Size Optimization:**
-
   - Use tree shaking to remove unused code from your bundle.
   - Minify your code to reduce bundle size.
   - Compress your code using gzip or Brotli.
@@ -158,7 +144,6 @@ This document outlines best practices and coding standards for developing TypeSc
 ## 4. Security Best Practices
 
 - **Common Vulnerabilities and Prevention:**
-
   - **Cross-Site Scripting (XSS):** Sanitize user input and escape output to prevent XSS attacks.
   - **Cross-Site Request Forgery (CSRF):** Use anti-CSRF tokens to protect against CSRF attacks.
   - **SQL Injection:** Use parameterized queries or ORMs to prevent SQL injection attacks (relevant for backend TypeScript).
@@ -166,20 +151,17 @@ This document outlines best practices and coding standards for developing TypeSc
   - **Man-in-the-Middle (MitM):** Use HTTPS to encrypt communication between the client and server.
 
 - **Input Validation:**
-
   - Validate all user input on both the client and server sides.
   - Use strong validation rules to prevent malicious input.
   - Sanitize user input to remove potentially harmful characters.
 
 - **Authentication and Authorization Patterns:**
-
   - Use a secure authentication mechanism to verify user identities.
   - Implement authorization checks to control access to resources.
   - Use role-based access control (RBAC) to manage user permissions.
   - Use JSON Web Tokens (JWT) for stateless authentication.
 
 - **Data Protection Strategies:**
-
   - Encrypt sensitive data at rest and in transit.
   - Use strong encryption algorithms.
   - Store passwords securely using a hashing algorithm and salt.
@@ -194,24 +176,20 @@ This document outlines best practices and coding standards for developing TypeSc
 ## 5. Testing Approaches
 
 - **Unit Testing Strategies:**
-
   - Write unit tests for individual functions and components.
   - Use mocking and stubbing to isolate units of code.
   - Test edge cases and error conditions.
   - Aim for high code coverage.
 
 - **Integration Testing:**
-
   - Test the interaction between different modules and components.
   - Verify that different parts of the application work together correctly.
 
 - **End-to-End Testing:**
-
   - Test the entire application from the user's perspective.
   - Use tools like Cypress or Playwright to automate end-to-end tests.
 
 - **Test Organization:**
-
   - Organize tests in a way that makes it easy to find and run them.
   - Group tests by feature or module.
   - Use descriptive test names.
@@ -223,7 +201,6 @@ This document outlines best practices and coding standards for developing TypeSc
 ## 6. Common Pitfalls and Gotchas
 
 - **Frequent Mistakes:**
-
   - Incorrectly handling asynchronous operations (Promises, async/await).
   - Not handling errors properly.
   - Overusing the `any` type.
@@ -231,20 +208,17 @@ This document outlines best practices and coding standards for developing TypeSc
   - Not keeping dependencies up to date.
 
 - **Edge Cases:**
-
   - Handling different browser versions and devices.
   - Dealing with network latency and failures.
   - Handling different time zones and locales.
   - Handling large datasets and complex calculations.
 
 - **Version-Specific Issues:**
-
   - Be aware of breaking changes in new versions of TypeScript and related libraries.
   - Consult the release notes for each new version to identify potential issues.
   - Use TypeScript's compiler options to target specific ECMAScript versions and maintain backwards compatibility if needed.
 
 - **Compatibility Concerns:**
-
   - Ensure that your code is compatible with the target browsers and devices.
   - Use polyfills to provide support for older browsers.
   - Test your code on different platforms to identify compatibility issues.
@@ -259,7 +233,6 @@ This document outlines best practices and coding standards for developing TypeSc
 ## 7. Tooling and Environment
 
 - **Recommended Development Tools:**
-
   - **IDE:** Visual Studio Code with the TypeScript extension.
   - **Package Manager:** npm or Yarn.
   - **Bundler:** Webpack, Parcel, or Rollup.
@@ -268,19 +241,16 @@ This document outlines best practices and coding standards for developing TypeSc
   - **Testing Framework:** Jest, Mocha, or Jasmine.
 
 - **Build Configuration:**
-
   - Use a `tsconfig.json` file to configure the TypeScript compiler.
   - Configure compiler options like `target`, `module`, `jsx`, and `strict`.
   - Use TypeScript's project references to organize large projects.
 
 - **Linting and Formatting:**
-
   - Use ESLint with TypeScript-specific rules to enforce coding standards.
   - Use Prettier to automatically format your code.
   - Integrate linting and formatting into your development workflow using Git hooks or CI/CD pipelines.
 
 - **Deployment Best Practices:**
-
   - Use a build process to transpile and bundle your code.
   - Minify and compress your code to reduce bundle size.
   - Use a CDN to serve static assets.

@@ -11,7 +11,6 @@ This document outlines best practices for developing applications using the Fire
 ### 1. Code Organization and Structure
 
 - **Directory Structure Best Practices:**
-
   - Adopt a modular structure to separate concerns.
   - Organize code based on features or domains (e.g., `auth`, `database`, `storage`).
   - Common directory structure:
@@ -49,7 +48,6 @@ This document outlines best practices for developing applications using the Fire
   - Style files: `ComponentName.module.css` or `ComponentName.scss`.
   - Test files: `ComponentName.test.js` or `ComponentName.spec.js`.
 - **Module Organization Best Practices:**
-
   - Encapsulate Firebase logic within dedicated modules/services.
   - Create a `firebase.js` module for initializing Firebase:
     javascript
@@ -82,7 +80,6 @@ This document outlines best practices for developing applications using the Fire
   - Separate UI components from Firebase data fetching logic.
   - Use Higher-Order Components (HOCs) or custom hooks for reusable Firebase authentication or data access patterns.
 - **Code Splitting Strategies:**
-
   - Implement lazy loading for routes and components to reduce initial bundle size.
   - Use dynamic imports for conditionally loading Firebase modules.
   - Example:
@@ -112,7 +109,6 @@ This document outlines best practices for developing applications using the Fire
   - **Writing complex logic in security rules:** Can lead to performance issues and difficult maintenance. Keep security rules simple and focused on access control.
   - **Hardcoding Firebase configuration:** Makes it difficult to manage multiple environments (development, staging, production).
 - **State Management Best Practices:**
-
   - **Local State:** Use React's `useState` or `useReducer` for component-specific state.
   - **Context API:** Share Firebase authentication state across components.
     javascript
@@ -148,7 +144,6 @@ This document outlines best practices for developing applications using the Fire
   - **Third-Party Libraries:** Consider Redux, Zustand, or Recoil for complex state management needs.
 
 - **Error Handling Patterns:**
-
   - Implement try-catch blocks for Firebase operations.
   - Handle Firebase-specific errors gracefully.
     javascript
@@ -224,7 +219,6 @@ This document outlines best practices for developing applications using the Fire
 ### 5. Testing Approaches
 
 - **Unit Testing:**
-
   - **Isolate components:** Test individual components in isolation.
   - **Mock Firebase dependencies:** Mock Firebase services to avoid external dependencies.
     javascript

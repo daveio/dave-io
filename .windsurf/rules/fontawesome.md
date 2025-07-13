@@ -47,7 +47,6 @@ This document outlines best practices for using Font Awesome in web development 
     javascript
     import '@fortawesome/fontawesome-free/css/all.min.css';
 - **Component Architecture:**
-
   - Create reusable icon components in your UI framework (e.g., React, Vue, Angular) to encapsulate Font Awesome usage and styling.
   - Example (React):
     jsx

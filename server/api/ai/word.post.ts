@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
 import { requireAIAuth } from "~/server/utils/auth-helpers"
-import { createOpenRouterClient, parseAIResponse, sendAIMessage } from "~/server/utils/ai-helpers"
+import { createOpenRouterClient, parseAIResponse, sendAIMessage, getAIModelFromKV } from "~/server/utils/ai-helpers"
 import { createApiError, isApiError, logRequest } from "~/server/utils/response"
 import { createTypedApiResponse } from "~/server/utils/response-types"
 import { AiWordRequestSchema, AiWordSuggestionSchema } from "~/server/utils/schemas"
@@ -32,6 +32,9 @@ export default defineEventHandler(async (event) => {
 
     // Create OpenRouter client using shared helper
     const openai = createOpenRouterClient(env)
+
+    // Get AI model from KV with fallback
+    const aiModel = await getAIModelFromKV(env, "word")
 
     let _aiSuccess = false
     let _aiErrorType: string | undefined
@@ -94,7 +97,7 @@ The word "${validatedRequest.target_word}" needs a better alternative. What woul
 
     try {
       // Send message to AI using shared helper
-      const textContent = await sendAIMessage(openai, systemPrompt, userMessage, "anthropic/claude-sonnet-4")
+      const textContent = await sendAIMessage(openai, systemPrompt, userMessage, aiModel)
 
       // Parse AI's response using shared helper
       const aiResponse = parseAIResponse<{ suggestions: AiWordSuggestion[] }>(textContent)

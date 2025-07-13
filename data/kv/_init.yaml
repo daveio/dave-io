@@ -1,6 +1,6 @@
 # KV initialization file
 # This file should be updated as new keys are defined.
-# This file can be imported with: bun run kv import data/kv/base-new.yaml --wipe
+# This file can be imported with: bun run kv import data/kv/_init.yaml --wipe
 
 _anchors: # _anchors is for YAML anchor definitions only. Excluded from direct output.
   redirects: &redirects
@@ -33,9 +33,8 @@ _anchors: # _anchors is for YAML anchor definitions only. Excluded from direct o
     wat: https://destroyallsoftware.com/talks/wat
     tumblr: https://tumblr.com/blog/daveio
     todo: https://daveio.notion.site/185b7795690c80399615eb0f5d5033c0
-
-  zero_metrics: &zero_metrics # Empty metrics template for initialization
-    ok: 0
+  zero_metrics: &zero_metrics
+    ok: 0 # Empty metrics template for initialization
     error: 0
     times:
       last-hit: 0
@@ -52,15 +51,13 @@ _anchors: # _anchors is for YAML anchor definitions only. Excluded from direct o
       4xx: 0
       5xx: 0
     status: {}
-
-  resource_metrics: &resource_metrics # Common resources with zero counters
+  resource_metrics: &resource_metrics
     go: *zero_metrics # /go (redirects)
     internal: *zero_metrics # /api/internal
     ai: *zero_metrics # /api/ai
     tokens: *zero_metrics # /api/tokens
     dashboard: *zero_metrics # /api/dashboard
-
-  redirect_metrics: &redirect_metrics # All redirects with zero counters
+  redirect_metrics: &redirect_metrics
     blog: *zero_metrics
     bluesky: *zero_metrics
     blit: *zero_metrics
@@ -89,23 +86,22 @@ _anchors: # _anchors is for YAML anchor definitions only. Excluded from direct o
     wat: *zero_metrics
     tumblr: *zero_metrics
     todo: *zero_metrics
-
 # KV data structure
-metrics:
+metrics: # All redirects with zero counters
   # Top-level metrics (entire worker)
   <<: *zero_metrics
-
   # Resource-specific metrics
   resources: *resource_metrics
-
   # Redirect-specific metrics
   redirect: *redirect_metrics
-
 # Redirect mappings (slug -> URL)
 redirect: *redirects
-
 # AI Social character limits
 ai:social:characters:bluesky: "300"
 ai:social:characters:mastodon: "4096"
 ai:social:characters:threads: "500"
 ai:social:characters:x: "280"
+# AI Model configurations for endpoints
+ai:model:social: anthropic/claude-sonnet-4
+ai:model:alt: anthropic/claude-sonnet-4
+ai:model:word: anthropic/claude-sonnet-4

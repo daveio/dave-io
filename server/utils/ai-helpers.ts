@@ -35,6 +35,38 @@ export function createOpenRouterClient(env: any): OpenAI {
 export type OpenRouterModel = string
 
 /**
+ * Reads the AI model name from KV for a specific endpoint with fallback
+ * @param env - Cloudflare environment bindings
+ * @param endpointName - Name of the endpoint (e.g., "social", "alt", "word")
+ * @returns Model name string or default fallback
+ */
+export async function getAIModelFromKV(env: CloudflareEnv, endpointName: string): Promise<string> {
+  const DEFAULT_MODEL = "anthropic/claude-sonnet-4"
+
+  if (!env?.KV) {
+    console.warn("KV not available for endpoint", endpointName, ", using default model:", DEFAULT_MODEL)
+    return DEFAULT_MODEL
+  }
+
+  try {
+    const kvKey = `ai:model:${endpointName}`
+    const modelName = await env.KV.get(kvKey)
+
+    if (!modelName) {
+      console.warn("No model configured in KV for key", kvKey, ", using default:", DEFAULT_MODEL)
+      return DEFAULT_MODEL
+    }
+
+    console.log("Using AI model for", endpointName, ":", modelName)
+    return modelName
+  } catch (error) {
+    console.error("Failed to read AI model from KV for endpoint", endpointName, ":", error)
+    console.warn("Using default model:", DEFAULT_MODEL)
+    return DEFAULT_MODEL
+  }
+}
+
+/**
  * Sends a message to AI with optional image attachment via OpenRouter
  * @param openai - Configured OpenAI client
  * @param systemPrompt - System prompt for the AI

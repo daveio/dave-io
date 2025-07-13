@@ -5,9 +5,7 @@ globs: *.vue
 ---
 
 - **Code Organization and Structure**:
-
   - **Directory Structure**: Adopt a feature-based directory structure. Group related files (components, stores, utilities) within feature-specific directories rather than separating by file type. This enhances maintainability and discoverability.
-
     - Example:
 
       src/
@@ -42,7 +40,6 @@ globs: *.vue
       ]
 
 - **Common Patterns and Anti-patterns**:
-
   - **Design Patterns**: Apply common design patterns such as composition API, provider/inject, and observer pattern where applicable.
     - **Composition API**: Organize component logic into composable functions for reusability and maintainability.
     - **Provider/Inject**: Use `provide` and `inject` to share data between components without prop drilling.
@@ -59,7 +56,6 @@ globs: *.vue
       }
 
 - **Performance Considerations**:
-
   - **Optimization Techniques**: Use `v-once` for static content. Use `v-memo` to memoize parts of the template. Use `key` attribute for `v-for` loops to improve rendering performance.
   - **Memory Management**: Avoid creating memory leaks by properly cleaning up event listeners and timers. Use `onBeforeUnmount` lifecycle hook to release resources.
   - **Rendering Optimization**: Use virtual DOM efficiently. Minimize unnecessary re-renders by using `ref` and `reactive` appropriately. Use `shouldUpdate` hook in functional components to control updates.
@@ -67,7 +63,6 @@ globs: *.vue
   - **Lazy Loading**: Implement lazy loading for images, components, and routes. Use `IntersectionObserver` API for lazy loading images.
 
 - **Security Best Practices**:
-
   - **Common Vulnerabilities**: Prevent Cross-Site Scripting (XSS) attacks by sanitizing user input. Prevent Cross-Site Request Forgery (CSRF) attacks by using CSRF tokens. Prevent SQL injection attacks by using parameterized queries.
   - **Input Validation**: Validate user input on both client-side and server-side. Use appropriate data types and formats. Escape special characters.
   - **Authentication and Authorization**: Implement secure authentication and authorization mechanisms. Use HTTPS to encrypt communication. Store passwords securely using hashing and salting.
@@ -75,7 +70,6 @@ globs: *.vue
   - **Secure API Communication**: Use HTTPS for API communication. Validate API responses. Implement rate limiting to prevent abuse.
 
 - **Testing Approaches**:
-
   - **Unit Testing**: Write unit tests for individual components, functions, and modules. Use Jest or Vitest as a test runner. Mock dependencies to isolate units of code.
   - **Integration Testing**: Write integration tests to verify the interaction between components and modules. Use Vue Test Utils for component testing.
   - **End-to-End Testing**: Write end-to-end tests to simulate user interactions and verify the application's overall functionality. Use Cypress or Playwright for end-to-end testing.
@@ -83,7 +77,6 @@ globs: *.vue
   - **Mocking and Stubbing**: Use mocks and stubs to isolate units of code and simulate dependencies. Use `jest.mock` or `vi.mock` for mocking modules.
 
 - **Common Pitfalls and Gotchas**:
-
   - **Frequent Mistakes**: Forgetting to register components. Incorrectly using `v-if` and `v-show`. Mutating props directly. Not handling asynchronous operations correctly. Ignoring error messages.
   - **Edge Cases**: Handling empty arrays or objects. Dealing with browser compatibility issues. Managing state in complex components.
   - **Version-Specific Issues**: Being aware of breaking changes between Vue 2 and Vue 3. Using deprecated APIs.
@@ -91,7 +84,6 @@ globs: *.vue
   - **Debugging Strategies**: Using Vue Devtools for debugging. Using `console.log` statements for inspecting variables. Using a debugger for stepping through code.
 
 - **Tooling and Environment**:
-
   - **Recommended Development Tools**: Use VS Code with the Volar extension for Vue 3 development. Use Vue CLI or Vite for project scaffolding. Use Vue Devtools for debugging.
   - **Build Configuration**: Configure Webpack or Rollup for building the application. Optimize build settings for production. Use environment variables for configuration.
   - **Linting and Formatting**: Use ESLint with the `eslint-plugin-vue` plugin for linting Vue code. Use Prettier for code formatting. Configure linting and formatting rules to enforce code style.
@@ -99,19 +91,16 @@ globs: *.vue
   - **CI/CD Integration**: Integrate linting, testing, and building into the CI/CD pipeline. Use automated deployment tools. Monitor application performance and errors.
 
 - **Additional Best Practices**:
-
   - **Accessibility (A11y)**: Ensure components are accessible by using semantic HTML, providing ARIA attributes where necessary, and testing with screen readers.
   - **Internationalization (i18n)**: Implement i18n from the start if multilingual support is required. Use a library like `vue-i18n` to manage translations.
   - **Documentation**: Document components and composables using JSDoc or similar tools. Generate documentation automatically using tools like Storybook.
 
 - **Vue 3 Specific Recommendations**:
-
   - **TypeScript**: Use TypeScript for improved type safety and code maintainability. Define component props and emits with type annotations.
   - **Teleport**: Use the `Teleport` component to render content outside the component's DOM hierarchy, useful for modals and tooltips.
   - **Suspense**: Use the `Suspense` component to handle asynchronous dependencies gracefully, providing fallback content while waiting for data to load.
 
 - **Naming Conventions**:
-
   - Components: PascalCase (e.g., `MyComponent.vue`)
   - Variables/Functions: camelCase (e.g., `myVariable`, `myFunction`)
   - Props/Events: camelCase (e.g., `myProp`, `myEvent`)

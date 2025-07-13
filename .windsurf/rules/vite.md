@@ -5,18 +5,14 @@ globs: *.js,*.jsx,*.ts,*.tsx,*.vue,*.svelte
 ---
 
 - **Introduction:**
-
   - This document outlines best practices for developing applications using Vite, a fast and opinionated build tool that aims to provide a better development experience.
 
 - **Prerequisites:**
-
   - Ensure Node.js and npm/yarn/pnpm are installed.
   - Familiarity with JavaScript/TypeScript, HTML, and CSS.
 
 - **Code Organization and Structure:**
-
   - **Directory Structure:**
-
     - Adopt a modular structure based on features or components.
 
     src/
@@ -62,7 +58,6 @@ globs: *.js,*.jsx,*.ts,*.tsx,*.vue,*.svelte
     - Configure Vite's `rollupOptions.output.manualChunks` for fine-grained control.
 
 - **Common Patterns and Anti-patterns:**
-
   - **Design Patterns:**
     - **Higher-Order Components (HOCs):** Carefully consider alternatives like render props or hooks for better composability.
     - **Render Props:** Useful for sharing logic between components, but can lead to deeply nested structures.
@@ -86,7 +81,6 @@ globs: *.js,*.jsx,*.ts,*.tsx,*.vue,*.svelte
     - Log errors to a central error tracking service (e.g., Sentry, Rollbar).
 
 - **Performance Considerations:**
-
   - **Optimization Techniques:**
     - Use production-ready code minification and bundling.
     - Optimize images and other assets using tools like `imagemin` or Vite plugins.
@@ -105,7 +99,6 @@ globs: *.js,*.jsx,*.ts,*.tsx,*.vue,*.svelte
     - Use `IntersectionObserver` to trigger loading when elements enter the viewport.
 
 - **Security Best Practices:**
-
   - **Common Vulnerabilities:**
     - Cross-Site Scripting (XSS): Sanitize user input to prevent XSS attacks.
     - Cross-Site Request Forgery (CSRF): Use CSRF tokens to protect against CSRF attacks.
@@ -124,7 +117,6 @@ globs: *.js,*.jsx,*.ts,*.tsx,*.vue,*.svelte
     - Rate limit API requests to prevent abuse.
 
 - **Testing Approaches:**
-
   - **Unit Testing:**
     - Write unit tests for individual components and functions.
     - Use testing libraries like Jest, Mocha, or Vitest.
@@ -143,7 +135,6 @@ globs: *.js,*.jsx,*.ts,*.tsx,*.vue,*.svelte
     - Avoid over-mocking; test the actual implementation whenever possible.
 
 - **Common Pitfalls and Gotchas:**
-
   - **Frequent Mistakes:**
     - Improperly handling asynchronous operations.
     - Neglecting accessibility considerations.
@@ -163,7 +154,6 @@ globs: *.js,*.jsx,*.ts,*.tsx,*.vue,*.svelte
     - Use debugging tools like `debugger` or `console.log`.
 
 - **Tooling and Environment:**
-
   - **Recommended Tools:**
     - VS Code with extensions like ESLint, Prettier, and TypeScript.
     - Chrome DevTools or Firefox Developer Tools.
@@ -184,11 +174,9 @@ globs: *.js,*.jsx,*.ts,*.tsx,*.vue,*.svelte
     - Use tools like GitHub Actions, GitLab CI, or CircleCI.
 
 - **TypeScript Best Practices (when using TypeScript):**
-
   - **Strict Type-Checking:**
     - Enable strict type-checking options in `tsconfig.json` (e.g., `strict: true`, `noImplicitAny: true`, `strictNullChecks: true`).
   - **Typing Props and State:**
-
     - Use interfaces or types to define the shape of props and state.
       typescript
       interface ButtonProps {

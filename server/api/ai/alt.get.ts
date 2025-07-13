@@ -5,7 +5,8 @@ import {
   createOpenRouterClient,
   parseAIResponse,
   sendAIMessage,
-  validateAndPrepareImageWithOptimization
+  validateAndPrepareImageWithOptimization,
+  getAIModelFromKV
 } from "~/server/utils/ai-helpers"
 import { getCloudflareEnv } from "~/server/utils/cloudflare"
 import { fetchImageFromUrl } from "~/server/utils/image-helpers"
@@ -35,6 +36,9 @@ export default defineEventHandler(async (event) => {
 
     // Create OpenRouter client
     const openai = createOpenRouterClient(env)
+
+    // Get AI model from KV with fallback
+    const aiModel = await getAIModelFromKV(env, "alt")
 
     let _aiSuccess = false
     let _aiErrorType: string | undefined
@@ -72,7 +76,7 @@ The confidence score should be between 0 and 1, representing how confident you a
         openai,
         systemPrompt,
         "Please generate alt text for this image.",
-        "anthropic/claude-sonnet-4",
+        aiModel,
         base64Data,
         mimeType
       )

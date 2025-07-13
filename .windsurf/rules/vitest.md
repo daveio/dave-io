@@ -43,7 +43,6 @@ This document outlines best practices for using Vitest to create reliable, maint
 ### 1.2 File Naming Conventions
 
 - **Use consistent naming:** Adopt a consistent naming scheme for test files. Common conventions include:
-
   - `[component/module].spec.ts`
   - `[component/module].test.ts`
   - `[component/module].e2e.ts` (for end-to-end tests)
