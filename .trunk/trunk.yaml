@@ -74,6 +74,7 @@ lint:
         - data/kv/*.yaml
         - nuxt.config.ts
         - server/middleware/shell-scripts.ts
+        - rag/**
     - linters:
         - gitleaks
       paths:
