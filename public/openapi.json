@@ -31,25 +31,25 @@
         "properties": {
           "image": {
             "type": "string",
-            "description": "URL of the image to analyze",
-            "format": "uri"
+            "format": "uri",
+            "description": "URL of the image to analyze"
           }
         },
         "required": ["image"],
-        "description": "Request to generate alt text from an image URL",
-        "title": "AI Alt Text GET Request"
+        "title": "AI Alt Text GET Request",
+        "description": "Request to generate alt text from an image URL"
       },
       "AiAltRequestPostSchema": {
         "type": "object",
         "properties": {
           "image": {
             "type": "string",
-            "description": "Image file (multipart form data)",
-            "format": "binary"
+            "format": "binary",
+            "description": "Image file (multipart form data)"
           }
         },
-        "description": "Request to generate alt text from an uploaded image file",
-        "title": "AI Alt Text POST Request"
+        "title": "AI Alt Text POST Request",
+        "description": "Request to generate alt text from an uploaded image file"
       },
       "AiAltResponseSchema": {
         "type": "object",
@@ -91,8 +91,8 @@
           }
         },
         "required": ["ok", "result", "status", "error", "timestamp"],
-        "description": "Response containing generated alt text for an image",
-        "title": "AI Alt Text Response"
+        "title": "AI Alt Text Response",
+        "description": "Response containing generated alt text for an image"
       },
       "AiSocialRequestSchema": {
         "type": "object",
@@ -131,8 +131,8 @@
           }
         },
         "required": ["input", "networks"],
-        "description": "Request to split text into social media posts",
-        "title": "AI Social Request"
+        "title": "AI Social Request",
+        "description": "Request to split text into social media posts"
       },
       "AiSocialResponseSchema": {
         "type": "object",
@@ -201,8 +201,8 @@
           }
         },
         "required": ["ok", "result", "status", "error", "timestamp"],
-        "description": "Response containing split text for each social network",
-        "title": "AI Social Response"
+        "title": "AI Social Response",
+        "description": "Response containing split text for each social network"
       },
       "AiWordRequestSchema": {
         "oneOf": [
@@ -242,8 +242,8 @@
             "required": ["mode", "text", "target_word"]
           }
         ],
-        "description": "Request to find alternative words",
-        "title": "AI Word Request"
+        "title": "AI Word Request",
+        "description": "Request to find alternative words"
       },
       "AiWordResponseSchema": {
         "type": "object",
@@ -297,8 +297,8 @@
           }
         },
         "required": ["ok", "result", "status", "error", "timestamp"],
-        "description": "Response containing alternative word suggestions",
-        "title": "AI Word Response"
+        "title": "AI Word Response",
+        "description": "Response containing alternative word suggestions"
       },
       "AiWordSuggestionSchema": {
         "type": "object",
@@ -885,7 +885,8 @@
                         "500": {
                           "type": "number"
                         }
-                      }
+                      },
+                      "additionalProperties": {}
                     }
                   },
                   "required": ["ok", "error", "times", "visitor", "group", "status"]
@@ -971,7 +972,8 @@
                         "500": {
                           "type": "number"
                         }
-                      }
+                      },
+                      "additionalProperties": {}
                     }
                   },
                   "required": ["ok", "error", "times", "visitor", "group", "status"]
@@ -1052,7 +1054,8 @@
                   "500": {
                     "type": "number"
                   }
-                }
+                },
+                "additionalProperties": {}
               }
             },
             "required": ["resources", "redirect", "ok", "error", "times", "visitor", "group", "status"]
@@ -1171,7 +1174,8 @@
                     "500": {
                       "type": "number"
                     }
-                  }
+                  },
+                  "additionalProperties": {}
                 }
               },
               "required": ["ok", "error", "times", "visitor", "group", "status"]
@@ -1257,7 +1261,8 @@
                     "500": {
                       "type": "number"
                     }
-                  }
+                  },
+                  "additionalProperties": {}
                 }
               },
               "required": ["ok", "error", "times", "visitor", "group", "status"]
@@ -1338,7 +1343,8 @@
               "500": {
                 "type": "number"
               }
-            }
+            },
+            "additionalProperties": {}
           }
         },
         "required": ["resources", "redirect", "ok", "error", "times", "visitor", "group", "status"]
@@ -1430,7 +1436,8 @@
                 "500": {
                   "type": "number"
                 }
-              }
+              },
+              "additionalProperties": {}
             }
           },
           "required": ["ok", "error", "times", "visitor", "group", "status"]
@@ -1516,7 +1523,8 @@
                 "500": {
                   "type": "number"
                 }
-              }
+              },
+              "additionalProperties": {}
             }
           },
           "required": ["ok", "error", "times", "visitor", "group", "status"]
@@ -1600,7 +1608,8 @@
               "500": {
                 "type": "number"
               }
-            }
+            },
+            "additionalProperties": {}
           }
         },
         "required": ["ok", "error", "times", "visitor", "group", "status"]
@@ -1623,7 +1632,8 @@
           "500": {
             "type": "number"
           }
-        }
+        },
+        "additionalProperties": {}
       },
       "KVTimeMetricsSchema": {
         "type": "object",
@@ -1962,24 +1972,108 @@
           "content": {
             "application/json": {
               "schema": {
-                "_def": {
-                  "unknownKeys": "strip",
-                  "catchall": {
-                    "_def": {
-                      "typeName": "ZodNever"
-                    },
-                    "~standard": {
-                      "version": 1,
-                      "vendor": "zod"
-                    }
-                  },
-                  "typeName": "ZodObject"
-                },
                 "~standard": {
-                  "version": 1,
-                  "vendor": "zod"
+                  "vendor": "zod",
+                  "version": 1
                 },
-                "_cached": null
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "token_id": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "string"
+                      },
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "usage_count": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "number",
+                        "checks": []
+                      },
+                      "minValue": null,
+                      "maxValue": null,
+                      "isInt": false,
+                      "isFinite": true,
+                      "format": null
+                    },
+                    "max_requests": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "nullable",
+                            "innerType": {
+                              "~standard": {
+                                "vendor": "zod",
+                                "version": 1
+                              },
+                              "def": {
+                                "type": "number",
+                                "checks": []
+                              },
+                              "minValue": null,
+                              "maxValue": null,
+                              "isInt": false,
+                              "isFinite": true,
+                              "format": null
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "created_at": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "string"
+                      },
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "last_used": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "string"
+                          },
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -2174,24 +2268,108 @@
           "content": {
             "application/json": {
               "schema": {
-                "_def": {
-                  "unknownKeys": "strip",
-                  "catchall": {
-                    "_def": {
-                      "typeName": "ZodNever"
-                    },
-                    "~standard": {
-                      "version": 1,
-                      "vendor": "zod"
-                    }
-                  },
-                  "typeName": "ZodObject"
-                },
                 "~standard": {
-                  "version": 1,
-                  "vendor": "zod"
+                  "vendor": "zod",
+                  "version": 1
                 },
-                "_cached": null
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "token_id": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "string"
+                      },
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "usage_count": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "number",
+                        "checks": []
+                      },
+                      "minValue": null,
+                      "maxValue": null,
+                      "isInt": false,
+                      "isFinite": true,
+                      "format": null
+                    },
+                    "max_requests": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "nullable",
+                            "innerType": {
+                              "~standard": {
+                                "vendor": "zod",
+                                "version": 1
+                              },
+                              "def": {
+                                "type": "number",
+                                "checks": []
+                              },
+                              "minValue": null,
+                              "maxValue": null,
+                              "isInt": false,
+                              "isFinite": true,
+                              "format": null
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "created_at": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "string"
+                      },
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "last_used": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "string"
+                          },
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -2898,24 +3076,327 @@
           "content": {
             "application/json": {
               "schema": {
-                "_def": {
-                  "unknownKeys": "strip",
-                  "catchall": {
-                    "_def": {
-                      "typeName": "ZodNever"
-                    },
-                    "~standard": {
-                      "version": 1,
-                      "vendor": "zod"
-                    }
-                  },
-                  "typeName": "ZodObject"
-                },
                 "~standard": {
-                  "version": 1,
-                  "vendor": "zod"
+                  "vendor": "zod",
+                  "version": 1
                 },
-                "_cached": null
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "cloudflare": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "object",
+                        "shape": {
+                          "connectingIP": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "string"
+                            },
+                            "format": null,
+                            "minLength": null,
+                            "maxLength": null
+                          },
+                          "country": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "object",
+                              "shape": {
+                                "ip": {
+                                  "~standard": {
+                                    "vendor": "zod",
+                                    "version": 1
+                                  },
+                                  "def": {
+                                    "type": "string"
+                                  },
+                                  "format": null,
+                                  "minLength": null,
+                                  "maxLength": null
+                                },
+                                "primary": {
+                                  "~standard": {
+                                    "vendor": "zod",
+                                    "version": 1
+                                  },
+                                  "def": {
+                                    "type": "string"
+                                  },
+                                  "format": null,
+                                  "minLength": null,
+                                  "maxLength": null
+                                }
+                              }
+                            }
+                          },
+                          "datacentre": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "string"
+                            },
+                            "format": null,
+                            "minLength": null,
+                            "maxLength": null
+                          },
+                          "ray": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "string"
+                            },
+                            "format": null,
+                            "minLength": null,
+                            "maxLength": null
+                          },
+                          "request": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "object",
+                              "shape": {
+                                "agent": {
+                                  "~standard": {
+                                    "vendor": "zod",
+                                    "version": 1
+                                  },
+                                  "def": {
+                                    "type": "string"
+                                  },
+                                  "format": null,
+                                  "minLength": null,
+                                  "maxLength": null
+                                },
+                                "host": {
+                                  "~standard": {
+                                    "vendor": "zod",
+                                    "version": 1
+                                  },
+                                  "def": {
+                                    "type": "string"
+                                  },
+                                  "format": null,
+                                  "minLength": null,
+                                  "maxLength": null
+                                },
+                                "method": {
+                                  "~standard": {
+                                    "vendor": "zod",
+                                    "version": 1
+                                  },
+                                  "def": {
+                                    "type": "string"
+                                  },
+                                  "format": null,
+                                  "minLength": null,
+                                  "maxLength": null
+                                },
+                                "path": {
+                                  "~standard": {
+                                    "vendor": "zod",
+                                    "version": 1
+                                  },
+                                  "def": {
+                                    "type": "string"
+                                  },
+                                  "format": null,
+                                  "minLength": null,
+                                  "maxLength": null
+                                },
+                                "proto": {
+                                  "~standard": {
+                                    "vendor": "zod",
+                                    "version": 1
+                                  },
+                                  "def": {
+                                    "type": "object",
+                                    "shape": {
+                                      "forward": {
+                                        "~standard": {
+                                          "vendor": "zod",
+                                          "version": 1
+                                        },
+                                        "def": {
+                                          "type": "string"
+                                        },
+                                        "format": null,
+                                        "minLength": null,
+                                        "maxLength": null
+                                      },
+                                      "request": {
+                                        "~standard": {
+                                          "vendor": "zod",
+                                          "version": 1
+                                        },
+                                        "def": {
+                                          "type": "string"
+                                        },
+                                        "format": null,
+                                        "minLength": null,
+                                        "maxLength": null
+                                      }
+                                    }
+                                  }
+                                },
+                                "version": {
+                                  "~standard": {
+                                    "vendor": "zod",
+                                    "version": 1
+                                  },
+                                  "def": {
+                                    "type": "string"
+                                  },
+                                  "format": null,
+                                  "minLength": null,
+                                  "maxLength": null
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "worker": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "object",
+                        "shape": {
+                          "edge_functions": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "boolean"
+                            }
+                          },
+                          "environment": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "string"
+                            },
+                            "format": null,
+                            "minLength": null,
+                            "maxLength": null
+                          },
+                          "limits": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "object",
+                              "shape": {
+                                "cpu_time": {
+                                  "~standard": {
+                                    "vendor": "zod",
+                                    "version": 1
+                                  },
+                                  "def": {
+                                    "type": "string"
+                                  },
+                                  "format": null,
+                                  "minLength": null,
+                                  "maxLength": null
+                                },
+                                "memory": {
+                                  "~standard": {
+                                    "vendor": "zod",
+                                    "version": 1
+                                  },
+                                  "def": {
+                                    "type": "string"
+                                  },
+                                  "format": null,
+                                  "minLength": null,
+                                  "maxLength": null
+                                },
+                                "request_timeout": {
+                                  "~standard": {
+                                    "vendor": "zod",
+                                    "version": 1
+                                  },
+                                  "def": {
+                                    "type": "string"
+                                  },
+                                  "format": null,
+                                  "minLength": null,
+                                  "maxLength": null
+                                }
+                              }
+                            }
+                          },
+                          "preset": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "string"
+                            },
+                            "format": null,
+                            "minLength": null,
+                            "maxLength": null
+                          },
+                          "runtime": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "string"
+                            },
+                            "format": null,
+                            "minLength": null,
+                            "maxLength": null
+                          },
+                          "server_side_rendering": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "boolean"
+                            }
+                          },
+                          "version": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "string"
+                            },
+                            "format": null,
+                            "minLength": null,
+                            "maxLength": null
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -3267,30 +3748,45 @@
           "content": {
             "application/json": {
               "schema": {
-                "_def": {
-                  "unknownKeys": "strip",
-                  "catchall": {
-                    "_def": {
-                      "typeName": "ZodNever"
-                    },
-                    "~standard": {
-                      "version": 1,
-                      "vendor": "zod"
-                    }
-                  },
-                  "typeName": "ZodObject",
-                  "openapi": {
-                    "metadata": {
-                      "title": "AI Alt Text GET Request",
-                      "description": "Request to generate alt text from an image URL"
+                "~standard": {
+                  "vendor": "zod",
+                  "version": 1
+                },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "image": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "string",
+                        "checks": [
+                          {},
+                          {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "string",
+                              "format": "url",
+                              "check": "string_format",
+                              "abort": false
+                            },
+                            "format": "url",
+                            "minLength": null,
+                            "maxLength": null
+                          }
+                        ]
+                      },
+                      "format": "url",
+                      "minLength": 1,
+                      "maxLength": null
                     }
                   }
-                },
-                "~standard": {
-                  "version": 1,
-                  "vendor": "zod"
-                },
-                "_cached": null
+                }
               }
             }
           }
@@ -3464,63 +3960,184 @@
           "content": {
             "application/json": {
               "schema": {
-                "_def": {
-                  "typeName": "ZodDiscriminatedUnion",
-                  "discriminator": "mode",
+                "~standard": {
+                  "vendor": "zod",
+                  "version": 1
+                },
+                "def": {
+                  "type": "union",
                   "options": [
                     {
-                      "_def": {
-                        "unknownKeys": "strip",
-                        "catchall": {
-                          "_def": {
-                            "typeName": "ZodNever"
-                          },
-                          "~standard": {
-                            "version": 1,
-                            "vendor": "zod"
-                          }
-                        },
-                        "typeName": "ZodObject"
-                      },
                       "~standard": {
-                        "version": 1,
-                        "vendor": "zod"
+                        "vendor": "zod",
+                        "version": 1
                       },
-                      "_cached": null
+                      "def": {
+                        "type": "object",
+                        "shape": {
+                          "mode": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "literal",
+                              "values": ["single"]
+                            },
+                            "values": {}
+                          },
+                          "word": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "string",
+                              "checks": [{}, {}]
+                            },
+                            "format": null,
+                            "minLength": 1,
+                            "maxLength": 100
+                          }
+                        }
+                      }
                     },
                     {
-                      "_def": {
-                        "unknownKeys": "strip",
-                        "catchall": {
-                          "_def": {
-                            "typeName": "ZodNever"
-                          },
-                          "~standard": {
-                            "version": 1,
-                            "vendor": "zod"
-                          }
-                        },
-                        "typeName": "ZodObject"
-                      },
                       "~standard": {
-                        "version": 1,
-                        "vendor": "zod"
+                        "vendor": "zod",
+                        "version": 1
                       },
-                      "_cached": null
+                      "def": {
+                        "type": "object",
+                        "shape": {
+                          "mode": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "literal",
+                              "values": ["context"]
+                            },
+                            "values": {}
+                          },
+                          "text": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "string",
+                              "checks": [{}, {}]
+                            },
+                            "format": null,
+                            "minLength": 1,
+                            "maxLength": 5000
+                          },
+                          "target_word": {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "string",
+                              "checks": [{}, {}]
+                            },
+                            "format": null,
+                            "minLength": 1,
+                            "maxLength": 100
+                          }
+                        }
+                      }
                     }
                   ],
-                  "optionsMap": {},
-                  "openapi": {
-                    "metadata": {
-                      "title": "AI Word Request",
-                      "description": "Request to find alternative words"
+                  "discriminator": "mode"
+                },
+                "options": [
+                  {
+                    "~standard": {
+                      "vendor": "zod",
+                      "version": 1
+                    },
+                    "def": {
+                      "type": "object",
+                      "shape": {
+                        "mode": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "literal",
+                            "values": ["single"]
+                          },
+                          "values": {}
+                        },
+                        "word": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "string",
+                            "checks": [{}, {}]
+                          },
+                          "format": null,
+                          "minLength": 1,
+                          "maxLength": 100
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "~standard": {
+                      "vendor": "zod",
+                      "version": 1
+                    },
+                    "def": {
+                      "type": "object",
+                      "shape": {
+                        "mode": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "literal",
+                            "values": ["context"]
+                          },
+                          "values": {}
+                        },
+                        "text": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "string",
+                            "checks": [{}, {}]
+                          },
+                          "format": null,
+                          "minLength": 1,
+                          "maxLength": 5000
+                        },
+                        "target_word": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "string",
+                            "checks": [{}, {}]
+                          },
+                          "format": null,
+                          "minLength": 1,
+                          "maxLength": 100
+                        }
+                      }
                     }
                   }
-                },
-                "~standard": {
-                  "version": 1,
-                  "vendor": "zod"
-                }
+                ]
               }
             }
           }
@@ -3694,30 +4311,199 @@
           "content": {
             "application/json": {
               "schema": {
-                "_def": {
-                  "unknownKeys": "strip",
-                  "catchall": {
-                    "_def": {
-                      "typeName": "ZodNever"
+                "~standard": {
+                  "vendor": "zod",
+                  "version": 1
+                },
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "input": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "string",
+                        "checks": [{}]
+                      },
+                      "format": null,
+                      "minLength": 1,
+                      "maxLength": null
                     },
-                    "~standard": {
-                      "version": 1,
-                      "vendor": "zod"
-                    }
-                  },
-                  "typeName": "ZodObject",
-                  "openapi": {
-                    "metadata": {
-                      "title": "AI Social Request",
-                      "description": "Request to split text into social media posts"
+                    "networks": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "array",
+                        "element": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "enum",
+                            "entries": {
+                              "bluesky": "bluesky",
+                              "mastodon": "mastodon",
+                              "threads": "threads",
+                              "x": "x"
+                            }
+                          },
+                          "enum": {
+                            "bluesky": "bluesky",
+                            "mastodon": "mastodon",
+                            "threads": "threads",
+                            "x": "x"
+                          },
+                          "options": ["bluesky", "mastodon", "threads", "x"]
+                        },
+                        "checks": [{}, {}]
+                      },
+                      "element": {
+                        "~standard": {
+                          "vendor": "zod",
+                          "version": 1
+                        },
+                        "def": {
+                          "type": "enum",
+                          "entries": {
+                            "bluesky": "bluesky",
+                            "mastodon": "mastodon",
+                            "threads": "threads",
+                            "x": "x"
+                          }
+                        },
+                        "enum": {
+                          "bluesky": "bluesky",
+                          "mastodon": "mastodon",
+                          "threads": "threads",
+                          "x": "x"
+                        },
+                        "options": ["bluesky", "mastodon", "threads", "x"]
+                      }
+                    },
+                    "markdown": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "default",
+                        "innerType": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "optional",
+                            "innerType": {
+                              "~standard": {
+                                "vendor": "zod",
+                                "version": 1
+                              },
+                              "def": {
+                                "type": "boolean"
+                              }
+                            }
+                          }
+                        },
+                        "defaultValue": false
+                      }
+                    },
+                    "strategies": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "default",
+                        "innerType": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "optional",
+                            "innerType": {
+                              "~standard": {
+                                "vendor": "zod",
+                                "version": 1
+                              },
+                              "def": {
+                                "type": "array",
+                                "element": {
+                                  "~standard": {
+                                    "vendor": "zod",
+                                    "version": 1
+                                  },
+                                  "def": {
+                                    "type": "enum",
+                                    "entries": {
+                                      "sentence_boundary": "sentence_boundary",
+                                      "word_boundary": "word_boundary",
+                                      "paragraph_preserve": "paragraph_preserve",
+                                      "thread_optimize": "thread_optimize",
+                                      "hashtag_preserve": "hashtag_preserve"
+                                    }
+                                  },
+                                  "enum": {
+                                    "sentence_boundary": "sentence_boundary",
+                                    "word_boundary": "word_boundary",
+                                    "paragraph_preserve": "paragraph_preserve",
+                                    "thread_optimize": "thread_optimize",
+                                    "hashtag_preserve": "hashtag_preserve"
+                                  },
+                                  "options": [
+                                    "sentence_boundary",
+                                    "word_boundary",
+                                    "paragraph_preserve",
+                                    "thread_optimize",
+                                    "hashtag_preserve"
+                                  ]
+                                },
+                                "checks": [{}]
+                              },
+                              "element": {
+                                "~standard": {
+                                  "vendor": "zod",
+                                  "version": 1
+                                },
+                                "def": {
+                                  "type": "enum",
+                                  "entries": {
+                                    "sentence_boundary": "sentence_boundary",
+                                    "word_boundary": "word_boundary",
+                                    "paragraph_preserve": "paragraph_preserve",
+                                    "thread_optimize": "thread_optimize",
+                                    "hashtag_preserve": "hashtag_preserve"
+                                  }
+                                },
+                                "enum": {
+                                  "sentence_boundary": "sentence_boundary",
+                                  "word_boundary": "word_boundary",
+                                  "paragraph_preserve": "paragraph_preserve",
+                                  "thread_optimize": "thread_optimize",
+                                  "hashtag_preserve": "hashtag_preserve"
+                                },
+                                "options": [
+                                  "sentence_boundary",
+                                  "word_boundary",
+                                  "paragraph_preserve",
+                                  "thread_optimize",
+                                  "hashtag_preserve"
+                                ]
+                              }
+                            }
+                          }
+                        },
+                        "defaultValue": ["sentence_boundary", "thread_optimize"]
+                      }
                     }
                   }
-                },
-                "~standard": {
-                  "version": 1,
-                  "vendor": "zod"
-                },
-                "_cached": null
+                }
               }
             }
           }
@@ -3898,24 +4684,157 @@
           "content": {
             "application/json": {
               "schema": {
-                "_def": {
-                  "unknownKeys": "strip",
-                  "catchall": {
-                    "_def": {
-                      "typeName": "ZodNever"
-                    },
-                    "~standard": {
-                      "version": 1,
-                      "vendor": "zod"
-                    }
-                  },
-                  "typeName": "ZodObject"
-                },
                 "~standard": {
-                  "version": 1,
-                  "vendor": "zod"
+                  "vendor": "zod",
+                  "version": 1
                 },
-                "_cached": null
+                "def": {
+                  "type": "object",
+                  "shape": {
+                    "slug": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "string",
+                        "checks": [{}, {}, {}]
+                      },
+                      "format": "regex",
+                      "minLength": 1,
+                      "maxLength": 50
+                    },
+                    "url": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "string",
+                        "checks": [
+                          {
+                            "~standard": {
+                              "vendor": "zod",
+                              "version": 1
+                            },
+                            "def": {
+                              "type": "string",
+                              "format": "url",
+                              "check": "string_format",
+                              "abort": false
+                            },
+                            "format": "url",
+                            "minLength": null,
+                            "maxLength": null
+                          }
+                        ]
+                      },
+                      "format": "url",
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "title": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "string"
+                          },
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      }
+                    },
+                    "description": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "string"
+                          },
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      }
+                    },
+                    "clicks": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "default",
+                        "innerType": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "number",
+                            "checks": []
+                          },
+                          "minValue": null,
+                          "maxValue": null,
+                          "isInt": false,
+                          "isFinite": true,
+                          "format": null
+                        },
+                        "defaultValue": 0
+                      }
+                    },
+                    "created_at": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "string"
+                      },
+                      "format": null,
+                      "minLength": null,
+                      "maxLength": null
+                    },
+                    "updated_at": {
+                      "~standard": {
+                        "vendor": "zod",
+                        "version": 1
+                      },
+                      "def": {
+                        "type": "optional",
+                        "innerType": {
+                          "~standard": {
+                            "vendor": "zod",
+                            "version": 1
+                          },
+                          "def": {
+                            "type": "string"
+                          },
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }
