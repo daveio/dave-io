@@ -101,24 +101,19 @@
   // Secrets Store
   "secrets_store_secrets": [
     {
-      "binding": "CLOUDFLARE_API_TOKEN",
-      "secret_name": "CLOUDFLARE_API_TOKEN",
-      "store_id": "<STORE_ID>"
-    },
-    {
-      "binding": "CLOUDFLARE_ACCOUNT_ID",
-      "secret_name": "CLOUDFLARE_ACCOUNT_ID",
-      "store_id": "<STORE_ID>"
-    },
-    {
       "binding": "API_JWT_SECRET",
       "secret_name": "API_JWT_SECRET",
-      "store_id": "<STORE_ID>"
+      "store_id": "c38e38cf995f4db08a71c9b616169d33"
+    },
+    {
+      "binding": "CLOUDFLARE_API_TOKEN",
+      "secret_name": "CLOUDFLARE_API_TOKEN",
+      "store_id": "c38e38cf995f4db08a71c9b616169d33"
     },
     {
       "binding": "OPENROUTER_API_KEY",
       "secret_name": "OPENROUTER_API_KEY",
-      "store_id": "<STORE_ID>"
+      "store_id": "c38e38cf995f4db08a71c9b616169d33"
     }
   ],
   // Whether Wrangler should send usage data to Cloudflare for this project
@@ -136,7 +131,9 @@
   // Environment variables (non-encrypted, visible in dashboard)
   "vars": {
     "CLOUDFLARE_ACCOUNT_ID": "def50674a738cee409235f71819973cf",
-    "NUXT_PUBLIC_API_BASE_URL": "/api"
+    "NUXT_PUBLIC_API_BASE_URL": "/api",
+    // trunk-ignore(gitleaks/generic-api-key)
+    "CLOUDFLARE_SECRET_STORE_ID": "c38e38cf995f4db08a71c9b616169d33"
     // Secrets (encrypted) should be managed via `wrangler secret put` command
     // or .dev.vars file for local development
   },

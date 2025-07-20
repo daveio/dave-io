@@ -78,6 +78,9 @@ export function getWranglerConfig(): WranglerConfig {
  * Get Cloudflare configuration from environment variables and wrangler.jsonc
  */
 export function getCloudflareConfig(includeDatabase = false, includeKV = false): CloudflareConfig {
+  // CLI tools run outside the Worker context, so they must use environment variables
+  // For production use, set these via Wrangler secrets commands:
+  // wrangler secrets-store secret create <STORE_ID> --name CLOUDFLARE_API_TOKEN --remote
   const apiToken = process.env.CLOUDFLARE_API_TOKEN
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID
   const wranglerConfig = getWranglerConfig()

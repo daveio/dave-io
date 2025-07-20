@@ -53,7 +53,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Create OpenRouter client using shared helper
-    const openai = createOpenRouterClient(env)
+    const openai = await createOpenRouterClient(env)
 
     // Get AI model from KV with fallback
     const aiModel = await getAIModelFromKV(env, "social")

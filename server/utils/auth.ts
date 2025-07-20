@@ -155,19 +155,20 @@ export async function authorizeEndpoint(
       return { success: false, error: "No token provided" }
     }
 
-    // Get JWT secret from Cloudflare environment or runtime config
+    // Get JWT secret from Cloudflare Secrets Store or runtime config
     let secret: string
 
-    const env = event.context.cloudflare?.env as { API_JWT_SECRET?: string }
+    const env = event.context.cloudflare?.env as { API_JWT_SECRET?: SecretsStoreSecret }
     const configSecret = useRuntimeConfig(event).apiJwtSecret
 
     // Prefer Cloudflare Workers secret when available
     if (env?.API_JWT_SECRET) {
-      secret = env.API_JWT_SECRET
-
-      // Detect mismatched secrets between environments
-      if (configSecret && configSecret !== secret) {
-        console.warn("JWT secret mismatch between Cloudflare environment and runtime config")
+      try {
+        secret = await env.API_JWT_SECRET.get()
+      } catch (error) {
+        console.error("Failed to retrieve API_JWT_SECRET from Secrets Store:", error)
+        // Fallback to runtime config for non-Cloudflare environments
+        secret = configSecret
       }
     } else {
       // Fallback to runtime config for non-Cloudflare environments

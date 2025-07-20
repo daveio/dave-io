@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
     const validatedRequest = AiAltRequestGetSchema.parse(query)
 
     // Create OpenRouter client
-    const openai = createOpenRouterClient(env)
+    const openai = await createOpenRouterClient(env)
 
     // Get AI model from KV with fallback
     const aiModel = await getAIModelFromKV(env, "alt")

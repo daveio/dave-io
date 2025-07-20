@@ -67,6 +67,9 @@ export function keyMatchesPatterns(key: string, patterns: RegExp[]): boolean {
  * Common environment variable helpers
  */
 export function getJWTSecret(): string | null {
+  // CLI tools run outside the Worker context, so they must use environment variables
+  // For production use, set these via Wrangler secrets commands:
+  // wrangler secrets-store secret create <STORE_ID> --name API_JWT_SECRET --remote
   return process.env.API_JWT_SECRET || null
 }
 

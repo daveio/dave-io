@@ -23,6 +23,7 @@ lint:
     - stylelint
     - vale
   enabled:
+    - gitleaks@8.27.2
     - eslint@9.31.0:
         packages:
           - "@eslint/js"
@@ -42,7 +43,6 @@ lint:
     - checkov@3.2.451
     - dustilock@1.2.0
     - git-diff-check
-    - gitleaks@8.27.2
     - hadolint@2.12.1-beta
     - markdownlint@0.45.0
     - osv-scanner@2.0.3

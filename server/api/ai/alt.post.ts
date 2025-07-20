@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
     validateImageFormat(imageFile.data, contentType.startsWith("image/") ? contentType : undefined)
 
     // Create OpenRouter client
-    const openai = createOpenRouterClient(env)
+    const openai = await createOpenRouterClient(env)
 
     // Get AI model from KV with fallback
     const aiModel = await getAIModelFromKV(env, "alt")

@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http"
 import type { H3Event } from "h3"
 import { SignJWT } from "jose"
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it } from "vitest"
 import {
   authorizeEndpoint,
   checkEndpointPermission,
@@ -255,7 +255,7 @@ describe("Authentication System", () => {
   })
 
   describe("authorizeEndpoint", () => {
-    it("should warn when secrets mismatch", async () => {
+    it("should use Secrets Store value when available", async () => {
       const envSecret = "env-secret"
       const configSecret = "config-secret"
       const now = Math.floor(Date.now() / 1000)
@@ -268,21 +268,22 @@ describe("Authentication System", () => {
       const event = mockH3Event({ authorization: `Bearer ${token}` })
       ;(event.context as { cloudflare?: { env?: Record<string, unknown> } }) = {
         cloudflare: {
-          env: { API_JWT_SECRET: envSecret }
+          env: {
+            API_JWT_SECRET: {
+              get: async () => envSecret
+            }
+          }
         }
       }
       ;(global as typeof globalThis & { useRuntimeConfig: () => { apiJwtSecret: string } }).useRuntimeConfig = () => ({
         apiJwtSecret: configSecret
       })
-      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {})
 
       const authFunc = await authorizeEndpoint("api")
       const result = await authFunc(event)
 
-      expect(warnSpy).toHaveBeenCalledWith("JWT secret mismatch between Cloudflare environment and runtime config")
+      // Should successfully verify with the Secrets Store value
       expect(result.success).toBe(true)
-
-      warnSpy.mockRestore()
     })
   })
 })

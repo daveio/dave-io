@@ -47,7 +47,23 @@ export default defineEventHandler(async (event) => {
   const token = extractToken(event)
 
   if (token) {
-    const secret = process.env.API_JWT_SECRET
+    // Get secret from Cloudflare Secrets Store or fallback to process.env
+    let secret: string | null = null
+
+    const env = event.context.cloudflare?.env as { API_JWT_SECRET?: SecretsStoreSecret }
+    if (env?.API_JWT_SECRET) {
+      try {
+        secret = await env.API_JWT_SECRET.get()
+      } catch (error) {
+        console.error("Failed to retrieve API_JWT_SECRET from Secrets Store:", error)
+      }
+    }
+
+    // Fallback to process.env for local development
+    if (!secret) {
+      secret = process.env.API_JWT_SECRET || null
+    }
+
     if (secret) {
       try {
         const verification = await verifyJWT(token, secret)

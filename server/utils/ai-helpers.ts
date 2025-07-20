@@ -9,7 +9,7 @@ import { createApiError } from "./response"
  * @throws {Error} If required environment variables are missing
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function createOpenRouterClient(env: any): OpenAI {
+export async function createOpenRouterClient(env: any): Promise<OpenAI> {
   if (!env?.OPENROUTER_API_KEY) {
     throw createApiError(503, "OpenRouter API key not available")
   }
@@ -18,11 +18,31 @@ export function createOpenRouterClient(env: any): OpenAI {
     throw createApiError(503, "Cloudflare account ID not available")
   }
 
+  // Get secrets from Secrets Store
+  let apiKey: string
+  let cfApiToken: string = ""
+
+  try {
+    apiKey = await env.OPENROUTER_API_KEY.get()
+  } catch (error) {
+    console.error("Failed to retrieve OPENROUTER_API_KEY from Secrets Store:", error)
+    throw createApiError(503, "Failed to retrieve OpenRouter API key")
+  }
+
+  if (env.CLOUDFLARE_API_TOKEN) {
+    try {
+      cfApiToken = await env.CLOUDFLARE_API_TOKEN.get()
+    } catch (error) {
+      console.error("Failed to retrieve CLOUDFLARE_API_TOKEN from Secrets Store:", error)
+      // Continue without the token - it's optional
+    }
+  }
+
   return new OpenAI({
-    apiKey: env.OPENROUTER_API_KEY,
+    apiKey,
     baseURL: `https://gateway.ai.cloudflare.com/v1/${env.CLOUDFLARE_ACCOUNT_ID}/ai-dave-io/openrouter`,
     defaultHeaders: {
-      "cf-aig-authorization": env.CLOUDFLARE_API_TOKEN || "",
+      "cf-aig-authorization": cfApiToken,
       "HTTP-Referer": "https://dave.io",
       "X-Title": "dave.io"
     }
