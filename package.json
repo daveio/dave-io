@@ -105,7 +105,7 @@
     "lint:format:trunk": "trunk fmt -a",
     "lint:trunk": "bun run trunk check -a --fix",
     "lint:types": "tsc --noEmit",
-    "postinstall": "bun run generate",
+    "postinstall": "bun run generate && bun run bin/vars.ts",
     "reset": "bun run-s reset:clean reset:packages",
     "reset:clean": "bun run rimraf .nuxt .output .wrangler *.d.ts",
     "reset:kv": "bun run kv import data/kv/_init.yaml --wipe --yes",
