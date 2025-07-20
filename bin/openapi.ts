@@ -67,5 +67,32 @@ const doc = generator.generateDocument({
   ]
 })
 
-writeFileSync("public/openapi.json", JSON.stringify(doc, null, 2))
+// Clean up Zod internal metadata from the generated document
+function cleanZodMetadata<T>(obj: T): T {
+  if (obj === null || obj === undefined) {
+    return obj
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(cleanZodMetadata) as T
+  }
+
+  if (typeof obj === "object") {
+    const cleaned: Record<string, unknown> = {}
+    for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+      // Skip Zod internal properties
+      if (key === "~standard" || key === "def" || key === "format" || key === "checks") {
+        continue
+      }
+      cleaned[key] = cleanZodMetadata(value)
+    }
+    return cleaned as T
+  }
+
+  return obj
+}
+
+const cleanedDoc = cleanZodMetadata(doc)
+
+writeFileSync("public/openapi.json", JSON.stringify(cleanedDoc, null, 2))
 console.log("Generated public/openapi.json")
