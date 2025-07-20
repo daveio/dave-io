@@ -74,12 +74,12 @@
     "wrangler": "^4.25.0"
   },
   "engines": {
-    "bun": "^1.2.18",
+    "bun": "^1.2.19",
     "node": "^22.17.1"
   },
   "license": "MIT",
   "name": "dave.io",
-  "packageManager": "bun@1.2.18",
+  "packageManager": "bun@1.2.19",
   "private": true,
   "scripts": {
     "build": "bun run-s init build:nuxt",
