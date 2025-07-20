@@ -21,8 +21,8 @@
   // ===============================
   // List of flags that enable features from upcoming versions of the Workers runtime
   "compatibility_flags": [
-    "nodejs_compat", // Enable Node.js compatibility (v2 due to compat date)
-    "nodejs_compat_v2", // Default by our compat date, but nitropack tries to disable it
+    // nitropack forces nodejs_compat v1 due to compat issues
+    "nodejs_compat", // Enable Node.js compatibility
     "nodejs_compat_populate_process_env" // Populate process.env
   ],
   // D1 database bindings for SQL databases
