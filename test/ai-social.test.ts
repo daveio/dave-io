@@ -1,23 +1,23 @@
 import { describe, expect, it, vi } from "vitest"
 import type { H3Event } from "h3"
-import { createApiError, createApiResponse } from "~/server/utils/response"
-import { AiSocialRequestSchema } from "~/server/utils/schemas"
-import type { AiSocialNetwork } from "~/server/utils/schemas"
+import { createApiError, createApiResponse } from "../server/utils/response"
+import { AiSocialRequestSchema } from "../server/utils/schemas"
+import type { AiSocialNetwork } from "../server/utils/schemas"
 
 // Mock the AI social endpoint implementation
-vi.mock("~/server/utils/auth-helpers", () => ({
+vi.mock("../server/utils/auth-helpers", () => ({
   requireAIAuth: vi.fn().mockResolvedValue({
     payload: { sub: "test-user", jti: "test-token-id" }
   })
 }))
 
-vi.mock("~/server/middleware/metrics", () => ({
+vi.mock("../server/middleware/metrics", () => ({
   recordAPIMetrics: vi.fn(),
   recordAPIErrorMetrics: vi.fn()
 }))
 
-vi.mock("~/server/utils/response", async () => {
-  const actual = await vi.importActual("~/server/utils/response")
+vi.mock("../server/utils/response", async () => {
+  const actual = await vi.importActual("../server/utils/response")
   return {
     ...actual,
     logRequest: vi.fn()
@@ -548,7 +548,7 @@ Return a JSON object with a "networks" property containing arrays of posts for e
   describe("Security Considerations", () => {
     it("should require authentication", async () => {
       // Test that authentication is properly mocked
-      const { requireAIAuth } = await import("~/server/utils/auth-helpers")
+      const { requireAIAuth } = await import("../server/utils/auth-helpers")
       expect(vi.mocked(requireAIAuth)).toBeDefined()
     })
 

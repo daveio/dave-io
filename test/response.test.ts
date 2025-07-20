@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { createApiError, createApiResponse } from "~/server/utils/response"
+import { createApiError, createApiResponse } from "../server/utils/response"
 
 // Mock implementations for functions that might not exist yet
 function sanitizeInput(input: unknown): string {

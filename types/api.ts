@@ -11,7 +11,7 @@ export type {
   UrlRedirect,
   User,
   WorkerInfo
-} from "~/server/utils/schemas"
+} from "../server/utils/schemas"
 
 // JWT Token Payload for client-side use
 export interface ClientJWTPayload {

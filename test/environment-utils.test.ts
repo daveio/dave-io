@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { getEnvironmentConfig, getEnvironmentVariable, isDevelopment, isProduction } from "~/server/utils/environment"
+import { getEnvironmentConfig, getEnvironmentVariable, isDevelopment, isProduction } from "../server/utils/environment"
 
 let originalNodeEnv: string | undefined
 let originalCfEnv: string | undefined

@@ -107,7 +107,7 @@ export default defineNuxtConfig({
     }
   },
   tailwindcss: {
-    cssPath: "~/assets/css/tailwind.css",
+    cssPath: "~/app/assets/css/tailwind.css",
     configPath: "./tailwind.config.ts",
     editorSupport: true,
     viewer: false,

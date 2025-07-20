@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { hasPermission, validateTokenPermissions } from "~/server/utils/auth"
+import { hasPermission, validateTokenPermissions } from "../server/utils/auth"
 
 describe("JWT Hierarchical Permissions", () => {
   describe("hasPermission", () => {
