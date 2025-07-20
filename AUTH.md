@@ -9,9 +9,10 @@ Our current authentication is a custom-built JWT-based system with the following
 - **Token Generation:** A CLI tool (`bin/jwt.ts`) generates HS256-signed JWTs.
 - **Token-based Permissions:** The token's `sub` (subject) claim dictates its permissions (e.g., `api:metrics`, `admin`).
 - **Metadata Storage:** Token metadata (UUID, subject, etc.) is stored in a Cloudflare D1 database (`jwt_tokens` table).
-- **Revocation:** Revocation is handled by placing the token's `jti` (UUID) into a Cloudflare KV namespace (`auth:revocation:`).
+- **Revocation:** Revocation is handled by placing the token's `jti` (UUID) into a Cloudflare KV namespace (`token:{uuid}:revoked`).
 - **Validation:** An H3 middleware (`server/utils/auth.ts`) validates the JWT signature, checks for expiration, and verifies against the KV revocation list.
 - **Authorization:** The `checkEndpointPermission` function in `server/utils/auth.ts` authorizes requests based on the token's `sub` claim against the required permission for an endpoint.
+- **Hierarchical Permissions:** The system supports hierarchical permissions where a parent permission grants access to child resources (e.g., `api` grants access to `api:metrics`, `api:token`, etc.).
 
 This system is effective but requires manual token management and custom code for storage and revocation.
 
@@ -49,7 +50,7 @@ This is the most critical part of the migration. We need to adapt our code to va
     - The `verifyJWT` function in `server/utils/auth.ts` must be completely replaced.
     - It no longer needs the `API_JWT_SECRET`. Instead, it must:
       - Fetch Cloudflare's public keys from your organization's certs endpoint: `https://<your-team-name>.cloudflareaccess.com/cdn-cgi/access/certs`.
-      - Use a JWT library (like `jose`, which is already a dependency) to decode and verify the incoming JWT from the `Cf-Access-Jwt-Assertion` header against those public keys. Cloudflare uses an `RS256` signature.
+      - Use a JWT library (like `jose`, which is already a dependency) to decode and verify the incoming JWT from the `Cf-Access-Jwt-Assertion` header against those public keys. Cloudflare uses `RS256` signature algorithm.
       - Validate the `iss` (issuer) and `aud` (audience) claims in the token to ensure it was issued by your Cloudflare organization for this specific application.
 
 3.  **Adapt Authorization Logic (`checkEndpointPermission`):**
@@ -84,7 +85,10 @@ For programmatic access (e.g., CLIs, scripts, other services) where a user canno
            -H "Authorization: Bearer <YOUR_CLOUDFLARE_API_TOKEN>" \
            -H "Content-Type: application/json" \
            --data '{
-             // ...all your existing app config...
+             "domain": "app.example.com",
+             "type": "self_hosted",
+             "name": "Your App Name",
+             "session_duration": "24h",
              "read_service_tokens_from_header": "Authorization"
            }'
       ```
@@ -97,16 +101,23 @@ For programmatic access (e.g., CLIs, scripts, other services) where a user canno
 4.  **How Clients Authenticate:**
     - Programmatic clients can now authenticate using the standard `Authorization` header. The `Bearer` scheme must be used.
     - The token itself is constructed by concatenating the Client ID and Client Secret with a colon (`:`), and then Base64 encoding the resulting string.
+    - **Token Construction:** Concatenate the Client ID and Client Secret with a colon (`:`) separator
     - **Token Value:** `base64(<Client-ID>:<Client-Secret>)`
     - **Header:** `Authorization: Bearer <token-value>`
+    - **Example:** If Client ID is `abc123` and Client Secret is `xyz789`, the header would be:
+      ```
+      Authorization: Bearer YWJjMTIzOnh5ejc4OQ==
+      ```
+      (where `YWJjMTIzOnh5ejc4OQ==` is the base64 encoding of `abc123:xyz789`)
 
 5.  **Adapt Application Code for Service Tokens:**
-    - When a client authenticates this way, Cloudflare verifies the token and forwards the request. It **does not** send a JWT.
-    - Instead, it adds identifying headers like `Cf-Access-Client-Id`.
-    - The `authorizeEndpoint` function in `server/utils/auth.ts` must be updated to handle this flow:
-      - First, check for the `Cf-Access-Jwt-Assertion` header (for logged-in users).
-      - If it's not present, check for the `CF-Access-Client-Id` header.
-      - If the `CF-Access-Client-Id` header exists, the request is authenticated as a service. The Client ID can be used to identify the service and grant appropriate permissions.
+    - When a client authenticates using service tokens with the Authorization header configuration, Cloudflare behaves differently than with user authentication:
+      - For service tokens in Service Auth policies: Cloudflare validates the token and adds identifying headers like `Cf-Access-Client-Id` but does NOT generate a JWT.
+      - For service tokens in Allow policies: Cloudflare may generate a JWT similar to user authentication.
+    - The `authorizeEndpoint` function in `server/utils/auth.ts` must be updated to handle both flows:
+      - First, check for the `Cf-Access-Jwt-Assertion` header (for logged-in users or service tokens in Allow policies).
+      - If it's not present, check for the `Cf-Access-Client-Id` header (for service tokens in Service Auth policies).
+      - If the `Cf-Access-Client-Id` header exists, the request is authenticated as a service. The Client ID can be used to identify the service and grant appropriate permissions.
 
 ### Step 4: Deprecate Old Infrastructure
 
@@ -114,7 +125,7 @@ Once the application is successfully using Cloudflare Access JWTs (for users) an
 
 1.  **Decommission `bin/jwt.ts`:** The CLI tool for creating tokens is now fully replaced by Cloudflare's user login and Service Token generation. It can be deleted.
 2.  **Remove D1 Token Store:** The `jwt_tokens` table in D1 is no longer necessary. It can be backed up and deleted.
-3.  **Remove KV Revocation:** The `auth:revocation:*` keys and the logic that checks them are obsolete. Session and token management is handled by Cloudflare.
+3.  **Remove KV Revocation:** The `token:{uuid}:revoked` keys and the logic that checks them are obsolete. Session and token management is handled by Cloudflare.
 4.  **Clean Up Config:** The `API_JWT_SECRET` environment variable can be removed from all configurations.
 
 ## 4. Conclusion
