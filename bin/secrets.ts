@@ -163,7 +163,9 @@ async function listSecrets(
           if (errorData.errors && errorData.errors.length > 0) {
             errorMessage = `${errorData.errors[0].code}: ${errorData.errors[0].message}`
           }
-        } catch {}
+        } catch {
+          // Ignore JSON parsing errors
+        }
 
         throw new Error(errorMessage)
       }
@@ -187,7 +189,7 @@ async function listSecrets(
     }
   }
 
-  console.error(`❌ Failed to list secrets after ${maxRetries} attempts:`, lastError)
+  console.error(`❌ Failed to list secrets after ${maxRetries} attempts: ${lastError?.message || "Unknown error"}`)
   throw lastError || new Error("Unknown error")
 }
 
@@ -226,7 +228,7 @@ async function createSecret(
       throw new Error(`Failed to create secret ${name}: ${error}`)
     }
   } catch (error) {
-    console.error(`❌ Failed to create secret ${name}:`, error)
+    console.error(`❌ Failed to create secret ${name}: ${error instanceof Error ? error.message : String(error)}`)
     throw error
   }
 }
@@ -263,7 +265,7 @@ async function updateSecret(
       throw new Error(`Failed to update secret ${name}: ${error}`)
     }
   } catch (error) {
-    console.error(`❌ Failed to update secret ${name}:`, error)
+    console.error(`❌ Failed to update secret ${name}: ${error instanceof Error ? error.message : String(error)}`)
     throw error
   }
 }
@@ -348,7 +350,7 @@ async function syncCommand(options: { dryRun?: boolean; force?: boolean; env: st
       await createSecret(client, config.accountId, config.storeId, name, secret.value)
       console.log(`   │   └── ✅ Created`)
     } catch (error) {
-      console.log(`   │   └── ❌ Failed`)
+      console.log(`   │   └── ❌ Failed: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
@@ -368,7 +370,7 @@ async function syncCommand(options: { dryRun?: boolean; force?: boolean; env: st
       await updateSecret(client, config.accountId, config.storeId, id, name, secret.value)
       console.log(`   │   └── ✅ Updated`)
     } catch (error) {
-      console.log(`   │   └── ❌ Failed`)
+      console.log(`   │   └── ❌ Failed: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
