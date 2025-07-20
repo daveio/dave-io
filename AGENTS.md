@@ -73,7 +73,7 @@ Workflow: Create tickets for TODOs with "TODO" label. Check Linear for existing 
 
 ## Tech Stack
 
-- **Runtime**: Nuxt 3 + Cloudflare Workers | **Auth**: JWT + JOSE hierarchical | **Validation**: Zod + TypeScript | **Testing**: Vitest + HTTP API | **Tools**: Bun, Biome
+- **Runtime**: Nuxt 4 + Cloudflare Workers | **Auth**: JWT + JOSE hierarchical | **Validation**: Zod + TypeScript | **Testing**: Vitest + HTTP API | **Tools**: Bun, Biome
 
 ## File Naming Conventions
 
@@ -182,6 +182,7 @@ const tokenId = auth.payload?.jti
 - **AI Word Alternative Finding**: New `/api/ai/word` endpoint for finding word alternatives using Claude 4 Sonnet via OpenRouter and AI Gateway. Supports two modes: single word alternatives and context-based word replacement suggestions. Returns 5-10 ordered suggestions with confidence scores.
 - **OpenRouter Integration**: Migrated all AI operations from direct Anthropic API to OpenRouter via Cloudflare AI Gateway. This enables dynamic model selection without frontend changes. All AI endpoints now use OpenRouter with the `openai` library for improved flexibility while maintaining Claude 4 Sonnet (`anthropic/claude-sonnet-4`) as the default model.
 - **API Response Validation**: All API responses now undergo runtime validation using Zod schemas. Responses are validated against `ApiSuccessResponseSchema` or `ApiErrorResponseSchema` before being returned. Validation errors are logged server-side but return generic 500 errors to clients for security. New typed response system with `createTypedApiResponse()` provides compile-time and runtime type safety.
+- **Nuxt 4 Migration**: Upgraded to Nuxt 4.0.0. Added experimental features: View Transitions API, Component Islands, and Lazy Hydration for improved performance. Project maintains traditional Nuxt structure (components/, pages/, etc. at root level) without migration to `app/` directory.
 
 ## Core
 

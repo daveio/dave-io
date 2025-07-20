@@ -14,7 +14,7 @@
   // "main": "./dist/index.js",
 
   // Compatibility date - determines which version of the Workers runtime is used
-  "compatibility_date": "2025-06-13",
+  "compatibility_date": "2025-07-19",
 
   // ===============================
   // RUNTIME CONFIGURATION
