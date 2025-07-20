@@ -38,6 +38,13 @@ function validateEnvironment(envPath: string = ".env"): SecretsSyncConfig {
 
   // If .env exists, prefer values from there
   const resolvedEnvPath = resolve(envPath)
+
+  // If .env doesn't exist, exit gracefully
+  if (!existsSync(resolvedEnvPath)) {
+    console.log("No .env file found - skipping secrets sync")
+    process.exit(0)
+  }
+
   if (existsSync(resolvedEnvPath)) {
     const content = readFileSync(resolvedEnvPath, "utf-8")
     const lines = content.split("\n")
