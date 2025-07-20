@@ -25,9 +25,8 @@ vi.mock("../server/utils/response", async () => {
 
 // Mock Cloudflare environment
 const mockCloudflareEnv = {
-  ANTHROPIC_API_KEY: "test-api-key",
   CLOUDFLARE_ACCOUNT_ID: "test-account-id",
-  AI_GATEWAY_TOKEN: "test-gateway-token"
+  CLOUDFLARE_API_TOKEN: "test-api-token"
 }
 
 vi.mock("#imports", () => ({
@@ -300,7 +299,7 @@ describe("AI Alt Text Endpoint", () => {
         "confidence"
       ]
 
-      const systemPrompt = `You are an expert at creating descriptive, accessible alt text for images. 
+      const systemPrompt = `You are an expert at creating descriptive, accessible alt text for images.
 
 Your task is to analyze the provided image and generate concise, descriptive alt text that:
 1. Describes the main subject and action in the image
@@ -587,9 +586,8 @@ The confidence score should be between 0 and 1, representing how confident you a
 
   describe("Environment Configuration", () => {
     it("should validate required environment variables", () => {
-      expect(mockCloudflareEnv.ANTHROPIC_API_KEY).toBeDefined()
       expect(mockCloudflareEnv.CLOUDFLARE_ACCOUNT_ID).toBeDefined()
-      expect(mockCloudflareEnv.AI_GATEWAY_TOKEN).toBeDefined()
+      expect(mockCloudflareEnv.CLOUDFLARE_API_TOKEN).toBeDefined()
     })
 
     it("should handle missing environment variables gracefully", () => {

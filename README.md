@@ -202,9 +202,9 @@ bun run deploy
 **Required Environment Variables**:
 
 - `API_JWT_SECRET` - JWT signing secret
-- `ANTHROPIC_API_KEY` - Claude AI API key
 - `CLOUDFLARE_API_TOKEN` - Cloudflare API access
 - `CLOUDFLARE_ACCOUNT_ID` - Cloudflare account ID
+- `OPENROUTER_API_KEY` - OpenRouter API key
 
 ## 🔧 Troubleshooting
 

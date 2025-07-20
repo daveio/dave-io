@@ -59,10 +59,6 @@ export interface CloudflareEnv {
   CLOUDFLARE_API_TOKEN?: string
   /** Cloudflare account ID */
   CLOUDFLARE_ACCOUNT_ID?: string
-  /** Anthropic API key for Claude models */
-  ANTHROPIC_API_KEY?: string
-  /** AI Gateway token for authentication */
-  AI_GATEWAY_TOKEN?: string
 }
 
 /**

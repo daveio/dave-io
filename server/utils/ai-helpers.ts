@@ -22,7 +22,7 @@ export function createOpenRouterClient(env: any): OpenAI {
     apiKey: env.OPENROUTER_API_KEY,
     baseURL: `https://gateway.ai.cloudflare.com/v1/${env.CLOUDFLARE_ACCOUNT_ID}/ai-dave-io/openrouter`,
     defaultHeaders: {
-      "cf-aig-authorization": env.AI_GATEWAY_TOKEN || "",
+      "cf-aig-authorization": env.CLOUDFLARE_API_TOKEN || "",
       "HTTP-Referer": "https://dave.io",
       "X-Title": "dave.io"
     }
