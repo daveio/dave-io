@@ -295,13 +295,11 @@ export const AiSocialRequestSchema = z
     networks: z
       .array(AiSocialNetworkEnum)
       .min(1, "At least one network must be specified")
-      .max(10, "Maximum 10 networks allowed")
-      .openapi({ maxItems: 10 }),
+      .max(10, "Maximum 10 networks allowed"),
     markdown: z.boolean().optional().default(false),
     strategies: z
       .array(AiSocialStrategyEnum)
       .max(10, "Maximum 10 strategies allowed")
-      .openapi({ maxItems: 10 })
       .optional()
       .default(["sentence_boundary", "thread_optimize"])
   })
@@ -316,11 +314,7 @@ export const AiSocialResponseSchema = z
     result: z.object({
       networks: z.record(
         AiSocialNetworkEnum,
-        z
-          .array(z.string())
-          .max(100, "Maximum 100 posts per network")
-          .openapi({ maxItems: 100 })
-          .describe("Array of posts for this network")
+        z.array(z.string()).max(100, "Maximum 100 posts per network").describe("Array of posts for this network")
       )
     }),
     status: z.object({ message: z.string() }).nullable(),
@@ -402,7 +396,6 @@ export const AiWordResponseSchema = z
         .array(AiWordSuggestionSchema)
         .min(5)
         .max(10)
-        .openapi({ maxItems: 10 })
         .describe("Array of word suggestions ordered by likelihood")
     }),
     status: z.object({ message: z.string() }).nullable(),
