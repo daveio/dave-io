@@ -8,7 +8,7 @@ idiomatic_version_file_enable_tools = []
 
 
 [tools]
-bun = { version = '1.2.18' }
+bun = { version = '1.2.19' }
 node = { version = '22.17.1' }
 rust = { version = '1.88.0' }
 
