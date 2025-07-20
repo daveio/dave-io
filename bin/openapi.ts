@@ -68,25 +68,25 @@ const doc = generator.generateDocument({
 })
 
 // Clean up Zod internal metadata from the generated document
-function cleanZodMetadata(obj: any): any {
+function cleanZodMetadata<T>(obj: T): T {
   if (obj === null || obj === undefined) {
     return obj
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(cleanZodMetadata)
+    return obj.map(cleanZodMetadata) as T
   }
 
   if (typeof obj === "object") {
-    const cleaned: any = {}
-    for (const [key, value] of Object.entries(obj)) {
+    const cleaned: Record<string, unknown> = {}
+    for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
       // Skip Zod internal properties
       if (key === "~standard" || key === "def" || key === "format" || key === "checks") {
         continue
       }
       cleaned[key] = cleanZodMetadata(value)
     }
-    return cleaned
+    return cleaned as T
   }
 
   return obj
