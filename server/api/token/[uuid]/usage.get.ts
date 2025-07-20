@@ -1,10 +1,10 @@
 import { z } from "zod"
-import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
-import { requireAPIAuth } from "~/server/utils/auth-helpers"
-import { getCloudflareEnv } from "~/server/utils/cloudflare"
-import { createApiError, isApiError, logRequest } from "~/server/utils/response"
-import { createTypedApiResponse } from "~/server/utils/response-types"
-import { getValidatedUUID } from "~/server/utils/validation"
+import { recordAPIErrorMetrics, recordAPIMetrics } from "../../../middleware/metrics"
+import { requireAPIAuth } from "../../../utils/auth-helpers"
+import { getCloudflareEnv } from "../../../utils/cloudflare"
+import { createApiError, isApiError, logRequest } from "../../../utils/response"
+import { createTypedApiResponse } from "../../../utils/response-types"
+import { getValidatedUUID } from "../../../utils/validation"
 
 interface TokenUsage {
   uuid: string

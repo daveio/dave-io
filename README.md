@@ -1,6 +1,6 @@
 # dave.io
 
-A modern web platform built with Nuxt 3 and Cloudflare Workers, featuring AI-powered text processing, image analysis, and URL redirection services.
+A modern web platform built with Nuxt 4 and Cloudflare Workers, featuring AI-powered text processing, image analysis, and URL redirection services.
 
 ## ✨ Features
 
@@ -22,7 +22,7 @@ bun install && bun run dev  # Starts in ~3s
 
 ## 🛠️ Tech Stack
 
-- **Runtime**: Nuxt 3 + Cloudflare Workers
+- **Runtime**: Nuxt 4 + Cloudflare Workers
 - **Auth**: JWT + JOSE hierarchical permissions
 - **Validation**: Zod + TypeScript
 - **Testing**: Vitest + HTTP API testing
@@ -167,6 +167,12 @@ bun try --auth ai word "happy"                  # Test AI word alternatives
 ## 📁 Project Structure
 
 ```text
+app/
+├── components/    # Vue components
+├── pages/         # Application pages
+├── plugins/       # Client/server plugins
+└── assets/        # CSS and static assets
+
 server/
 ├── api/           # API endpoint handlers
 ├── routes/        # Server-side routes (redirects)

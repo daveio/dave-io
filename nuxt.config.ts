@@ -31,7 +31,15 @@ export default defineNuxtConfig({
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || "/api"
     }
   },
-  compatibilityDate: "2025-05-15",
+  compatibilityDate: "2025-07-19",
+  future: {
+    compatibilityVersion: 4
+  },
+  experimental: {
+    viewTransition: true,
+    componentIslands: true,
+    lazyHydration: true
+  },
   nitro: {
     preset: "cloudflare_module",
     cloudflare: {
@@ -99,7 +107,7 @@ export default defineNuxtConfig({
     }
   },
   tailwindcss: {
-    cssPath: "~/assets/css/tailwind.css",
+    cssPath: "~/app/assets/css/tailwind.css",
     configPath: "./tailwind.config.ts",
     editorSupport: true,
     viewer: false,

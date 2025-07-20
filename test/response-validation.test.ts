@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { z } from "zod"
-import { createApiError, createApiResponse } from "~/server/utils/response"
-import type { TypedApiResponse, TypedApiErrorResponse } from "~/server/utils/response-types"
+import { createApiError, createApiResponse } from "../server/utils/response"
+import type { TypedApiResponse, TypedApiErrorResponse } from "../server/utils/response-types"
 import {
   createTypedApiResponse,
   createTypedSuccessResponseSchema,
   createTypedErrorResponseSchema
-} from "~/server/utils/response-types"
+} from "../server/utils/response-types"
 
 // Mock console.error to test error logging
 const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {})

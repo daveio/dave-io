@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { AiWordRequestSchema, AiWordResponseSchema, AiWordSuggestionSchema } from "~/server/utils/schemas"
+import { AiWordRequestSchema, AiWordResponseSchema, AiWordSuggestionSchema } from "../server/utils/schemas"
 
 describe("AI Word Schemas", () => {
   describe("AiWordRequestSchema", () => {

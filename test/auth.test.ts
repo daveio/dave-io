@@ -8,7 +8,7 @@ import {
   extractToken,
   getUserFromPayload,
   verifyJWT
-} from "~/server/utils/auth"
+} from "../server/utils/auth"
 
 // Mock H3Event for testing - this is a simplified version for unit testing
 function mockH3Event(headers: Record<string, string> = {}, query: Record<string, unknown> = {}): H3Event {

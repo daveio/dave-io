@@ -1,5 +1,5 @@
 import { createError, getHeader, getMethod, setResponseHeader } from "h3"
-import { isApiError } from "~/server/utils/response"
+import { isApiError } from "../utils/response"
 
 // Error categorization for better logging and monitoring
 enum ErrorCategory {

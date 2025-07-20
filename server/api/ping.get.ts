@@ -1,11 +1,11 @@
 import { getHeaders } from "h3"
 import { z } from "zod"
-import { recordAPIMetrics } from "~/server/middleware/metrics"
-import { extractToken, getUserFromPayload, verifyJWT } from "~/server/utils/auth"
-import { getCloudflareRequestInfo } from "~/server/utils/cloudflare"
-import { logRequest } from "~/server/utils/response"
-import { createTypedApiResponse } from "~/server/utils/response-types"
-import { PingResponseSchema } from "~/server/utils/schemas"
+import { recordAPIMetrics } from "../middleware/metrics"
+import { extractToken, getUserFromPayload, verifyJWT } from "../utils/auth"
+import { getCloudflareRequestInfo } from "../utils/cloudflare"
+import { logRequest } from "../utils/response"
+import { createTypedApiResponse } from "../utils/response-types"
+import { PingResponseSchema } from "../utils/schemas"
 
 // Define the result schema for the ping endpoint
 const PingResultSchema = z.object({

@@ -1,22 +1,22 @@
 import { describe, expect, it, vi } from "vitest"
 import type { H3Event } from "h3"
-import { createApiError, createApiResponse } from "~/server/utils/response"
-import { AiAltRequestGetSchema, AiAltRequestPostSchema } from "~/server/utils/schemas"
+import { createApiError, createApiResponse } from "../server/utils/response"
+import { AiAltRequestGetSchema, AiAltRequestPostSchema } from "../server/utils/schemas"
 
 // Mock the AI alt endpoint dependencies
-vi.mock("~/server/utils/auth-helpers", () => ({
+vi.mock("../server/utils/auth-helpers", () => ({
   requireAIAuth: vi.fn().mockResolvedValue({
     payload: { sub: "test-user", jti: "test-token-id" }
   })
 }))
 
-vi.mock("~/server/middleware/metrics", () => ({
+vi.mock("../server/middleware/metrics", () => ({
   recordAPIMetrics: vi.fn(),
   recordAPIErrorMetrics: vi.fn()
 }))
 
-vi.mock("~/server/utils/response", async () => {
-  const actual = await vi.importActual("~/server/utils/response")
+vi.mock("../server/utils/response", async () => {
+  const actual = await vi.importActual("../server/utils/response")
   return {
     ...actual,
     logRequest: vi.fn()
@@ -39,7 +39,7 @@ vi.mock("#imports", () => ({
 }))
 
 // Mock AI helpers
-vi.mock("~/server/utils/ai-helpers", () => ({
+vi.mock("../server/utils/ai-helpers", () => ({
   createAnthropicClient: vi.fn().mockReturnValue({
     messages: {
       create: vi.fn()
@@ -64,7 +64,7 @@ vi.mock("~/server/utils/ai-helpers", () => ({
 }))
 
 // Mock image helpers
-vi.mock("~/server/utils/image-helpers", () => ({
+vi.mock("../server/utils/image-helpers", () => ({
   fetchImageFromUrl: vi.fn().mockResolvedValue({
     buffer: Buffer.from("mock-image-data"),
     contentType: "image/jpeg"
@@ -165,26 +165,30 @@ describe("AI Alt Text Endpoint", () => {
 
   describe("Image URL Validation", () => {
     it("should validate HTTPS URLs", async () => {
-      const { validateImageUrl } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { validateImageUrl } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       expect(() => validateImageUrl("https://example.com/image.jpg")).not.toThrow()
     })
 
     it("should validate HTTP URLs", async () => {
-      const { validateImageUrl } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { validateImageUrl } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       expect(() => validateImageUrl("http://example.com/image.jpg")).not.toThrow()
     })
 
     it("should reject localhost URLs", async () => {
-      const { validateImageUrl } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { validateImageUrl } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       expect(() => validateImageUrl("http://localhost/image.jpg")).toThrow()
     })
 
     it("should reject private IP ranges", async () => {
-      const { validateImageUrl } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { validateImageUrl } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       const privateUrls = [
         "http://192.168.1.1/image.jpg",
         "http://10.0.0.1/image.jpg",
@@ -198,8 +202,9 @@ describe("AI Alt Text Endpoint", () => {
     })
 
     it("should reject non-HTTP protocols", async () => {
-      const { validateImageUrl } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { validateImageUrl } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       const invalidUrls = ["ftp://example.com/image.jpg", "file:///path/to/image.jpg", "javascript:alert(1)"]
 
       for (const url of invalidUrls) {
@@ -210,29 +215,33 @@ describe("AI Alt Text Endpoint", () => {
 
   describe("Image Size Validation", () => {
     it("should accept images under 5MB", async () => {
-      const { validateImageSize } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { validateImageSize } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       const smallImage = Buffer.alloc(1024 * 1024) // 1MB
       expect(() => validateImageSize(smallImage)).not.toThrow()
     })
 
     it("should reject images over 5MB", async () => {
-      const { validateImageSize } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { validateImageSize } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       const largeImage = Buffer.alloc(6 * 1024 * 1024) // 6MB
       expect(() => validateImageSize(largeImage)).toThrow()
     })
 
     it("should handle edge case at exactly 5MB", async () => {
-      const { validateImageSize } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { validateImageSize } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       const exactlyFiveMB = Buffer.alloc(5 * 1024 * 1024) // Exactly 5MB
       expect(() => validateImageSize(exactlyFiveMB)).not.toThrow()
     })
 
     it("should handle empty buffers", async () => {
-      const { validateImageSize } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { validateImageSize } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       const emptyBuffer = Buffer.alloc(0)
       expect(() => validateImageSize(emptyBuffer)).not.toThrow()
     })
@@ -240,36 +249,41 @@ describe("AI Alt Text Endpoint", () => {
 
   describe("Image Format Detection", () => {
     it("should detect JPEG format", async () => {
-      const { detectImageFormat } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { detectImageFormat } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       const jpegHeader = Buffer.from([0xff, 0xd8, 0xff, 0xe0])
       expect(detectImageFormat(jpegHeader)).toBe("image/jpeg")
     })
 
     it("should detect PNG format", async () => {
-      const { detectImageFormat } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { detectImageFormat } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       const pngHeader = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
       expect(detectImageFormat(pngHeader)).toBe("image/png")
     })
 
     it("should detect GIF format", async () => {
-      const { detectImageFormat } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { detectImageFormat } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       const gifHeader = Buffer.from([0x47, 0x49, 0x46, 0x38, 0x39, 0x61])
       expect(detectImageFormat(gifHeader)).toBe("image/gif")
     })
 
     it("should default to JPEG for unknown formats", async () => {
-      const { detectImageFormat } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { detectImageFormat } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       const unknownHeader = Buffer.from([0x00, 0x00, 0x00, 0x00])
       expect(detectImageFormat(unknownHeader)).toBe("image/jpeg")
     })
 
     it("should handle small buffers gracefully", async () => {
-      const { detectImageFormat } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { detectImageFormat } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       const tinyBuffer = Buffer.from([0xff])
       expect(detectImageFormat(tinyBuffer)).toBe("image/jpeg")
     })
@@ -427,7 +441,7 @@ The confidence score should be between 0 and 1, representing how confident you a
   describe("Authentication Requirements", () => {
     it("should require AI auth with alt resource", async () => {
       const { requireAIAuth } =
-        await vi.importActual<typeof import("~/server/utils/auth-helpers")>("~/server/utils/auth-helpers")
+        await vi.importActual<typeof import("../server/utils/auth-helpers")>("../server/utils/auth-helpers")
       expect(requireAIAuth).toBeDefined()
     })
 
@@ -450,8 +464,9 @@ The confidence score should be between 0 and 1, representing how confident you a
         "http://10.0.0.1/secret"
       ]
 
-      const { validateImageUrl } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { validateImageUrl } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
 
       for (const url of maliciousUrls) {
         expect(() => validateImageUrl(url)).toThrow()
@@ -459,16 +474,18 @@ The confidence score should be between 0 and 1, representing how confident you a
     })
 
     it("should validate file upload limits", async () => {
-      const { validateImageSize } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { validateImageSize } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       const oversizedImage = Buffer.alloc(10 * 1024 * 1024) // 10MB
 
       expect(() => validateImageSize(oversizedImage)).toThrow()
     })
 
     it("should sanitize file inputs", async () => {
-      const { validateImageFormat } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { validateImageFormat } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
       const emptyBuffer = Buffer.alloc(0)
 
       expect(() => validateImageFormat(emptyBuffer)).toThrow()
@@ -500,8 +517,9 @@ The confidence score should be between 0 and 1, representing how confident you a
 
     it("should handle various image formats in uploads", async () => {
       const supportedFormats = ["image/jpeg", "image/png", "image/gif", "image/webp"]
-      const { validateImageFormat } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { validateImageFormat } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
 
       for (const format of supportedFormats) {
         // Create proper mock buffer with correct magic bytes for each format
@@ -551,8 +569,9 @@ The confidence score should be between 0 and 1, representing how confident you a
     it("should handle large image files efficiently", async () => {
       // Test with a moderately large image (under 5MB limit)
       const largeImage = Buffer.alloc(4 * 1024 * 1024) // 4MB
-      const { validateImageSize } =
-        await vi.importActual<typeof import("~/server/utils/image-helpers")>("~/server/utils/image-helpers")
+      const { validateImageSize } = await vi.importActual<typeof import("../server/utils/image-helpers")>(
+        "../server/utils/image-helpers"
+      )
 
       expect(() => validateImageSize(largeImage)).not.toThrow()
     })

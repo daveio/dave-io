@@ -10,7 +10,7 @@ import {
   KVSampleMetricsSchema,
   TokenMetricsSchema,
   TokenUsageSchema
-} from "~/server/utils/schemas"
+} from "../server/utils/schemas"
 
 describe("API Schemas", () => {
   describe("ApiSuccessResponseSchema", () => {

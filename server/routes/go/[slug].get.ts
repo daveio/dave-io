@@ -1,8 +1,8 @@
 import { getHeader, sendRedirect } from "h3"
-import { getCloudflareEnv, getKVNamespace } from "~/server/utils/cloudflare"
-import { updateRedirectMetricsAsync } from "~/server/utils/kv-metrics"
-import { createApiError, isApiError, logRequest } from "~/server/utils/response"
-import { UrlRedirectSchema } from "~/server/utils/schemas"
+import { getCloudflareEnv, getKVNamespace } from "../../utils/cloudflare"
+import { updateRedirectMetricsAsync } from "../../utils/kv-metrics"
+import { createApiError, isApiError, logRequest } from "../../utils/response"
+import { UrlRedirectSchema } from "../../utils/schemas"
 
 interface RedirectData {
   slug: string
