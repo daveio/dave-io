@@ -84,6 +84,7 @@ lint:
       paths:
         - .cursor/**
         - .windsurf/**
+        - rag/**
 plugins:
   # https://docs.trunk.io/plugins
   sources:

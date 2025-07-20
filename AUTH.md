@@ -105,7 +105,7 @@ For programmatic access (e.g., CLIs, scripts, other services) where a user canno
     - **Token Value:** `base64(<Client-ID>:<Client-Secret>)`
     - **Header:** `Authorization: Bearer <token-value>`
     - **Example:** If Client ID is `abc123` and Client Secret is `xyz789`, the header would be:
-      ```
+      ```plaintext
       Authorization: Bearer YWJjMTIzOnh5ejc4OQ==
       ```
       (where `YWJjMTIzOnh5ejc4OQ==` is the base64 encoding of `abc123:xyz789`)
