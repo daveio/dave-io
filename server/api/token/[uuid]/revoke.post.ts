@@ -1,9 +1,9 @@
 import { z } from "zod"
-import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
-import { authorizeEndpoint } from "~/server/utils/auth"
-import { getCloudflareEnv } from "~/server/utils/cloudflare"
-import { createApiError, isApiError } from "~/server/utils/response"
-import { createTypedApiResponse } from "~/server/utils/response-types"
+import { recordAPIErrorMetrics, recordAPIMetrics } from "../../../middleware/metrics"
+import { authorizeEndpoint } from "../../../utils/auth"
+import { getCloudflareEnv } from "../../../utils/cloudflare"
+import { createApiError, isApiError } from "../../../utils/response"
+import { createTypedApiResponse } from "../../../utils/response-types"
 
 interface RevokeRequest {
   revoked: boolean

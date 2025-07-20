@@ -1,7 +1,7 @@
 import type { H3Event } from "h3"
 import { getHeader, getMethod, getRequestURL } from "h3"
-import { getCloudflareEnv, getCloudflareRequestInfo } from "~/server/utils/cloudflare"
-import { updateAPIRequestMetricsAsync } from "~/server/utils/kv-metrics"
+import { getCloudflareEnv, getCloudflareRequestInfo } from "../utils/cloudflare"
+import { updateAPIRequestMetricsAsync } from "../utils/kv-metrics"
 
 /**
  * Helper to automatically record standard API metrics for an endpoint

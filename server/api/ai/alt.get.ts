@@ -1,18 +1,18 @@
 import { z } from "zod"
-import { recordAPIErrorMetrics, recordAPIMetrics } from "~/server/middleware/metrics"
-import { requireAIAuth } from "~/server/utils/auth-helpers"
+import { recordAPIErrorMetrics, recordAPIMetrics } from "../../middleware/metrics"
+import { requireAIAuth } from "../../utils/auth-helpers"
 import {
   createOpenRouterClient,
   parseAIResponse,
   sendAIMessage,
   validateAndPrepareImageWithOptimization,
   getAIModelFromKV
-} from "~/server/utils/ai-helpers"
-import { getCloudflareEnv } from "~/server/utils/cloudflare"
-import { fetchImageFromUrl } from "~/server/utils/image-helpers"
-import { createApiError, isApiError, logRequest } from "~/server/utils/response"
-import { createTypedApiResponse } from "~/server/utils/response-types"
-import { AiAltRequestGetSchema } from "~/server/utils/schemas"
+} from "../../utils/ai-helpers"
+import { getCloudflareEnv } from "../../utils/cloudflare"
+import { fetchImageFromUrl } from "../../utils/image-helpers"
+import { createApiError, isApiError, logRequest } from "../../utils/response"
+import { createTypedApiResponse } from "../../utils/response-types"
+import { AiAltRequestGetSchema } from "../../utils/schemas"
 
 // Define the result schema for the AI alt endpoint
 const AiAltResultSchema = z.object({
