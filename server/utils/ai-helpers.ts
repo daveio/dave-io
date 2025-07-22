@@ -144,7 +144,7 @@ export async function sendAIMessage(
   // Extract text content from response
   const textContent = completion.choices[0]?.message?.content
   if (!textContent) {
-    throw new Error("No text content in AI response")
+    throw createApiError(500, "No text content in AI response")
   }
 
   return textContent
@@ -179,7 +179,7 @@ export function parseAIResponse<T = any>(textContent: string): T {
   } catch {
     console.error("Failed to parse AI response as JSON:", cleanedContent)
     console.error("Original response:", textContent)
-    throw new Error("Invalid JSON response from AI")
+    throw createApiError(500, "Invalid JSON response from AI")
   }
 }
 

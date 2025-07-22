@@ -109,7 +109,7 @@ Return a JSON object with a "networks" property containing arrays of posts for e
       // Validate that all requested networks are present
       for (const network of validatedRequest.networks) {
         if (!aiResponse.networks?.[network] || !Array.isArray(aiResponse.networks[network])) {
-          throw new Error(`Missing or invalid response for network: ${network}`)
+          throw createApiError(500, `Missing or invalid response for network: ${network}`)
         }
       }
 

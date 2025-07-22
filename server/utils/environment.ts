@@ -1,5 +1,7 @@
 // Environment-specific functionality - no re-exports to avoid duplicate imports
 
+import { createApiError } from "./response"
+
 /**
  * Environment configuration for controlling fallback behavior
  */
@@ -35,7 +37,7 @@ export function getEnvironmentVariable(name: string, required = false): string |
   const value = process.env[name]
 
   if (required && !value) {
-    throw new Error(`Required environment variable ${name} is not set`)
+    throw createApiError(503, `Required environment variable ${name} is not set`)
   }
 
   return value

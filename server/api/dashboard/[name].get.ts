@@ -86,7 +86,7 @@ async function fetchHackerNews(kv: KVNamespace): Promise<{ items: DashboardItem[
   try {
     const response = await fetch("https://news.ycombinator.com/rss")
     if (!response.ok) {
-      throw new Error(`RSS fetch failed: ${response.status}`)
+      throw createApiError(503, `RSS fetch failed: ${response.status}`)
     }
 
     const rssText = await response.text()
@@ -120,7 +120,7 @@ async function fetchHackerNews(kv: KVNamespace): Promise<{ items: DashboardItem[
     return { items, source: "live" }
   } catch (error) {
     console.error("Error fetching Hacker News:", error)
-    throw new Error("Hacker News RSS feed temporarily unavailable")
+    throw createApiError(503, "Hacker News RSS feed temporarily unavailable")
   }
 }
 

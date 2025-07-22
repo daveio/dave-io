@@ -16,6 +16,7 @@
     "cloudflare": "^4.5.0",
     "dashkit": "^0.1.0",
     "date-fns": "^4.1.0",
+    "eslint-plugin-unicorn": "^60.0.0",
     "fast-xml-parser": "^5.2.5",
     "file-type": "^21.0.0",
     "jose": "^6.0.12",
