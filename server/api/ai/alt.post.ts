@@ -96,7 +96,7 @@ The confidence score should be between 0 and 1, representing how confident you a
 
       // Validate that we got the expected response format
       if (!aiResponse.alt_text || typeof aiResponse.alt_text !== "string") {
-        throw new Error("Invalid response format from AI: missing or invalid alt_text")
+        throw createApiError(500, "Invalid response format from AI: missing or invalid alt_text")
       }
 
       // Ensure confidence is within valid range if provided

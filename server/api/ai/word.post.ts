@@ -104,13 +104,13 @@ The word "${validatedRequest.target_word}" needs a better alternative. What woul
 
       // Validate that we got the expected response format
       if (!aiResponse.suggestions || !Array.isArray(aiResponse.suggestions)) {
-        throw new Error("Invalid response format from AI: missing or invalid suggestions array")
+        throw createApiError(500, "Invalid response format from AI: missing or invalid suggestions array")
       }
 
       // Validate each suggestion
       for (const suggestion of aiResponse.suggestions) {
         if (!suggestion.word || typeof suggestion.word !== "string") {
-          throw new Error("Invalid suggestion format: missing or invalid word")
+          throw createApiError(500, "Invalid suggestion format: missing or invalid word")
         }
         // Ensure confidence is within valid range if provided
         if (suggestion.confidence !== undefined && (suggestion.confidence < 0 || suggestion.confidence > 1)) {
@@ -120,7 +120,7 @@ The word "${validatedRequest.target_word}" needs a better alternative. What woul
 
       // Ensure we have 5-10 suggestions
       if (aiResponse.suggestions.length < 5) {
-        throw new Error(`Not enough suggestions provided: ${aiResponse.suggestions.length}`)
+        throw createApiError(500, `Not enough suggestions provided: ${aiResponse.suggestions.length}`)
       }
       if (aiResponse.suggestions.length > 10) {
         aiResponse.suggestions = aiResponse.suggestions.slice(0, 10)

@@ -146,7 +146,7 @@ export function parseRSSFeed(xmlContent: string): Array<{
     // Handle RSS 2.0 format
     const channel = parsed.rss?.channel
     if (!channel) {
-      throw new Error("Invalid RSS format - no channel found")
+      throw createApiError(400, "Invalid RSS format - no channel found")
     }
 
     const items = Array.isArray(channel.item) ? channel.item : [channel.item].filter(Boolean)

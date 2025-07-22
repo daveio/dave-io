@@ -23,7 +23,7 @@ lint:
     - stylelint
     - vale
   enabled:
-    - gitleaks@8.27.2
+    - gitleaks@8.28.0
     - eslint@9.31.0:
         packages:
           - "@eslint/js"
@@ -53,7 +53,7 @@ lint:
     - sourcery@1.37.0
     - svgo@4.0.0
     - taplo@0.9.3
-    - trufflehog@3.90.0
+    - trufflehog@3.90.1
     - trunk-toolbox@0.5.4
     - yamllint@1.37.1
   ignore:
