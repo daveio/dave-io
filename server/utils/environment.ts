@@ -37,7 +37,7 @@ export function getEnvironmentVariable(name: string, required = false): string |
   const value = process.env[name]
 
   if (required && !value) {
-    throw createApiError(503, `Required environment variable ${name} is not set`)
+    throw createApiError(500, `Required environment variable ${name} is not set`)
   }
 
   return value
