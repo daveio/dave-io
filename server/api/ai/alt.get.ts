@@ -29,7 +29,12 @@ export default defineEventHandler(async (event) => {
 
     // Parse and validate query parameters
     const query = getQuery(event)
-    const validatedRequest = AiAltRequestGetSchema.parse(query)
+    let validatedRequest
+    try {
+      validatedRequest = AiAltRequestGetSchema.parse(query)
+    } catch (error) {
+      throw createApiError(400, "Invalid request parameters", error instanceof z.ZodError ? error.issues : undefined)
+    }
 
     // Create OpenRouter client
     const openai = await createOpenRouterClient(env)

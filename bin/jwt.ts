@@ -24,7 +24,7 @@ interface TokenMetadata {
 
 const program = new Command()
 
-program.name("jwt").description("JWT Token Management for dave-io-nuxt").version("3.0.0")
+program.name("jwt").description("JWT Token Management for dave-io").version("3.0.0")
 
 // Global options
 program.option("--script", "Enable script mode (non-interactive, structured output)")

@@ -257,9 +257,7 @@ class APITester {
     results.push(await this.makeRequest("/api/ai/alt", "GET", undefined, undefined, {}, 401))
 
     // Test AI alt-text GET with url parameter (should return 200 or 400)
-    const imageUrl = this.isLocal
-      ? `http://localhost:3000/images/integration-test.jpg`
-      : `https://dave.io/images/integration-test.jpg`
+    const imageUrl = "https://dcw.soy/duck.webp"
     const altTextGetResult = await this.makeRequest(
       `/api/ai/alt?url=${encodeURIComponent(imageUrl)}`,
       "GET",
@@ -307,10 +305,10 @@ class APITester {
 
     // Test AI alt-text POST with actual image file upload (should return 200 or 400)
     try {
-      const imageFilePath = resolve(process.cwd(), "public/images/integration-test.jpg")
+      const imageFilePath = resolve(process.cwd(), "data/images/duck.webp")
       const imageFile = Bun.file(imageFilePath)
       const formData = new FormData()
-      formData.append("image", imageFile, "integration-test.jpg")
+      formData.append("image", imageFile, "duck.webp")
 
       const response = await fetch(`${this.baseUrl}/api/ai/alt`, {
         method: "POST",
@@ -815,7 +813,7 @@ class APITester {
 }
 
 // CLI interface
-program.name("api").description("HTTP API Test Suite for dave-io-nuxt").version("1.0.0")
+program.name("api").description("HTTP API Test Suite for dave-io").version("1.0.0")
 
 // Global script mode option
 program.option("--script", "Enable script mode (non-interactive, structured output)")

@@ -144,7 +144,7 @@ const program = new Command()
 
 program
   .name("kv")
-  .description("KV Admin utility for dave-io-nuxt")
+  .description("KV Admin utility for dave-io")
   .version("1.0.0")
   .option("--local", "Use local wrangler KV storage instead of remote Cloudflare API")
   .option("--script", "Enable script mode (non-interactive, structured output)")

@@ -69,7 +69,7 @@ function validateColumnName(columnName: string): void {
 
 const program = new Command()
 
-program.name("d1").description("D1 Database Management Utility for dave-io-nuxt").version("1.0.0")
+program.name("d1").description("D1 Database Management Utility for dave-io").version("1.0.0")
 
 // Global options
 program.option("--script", "Enable script mode (non-interactive, structured output)")
@@ -77,6 +77,32 @@ program.option("--script", "Enable script mode (non-interactive, structured outp
 // Check if script mode is enabled
 function isScriptMode(): boolean {
   return program.opts().script || false
+}
+
+/**
+ * Initialize database schema - create all required tables
+ * @returns Promise resolving when schema is initialized
+ */
+export async function initializeSchema(): Promise<void> {
+  // Create jwt_tokens table
+  const createJwtTokensTable = `
+    CREATE TABLE IF NOT EXISTS jwt_tokens (
+      uuid TEXT PRIMARY KEY,
+      sub TEXT NOT NULL,
+      description TEXT,
+      created_at TEXT NOT NULL,
+      expires_at TEXT
+    )
+  `
+
+  // Create index for jwt_tokens
+  const createJwtTokensIndex = `
+    CREATE INDEX IF NOT EXISTS idx_jwt_tokens_sub ON jwt_tokens(sub)
+  `
+
+  // Execute schema creation
+  await executeD1Command(createJwtTokensTable)
+  await executeD1Command(createJwtTokensIndex)
 }
 
 // Removed unused getD1Config function - configuration is handled directly in executeD1Command
@@ -345,10 +371,54 @@ program
     }
   })
 
+// Init command
+program
+  .command("init")
+  .description("Initialize database schema - create all required tables")
+  .option("-y, --yes", "Skip confirmation prompt")
+  .action(async (options) => {
+    const scriptMode = isScriptMode()
+
+    try {
+      if (!scriptMode && !options.yes) {
+        console.log("⚠️  WARNING: This will create/update database tables:")
+        console.log("   - jwt_tokens (JWT token metadata)")
+        console.log("\n   Existing tables will not be dropped, only created if missing.")
+        console.log("   Use --yes flag to skip this confirmation.")
+        process.exit(1)
+      }
+
+      if (!scriptMode) {
+        console.log("🔨 Initializing database schema...")
+      }
+
+      await initializeSchema()
+
+      if (scriptMode) {
+        console.log(JSON.stringify({ success: true, message: "Database schema initialized successfully" }, null, 2))
+      } else {
+        console.log("\n✅ Database schema initialized successfully!")
+        console.log("   Created tables:")
+        console.log("   - jwt_tokens (with index on 'sub' column)")
+      }
+    } catch (error) {
+      if (scriptMode) {
+        console.log(
+          JSON.stringify({ success: false, error: error instanceof Error ? error.message : String(error) }, null, 2)
+        )
+      } else {
+        console.error("❌ Failed to initialize database schema:", error)
+      }
+      process.exit(1)
+    }
+  })
+
 program.addHelpText(
   "after",
   `
 Examples:
+  bun run bin/d1.ts init                          # Initialize database schema
+  bun run bin/d1.ts init --yes                    # Initialize without confirmation
   bun run bin/d1.ts list jwt_tokens              # List all JWT tokens
   bun run bin/d1.ts list jwt_tokens --limit 10   # List first 10 JWT tokens
   bun run bin/d1.ts search jwt_tokens sub "api"  # Find tokens with sub="api"

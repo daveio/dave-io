@@ -242,7 +242,7 @@ function validateToken(config: RequestConfig, endpoint: string, hasAuth: boolean
   }
 }
 
-program.name("try").description("Interactive API endpoint tester for dave-io-nuxt").version("1.0.0")
+program.name("try").description("Interactive API endpoint tester for dave-io").version("1.0.0")
 
 program
   .option("-t, --token <token>", "JWT token for authentication")
