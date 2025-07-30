@@ -88,7 +88,6 @@ class APITester {
     // Token configurations
     const tokenConfigs = [
       { key: "admin", sub: "*", description: "Test admin token with full permissions" },
-      { key: "metrics", sub: "api:metrics", description: "Test metrics token" },
       { key: "ai", sub: "ai:alt", description: "Test AI token" },
       { key: "limited", sub: "api", description: "Test limited token" }
     ]
@@ -150,7 +149,7 @@ class APITester {
       }
 
       if (!this.scriptMode) {
-        console.log("✅ Generated tokens for: admin, metrics, ai, limited")
+        console.log("✅ Generated tokens for: admin, ai, limited")
         console.log("🔗 Token URLs for manual testing:")
         console.log(
           `   AI: ${this.baseUrl}/api/ai/alt?token=${this.tokens.get("ai")}&url=https://example.com/image.jpg`
@@ -286,7 +285,7 @@ class APITester {
       await this.makeRequest(
         "/api/ai/alt?url=https://example.com/image.jpg",
         "GET",
-        this.tokens.get("metrics"),
+        this.tokens.get("limited"),
         undefined,
         {},
         401
@@ -355,11 +354,6 @@ class APITester {
     // Test token usage with valid auth (should return 404 since token likely doesn't exist)
     results.push(await this.makeRequest(`/api/token/${testUuid}`, "GET", this.tokens.get("admin"), undefined, {}, 404))
 
-    // Test token metrics (admin token should have permission, but token doesn't exist)
-    results.push(
-      await this.makeRequest(`/api/token/${testUuid}/metrics`, "GET", this.tokens.get("admin"), undefined, {}, 404)
-    )
-
     // Test token revocation (should return 404 since token likely doesn't exist)
     results.push(
       await this.makeRequest(
@@ -408,7 +402,23 @@ class APITester {
       console.log("\n❤️ Testing Health Endpoint...")
     }
 
-    results.push(await this.makeRequest("/api/ping"))
+    const pingResult = await this.makeRequest("/api/ping")
+
+    // Validate ping response structure
+    if (pingResult.success && pingResult.response && typeof pingResult.response === "object") {
+      const response = pingResult.response as any
+
+      // Check for expected structure
+      const hasValidStructure =
+        response.result && response.result.pingData && Array.isArray(response.result.pingData.redirects)
+
+      if (!hasValidStructure) {
+        pingResult.success = false
+        pingResult.error = "Missing redirects field in ping response"
+      }
+    }
+
+    results.push(pingResult)
 
     const passed = results.filter((r) => r.success).length
     const failed = results.length - passed
@@ -432,7 +442,26 @@ class APITester {
     }
 
     // Test ping endpoint (should be public and provide all system info)
-    results.push(await this.makeRequest("/api/ping"))
+    const pingResult = await this.makeRequest("/api/ping")
+
+    // Validate ping response structure and redirects field
+    if (pingResult.success && pingResult.response && typeof pingResult.response === "object") {
+      const response = pingResult.response as any
+
+      // Check for expected structure with redirects field
+      const hasValidStructure =
+        response.result && response.result.pingData && Array.isArray(response.result.pingData.redirects)
+
+      if (!hasValidStructure) {
+        pingResult.success = false
+        pingResult.error = "Missing or invalid redirects field in ping response"
+      } else if (!this.scriptMode) {
+        // Log redirects count for validation
+        console.log(`   ✅ Found ${response.result.pingData.redirects.length} redirects in ping response`)
+      }
+    }
+
+    results.push(pingResult)
 
     const passed = results.filter((r) => r.success).length
     const failed = results.length - passed
@@ -611,9 +640,6 @@ class APITester {
         console.log("📋 Would execute the following test suites:")
         console.log("   - Health endpoint")
         console.log("   - Internal endpoints")
-        console.log("   - Authentication")
-        console.log("   - Metrics")
-        console.log("   - Metrics formats")
         console.log("   - Dashboard")
         console.log("   - AI endpoints")
         console.log("   - Redirects")
@@ -692,7 +718,6 @@ program
     if (options.token) {
       // Use provided token for all tests
       tester.tokens.set("admin", options.token)
-      tester.tokens.set("metrics", options.token)
       tester.tokens.set("ai", options.token)
       tester.tokens.set("limited", options.token)
     }

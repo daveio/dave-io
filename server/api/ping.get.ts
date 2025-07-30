@@ -1,7 +1,7 @@
 import { getHeaders } from "h3"
 import { z } from "zod"
 import { extractToken, getUserFromPayload, verifyJWT } from "../utils/auth"
-import { getCloudflareRequestInfo } from "../utils/cloudflare"
+import { getCloudflareRequestInfo, getCloudflareEnv, getKVNamespace } from "../utils/cloudflare"
 import { createTypedApiResponse } from "../utils/response-types"
 import { PingResponseSchema } from "../utils/schemas"
 
@@ -38,6 +38,10 @@ export default defineEventHandler(async (event) => {
 
   // Get Cloudflare request information
   const cfInfo = getCloudflareRequestInfo(event)
+
+  // Get KV namespace for redirect lookup
+  const env = getCloudflareEnv(event)
+  const kv = getKVNamespace(env)
 
   // Try to extract and validate JWT token (optional)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -162,6 +166,16 @@ export default defineEventHandler(async (event) => {
     // Default to https if parsing fails
   }
 
+  // Fetch available redirect slugs from KV
+  let redirectSlugs: string[] = []
+  try {
+    const redirectKeys = await kv.list({ prefix: "redirect:" })
+    redirectSlugs = redirectKeys.keys.map((key) => key.name.replace("redirect:", "")).sort()
+  } catch (error) {
+    console.error("Failed to fetch redirect slugs:", error)
+    // Continue with empty array if KV lookup fails
+  }
+
   // Create the new restructured response data
   const pingData = PingResponseSchema.parse({
     cloudflare: {
@@ -196,7 +210,8 @@ export default defineEventHandler(async (event) => {
       runtime: "cloudflare-workers",
       server_side_rendering: true,
       version: "1.0.0"
-    }
+    },
+    redirects: redirectSlugs
   })
 
   const _responseTime = Date.now() - startTime

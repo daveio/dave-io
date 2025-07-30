@@ -5,9 +5,7 @@ import {
   AuthIntrospectionSchema,
   JWTPayloadSchema,
   KVDataSchema,
-  KVMetricsSchema,
   KVRedirectMappingSchema,
-  KVSampleMetricsSchema,
   TokenMetricsSchema,
   TokenUsageSchema
 } from "../server/utils/schemas"
@@ -258,47 +256,6 @@ describe("API Schemas", () => {
   })
 
   describe("New KV Schema Tests", () => {
-    describe("KVSampleMetricsSchema", () => {
-      it("should validate sample metrics structure", () => {
-        const sampleMetrics = {
-          ok: 100,
-          error: 5,
-          times: {
-            "last-hit": 1704067200000,
-            "last-error": 1704060000000,
-            "last-ok": 1704067200000
-          },
-          visitor: {
-            human: 80,
-            bot: 20,
-            unknown: 5
-          },
-          group: {
-            "1xx": 0,
-            "2xx": 95,
-            "3xx": 5,
-            "4xx": 3,
-            "5xx": 2
-          },
-          status: {
-            200: 85,
-            302: 5,
-            404: 3,
-            500: 2
-          }
-        }
-
-        const result = KVSampleMetricsSchema.safeParse(sampleMetrics)
-        expect(result.success).toBe(true)
-        if (result.success) {
-          expect(result.data.ok).toBe(100)
-          expect(result.data.error).toBe(5)
-          expect(result.data.visitor.human).toBe(80)
-          expect(result.data.group["2xx"]).toBe(95)
-        }
-      })
-    })
-
     describe("KVRedirectMappingSchema", () => {
       it("should validate redirect mappings", () => {
         const redirectMapping = {
@@ -326,190 +283,9 @@ describe("API Schemas", () => {
       })
     })
 
-    describe("KVMetricsSchema", () => {
-      it("should validate complete metrics structure", () => {
-        const kvMetrics = {
-          // Top-level metrics
-          ok: 1000,
-          error: 50,
-          times: {
-            "last-hit": 1704067200000,
-            "last-error": 1704060000000,
-            "last-ok": 1704067200000
-          },
-          visitor: {
-            human: 800,
-            bot: 200,
-            unknown: 50
-          },
-          group: {
-            "1xx": 0,
-            "2xx": 950,
-            "3xx": 30,
-            "4xx": 15,
-            "5xx": 5
-          },
-          status: {
-            200: 900,
-            302: 30,
-            404: 15,
-            500: 5
-          },
-          // Resources
-          resources: {
-            internal: {
-              ok: 500,
-              error: 20,
-              times: {
-                "last-hit": 1704067200000,
-                "last-error": 1704060000000,
-                "last-ok": 1704067200000
-              },
-              visitor: {
-                human: 400,
-                bot: 100,
-                unknown: 20
-              },
-              group: {
-                "1xx": 0,
-                "2xx": 480,
-                "3xx": 15,
-                "4xx": 5,
-                "5xx": 0
-              },
-              status: {
-                200: 480,
-                302: 15,
-                404: 5
-              }
-            },
-            ai: {
-              ok: 200,
-              error: 10,
-              times: {
-                "last-hit": 1704066000000,
-                "last-error": 1704059000000,
-                "last-ok": 1704066000000
-              },
-              visitor: {
-                human: 150,
-                bot: 50,
-                unknown: 10
-              },
-              group: {
-                "1xx": 0,
-                "2xx": 190,
-                "3xx": 5,
-                "4xx": 5,
-                "5xx": 0
-              },
-              status: {
-                200: 190,
-                302: 5,
-                404: 5
-              }
-            }
-          },
-          // Redirect metrics
-          redirect: {
-            gh: {
-              ok: 150,
-              error: 5,
-              times: {
-                "last-hit": 1704067000000,
-                "last-error": 1704050000000,
-                "last-ok": 1704067000000
-              },
-              visitor: {
-                human: 120,
-                bot: 30,
-                unknown: 5
-              },
-              group: {
-                "1xx": 0,
-                "2xx": 0,
-                "3xx": 150,
-                "4xx": 5,
-                "5xx": 0
-              },
-              status: {
-                302: 150,
-                404: 5
-              }
-            }
-          }
-        }
-
-        const result = KVMetricsSchema.safeParse(kvMetrics)
-        expect(result.success).toBe(true)
-        if (result.success) {
-          expect(result.data.ok).toBe(1000)
-          expect(result.data.resources.internal?.ok).toBe(500)
-          expect(result.data.resources.ai?.visitor.human).toBe(150)
-          expect(result.data.redirect.gh?.ok).toBe(150)
-        }
-      })
-    })
-
     describe("KVDataSchema", () => {
       it("should validate complete KV data structure", () => {
         const kvData = {
-          metrics: {
-            ok: 1000,
-            error: 50,
-            times: {
-              "last-hit": 1704067200000,
-              "last-error": 1704060000000,
-              "last-ok": 1704067200000
-            },
-            visitor: {
-              human: 800,
-              bot: 200,
-              unknown: 50
-            },
-            group: {
-              "1xx": 0,
-              "2xx": 950,
-              "3xx": 30,
-              "4xx": 15,
-              "5xx": 5
-            },
-            status: {
-              200: 900,
-              302: 30,
-              404: 15,
-              500: 5
-            },
-            resources: {
-              internal: {
-                ok: 500,
-                error: 20,
-                times: {
-                  "last-hit": 1704067200000,
-                  "last-error": 1704060000000,
-                  "last-ok": 1704067200000
-                },
-                visitor: {
-                  human: 400,
-                  bot: 100,
-                  unknown: 20
-                },
-                group: {
-                  "1xx": 0,
-                  "2xx": 480,
-                  "3xx": 15,
-                  "4xx": 5,
-                  "5xx": 0
-                },
-                status: {
-                  200: 480,
-                  302: 15,
-                  404: 5
-                }
-              }
-            },
-            redirect: {}
-          },
           redirect: {
             gh: "https://github.com/daveio",
             blog: "https://blog.dave.io",
@@ -520,8 +296,9 @@ describe("API Schemas", () => {
         const result = KVDataSchema.safeParse(kvData)
         expect(result.success).toBe(true)
         if (result.success) {
-          expect(result.data.metrics.ok).toBe(1000)
           expect(result.data.redirect.gh).toBe("https://github.com/daveio")
+          expect(result.data.redirect.blog).toBe("https://blog.dave.io")
+          expect(result.data.redirect.tw).toBe("https://twitter.com/daveio")
         }
       })
     })
