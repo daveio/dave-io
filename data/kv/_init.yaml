@@ -3,7 +3,7 @@
 # This file can be imported with: bun run kv import data/kv/_init.yaml --wipe
 
 _anchors:
-  sonnet: &sonnet anthropic/claude-sonnet
+  sonnet: &sonnet anthropic/claude-sonnet-4
   keyoxide: &keyoxide https://keyoxide.org/729A7FAAB95A78A7AAB70E06B22EFAE146E2BB7E
   dreamwidth: &dreamwidth https://daveio.dreamwidth.org
 ai:
