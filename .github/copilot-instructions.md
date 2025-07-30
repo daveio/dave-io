@@ -183,6 +183,7 @@ const tokenId = auth.payload?.jti
 - **API Response Validation**: All API responses now undergo runtime validation using Zod schemas. Responses are validated against `ApiSuccessResponseSchema` or `ApiErrorResponseSchema` before being returned. Validation errors are logged server-side but return generic 500 errors to clients for security. New typed response system with `createTypedApiResponse()` provides compile-time and runtime type safety.
 - **Nuxt 4 Migration**: Upgraded to Nuxt 4.0.0. Added experimental features: View Transitions API, Component Islands, and Lazy Hydration for improved performance. Project structure has been migrated to Nuxt 4 conventions with components, pages, and assets now located under the `app/` directory.
 - **Metrics and Logging Removal**: Removed all metrics collection, Analytics Engine integration, and non-error logging code to reduce complexity. Only error logging via `console.error()` remains. This includes removal of KV metrics, API request metrics, redirect metrics, and page logging. Will be reimplemented in a cleaner way at a later date.
+- **KV Export Output Path**: Added configurable output path for KV export command. Exports now default to timestamped files in current directory (e.g., `kv-20250730-120000.yaml`) instead of fixed `data/kv/` directory. Use `bun run kv export [output-path]` to specify custom file path.
 
 ## Core
 
@@ -225,7 +226,10 @@ curl -X POST -H "Authorization: Bearer <token>" -d '{"input": "Long text...", "n
 
 ```bash
 bun jwt init && bun jwt create --sub "api:token" --expiry "30d"  # JWT
-bun run kv export --all && bun run kv --local import backup.yaml  # KV
+bun run kv export  # Export KV to timestamped file (e.g., kv-20250730-120000.yaml)
+bun run kv export backup.yaml  # Export KV to specific file
+bun run kv export --all data/kv/full-export.yaml  # Export all KV data to specific path
+bun run kv --local import backup.yaml  # Import KV from file
 bun try --auth ai social "Long text to split"  # AI Social
 bun try --auth ai word "happy"  # AI Word (single mode)
 bun try --auth ai word context "I am happy" "happy"  # AI Word (context mode)

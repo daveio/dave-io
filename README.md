@@ -20,6 +20,8 @@ A modern web platform built with Nuxt 4 and Cloudflare Workers, featuring AI-pow
 bun install && bun run dev  # Starts in ~3s
 ```
 
+> **Note**: Metrics collection and logging have been temporarily removed to reduce complexity. Only error logging via `console.error()` remains. Enhanced observability features will be reimplemented in a future release.
+
 ## 🛠️ Tech Stack
 
 - **Runtime**: Nuxt 4 + Cloudflare Workers
@@ -154,7 +156,9 @@ bun jwt list                                    # List active tokens
 bun jwt verify <token>                          # Verify token
 
 # KV storage management
-bun run kv export --all                         # Export all KV data
+bun run kv export                               # Export KV to timestamped file
+bun run kv export backup.yaml                   # Export KV to specific file
+bun run kv export --all data/kv/full-export.yaml # Export all KV data to path
 bun run kv import backup.yaml                   # Import KV data
 bun run kv list                                 # List KV entries
 
