@@ -21,12 +21,10 @@ const AiSocialResultSchema = z.object({
 export default defineEventHandler(async (event) => {
   try {
     // Check authorization for AI social text generation using helper
-    const _auth = await requireAIAuth(event, "social")
+    await requireAIAuth(event, "social")
 
     // Get environment bindings using helper
     const env = getCloudflareEnv(event)
-
-    const startTime = Date.now()
 
     // Parse and validate request body
     const body = await readBody(event)
@@ -56,9 +54,6 @@ export default defineEventHandler(async (event) => {
 
     // Get AI model from KV with fallback
     const aiModel = await getAIModelFromKV(env, "social")
-
-    let _aiSuccess = false
-    let _aiErrorType: string | undefined
 
     // Build strategy descriptions for the prompt
     const strategyDescriptions = {
@@ -126,10 +121,6 @@ Return a JSON object with a "networks" property containing arrays of posts for e
         }
       }
 
-      _aiSuccess = true
-
-      const _processingTime = Date.now() - startTime
-
       return createTypedApiResponse({
         result: {
           networks: aiResponse.networks
@@ -140,8 +131,6 @@ Return a JSON object with a "networks" property containing arrays of posts for e
       })
     } catch (error) {
       console.error("OpenRouter AI processing failed:", error)
-      _aiSuccess = false
-      _aiErrorType = error instanceof Error ? error.name : "UnknownError"
       throw createApiError(500, "Failed to process text with OpenRouter AI")
     }
   } catch (error: unknown) {

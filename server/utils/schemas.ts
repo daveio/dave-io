@@ -89,61 +89,9 @@ export const HealthCheckSchema = z.object({
   cf_datacenter: z.string().optional()
 })
 
-// KV Metrics Schema - matches new YAML structure
-export const KVTimeMetricsSchema = z.object({
-  "last-hit": z.number(),
-  "last-error": z.number(),
-  "last-ok": z.number()
-})
-
-export const KVVisitorMetricsSchema = z.object({
-  human: z.number(),
-  bot: z.number(),
-  unknown: z.number()
-})
-
-export const KVGroupMetricsSchema = z.object({
-  "1xx": z.number(),
-  "2xx": z.number(),
-  "3xx": z.number(),
-  "4xx": z.number(),
-  "5xx": z.number()
-})
-
-export const KVStatusMetricsSchema = z
-  .object({
-    304: z.number().optional(),
-    404: z.number().optional(),
-    307: z.number().optional(),
-    405: z.number().optional(),
-    500: z.number().optional()
-  })
-  .passthrough() // Allow additional status codes
-
-export const KVSampleMetricsSchema = z.object({
-  ok: z.number(),
-  error: z.number(),
-  times: KVTimeMetricsSchema,
-  visitor: KVVisitorMetricsSchema,
-  group: KVGroupMetricsSchema,
-  status: KVStatusMetricsSchema
-})
-
-export const KVResourceMetricsSchema = z.record(z.string(), KVSampleMetricsSchema)
-
-export const KVRedirectMetricsSchema = z.record(z.string(), KVSampleMetricsSchema)
-
-export const KVMetricsSchema = z
-  .object({
-    resources: KVResourceMetricsSchema,
-    redirect: KVRedirectMetricsSchema
-  })
-  .merge(KVSampleMetricsSchema) // Inherit sample metrics at top level
-
 export const KVRedirectMappingSchema = z.record(z.string(), z.string().url())
 
 export const KVDataSchema = z.object({
-  metrics: KVMetricsSchema,
   redirect: KVRedirectMappingSchema
 })
 
@@ -434,14 +382,6 @@ export type AiWordRequest = z.infer<typeof AiWordRequestSchema>
 export type AiWordSuggestion = z.infer<typeof AiWordSuggestionSchema>
 export type AiWordResponse = z.infer<typeof AiWordResponseSchema>
 
-// New KV schema types
-export type KVTimeMetrics = z.infer<typeof KVTimeMetricsSchema>
-export type KVVisitorMetrics = z.infer<typeof KVVisitorMetricsSchema>
-export type KVGroupMetrics = z.infer<typeof KVGroupMetricsSchema>
-export type KVStatusMetrics = z.infer<typeof KVStatusMetricsSchema>
-export type KVSampleMetrics = z.infer<typeof KVSampleMetricsSchema>
-export type KVResourceMetrics = z.infer<typeof KVResourceMetricsSchema>
-export type KVRedirectMetrics = z.infer<typeof KVRedirectMetricsSchema>
-export type KVMetrics = z.infer<typeof KVMetricsSchema>
+// KV schema types
 export type KVRedirectMapping = z.infer<typeof KVRedirectMappingSchema>
 export type KVData = z.infer<typeof KVDataSchema>

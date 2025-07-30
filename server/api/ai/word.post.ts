@@ -18,12 +18,10 @@ const AiWordResultSchema = z.object({
 export default defineEventHandler(async (event) => {
   try {
     // Check authorization for AI word alternative generation using helper
-    const _auth = await requireAIAuth(event, "word")
+    await requireAIAuth(event, "word")
 
     // Get environment bindings using helper
     const env = getCloudflareEnv(event)
-
-    const startTime = Date.now()
 
     // Parse and validate request body
     const body = await readBody(event)
@@ -34,9 +32,6 @@ export default defineEventHandler(async (event) => {
 
     // Get AI model from KV with fallback
     const aiModel = await getAIModelFromKV(env, "word")
-
-    let _aiSuccess = false
-    let _aiErrorType: string | undefined
 
     // Build system prompt based on mode
     let systemPrompt: string
@@ -125,10 +120,6 @@ The word "${validatedRequest.target_word}" needs a better alternative. What woul
         aiResponse.suggestions = aiResponse.suggestions.slice(0, 10)
       }
 
-      _aiSuccess = true
-
-      const _processingTime = Date.now() - startTime
-
       return createTypedApiResponse({
         result: {
           suggestions: aiResponse.suggestions
@@ -139,14 +130,11 @@ The word "${validatedRequest.target_word}" needs a better alternative. What woul
       })
     } catch (error) {
       console.error("OpenRouter AI processing failed:", error)
-      _aiSuccess = false
-      _aiErrorType = error instanceof Error ? error.name : "UnknownError"
       throw createApiError(500, "Failed to process word alternatives with OpenRouter AI")
     }
   } catch (error: unknown) {
     console.error("AI word error:", error)
 
-    // Log error request
     // Re-throw API errors
     if (isApiError(error)) {
       throw error

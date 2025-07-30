@@ -100,8 +100,6 @@ export default defineEventHandler(async (event) => {
   } catch (error: unknown) {
     console.error("Token usage error:", error)
 
-    // Log error request
-
     if (isApiError(error)) {
       throw error
     }

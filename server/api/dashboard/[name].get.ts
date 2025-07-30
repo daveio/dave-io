@@ -178,8 +178,6 @@ export default defineEventHandler(async (event) => {
   } catch (error: unknown) {
     console.error("Dashboard error:", error)
 
-    // Log error request
-
     // Re-throw API errors
     if (isApiError(error)) {
       throw error

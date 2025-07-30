@@ -8,7 +8,6 @@ interface RedirectData {
   url: string
   title?: string
   description?: string
-  clicks: number
   created_at: string
   updated_at: string
 }
@@ -35,7 +34,6 @@ export default defineEventHandler(async (event) => {
         redirectData = {
           slug: slug,
           url: redirectUrl,
-          clicks: 0, // No longer tracking clicks
           created_at: Date.now().toString(),
           updated_at: Date.now().toString()
         }

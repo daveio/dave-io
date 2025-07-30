@@ -22,12 +22,10 @@ const AiAltResultSchema = z.object({
 export default defineEventHandler(async (event) => {
   try {
     // Check authorization for AI alt text generation
-    const _auth = await requireAIAuth(event, "alt")
+    await requireAIAuth(event, "alt")
 
     // Get environment bindings
     const env = getCloudflareEnv(event)
-
-    const startTime = Date.now()
 
     // Parse and validate query parameters
     const query = getQuery(event)
@@ -38,9 +36,6 @@ export default defineEventHandler(async (event) => {
 
     // Get AI model from KV with fallback
     const aiModel = await getAIModelFromKV(env, "alt")
-
-    let _aiSuccess = false
-    let _aiErrorType: string | undefined
 
     const systemPrompt = `You are an expert at creating descriptive, accessible alt text for images.
 
@@ -93,10 +88,6 @@ The confidence score should be between 0 and 1, representing how confident you a
         aiResponse.confidence = undefined
       }
 
-      _aiSuccess = true
-
-      const _processingTime = Date.now() - startTime
-
       return createTypedApiResponse({
         result: {
           alt_text: aiResponse.alt_text,
@@ -108,8 +99,6 @@ The confidence score should be between 0 and 1, representing how confident you a
       })
     } catch (error) {
       console.error("AI alt text generation failed:", error)
-      _aiSuccess = false
-      _aiErrorType = error instanceof Error ? error.name : "UnknownError"
 
       // If it's already an API error, re-throw it
       if (isApiError(error)) {
@@ -121,7 +110,6 @@ The confidence score should be between 0 and 1, representing how confident you a
   } catch (error: unknown) {
     console.error("AI alt error:", error)
 
-    // Log error request
     // Re-throw API errors
     if (isApiError(error)) {
       throw error
