@@ -27,8 +27,6 @@ import JSON5 from "json5"
 import { getTimestamp, keyMatchesPatterns, tryParseJson } from "./shared/cli-utils"
 import { deleteKeyKV, fetchAllKeysKV, getKeyValueKV, putKeyValueKV } from "./shared/cloudflare"
 
-const EXPORT_DIR = "data/kv"
-
 // Configure the key patterns to include in exports (using regular expressions)
 // Updated for simple KV key structure
 const EXPORT_KEY_PATTERNS = [
@@ -265,8 +263,8 @@ async function wipeKV(dryRun = false, useLocal = false, skipConfirmation = false
   return await wipeKVNamespace(dryRun, useLocal, skipConfirmation)
 }
 
-// Export KV data to YAML in data/kv directory
-async function exportKV(exportAll = false, dryRun = false, useLocal = false) {
+// Export KV data to YAML file
+async function exportKV(exportAll = false, dryRun = false, useLocal = false, outputPath?: string) {
   try {
     console.log(
       `🚀 Starting KV export to YAML (${exportAll ? "all keys" : "selected keys"}) from ${useLocal ? "local" : "remote"}${dryRun ? " [DRY RUN]" : ""}...`
@@ -311,20 +309,30 @@ async function exportKV(exportAll = false, dryRun = false, useLocal = false) {
 
     if (dryRun) {
       console.log(`📊 Would export ${Object.keys(flatKvData).length} keys`)
+      if (outputPath) {
+        console.log(`📁 Would save to: ${outputPath}`)
+      }
       console.log("\n🔍 YAML preview (first 500 characters):")
       console.log(yamlOutput.substring(0, 500) + (yamlOutput.length > 500 ? "..." : ""))
       return true
     }
 
-    // Ensure export directory exists
-    if (!existsSync(EXPORT_DIR)) {
-      mkdirSync(EXPORT_DIR, { recursive: true })
-      console.log(`📁 Created ${EXPORT_DIR} directory`)
+    // Determine output file path
+    let filepath: string
+    if (outputPath) {
+      filepath = resolve(outputPath)
+    } else {
+      // Default filename with timestamp
+      const timestamp = getTimestamp()
+      filepath = resolve(`kv-${timestamp}.yaml`)
     }
 
-    const timestamp = getTimestamp()
-    const filename = `kv-${timestamp}.yaml`
-    const filepath = resolve(EXPORT_DIR, filename)
+    // Ensure output directory exists if outputPath contains a directory
+    const outputDir = resolve(filepath, "..")
+    if (!existsSync(outputDir)) {
+      mkdirSync(outputDir, { recursive: true })
+      console.log(`📁 Created ${outputDir} directory`)
+    }
 
     // Write to file
     writeFileSync(filepath, yamlOutput, "utf8")
@@ -360,15 +368,7 @@ async function importKV(
 ) {
   try {
     // Resolve file path - support both absolute and relative paths
-    let filepath: string
-    if (filename.startsWith("/")) {
-      filepath = filename
-    } else if (filename.startsWith("data/kv/") || filename.startsWith("./data/kv/")) {
-      filepath = resolve(filename)
-    } else {
-      // Assume it's just a filename in the data/kv directory
-      filepath = resolve(EXPORT_DIR, filename)
-    }
+    const filepath = resolve(filename)
 
     if (!existsSync(filepath)) {
       console.error(`❌ File not found: ${filepath}`)
@@ -570,13 +570,13 @@ program
 
 // Export command
 program
-  .command("export")
-  .description("Export KV data to YAML file in data/kv directory")
+  .command("export [output]")
+  .description("Export KV data to YAML file")
   .option("-a, --all", "Export all KV data (not just pattern matches)")
   .option("-d, --dry-run", "Show what would be exported without writing files")
-  .action(async (options) => {
+  .action(async (output, options) => {
     const useLocal = program.opts().local
-    await exportKV(options.all, options.dryRun, useLocal)
+    await exportKV(options.all, options.dryRun, useLocal, output)
   })
 
 // Import command
@@ -597,25 +597,28 @@ program.addHelpText(
   `
 Examples:
   # Remote KV operations (default - requires API credentials)
-  bun run bin/kv export              # Export selected data patterns to YAML
-  bun run bin/kv export --all        # Export all KV data to YAML
-  bun run bin/kv export --dry-run    # Preview what would be exported
-  bun run bin/kv import data/kv/kv-20241201-120000.yaml  # Import from YAML
-  bun run bin/kv import kv-20241201-120000.yaml --yes    # Import with auto-confirm
-  bun run bin/kv import data/kv/backup.yaml --wipe       # Wipe then import
-  bun run bin/kv import data/kv/backup.yaml --wipe --yes # Wipe then import with confirmation
-  bun run bin/kv import backup.yaml --dry-run           # Preview what would be imported
-  bun run bin/kv list                # List all keys
-  bun run bin/kv list --pattern "^metrics:"  # List metrics keys
-  bun run bin/kv wipe                # Wipe all data (dangerous!)
-  bun run bin/kv wipe --yes          # Wipe all data with confirmation
-  bun run bin/kv wipe --dry-run      # Preview what would be deleted
+  bun run bin/kv export                     # Export selected data patterns to timestamped YAML file
+  bun run bin/kv export backup.yaml        # Export to specific file path
+  bun run bin/kv export data/kv/export.yaml # Export to specific directory and file
+  bun run bin/kv export --all              # Export all KV data to timestamped YAML file
+  bun run bin/kv export --dry-run          # Preview what would be exported
+  bun run bin/kv import backup.yaml        # Import from YAML file
+  bun run bin/kv import /path/to/backup.yaml --yes    # Import with auto-confirm
+  bun run bin/kv import ./data/backup.yaml --wipe     # Wipe then import
+  bun run bin/kv import backup.yaml --wipe --yes      # Wipe then import with confirmation
+  bun run bin/kv import backup.yaml --dry-run         # Preview what would be imported
+  bun run bin/kv list                       # List all keys
+  bun run bin/kv list --pattern "^metrics:" # List metrics keys
+  bun run bin/kv wipe                       # Wipe all data (dangerous!)
+  bun run bin/kv wipe --yes                 # Wipe all data with confirmation
+  bun run bin/kv wipe --dry-run             # Preview what would be deleted
 
   # Local KV operations (development - uses wrangler local simulator)
-  bun run bin/kv --local export      # Export from local wrangler KV storage
-  bun run bin/kv --local import backup.yaml  # Import to local wrangler KV storage
-  bun run bin/kv --local list        # List keys from local wrangler storage
-  bun run bin/kv --local wipe        # Wipe local wrangler storage
+  bun run bin/kv --local export             # Export from local wrangler KV storage
+  bun run bin/kv --local export local-backup.yaml  # Export to specific file
+  bun run bin/kv --local import backup.yaml # Import to local wrangler KV storage
+  bun run bin/kv --local list               # List keys from local wrangler storage
+  bun run bin/kv --local wipe               # Wipe local wrangler storage
 
 Global Flags:
   --local                           - Use local wrangler KV storage instead of remote API
