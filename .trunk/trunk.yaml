@@ -75,6 +75,7 @@ lint:
         - nuxt.config.ts
         - server/middleware/shell-scripts.ts
         - rag/**
+        - data/images/**
     - linters:
         - gitleaks
       paths:
