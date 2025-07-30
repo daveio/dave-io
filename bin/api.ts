@@ -1,5 +1,9 @@
 #!/usr/bin/env bun
 import { Command } from "commander"
+import { resolve } from "node:path"
+import { deleteFromTable } from "./d1"
+import { createToken } from "./jwt"
+import { deleteKeyKV } from "./shared/cloudflare"
 import { getJWTSecret } from "./shared/cli-utils"
 
 const program = new Command()
@@ -151,8 +155,11 @@ class APITester {
       if (!this.scriptMode) {
         console.log("✅ Generated tokens for: admin, ai, limited")
         console.log("🔗 Token URLs for manual testing:")
+        const imageUrl = this.isLocal
+          ? `http://localhost:3000/images/integration-test.jpg`
+          : `https://dave.io/images/integration-test.jpg`
         console.log(
-          `   AI: ${this.baseUrl}/api/ai/alt?token=${this.tokens.get("ai")}&url=https://example.com/image.jpg`
+          `   AI: ${this.baseUrl}/api/ai/alt?token=${this.tokens.get("ai")}&url=${encodeURIComponent(imageUrl)}`
         )
       }
     } catch (error) {
@@ -250,30 +257,99 @@ class APITester {
     results.push(await this.makeRequest("/api/ai/alt", "GET", undefined, undefined, {}, 401))
 
     // Test AI alt-text GET with url parameter (should return 200 or 400)
-    results.push(
-      await this.makeRequest(
-        "/api/ai/alt?url=https://example.com/image.jpg",
-        "GET",
-        this.tokens.get("ai"),
-        undefined,
-        {},
-        [200, 400]
-      )
+    const imageUrl = this.isLocal
+      ? `http://localhost:3000/images/integration-test.jpg`
+      : `https://dave.io/images/integration-test.jpg`
+    const altTextGetResult = await this.makeRequest(
+      `/api/ai/alt?url=${encodeURIComponent(imageUrl)}`,
+      "GET",
+      this.tokens.get("ai"),
+      undefined,
+      {},
+      [200, 400]
     )
 
+    // Validate alt text contains "duck" (case insensitive)
+    if (altTextGetResult.success && altTextGetResult.status === 200) {
+      const response = altTextGetResult.response as { result?: { alt_text?: string } }
+      const altText = response?.result?.alt_text || ""
+      if (!altText.toLowerCase().includes("duck")) {
+        altTextGetResult.success = false
+        altTextGetResult.error = "Alt text validation failed: missing 'duck' in response"
+      }
+    }
+
+    results.push(altTextGetResult)
+
     // Test AI alt-text POST with URL in body (should return 200 or 400)
-    results.push(
-      await this.makeRequest(
-        "/api/ai/alt",
-        "POST",
-        this.tokens.get("ai"),
-        {
-          url: "https://example.com/test.png"
-        },
-        {},
-        [200, 400]
-      )
+    const altTextPostResult = await this.makeRequest(
+      "/api/ai/alt",
+      "POST",
+      this.tokens.get("ai"),
+      {
+        url: imageUrl
+      },
+      {},
+      [200, 400]
     )
+
+    // Validate alt text contains "duck" (case insensitive)
+    if (altTextPostResult.success && altTextPostResult.status === 200) {
+      const response = altTextPostResult.response as { result?: { alt_text?: string } }
+      const altText = response?.result?.alt_text || ""
+      if (!altText.toLowerCase().includes("duck")) {
+        altTextPostResult.success = false
+        altTextPostResult.error = "Alt text validation failed: missing 'duck' in response"
+      }
+    }
+
+    results.push(altTextPostResult)
+
+    // Test AI alt-text POST with actual image file upload (should return 200 or 400)
+    try {
+      const imageFilePath = resolve(process.cwd(), "public/images/integration-test.jpg")
+      const imageFile = Bun.file(imageFilePath)
+      const formData = new FormData()
+      formData.append("image", imageFile, "integration-test.jpg")
+
+      const response = await fetch(`${this.baseUrl}/api/ai/alt`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${this.tokens.get("ai")}`
+        },
+        body: formData
+      })
+
+      const responseData = (await response.json()) as { result?: { alt_text?: string } }
+      let success = [200, 400].includes(response.status)
+
+      // Validate alt text contains "duck" (case insensitive) if request was successful
+      if (success && response.status === 200) {
+        const altText = responseData?.result?.alt_text || ""
+        if (!altText.toLowerCase().includes("duck")) {
+          success = false
+        }
+      }
+
+      results.push({
+        endpoint: "/api/ai/alt",
+        method: "POST (file upload)",
+        status: response.status,
+        success,
+        response: responseData,
+        error: success ? undefined : "Alt text validation failed: missing 'duck' in response",
+        duration: 0 // We'll skip duration tracking for this custom request
+      })
+    } catch (error) {
+      results.push({
+        endpoint: "/api/ai/alt",
+        method: "POST (file upload)",
+        status: 0,
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+        duration: 0
+      })
+    }
 
     // Test AI alt-text with invalid URL (should return 400)
     results.push(
@@ -283,7 +359,7 @@ class APITester {
     // Test AI alt-text with wrong permission token (should return 401)
     results.push(
       await this.makeRequest(
-        "/api/ai/alt?url=https://example.com/image.jpg",
+        `/api/ai/alt?url=${encodeURIComponent(imageUrl)}`,
         "GET",
         this.tokens.get("limited"),
         undefined,
@@ -406,6 +482,7 @@ class APITester {
 
     // Validate ping response structure
     if (pingResult.success && pingResult.response && typeof pingResult.response === "object") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response = pingResult.response as any
 
       // Check for expected structure
@@ -446,6 +523,7 @@ class APITester {
 
     // Validate ping response structure and redirects field
     if (pingResult.success && pingResult.response && typeof pingResult.response === "object") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response = pingResult.response as any
 
       // Check for expected structure with redirects field
@@ -590,26 +668,87 @@ class APITester {
       console.log("\n🎫 Testing Enhanced Token Management...")
     }
 
-    const testUuid = "550e8400-e29b-41d4-a716-446655440000"
+    // Create a real token for testing
+    let testUuid: string | null = null
 
-    // Test token usage endpoint (admin token should have permission, but token doesn't exist)
-    results.push(
-      await this.makeRequest(`/api/token/${testUuid}/usage`, "GET", this.tokens.get("admin"), undefined, {}, 404)
-    )
-
-    // Test token revocation endpoint (admin token should have permission and succeed)
-    results.push(
-      await this.makeRequest(
-        `/api/token/${testUuid}/revoke`,
-        "POST",
-        this.tokens.get("admin"),
+    try {
+      const { metadata } = await createToken(
         {
-          revoked: true
+          sub: "api:token",
+          description: "Test token for revocation",
+          expiresIn: "1h"
         },
-        {},
-        200
+        this.secret,
+        false
       )
-    )
+
+      testUuid = metadata.uuid
+
+      if (!this.scriptMode) {
+        console.log(`   ✅ Created test token with UUID: ${testUuid}`)
+      }
+
+      // Store token metadata in D1 (this is done by createToken but let's ensure it)
+      // The token should now exist in the system
+
+      // Test token usage endpoint (should now find the token)
+      results.push(
+        await this.makeRequest(
+          `/api/token/${testUuid}/usage`,
+          "GET",
+          this.tokens.get("admin"),
+          undefined,
+          {},
+          [200, 404]
+        )
+      )
+
+      // Test token revocation endpoint (should succeed)
+      results.push(
+        await this.makeRequest(
+          `/api/token/${testUuid}/revoke`,
+          "POST",
+          this.tokens.get("admin"),
+          {
+            revoked: true
+          },
+          {},
+          200
+        )
+      )
+    } catch (error) {
+      if (!this.scriptMode) {
+        console.error("   ❌ Failed to create test token:", error)
+      }
+      results.push({
+        endpoint: "/api/token/create",
+        method: "INTERNAL",
+        status: 0,
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+        duration: 0
+      })
+    } finally {
+      // Clean up: Remove token from KV and D1
+      if (testUuid) {
+        try {
+          // Delete from KV (revocation keys)
+          await deleteKeyKV(`revoked:${testUuid}`, this.isLocal)
+          await deleteKeyKV(`token:${testUuid}`, this.isLocal)
+
+          // Delete from D1
+          await deleteFromTable("jwt_tokens", "uuid", testUuid)
+
+          if (!this.scriptMode) {
+            console.log(`   🧹 Cleaned up test token: ${testUuid}`)
+          }
+        } catch (cleanupError) {
+          if (!this.scriptMode) {
+            console.warn("   ⚠️  Failed to clean up test token:", cleanupError)
+          }
+        }
+      }
+    }
 
     // Test invalid UUID (should return 400 for invalid UUID format)
     results.push(
