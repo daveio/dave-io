@@ -188,12 +188,14 @@ const tokenId = auth.payload?.jti
 - **Nuxt 4 Migration**: Upgraded to Nuxt 4.0.0. Added experimental features: View Transitions API, Component Islands, and Lazy Hydration for improved performance. Project structure has been migrated to Nuxt 4 conventions with components, pages, and assets now located under the `app/` directory.
 - **Metrics and Logging Removal**: Removed all metrics collection, Analytics Engine integration, and non-error logging code to reduce complexity. Only error logging via `console.error()` remains. This includes removal of KV metrics, API request metrics, redirect metrics, and page logging. Will be reimplemented in a cleaner way at a later date.
 - **KV Export Output Path**: Added configurable output path for KV export command. Exports now default to timestamped files in current directory (e.g., `kv-20250730-120000.yaml`) instead of fixed `data/kv/` directory. Use `bun run kv export [output-path]` to specify custom file path.
+- **D1 Utility**: New `bin/d1.ts` utility script for D1 database operations. Supports listing, searching, and deleting entries from D1 tables. Also supports running custom SQL queries with parameters. This enables proper cleanup of test tokens and general D1 database management.
+- **Integration Test Improvements**: Enhanced `bin/api.ts` integration tests with proper image URL handling for local/remote modes, POST image file upload support, alt text validation for "duck" keyword (case-insensitive), and real token creation/revocation testing with automatic cleanup in both KV and D1.
 
 ## Core
 
 - **Response**: Success `{ok: true, result, error: null, status: {message}, timestamp}` | Error `{ok: false, error, status: {message}?, timestamp}`
 - **Environment**: `API_JWT_SECRET`, `OPENROUTER_API_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Bindings: KV(KV), D1(D1), AI, BROWSER, IMAGES
-- **CLI**: JWT(`init|create|verify|list|revoke`) | API-Test(`--auth-only|--ai-only`) | Try(`--auth|--token`) | KV(`export|import|list|wipe --local`)
+- **CLI**: JWT(`init|create|verify|list|revoke`) | API-Test(`--auth-only|--ai-only`) | Try(`--auth|--token`) | KV(`export|import|list|wipe --local`) | D1(`list|search|delete|query`)
 - **Testing**: Unit(`bun run test|test:ui`) | HTTP(`bun run test:api`) | Remote(`--url https://example.com`)
 
 ## Commands 🚀 (~3s dev startup, no circular deps)
@@ -238,6 +240,9 @@ bun try --auth ai social "Long text to split"  # AI Social
 bun try --auth ai word "happy"  # AI Word (single mode)
 bun try --auth ai word context "I am happy" "happy"  # AI Word (context mode)
 bun run test:api --ai-only --url https://dave.io  # Test
+bun run d1 list jwt_tokens  # List all JWT tokens in D1
+bun run d1 search jwt_tokens sub "api"  # Search tokens by subject
+bun run d1 delete jwt_tokens uuid "..." --yes  # Delete token from D1
 ```
 
 ## Deployment & Config

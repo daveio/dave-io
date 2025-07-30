@@ -135,3 +135,78 @@ export async function batchKVGet(kv: KVNamespace, keys: string[], defaultValue =
 export async function batchKVGetStrings(kv: KVNamespace, keys: string[], defaultValue = ""): Promise<string[]> {
   return await Promise.all(keys.map((key) => kv.get(key).then((v) => v || defaultValue)))
 }
+
+/**
+ * Cached redirect data structure
+ */
+interface CachedRedirectData {
+  redirects: string[]
+}
+
+/**
+ * Get cached redirect list with automatic refresh
+ * Returns cached data if available, otherwise fetches new data and updates cache
+ * Cache expiration is handled by KV TTL
+ * @param kv KV namespace instance
+ * @returns Array of redirect slugs
+ */
+export async function getCachedRedirectList(kv: KVNamespace): Promise<string[]> {
+  const cacheDataKey = "cache:redirects:data"
+
+  try {
+    // Try to get cached data
+    const cachedDataString = await kv.get(cacheDataKey)
+
+    if (cachedDataString) {
+      try {
+        const cachedData: CachedRedirectData = JSON.parse(cachedDataString)
+        return cachedData.redirects
+      } catch (parseError) {
+        console.error("Failed to parse cached redirect data:", parseError)
+        // Fall through to fetch fresh data
+      }
+    }
+
+    // Cache is missing (expired by KV TTL), fetch fresh data
+    return await refreshRedirectCache(kv, cacheDataKey)
+  } catch (error) {
+    console.error("Failed to get cached redirect list:", error)
+    // Fallback to direct KV fetch if caching fails
+    return await fetchRedirectListDirect(kv)
+  }
+}
+
+/**
+ * Refresh the redirect cache with fresh data
+ * @param kv KV namespace instance
+ * @param cacheDataKey Cache data key
+ * @returns Fresh redirect list
+ */
+async function refreshRedirectCache(kv: KVNamespace, cacheDataKey: string): Promise<string[]> {
+  const redirectSlugs = await fetchRedirectListDirect(kv)
+  const cacheExpiryKey = "cache:redirects:expiry"
+
+  // Get cache expiry setting (default to 3600 seconds = 1 hour)
+  const expirySeconds = Number.parseInt((await kv.get(cacheExpiryKey)) || "3600", 10)
+
+  const cacheData: CachedRedirectData = {
+    redirects: redirectSlugs
+  }
+
+  // Update cache asynchronously with TTL (don't block on this)
+  kv.put(cacheDataKey, JSON.stringify(cacheData), { expirationTtl: expirySeconds }).catch((error) => {
+    console.error("Failed to update redirect cache:", error)
+  })
+
+  return redirectSlugs
+}
+
+/**
+ * Fetch redirect list directly from KV
+ * @param kv KV namespace instance
+ * @returns Array of redirect slugs
+ */
+async function fetchRedirectListDirect(kv: KVNamespace): Promise<string[]> {
+  const redirectKeys = await kv.list({ prefix: "redirect:" })
+  return redirectKeys.keys.map((key) => key.name.replace("redirect:", "")).sort()
+}

@@ -162,6 +162,12 @@ bun run kv export --all data/kv/full-export.yaml # Export all KV data to path
 bun run kv import backup.yaml                   # Import KV data
 bun run kv list                                 # List KV entries
 
+# D1 database management
+bun run d1 list jwt_tokens                      # List all JWT tokens
+bun run d1 search jwt_tokens sub "api"          # Search tokens by subject
+bun run d1 delete jwt_tokens uuid "..." --yes   # Delete token from D1
+bun run d1 query "SELECT COUNT(*) FROM jwt_tokens" # Run custom SQL
+
 # API testing
 bun try --auth ping                             # Test ping with auth
 bun try --auth ai social "Long text to split"  # Test AI social
