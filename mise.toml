@@ -13,5 +13,4 @@ node = { version = '22.17.1' }
 rust = { version = '1.88.0' }
 
 [tasks]
-'hello' = { run = "echo 'Hello, world!'" }
-'claude' = { run = "bun run claude", description = "Invoke Claude Code", alias = "cc" }
+'claude' = { run = "bun x @anthropic-ai/claude-code", description = "Invoke Claude Code", alias = "cc" }
