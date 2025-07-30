@@ -268,7 +268,3 @@ Error responses:
 - [Live Site](https://dave.io)
 - [API Documentation](https://dave.io/openapi.json)
 - [Issue Tracker](https://linear.app/dave-io)
-
----
-
-Built with ❤️ using modern web technologies and AI-powered services.

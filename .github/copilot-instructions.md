@@ -5,18 +5,18 @@
 ### PRE-TASK CHECKLIST (Mental Review Required)
 
 □ Am I following ALL 11 rules below?
-□ Have I checked `AGENTS.md` for latest specs?
+□ Have I checked `.github/copilot-instructions.md` for latest specs?
 □ Will my code be production-ready?
 
 ### THE 11 COMMANDMENTS
 
-**1. BREAK**: Ship breaking changes freely. Document in `AGENTS.md`. Never add migration code. THIS DOES NOT APPLY TO DATABASE MIGRATIONS.
+**1. BREAK**: Ship breaking changes freely. Document in `.github/copilot-instructions.md`. Never add migration code. THIS DOES NOT APPLY TO DATABASE MIGRATIONS.
 
 **2. PERFECT**: Take unlimited time/calls for correctness. Refactor aggressively. No "good enough".
 
 **3. TEST**: Test everything with logic/side effects. Commands: `bun run test`, `bun run test:ui`, `bun run test:api`. Skip only: trivial getters, UI components, config.
 
-**4. SYNC**: `AGENTS.md` = agent context. `README.md` = human documentation. Update both after API/feature/auth changes, or anything which should be documented. `CLAUDE.md` is a symbolic link to `AGENTS.md`, so you only need to update `AGENTS.md`.
+**4. SYNC**: `.github/copilot-instructions.md` = agent context. `README.md` = human documentation. Update both after API/feature/auth changes, or anything which should be documented. `CLAUDE.md` and `AGENTS.md` are symbolic links to `.github/copilot-instructions.md`, so you only need to update `.github/copilot-instructions.md`.
 
 **5. VERIFY**: `bun run build` → `bun run lint:eslint`, `bun run lint:trunk`, `bun run lint:types`, `bun run test` → `bun run check`. Never continue with errors.
 
@@ -26,7 +26,9 @@
 
 **8. COMPLETE**: Finish all code or mark `TODO: [description]`. Fail explicitly, never silently.
 
-**9. TRACK**: Use Linear tickets (NOT `TODO.md`) for TODO tracking. Team "Dave IO" (DIO), tickets begin "DIO-":
+**9. TRACK**: Use Linear tickets for TODO tracking. Open new tickets as required. Team "Dave IO" (DIO), tickets begin "DIO-".
+
+Write comments if a TODO has a code location:
 
 ```typescript
 // TODO: (DIO-118) Skip Bun mocking - test separately
@@ -58,11 +60,13 @@ This is correct:
 Useful IDs:
 
 - Team ID: `5b759ac2-279b-4e9f-9e66-de66af7ba4bd`
-- TODO Label ID: `1dff83f6-65fa-40cf-944d-7323653d49a4`
+- `TODO` label ID: `1dff83f6-65fa-40cf-944d-7323653d49a4`
 
-Workflow: Create tickets for TODOs with "TODO" label. Check Linear for existing tickets. Reference ticket IDs in code comments as shown in example.
+Two-way sync with GitHub tickets is configured. Thus, creating a Linear ticket creates a GitHub ticket (and keeps it updated), and creating a GitHub ticket creates a Linear ticket (and keeps it updated). Prefer creating Linear tickets and letting the automation create GitHub tickets, not the other way around.
 
-**10. KV**: Simple values only. Hierarchical keys: `auth:token-uuid`. Kebab-case. Update `data/kv/_init.yaml`.
+Workflow: Create tickets for TODOs with "TODO" label. Check Linear for existing tickets. Reference ticket IDs in code comments as shown in example if a TODO has a code location. Create tickets without code locations where necessary.
+
+**10. KV**: Simple values only. Hierarchical keys: `auth:token-uuid`. Kebab-case. Update `data/kv/_init.yaml`. Use YAML anchors.
 
 **11. SHARE**: Extract duplicated logic to `server/utils/` immediately. Add JSDoc+tests+types.
 
