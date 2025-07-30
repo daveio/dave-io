@@ -200,14 +200,18 @@ export async function getCachedRedirectList(kv: KVNamespace): Promise<string[]> 
  */
 async function refreshRedirectCache(kv: KVNamespace, cacheDataKey: string, currentTime: number): Promise<string[]> {
   const redirectSlugs = await fetchRedirectListDirect(kv)
+  const cacheExpiryKey = "cache:redirects:expiry"
+
+  // Get cache expiry setting (default to 3600 seconds = 1 hour)
+  const expirySeconds = Number.parseInt((await kv.get(cacheExpiryKey)) || "3600", 10)
 
   const cacheData: CachedRedirectData = {
     redirects: redirectSlugs,
     timestamp: currentTime
   }
 
-  // Update cache asynchronously (don't block on this)
-  kv.put(cacheDataKey, JSON.stringify(cacheData)).catch((error) => {
+  // Update cache asynchronously with TTL (don't block on this)
+  kv.put(cacheDataKey, JSON.stringify(cacheData), { expirationTtl: expirySeconds }).catch((error) => {
     console.error("Failed to update redirect cache:", error)
   })
 
