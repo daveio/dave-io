@@ -90,13 +90,6 @@ export default defineEventHandler(async (event) => {
     // Get token usage from KV storage
     const usage = await getTokenUsageFromKV(uuid, env.KV)
 
-    // Log successful request
-    logRequest(event, "token/{uuid}/usage", "GET", 200, {
-      tokenId: uuid,
-      usage: `requests:${usage.requestCount},max:${usage.maxRequests || "unlimited"}`,
-      isRevoked: usage.isRevoked
-    })
-
     // Return success with result and success message
     return createTypedApiResponse({
       result: usage,
@@ -106,15 +99,6 @@ export default defineEventHandler(async (event) => {
     })
   } catch (error: unknown) {
     console.error("Token usage error:", error)
-
-    // Log error request
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const statusCode = isApiError(error) ? (error as any).statusCode || 500 : 500
-    logRequest(event, "token/{uuid}/usage", "GET", statusCode, {
-      tokenId: uuid || "unknown",
-      usage: "error",
-      isRevoked: false
-    })
 
     if (isApiError(error)) {
       throw error

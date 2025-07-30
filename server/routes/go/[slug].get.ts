@@ -1,7 +1,6 @@
-import { getHeader, sendRedirect } from "h3"
+import { sendRedirect } from "h3"
 import { getCloudflareEnv, getKVNamespace } from "../../utils/cloudflare"
-import { updateRedirectMetricsAsync } from "../../utils/kv-metrics"
-import { createApiError, isApiError, logRequest } from "../../utils/response"
+import { createApiError, isApiError } from "../../utils/response"
 import { UrlRedirectSchema } from "../../utils/schemas"
 
 interface RedirectData {
@@ -9,7 +8,6 @@ interface RedirectData {
   url: string
   title?: string
   description?: string
-  clicks: number
   created_at: string
   updated_at: string
 }
@@ -25,22 +23,17 @@ export default defineEventHandler(async (event) => {
       throw createApiError(400, "Slug parameter is required")
     }
 
-    // Get redirect URL and click count from simple KV keys
+    // Get redirect URL from simple KV keys
     let redirectData: RedirectData | undefined
 
     try {
-      // Get redirect URL and metrics using simple KV keys
-      const [redirectUrl, clickCountStr] = await Promise.all([
-        kv.get(`redirect:${slug}`),
-        kv.get(`metrics:redirect:${slug}:ok`)
-      ])
+      // Get redirect URL using simple KV keys
+      const redirectUrl = await kv.get(`redirect:${slug}`)
 
       if (redirectUrl) {
-        const clickCount = clickCountStr ? Number.parseInt(clickCountStr) : 0
         redirectData = {
           slug: slug,
           url: redirectUrl,
-          clicks: clickCount,
           created_at: Date.now().toString(),
           updated_at: Date.now().toString()
         }
@@ -57,36 +50,9 @@ export default defineEventHandler(async (event) => {
     // Validate redirect data
     const redirect = UrlRedirectSchema.parse(redirectData)
 
-    // Update redirect metrics using new hierarchical schema asynchronously
-    try {
-      const userAgent = getHeader(event, "user-agent") || ""
-      // Use updateRedirectMetricsAsync for non-blocking metrics update
-      updateRedirectMetricsAsync(kv, slug, 302, userAgent)
-    } catch (error) {
-      console.error("Failed to update redirect metrics:", error)
-      // Continue with redirect even if metrics fails
-    }
-
-    // Log redirect request
-    logRequest(event, `go/${slug}`, "GET", 302, {
-      target: redirect.url,
-      clicks: redirect.clicks + 1,
-      cached: "hit"
-    })
-
     // Perform proper HTTP redirect
     await sendRedirect(event, redirect.url, 302)
   } catch (error: unknown) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const statusCode = isApiError(error) ? (error as any).statusCode || 500 : 500
-    const slug = getRouterParam(event, "slug")
-
-    // Log failed redirect request
-    logRequest(event, `go/${slug || "unknown"}`, "GET", statusCode, {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      error: isApiError(error) ? (error as any).statusMessage || "Unknown error" : "Internal error"
-    })
-
     // Re-throw API errors
     if (isApiError(error)) {
       throw error

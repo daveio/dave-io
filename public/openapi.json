@@ -799,264 +799,6 @@
       "KVDataSchema": {
         "type": "object",
         "properties": {
-          "metrics": {
-            "type": "object",
-            "properties": {
-              "resources": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "number"
-                    },
-                    "error": {
-                      "type": "number"
-                    },
-                    "times": {
-                      "type": "object",
-                      "properties": {
-                        "last-hit": {
-                          "type": "number"
-                        },
-                        "last-error": {
-                          "type": "number"
-                        },
-                        "last-ok": {
-                          "type": "number"
-                        }
-                      },
-                      "required": ["last-hit", "last-error", "last-ok"]
-                    },
-                    "visitor": {
-                      "type": "object",
-                      "properties": {
-                        "human": {
-                          "type": "number"
-                        },
-                        "bot": {
-                          "type": "number"
-                        },
-                        "unknown": {
-                          "type": "number"
-                        }
-                      },
-                      "required": ["human", "bot", "unknown"]
-                    },
-                    "group": {
-                      "type": "object",
-                      "properties": {
-                        "1xx": {
-                          "type": "number"
-                        },
-                        "2xx": {
-                          "type": "number"
-                        },
-                        "3xx": {
-                          "type": "number"
-                        },
-                        "4xx": {
-                          "type": "number"
-                        },
-                        "5xx": {
-                          "type": "number"
-                        }
-                      },
-                      "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
-                    },
-                    "status": {
-                      "type": "object",
-                      "properties": {
-                        "304": {
-                          "type": "number"
-                        },
-                        "307": {
-                          "type": "number"
-                        },
-                        "404": {
-                          "type": "number"
-                        },
-                        "405": {
-                          "type": "number"
-                        },
-                        "500": {
-                          "type": "number"
-                        }
-                      },
-                      "additionalProperties": {}
-                    }
-                  },
-                  "required": ["ok", "error", "times", "visitor", "group", "status"]
-                }
-              },
-              "redirect": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "number"
-                    },
-                    "error": {
-                      "type": "number"
-                    },
-                    "times": {
-                      "type": "object",
-                      "properties": {
-                        "last-hit": {
-                          "type": "number"
-                        },
-                        "last-error": {
-                          "type": "number"
-                        },
-                        "last-ok": {
-                          "type": "number"
-                        }
-                      },
-                      "required": ["last-hit", "last-error", "last-ok"]
-                    },
-                    "visitor": {
-                      "type": "object",
-                      "properties": {
-                        "human": {
-                          "type": "number"
-                        },
-                        "bot": {
-                          "type": "number"
-                        },
-                        "unknown": {
-                          "type": "number"
-                        }
-                      },
-                      "required": ["human", "bot", "unknown"]
-                    },
-                    "group": {
-                      "type": "object",
-                      "properties": {
-                        "1xx": {
-                          "type": "number"
-                        },
-                        "2xx": {
-                          "type": "number"
-                        },
-                        "3xx": {
-                          "type": "number"
-                        },
-                        "4xx": {
-                          "type": "number"
-                        },
-                        "5xx": {
-                          "type": "number"
-                        }
-                      },
-                      "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
-                    },
-                    "status": {
-                      "type": "object",
-                      "properties": {
-                        "304": {
-                          "type": "number"
-                        },
-                        "307": {
-                          "type": "number"
-                        },
-                        "404": {
-                          "type": "number"
-                        },
-                        "405": {
-                          "type": "number"
-                        },
-                        "500": {
-                          "type": "number"
-                        }
-                      },
-                      "additionalProperties": {}
-                    }
-                  },
-                  "required": ["ok", "error", "times", "visitor", "group", "status"]
-                }
-              },
-              "ok": {
-                "type": "number"
-              },
-              "error": {
-                "type": "number"
-              },
-              "times": {
-                "type": "object",
-                "properties": {
-                  "last-hit": {
-                    "type": "number"
-                  },
-                  "last-error": {
-                    "type": "number"
-                  },
-                  "last-ok": {
-                    "type": "number"
-                  }
-                },
-                "required": ["last-hit", "last-error", "last-ok"]
-              },
-              "visitor": {
-                "type": "object",
-                "properties": {
-                  "human": {
-                    "type": "number"
-                  },
-                  "bot": {
-                    "type": "number"
-                  },
-                  "unknown": {
-                    "type": "number"
-                  }
-                },
-                "required": ["human", "bot", "unknown"]
-              },
-              "group": {
-                "type": "object",
-                "properties": {
-                  "1xx": {
-                    "type": "number"
-                  },
-                  "2xx": {
-                    "type": "number"
-                  },
-                  "3xx": {
-                    "type": "number"
-                  },
-                  "4xx": {
-                    "type": "number"
-                  },
-                  "5xx": {
-                    "type": "number"
-                  }
-                },
-                "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
-              },
-              "status": {
-                "type": "object",
-                "properties": {
-                  "304": {
-                    "type": "number"
-                  },
-                  "307": {
-                    "type": "number"
-                  },
-                  "404": {
-                    "type": "number"
-                  },
-                  "405": {
-                    "type": "number"
-                  },
-                  "500": {
-                    "type": "number"
-                  }
-                },
-                "additionalProperties": {}
-              }
-            },
-            "required": ["resources", "redirect", "ok", "error", "times", "visitor", "group", "status"]
-          },
           "redirect": {
             "type": "object",
             "additionalProperties": {
@@ -1064,601 +806,13 @@
             }
           }
         },
-        "required": ["metrics", "redirect"]
-      },
-      "KVGroupMetricsSchema": {
-        "type": "object",
-        "properties": {
-          "1xx": {
-            "type": "number"
-          },
-          "2xx": {
-            "type": "number"
-          },
-          "3xx": {
-            "type": "number"
-          },
-          "4xx": {
-            "type": "number"
-          },
-          "5xx": {
-            "type": "number"
-          }
-        },
-        "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
-      },
-      "KVMetricsSchema": {
-        "type": "object",
-        "properties": {
-          "resources": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "properties": {
-                "ok": {
-                  "type": "number"
-                },
-                "error": {
-                  "type": "number"
-                },
-                "times": {
-                  "type": "object",
-                  "properties": {
-                    "last-hit": {
-                      "type": "number"
-                    },
-                    "last-error": {
-                      "type": "number"
-                    },
-                    "last-ok": {
-                      "type": "number"
-                    }
-                  },
-                  "required": ["last-hit", "last-error", "last-ok"]
-                },
-                "visitor": {
-                  "type": "object",
-                  "properties": {
-                    "human": {
-                      "type": "number"
-                    },
-                    "bot": {
-                      "type": "number"
-                    },
-                    "unknown": {
-                      "type": "number"
-                    }
-                  },
-                  "required": ["human", "bot", "unknown"]
-                },
-                "group": {
-                  "type": "object",
-                  "properties": {
-                    "1xx": {
-                      "type": "number"
-                    },
-                    "2xx": {
-                      "type": "number"
-                    },
-                    "3xx": {
-                      "type": "number"
-                    },
-                    "4xx": {
-                      "type": "number"
-                    },
-                    "5xx": {
-                      "type": "number"
-                    }
-                  },
-                  "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
-                },
-                "status": {
-                  "type": "object",
-                  "properties": {
-                    "304": {
-                      "type": "number"
-                    },
-                    "307": {
-                      "type": "number"
-                    },
-                    "404": {
-                      "type": "number"
-                    },
-                    "405": {
-                      "type": "number"
-                    },
-                    "500": {
-                      "type": "number"
-                    }
-                  },
-                  "additionalProperties": {}
-                }
-              },
-              "required": ["ok", "error", "times", "visitor", "group", "status"]
-            }
-          },
-          "redirect": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "properties": {
-                "ok": {
-                  "type": "number"
-                },
-                "error": {
-                  "type": "number"
-                },
-                "times": {
-                  "type": "object",
-                  "properties": {
-                    "last-hit": {
-                      "type": "number"
-                    },
-                    "last-error": {
-                      "type": "number"
-                    },
-                    "last-ok": {
-                      "type": "number"
-                    }
-                  },
-                  "required": ["last-hit", "last-error", "last-ok"]
-                },
-                "visitor": {
-                  "type": "object",
-                  "properties": {
-                    "human": {
-                      "type": "number"
-                    },
-                    "bot": {
-                      "type": "number"
-                    },
-                    "unknown": {
-                      "type": "number"
-                    }
-                  },
-                  "required": ["human", "bot", "unknown"]
-                },
-                "group": {
-                  "type": "object",
-                  "properties": {
-                    "1xx": {
-                      "type": "number"
-                    },
-                    "2xx": {
-                      "type": "number"
-                    },
-                    "3xx": {
-                      "type": "number"
-                    },
-                    "4xx": {
-                      "type": "number"
-                    },
-                    "5xx": {
-                      "type": "number"
-                    }
-                  },
-                  "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
-                },
-                "status": {
-                  "type": "object",
-                  "properties": {
-                    "304": {
-                      "type": "number"
-                    },
-                    "307": {
-                      "type": "number"
-                    },
-                    "404": {
-                      "type": "number"
-                    },
-                    "405": {
-                      "type": "number"
-                    },
-                    "500": {
-                      "type": "number"
-                    }
-                  },
-                  "additionalProperties": {}
-                }
-              },
-              "required": ["ok", "error", "times", "visitor", "group", "status"]
-            }
-          },
-          "ok": {
-            "type": "number"
-          },
-          "error": {
-            "type": "number"
-          },
-          "times": {
-            "type": "object",
-            "properties": {
-              "last-hit": {
-                "type": "number"
-              },
-              "last-error": {
-                "type": "number"
-              },
-              "last-ok": {
-                "type": "number"
-              }
-            },
-            "required": ["last-hit", "last-error", "last-ok"]
-          },
-          "visitor": {
-            "type": "object",
-            "properties": {
-              "human": {
-                "type": "number"
-              },
-              "bot": {
-                "type": "number"
-              },
-              "unknown": {
-                "type": "number"
-              }
-            },
-            "required": ["human", "bot", "unknown"]
-          },
-          "group": {
-            "type": "object",
-            "properties": {
-              "1xx": {
-                "type": "number"
-              },
-              "2xx": {
-                "type": "number"
-              },
-              "3xx": {
-                "type": "number"
-              },
-              "4xx": {
-                "type": "number"
-              },
-              "5xx": {
-                "type": "number"
-              }
-            },
-            "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
-          },
-          "status": {
-            "type": "object",
-            "properties": {
-              "304": {
-                "type": "number"
-              },
-              "307": {
-                "type": "number"
-              },
-              "404": {
-                "type": "number"
-              },
-              "405": {
-                "type": "number"
-              },
-              "500": {
-                "type": "number"
-              }
-            },
-            "additionalProperties": {}
-          }
-        },
-        "required": ["resources", "redirect", "ok", "error", "times", "visitor", "group", "status"]
+        "required": ["redirect"]
       },
       "KVRedirectMappingSchema": {
         "type": "object",
         "additionalProperties": {
           "type": "string"
         }
-      },
-      "KVRedirectMetricsSchema": {
-        "type": "object",
-        "additionalProperties": {
-          "type": "object",
-          "properties": {
-            "ok": {
-              "type": "number"
-            },
-            "error": {
-              "type": "number"
-            },
-            "times": {
-              "type": "object",
-              "properties": {
-                "last-hit": {
-                  "type": "number"
-                },
-                "last-error": {
-                  "type": "number"
-                },
-                "last-ok": {
-                  "type": "number"
-                }
-              },
-              "required": ["last-hit", "last-error", "last-ok"]
-            },
-            "visitor": {
-              "type": "object",
-              "properties": {
-                "human": {
-                  "type": "number"
-                },
-                "bot": {
-                  "type": "number"
-                },
-                "unknown": {
-                  "type": "number"
-                }
-              },
-              "required": ["human", "bot", "unknown"]
-            },
-            "group": {
-              "type": "object",
-              "properties": {
-                "1xx": {
-                  "type": "number"
-                },
-                "2xx": {
-                  "type": "number"
-                },
-                "3xx": {
-                  "type": "number"
-                },
-                "4xx": {
-                  "type": "number"
-                },
-                "5xx": {
-                  "type": "number"
-                }
-              },
-              "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
-            },
-            "status": {
-              "type": "object",
-              "properties": {
-                "304": {
-                  "type": "number"
-                },
-                "307": {
-                  "type": "number"
-                },
-                "404": {
-                  "type": "number"
-                },
-                "405": {
-                  "type": "number"
-                },
-                "500": {
-                  "type": "number"
-                }
-              },
-              "additionalProperties": {}
-            }
-          },
-          "required": ["ok", "error", "times", "visitor", "group", "status"]
-        }
-      },
-      "KVResourceMetricsSchema": {
-        "type": "object",
-        "additionalProperties": {
-          "type": "object",
-          "properties": {
-            "ok": {
-              "type": "number"
-            },
-            "error": {
-              "type": "number"
-            },
-            "times": {
-              "type": "object",
-              "properties": {
-                "last-hit": {
-                  "type": "number"
-                },
-                "last-error": {
-                  "type": "number"
-                },
-                "last-ok": {
-                  "type": "number"
-                }
-              },
-              "required": ["last-hit", "last-error", "last-ok"]
-            },
-            "visitor": {
-              "type": "object",
-              "properties": {
-                "human": {
-                  "type": "number"
-                },
-                "bot": {
-                  "type": "number"
-                },
-                "unknown": {
-                  "type": "number"
-                }
-              },
-              "required": ["human", "bot", "unknown"]
-            },
-            "group": {
-              "type": "object",
-              "properties": {
-                "1xx": {
-                  "type": "number"
-                },
-                "2xx": {
-                  "type": "number"
-                },
-                "3xx": {
-                  "type": "number"
-                },
-                "4xx": {
-                  "type": "number"
-                },
-                "5xx": {
-                  "type": "number"
-                }
-              },
-              "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
-            },
-            "status": {
-              "type": "object",
-              "properties": {
-                "304": {
-                  "type": "number"
-                },
-                "307": {
-                  "type": "number"
-                },
-                "404": {
-                  "type": "number"
-                },
-                "405": {
-                  "type": "number"
-                },
-                "500": {
-                  "type": "number"
-                }
-              },
-              "additionalProperties": {}
-            }
-          },
-          "required": ["ok", "error", "times", "visitor", "group", "status"]
-        }
-      },
-      "KVSampleMetricsSchema": {
-        "type": "object",
-        "properties": {
-          "ok": {
-            "type": "number"
-          },
-          "error": {
-            "type": "number"
-          },
-          "times": {
-            "type": "object",
-            "properties": {
-              "last-hit": {
-                "type": "number"
-              },
-              "last-error": {
-                "type": "number"
-              },
-              "last-ok": {
-                "type": "number"
-              }
-            },
-            "required": ["last-hit", "last-error", "last-ok"]
-          },
-          "visitor": {
-            "type": "object",
-            "properties": {
-              "human": {
-                "type": "number"
-              },
-              "bot": {
-                "type": "number"
-              },
-              "unknown": {
-                "type": "number"
-              }
-            },
-            "required": ["human", "bot", "unknown"]
-          },
-          "group": {
-            "type": "object",
-            "properties": {
-              "1xx": {
-                "type": "number"
-              },
-              "2xx": {
-                "type": "number"
-              },
-              "3xx": {
-                "type": "number"
-              },
-              "4xx": {
-                "type": "number"
-              },
-              "5xx": {
-                "type": "number"
-              }
-            },
-            "required": ["1xx", "2xx", "3xx", "4xx", "5xx"]
-          },
-          "status": {
-            "type": "object",
-            "properties": {
-              "304": {
-                "type": "number"
-              },
-              "307": {
-                "type": "number"
-              },
-              "404": {
-                "type": "number"
-              },
-              "405": {
-                "type": "number"
-              },
-              "500": {
-                "type": "number"
-              }
-            },
-            "additionalProperties": {}
-          }
-        },
-        "required": ["ok", "error", "times", "visitor", "group", "status"]
-      },
-      "KVStatusMetricsSchema": {
-        "type": "object",
-        "properties": {
-          "304": {
-            "type": "number"
-          },
-          "307": {
-            "type": "number"
-          },
-          "404": {
-            "type": "number"
-          },
-          "405": {
-            "type": "number"
-          },
-          "500": {
-            "type": "number"
-          }
-        },
-        "additionalProperties": {}
-      },
-      "KVTimeMetricsSchema": {
-        "type": "object",
-        "properties": {
-          "last-hit": {
-            "type": "number"
-          },
-          "last-error": {
-            "type": "number"
-          },
-          "last-ok": {
-            "type": "number"
-          }
-        },
-        "required": ["last-hit", "last-error", "last-ok"]
-      },
-      "KVVisitorMetricsSchema": {
-        "type": "object",
-        "properties": {
-          "human": {
-            "type": "number"
-          },
-          "bot": {
-            "type": "number"
-          },
-          "unknown": {
-            "type": "number"
-          }
-        },
-        "required": ["human", "bot", "unknown"]
       },
       "PingResponseSchema": {
         "type": "object",
@@ -1939,917 +1093,6 @@
     "parameters": {}
   },
   "paths": {
-    "/api/token/{uuid}": {
-      "get": {
-        "tags": ["Token"],
-        "summary": "Get uuid",
-        "description": "Token management operations",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "path",
-            "required": true,
-            "description": "UUID identifier",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {}
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Insufficient permissions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/token/{uuid}/{path}": {
-      "get": {
-        "tags": ["Token"],
-        "summary": "Get path",
-        "description": "Token management operations",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "path",
-            "required": true,
-            "description": "UUID identifier",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "path",
-            "in": "path",
-            "required": true,
-            "description": "path parameter",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {}
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Insufficient permissions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/token/{uuid}/usage": {
-      "get": {
-        "tags": ["Token"],
-        "summary": "Get usage",
-        "description": "Token management operations",
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "path",
-            "required": true,
-            "description": "UUID identifier",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/token/{uuid}/revoke": {
-      "post": {
-        "tags": ["Token"],
-        "summary": "Create/Update revoke",
-        "description": "Token management operations",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "path",
-            "required": true,
-            "description": "UUID identifier",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Insufficient permissions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/docs": {
-      "get": {
-        "tags": ["Documentation"],
-        "summary": "Get docs",
-        "description": "API documentation",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/dashboard/{name}": {
-      "get": {
-        "tags": ["Dashboard"],
-        "summary": "Get name",
-        "description": "Dashboard data operations",
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "description": "Name identifier",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/ping": {
       "get": {
         "tags": ["System"],
@@ -3666,6 +1909,917 @@
           },
           "403": {
             "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/{name}": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get name",
+        "description": "Dashboard data operations",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Name identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [true]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "message", "error", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/docs": {
+      "get": {
+        "tags": ["Documentation"],
+        "summary": "Get docs",
+        "description": "API documentation",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [true]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "message", "error", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/token/{uuid}": {
+      "get": {
+        "tags": ["Token"],
+        "summary": "Get uuid",
+        "description": "Token management operations",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [true]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "message", "error", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/token/{uuid}/revoke": {
+      "post": {
+        "tags": ["Token"],
+        "summary": "Create/Update revoke",
+        "description": "Token management operations",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [true]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "message", "error", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/token/{uuid}/{path}": {
+      "get": {
+        "tags": ["Token"],
+        "summary": "Get path",
+        "description": "Token management operations",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "path",
+            "in": "path",
+            "required": true,
+            "description": "path parameter",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [true]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "message", "error", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/token/{uuid}/usage": {
+      "get": {
+        "tags": ["Token"],
+        "summary": "Get usage",
+        "description": "Token management operations",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [true]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "message", "error", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
             "content": {
               "application/json": {
                 "schema": {

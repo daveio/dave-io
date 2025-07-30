@@ -95,13 +95,6 @@ export default defineEventHandler(async (event) => {
       throw createApiError(500, "Failed to update token revocation status")
     }
 
-    console.log(`Token ${body.revoked ? "revocation" : "restoration"} completed:`, {
-      uuid,
-      revoked: body.revoked,
-      requestedBy: auth.payload?.sub,
-      timestamp: now
-    })
-
     const response: RevokeResponse = {
       uuid,
       revoked: body.revoked,

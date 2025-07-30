@@ -1,6 +1,5 @@
 import { XMLParser } from "fast-xml-parser"
 import type { H3Event } from "h3"
-import { dump as yamlDump } from "js-yaml"
 import { createApiError } from "./response"
 
 interface RSSItem {
@@ -8,67 +7,6 @@ interface RSSItem {
   link?: string
   description?: string
   pubDate?: string
-}
-
-/**
- * Format metrics data as YAML using js-yaml library
- * Replaces manual string concatenation in metrics endpoint
- */
-export function formatMetricsAsYAML(metrics: {
-  success: boolean
-  data: {
-    total_requests: number
-    successful_requests: number
-    failed_requests: number
-    redirect_clicks: number
-  }
-  timestamp: string
-}): string {
-  return yamlDump(metrics, {
-    indent: 2,
-    lineWidth: 120,
-    noRefs: true
-  })
-}
-
-/**
- * Format metrics data as Prometheus exposition format
- * Centralizes the Prometheus format generation
- */
-export function formatMetricsAsPrometheus(metrics: {
-  data: {
-    total_requests: number
-    successful_requests: number
-    failed_requests: number
-    redirect_clicks: number
-  }
-}): string {
-  const lines: string[] = []
-
-  // Total requests counter
-  lines.push("# HELP api_requests_total Total number of API requests")
-  lines.push("# TYPE api_requests_total counter")
-  lines.push(`api_requests_total ${metrics.data.total_requests}`)
-  lines.push("")
-
-  // Successful requests counter
-  lines.push("# HELP api_requests_successful_total Total number of successful API requests")
-  lines.push("# TYPE api_requests_successful_total counter")
-  lines.push(`api_requests_successful_total ${metrics.data.successful_requests}`)
-  lines.push("")
-
-  // Failed requests counter
-  lines.push("# HELP api_requests_failed_total Total number of failed API requests")
-  lines.push("# TYPE api_requests_failed_total counter")
-  lines.push(`api_requests_failed_total ${metrics.data.failed_requests}`)
-  lines.push("")
-
-  // Redirect clicks counter
-  lines.push("# HELP redirect_clicks_total Total number of redirect clicks")
-  lines.push("# TYPE redirect_clicks_total counter")
-  lines.push(`redirect_clicks_total ${metrics.data.redirect_clicks}`)
-
-  return lines.join("\n")
 }
 
 /**

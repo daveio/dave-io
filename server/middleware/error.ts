@@ -1,7 +1,7 @@
 import { createError, getHeader, getMethod, setResponseHeader } from "h3"
 import { isApiError } from "../utils/response"
 
-// Error categorization for better logging and monitoring
+// Error categorization for better error logging
 enum ErrorCategory {
   AUTH = "auth",
   VALIDATION = "validation",
@@ -48,7 +48,7 @@ function logError(error: unknown, category: ErrorCategory, context: ErrorContext
     timestamp: context.timestamp
   }
 
-  // In production, this would integrate with monitoring services
+  // Log categorized errors for debugging
   console.error("[ERROR:%s]", category.toUpperCase(), JSON.stringify(logEntry, null, 2))
 }
 
@@ -85,11 +85,6 @@ export default defineEventHandler(async (event) => {
         "X-API-Version": "1.0.0"
       })
     }
-
-    // Add request logging for both API and redirect routes
-    console.log(
-      `[${new Date().toISOString()}] ${method} ${url} - IP: ${ip} - Country: ${cfCountry} - Ray: ${cfRay} - UA: ${userAgent}`
-    )
 
     // Add security headers for all routes
     setHeaders(event, {

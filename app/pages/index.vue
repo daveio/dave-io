@@ -36,20 +36,9 @@ usePageSetup({
   image: "/images/dave-io-social-1280.png"
 })
 
-// Page logging
-const { logPageVisit, logInteraction } = usePageLogging()
-
 onMounted(() => {
-  // Log page visit
-  logPageVisit("/", {
-    title: "home",
-    colorMode: "dark",
-    services: ["web"]
-  })
+  // Page mounted
 })
 
-// Log button interactions
-const _handleServiceClick = (service: string) => {
-  logInteraction("click", "service-button", { service })
-}
+
 </script>

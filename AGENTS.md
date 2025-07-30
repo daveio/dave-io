@@ -62,7 +62,7 @@ Useful IDs:
 
 Workflow: Create tickets for TODOs with "TODO" label. Check Linear for existing tickets. Reference ticket IDs in code comments as shown in example.
 
-**10. KV**: Simple values only. Hierarchical keys: `metrics:api:ok`. Kebab-case: `auth:token-uuid`. Update `data/kv/_init.yaml`.
+**10. KV**: Simple values only. Hierarchical keys: `auth:token-uuid`. Kebab-case. Update `data/kv/_init.yaml`.
 
 **11. SHARE**: Extract duplicated logic to `server/utils/` immediately. Add JSDoc+tests+types.
 
@@ -140,7 +140,6 @@ return createApiResponse({
 
 // Log errors before throwing
 console.error("Endpoint error:", error)
-recordAPIErrorMetrics(event, error)
 throw error
 ```
 
@@ -183,6 +182,7 @@ const tokenId = auth.payload?.jti
 - **OpenRouter Integration**: Migrated all AI operations from direct Anthropic API to OpenRouter via Cloudflare AI Gateway. This enables dynamic model selection without frontend changes. All AI endpoints now use OpenRouter with the `openai` library for improved flexibility while maintaining Claude 4 Sonnet (`anthropic/claude-sonnet-4`) as the default model.
 - **API Response Validation**: All API responses now undergo runtime validation using Zod schemas. Responses are validated against `ApiSuccessResponseSchema` or `ApiErrorResponseSchema` before being returned. Validation errors are logged server-side but return generic 500 errors to clients for security. New typed response system with `createTypedApiResponse()` provides compile-time and runtime type safety.
 - **Nuxt 4 Migration**: Upgraded to Nuxt 4.0.0. Added experimental features: View Transitions API, Component Islands, and Lazy Hydration for improved performance. Project structure has been migrated to Nuxt 4 conventions with components, pages, and assets now located under the `app/` directory.
+- **Metrics and Logging Removal**: Removed all metrics collection, Analytics Engine integration, and non-error logging code to reduce complexity. Only error logging via `console.error()` remains. This includes removal of KV metrics, API request metrics, redirect metrics, and page logging. Will be reimplemented in a cleaner way at a later date.
 
 ## Core
 
@@ -224,7 +224,7 @@ curl -X POST -H "Authorization: Bearer <token>" -d '{"input": "Long text...", "n
 ## CLI Usage
 
 ```bash
-bun jwt init && bun jwt create --sub "api:metrics" --expiry "30d"  # JWT
+bun jwt init && bun jwt create --sub "api:token" --expiry "30d"  # JWT
 bun run kv export --all && bun run kv --local import backup.yaml  # KV
 bun try --auth ai social "Long text to split"  # AI Social
 bun try --auth ai word "happy"  # AI Word (single mode)
@@ -239,7 +239,7 @@ wrangler kv:namespace create KV && wrangler d1 create NEXT_API_AUTH_METADATA
 bun jwt init && bun run deploy
 ```
 
-**KV YAML**: `metrics: {ok: 0}` → `metrics:ok = "0"` | AI Social: `ai:social:characters:bluesky = "300"`
+**KV YAML**: AI Social: `ai:social:characters:bluesky = "300"`
 **Linting**: `// eslint-disable-next-line @typescript-eslint/no-explicit-any`
 **AI Social**: Character limits in KV (`ai:social:characters:{network}`). Uses strategy-based splitting with default strategies `["sentence_boundary", "paragraph_preserve"]`. Available strategies: `sentence_boundary` (split at sentences), `word_boundary` (split at words), `paragraph_preserve` (keep paragraphs intact), `thread_optimize` (optimize threading), `hashtag_preserve` (keep hashtags with content). Multi-post threads automatically get threading indicators (`🧵 1/3`, `🧵 2/3`, etc.) with 10 chars reserved per post.
 
@@ -247,9 +247,9 @@ bun jwt init && bun run deploy
 
 ### KV Storage
 
-- **Keys**: Hierarchical `metrics:api:ok`, kebab-case `auth:token-uuid`
+- **Keys**: Hierarchical, kebab-case `auth:token-uuid`
 - **Values**: Simple only, no complex objects
-- **Pattern**: `await kv.put("metrics:api:ok", "42")` ✅ vs `JSON.stringify(object)` ❌
+- **Pattern**: `await kv.put("auth:token-uuid", "value")` ✅ vs `JSON.stringify(object)` ❌
 
 ### Security (MANDATORY)
 
@@ -260,7 +260,6 @@ bun jwt init && bun run deploy
 
 ### Performance
 
-- **Async**: Non-blocking metrics with `recordAPIMetricsAsync()`
 - **Services**: Real calls only (`env.AI.run()`, `env.KV.get()`), no mocks except tests
 
 ### Code Quality

@@ -2,7 +2,6 @@ import { getHeaders } from "h3"
 import { z } from "zod"
 import { extractToken, getUserFromPayload, verifyJWT } from "../utils/auth"
 import { getCloudflareRequestInfo } from "../utils/cloudflare"
-import { logRequest } from "../utils/response"
 import { createTypedApiResponse } from "../utils/response-types"
 import { PingResponseSchema } from "../utils/schemas"
 
@@ -200,18 +199,7 @@ export default defineEventHandler(async (event) => {
     }
   })
 
-  // Log successful request
-  const responseTime = Date.now() - startTime
-  logRequest(event, "ping", "GET", 200, {
-    environment: pingData.worker.environment,
-    runtime: pingData.worker.runtime,
-    datacenter: pingData.cloudflare.datacentre,
-    responseTime: `${responseTime}ms`,
-    cfRay: pingData.cloudflare.ray,
-    authSupplied: authInfo.supplied ? "true" : "false",
-    authValid: authInfo.token?.valid ? "true" : "false",
-    headerCount: headersInfo.count
-  })
+  const _responseTime = Date.now() - startTime
 
   return createTypedApiResponse({
     result: {

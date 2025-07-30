@@ -22,14 +22,12 @@ stroke-linecap="round" stroke-linejoin="round"
 
 <script setup lang="ts">
 // Import page logging functionality
-const { logInteraction } = usePageLogging()
 
 // Copy curl command to clipboard and track the action
 const copyCurlCommand = async () => {
   const command = "curl https://dave.io | sh"
   try {
     await navigator.clipboard.writeText(command)
-    logInteraction("copy", "curl-command", { command })
   } catch {
     // Fallback for older browsers or when clipboard API fails
     const textArea = document.createElement("textarea")
@@ -41,7 +39,6 @@ const copyCurlCommand = async () => {
     } finally {
       document.body.removeChild(textArea)
     }
-    logInteraction("copy", "curl-command", { command, fallback: true })
   }
 }
 </script>

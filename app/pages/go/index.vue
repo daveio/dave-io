@@ -24,15 +24,7 @@ usePageSetup({
   image: "/images/dave-io-social-1280.png"
 })
 
-// Page logging
-const { logPageVisit } = usePageLogging()
-
 onMounted(() => {
-  // Log page visit to access denied page
-  logPageVisit("/go", {
-    title: "Access Denied",
-    theme: "jurassic-park",
-    reason: "no-magic-word"
-  })
+  // Page mounted
 })
 </script>

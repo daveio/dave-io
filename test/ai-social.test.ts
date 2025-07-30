@@ -11,19 +11,6 @@ vi.mock("../server/utils/auth-helpers", () => ({
   })
 }))
 
-vi.mock("../server/middleware/metrics", () => ({
-  recordAPIMetrics: vi.fn(),
-  recordAPIErrorMetrics: vi.fn()
-}))
-
-vi.mock("../server/utils/response", async () => {
-  const actual = await vi.importActual("../server/utils/response")
-  return {
-    ...actual,
-    logRequest: vi.fn()
-  }
-})
-
 // Mock Cloudflare environment
 const mockCloudflareEnv = {
   AI: {

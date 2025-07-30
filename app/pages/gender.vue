@@ -38,16 +38,8 @@ usePageSetup({
   image: "/images/dave-io-social-1280.png"
 })
 
-// Page logging
-const { logPageVisit } = usePageLogging()
-
 onMounted(() => {
-  // Log page visit
-  logPageVisit("/gender", {
-    title: "gender-identity-guide",
-    colorMode: "dark",
-    services: ["web"]
-  })
+  // Page mounted
 })
 </script>
 

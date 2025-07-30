@@ -20,13 +20,6 @@ const TokenRevokeDataSchema = z.object({
   revoked_at: z.string()
 })
 
-const TokenMetricsDataSchema = z.object({
-  total_requests: z.number(),
-  successful_requests: z.number(),
-  failed_requests: z.number(),
-  redirect_clicks: z.number()
-})
-
 export default defineEventHandler(async (event) => {
   const _startTime = Date.now()
   let _authToken: string | null = null
@@ -105,8 +98,6 @@ export default defineEventHandler(async (event) => {
       // Add the token to revocation using simple KV key
       await env.KV.put(`token:${uuid}:revoked`, "true", { expirationTtl: 86400 * 30 })
 
-      console.log(`Token revoked: ${uuid}`)
-
       const revokeData = {
         revoked: true,
         token_id: uuid,
@@ -118,36 +109,6 @@ export default defineEventHandler(async (event) => {
         message: "Token revoked successfully",
         error: null,
         resultSchema: TokenRevokeDataSchema
-      })
-    }
-    if (path === "metrics") {
-      // GET /api/token/{uuid}/metrics - Get token metrics using simple KV keys
-      const createdAtStr = await env.KV.get(`token:${uuid}:created-at`)
-
-      if (!createdAtStr) {
-        throw createApiError(404, `Token not found: ${uuid}`)
-      }
-
-      // Get real metrics data from KV counters for this specific token
-      const [totalRequests, successfulRequests, failedRequests, redirectClicks] = await Promise.all([
-        env.KV.get(`metrics:token:${uuid}:requests:total`).then((v) => Number.parseInt(v || "0")),
-        env.KV.get(`metrics:token:${uuid}:requests:successful`).then((v) => Number.parseInt(v || "0")),
-        env.KV.get(`metrics:token:${uuid}:requests:failed`).then((v) => Number.parseInt(v || "0")),
-        env.KV.get(`metrics:token:${uuid}:redirects:total`).then((v) => Number.parseInt(v || "0"))
-      ])
-
-      const metricsData = {
-        total_requests: totalRequests,
-        successful_requests: successfulRequests,
-        failed_requests: failedRequests,
-        redirect_clicks: redirectClicks
-      }
-
-      return createTypedApiResponse({
-        result: metricsData,
-        message: "Token metrics retrieved successfully",
-        error: null,
-        resultSchema: TokenMetricsDataSchema
       })
     }
     throw createApiError(404, `Unknown token endpoint: ${path}`)

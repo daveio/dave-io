@@ -21,12 +21,10 @@ const AiSocialResultSchema = z.object({
 export default defineEventHandler(async (event) => {
   try {
     // Check authorization for AI social text generation using helper
-    const auth = await requireAIAuth(event, "social")
+    await requireAIAuth(event, "social")
 
     // Get environment bindings using helper
     const env = getCloudflareEnv(event)
-
-    const startTime = Date.now()
 
     // Parse and validate request body
     const body = await readBody(event)
@@ -56,9 +54,6 @@ export default defineEventHandler(async (event) => {
 
     // Get AI model from KV with fallback
     const aiModel = await getAIModelFromKV(env, "social")
-
-    let _aiSuccess = false
-    let _aiErrorType: string | undefined
 
     // Build strategy descriptions for the prompt
     const strategyDescriptions = {
@@ -126,19 +121,6 @@ Return a JSON object with a "networks" property containing arrays of posts for e
         }
       }
 
-      _aiSuccess = true
-
-      const processingTime = Date.now() - startTime
-
-      // Log successful request
-      logRequest(event, "ai/social", "POST", 200, {
-        user: auth.payload?.sub || "anonymous",
-        inputLength: validatedRequest.input.length,
-        networksCount: validatedRequest.networks.length,
-        processingTime,
-        success: true
-      })
-
       return createTypedApiResponse({
         result: {
           networks: aiResponse.networks
@@ -149,23 +131,10 @@ Return a JSON object with a "networks" property containing arrays of posts for e
       })
     } catch (error) {
       console.error("OpenRouter AI processing failed:", error)
-      _aiSuccess = false
-      _aiErrorType = error instanceof Error ? error.name : "UnknownError"
       throw createApiError(500, "Failed to process text with OpenRouter AI")
     }
   } catch (error: unknown) {
     console.error("AI social error:", error)
-
-    // Log error request
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const statusCode = isApiError(error) ? (error as any).statusCode || 500 : 500
-    logRequest(event, "ai/social", "POST", statusCode, {
-      user: "unknown",
-      inputLength: 0,
-      networksCount: 0,
-      processingTime: 0,
-      success: false
-    })
 
     // Re-throw API errors
     if (isApiError(error)) {

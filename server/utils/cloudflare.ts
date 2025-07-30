@@ -135,26 +135,3 @@ export async function batchKVGet(kv: KVNamespace, keys: string[], defaultValue =
 export async function batchKVGetStrings(kv: KVNamespace, keys: string[], defaultValue = ""): Promise<string[]> {
   return await Promise.all(keys.map((key) => kv.get(key).then((v) => v || defaultValue)))
 }
-
-/**
- * Standard error logging for API endpoints
- */
-export function logCloudflareRequest(
-  info: CloudflareRequestInfo,
-  method: string,
-  additionalInfo?: Record<string, unknown>
-): void {
-  const logData = {
-    timestamp: new Date().toISOString(),
-    method,
-    url: info.requestUrl,
-    ip: info.ip,
-    country: info.country,
-    ray: info.ray,
-    datacenter: info.datacenter,
-    userAgent: info.userAgent,
-    ...additionalInfo
-  }
-
-  console.log("[%s] %s %s", logData.timestamp, method, info.requestUrl, logData)
-}
