@@ -147,7 +147,11 @@ export const PingResponseSchema = z.object({
     server_side_rendering: z.boolean(),
     version: z.string()
   }),
-  redirects: z.array(z.string()).max(100).describe("Array of available redirect slugs")
+  redirects: z
+    .array(z.string())
+    .min(0)
+    .max(100)
+    .describe("Array of available redirect slugs (truncated to 100 if more exist)")
 })
 
 // Enhanced ping endpoint schema (includes auth and headers)

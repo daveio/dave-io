@@ -1,7 +1,7 @@
 import { getHeaders } from "h3"
 import { z } from "zod"
-import { extractToken, getUserFromPayload, verifyJWT } from "../utils/auth"
-import { getCloudflareRequestInfo, getCloudflareEnv, getKVNamespace } from "../utils/cloudflare"
+import { extractToken, verifyJWT } from "../utils/auth"
+import { getCloudflareRequestInfo, getCloudflareEnv, getKVNamespace, getCachedRedirectList } from "../utils/cloudflare"
 import { createTypedApiResponse } from "../utils/response-types"
 import { PingResponseSchema } from "../utils/schemas"
 
@@ -58,9 +58,6 @@ export default defineEventHandler(async (event) => {
         const verification = await verifyJWT(token, secret)
         if (verification.success && verification.payload) {
           const { payload } = verification
-          // User variable needed for JWT validation context
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const user = getUserFromPayload(payload)
 
           authInfo = {
             supplied: true,
@@ -84,9 +81,7 @@ export default defineEventHandler(async (event) => {
             }
           }
         }
-        // Error variable needed for exception handling context
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (error) {
+      } catch {
         authInfo = {
           supplied: true,
           token: {
@@ -166,13 +161,20 @@ export default defineEventHandler(async (event) => {
     // Default to https if parsing fails
   }
 
-  // Fetch available redirect slugs from KV
+  // Fetch available redirect slugs from cached KV
   let redirectSlugs: string[] = []
   try {
-    const redirectKeys = await kv.list({ prefix: "redirect:" })
-    redirectSlugs = redirectKeys.keys.map((key) => key.name.replace("redirect:", "")).sort()
+    const allRedirects = await getCachedRedirectList(kv)
+
+    // Handle case where more than 100 redirects exist
+    if (allRedirects.length > 100) {
+      console.error(`Warning: ${allRedirects.length} redirects found, truncating to 100 for API response`)
+      redirectSlugs = allRedirects.slice(0, 100)
+    } else {
+      redirectSlugs = allRedirects
+    }
   } catch (error) {
-    console.error("Failed to fetch redirect slugs:", error)
+    console.error("Failed to fetch cached redirect slugs:", error)
     // Continue with empty array if KV lookup fails
   }
 

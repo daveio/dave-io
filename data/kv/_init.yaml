@@ -17,6 +17,9 @@ ai:
       mastodon: 4096
       threads: 500
       x: 280
+cache:
+  redirects:
+    expiry: 3600
 redirect:
   blog: https://blog.dave.io
   bluesky: https://bsky.app/profile/dave.io
