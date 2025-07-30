@@ -1,8 +1,7 @@
 import { z } from "zod"
-import { recordAPIErrorMetrics, recordAPIMetrics } from "../../middleware/metrics"
 import { requireAIAuth } from "../../utils/auth-helpers"
 import { createOpenRouterClient, parseAIResponse, sendAIMessage, getAIModelFromKV } from "../../utils/ai-helpers"
-import { createApiError, isApiError, logRequest } from "../../utils/response"
+import { createApiError, isApiError } from "../../utils/response"
 import { createTypedApiResponse } from "../../utils/response-types"
 import { AiSocialRequestSchema, AiSocialNetworkEnum } from "../../utils/schemas"
 import type { AiSocialNetwork } from "../../utils/schemas"
@@ -131,9 +130,6 @@ Return a JSON object with a "networks" property containing arrays of posts for e
 
       const processingTime = Date.now() - startTime
 
-      // Record successful AI request
-      recordAPIMetrics(event, 200)
-
       // Log successful request
       logRequest(event, "ai/social", "POST", 200, {
         user: auth.payload?.sub || "anonymous",
@@ -159,9 +155,6 @@ Return a JSON object with a "networks" property containing arrays of posts for e
     }
   } catch (error: unknown) {
     console.error("AI social error:", error)
-
-    // Record failed AI request
-    recordAPIErrorMetrics(event, error)
 
     // Log error request
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

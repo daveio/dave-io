@@ -1,8 +1,7 @@
 import { z } from "zod"
-import { recordAPIErrorMetrics, recordAPIMetrics } from "../../../middleware/metrics"
 import { requireAPIAuth } from "../../../utils/auth-helpers"
 import { getCloudflareEnv } from "../../../utils/cloudflare"
-import { createApiError, isApiError, logRequest } from "../../../utils/response"
+import { createApiError, isApiError } from "../../../utils/response"
 import { createTypedApiResponse } from "../../../utils/response-types"
 import { getValidatedUUID } from "../../../utils/validation"
 
@@ -91,9 +90,6 @@ export default defineEventHandler(async (event) => {
     // Get token usage from KV storage
     const usage = await getTokenUsageFromKV(uuid, env.KV)
 
-    // Record successful token usage request
-    recordAPIMetrics(event, 200)
-
     // Log successful request
     logRequest(event, "token/{uuid}/usage", "GET", 200, {
       tokenId: uuid,
@@ -119,9 +115,6 @@ export default defineEventHandler(async (event) => {
       usage: "error",
       isRevoked: false
     })
-
-    // Record error metrics
-    recordAPIErrorMetrics(event, error)
 
     if (isApiError(error)) {
       throw error

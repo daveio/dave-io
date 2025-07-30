@@ -1,4 +1,6 @@
+/// <reference types="../../worker-configuration" />
 import type { H3Event } from "h3"
+import { getHeader } from "h3"
 import { createApiError } from "./response"
 
 /**

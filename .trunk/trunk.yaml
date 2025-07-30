@@ -24,7 +24,7 @@ lint:
     - vale
   enabled:
     - gitleaks@8.28.0
-    - eslint@9.31.0:
+    - eslint@9.32.0:
         packages:
           - "@eslint/js"
           - "@nuxt/eslint"
@@ -40,20 +40,20 @@ lint:
     - gofmt@1.20.4
     - golangci-lint2
     - actionlint@1.7.7
-    - checkov@3.2.451
+    - checkov@3.2.457
     - dustilock@1.2.0
     - git-diff-check
     - hadolint@2.12.1-beta
     - markdownlint@0.45.0
     - osv-scanner@2.0.3
     - oxipng@9.1.5
-    - semgrep@1.128.1
+    - semgrep@1.130.0
     - shellcheck@0.10.0
     - shfmt@3.6.0
     - sourcery@1.37.0
     - svgo@4.0.0
     - taplo@0.9.3
-    - trufflehog@3.90.1
+    - trufflehog@3.90.2
     - trunk-toolbox@0.5.4
     - yamllint@1.37.1
   ignore:

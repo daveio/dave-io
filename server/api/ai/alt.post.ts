@@ -1,5 +1,4 @@
 import { z } from "zod"
-import { recordAPIErrorMetrics, recordAPIMetrics } from "../../middleware/metrics"
 import { requireAIAuth } from "../../utils/auth-helpers"
 import {
   createOpenRouterClient,
@@ -10,7 +9,7 @@ import {
 } from "../../utils/ai-helpers"
 import { getCloudflareEnv } from "../../utils/cloudflare"
 import { validateImageFormat } from "../../utils/image-helpers"
-import { createApiError, isApiError, logRequest } from "../../utils/response"
+import { createApiError, isApiError } from "../../utils/response"
 import { createTypedApiResponse } from "../../utils/response-types"
 
 // Define the result schema for the AI alt endpoint (same as GET)
@@ -108,9 +107,6 @@ The confidence score should be between 0 and 1, representing how confident you a
 
       const processingTime = Date.now() - startTime
 
-      // Record successful AI request
-      recordAPIMetrics(event, 200)
-
       // Log successful request
       logRequest(event, "ai/alt", "POST", 200, {
         user: auth.payload?.sub || "anonymous",
@@ -144,9 +140,6 @@ The confidence score should be between 0 and 1, representing how confident you a
     }
   } catch (error: unknown) {
     console.error("AI alt error:", error)
-
-    // Record failed AI request
-    recordAPIErrorMetrics(event, error)
 
     // Log error request
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

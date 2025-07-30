@@ -1,8 +1,7 @@
 import { z } from "zod"
-import { recordAPIErrorMetrics, recordAPIMetrics } from "../../middleware/metrics"
 import { requireAIAuth } from "../../utils/auth-helpers"
 import { createOpenRouterClient, parseAIResponse, sendAIMessage, getAIModelFromKV } from "../../utils/ai-helpers"
-import { createApiError, isApiError, logRequest } from "../../utils/response"
+import { createApiError, isApiError } from "../../utils/response"
 import { createTypedApiResponse } from "../../utils/response-types"
 import { AiWordRequestSchema, AiWordSuggestionSchema } from "../../utils/schemas"
 import type { AiWordSuggestion } from "../../utils/schemas"
@@ -130,9 +129,6 @@ The word "${validatedRequest.target_word}" needs a better alternative. What woul
 
       const processingTime = Date.now() - startTime
 
-      // Record successful AI request
-      recordAPIMetrics(event, 200)
-
       // Log successful request
       logRequest(event, "ai/word", "POST", 200, {
         user: auth.payload?.sub || "anonymous",
@@ -158,9 +154,6 @@ The word "${validatedRequest.target_word}" needs a better alternative. What woul
     }
   } catch (error: unknown) {
     console.error("AI word error:", error)
-
-    // Record failed AI request
-    recordAPIErrorMetrics(event, error)
 
     // Log error request
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

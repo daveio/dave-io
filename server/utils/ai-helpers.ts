@@ -29,14 +29,9 @@ export async function createOpenRouterClient(env: any): Promise<OpenAI> {
     throw createApiError(503, "Failed to retrieve OpenRouter API key")
   }
 
-  if (env.CLOUDFLARE_API_TOKEN) {
-    try {
-      cfApiToken = await env.CLOUDFLARE_API_TOKEN.get()
-    } catch (error) {
-      console.error("Failed to retrieve CLOUDFLARE_API_TOKEN from Secrets Store:", error)
-      // Continue without the token - it's optional
-    }
-  }
+  // Get Cloudflare API token from Nuxt runtime config
+  const config = useRuntimeConfig()
+  cfApiToken = config.cloudflareApiToken || ""
 
   return new OpenAI({
     apiKey,

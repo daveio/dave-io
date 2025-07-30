@@ -1,6 +1,5 @@
 import { getHeaders } from "h3"
 import { z } from "zod"
-import { recordAPIMetrics } from "../middleware/metrics"
 import { extractToken, getUserFromPayload, verifyJWT } from "../utils/auth"
 import { getCloudflareRequestInfo } from "../utils/cloudflare"
 import { logRequest } from "../utils/response"
@@ -47,22 +46,9 @@ export default defineEventHandler(async (event) => {
   const token = extractToken(event)
 
   if (token) {
-    // Get secret from Cloudflare Secrets Store or fallback to process.env
-    let secret: string | null = null
-
-    const env = event.context.cloudflare?.env as { API_JWT_SECRET?: SecretsStoreSecret }
-    if (env?.API_JWT_SECRET) {
-      try {
-        secret = await env.API_JWT_SECRET.get()
-      } catch (error) {
-        console.error("Failed to retrieve API_JWT_SECRET from Secrets Store:", error)
-      }
-    }
-
-    // Fallback to process.env for local development
-    if (!secret) {
-      secret = process.env.API_JWT_SECRET || null
-    }
+    // Get secret from Nuxt runtime config
+    const config = useRuntimeConfig()
+    const secret = config.apiJwtSecret
 
     if (secret) {
       try {
@@ -213,9 +199,6 @@ export default defineEventHandler(async (event) => {
       version: "1.0.0"
     }
   })
-
-  // Record standard API metrics
-  recordAPIMetrics(event, 200)
 
   // Log successful request
   const responseTime = Date.now() - startTime

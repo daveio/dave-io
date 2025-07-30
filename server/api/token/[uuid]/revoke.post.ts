@@ -1,5 +1,4 @@
 import { z } from "zod"
-import { recordAPIErrorMetrics, recordAPIMetrics } from "../../../middleware/metrics"
 import { authorizeEndpoint } from "../../../utils/auth"
 import { getCloudflareEnv } from "../../../utils/cloudflare"
 import { createApiError, isApiError } from "../../../utils/response"
@@ -113,9 +112,6 @@ export default defineEventHandler(async (event) => {
       response.revokedAt = now
     }
 
-    // Record successful metrics
-    recordAPIMetrics(event, 200)
-
     return createTypedApiResponse({
       result: response,
       message: body.revoked ? "Token revoked successfully" : "Token revocation removed successfully",
@@ -124,9 +120,6 @@ export default defineEventHandler(async (event) => {
     })
   } catch (error: unknown) {
     console.error("Token revocation error:", error)
-
-    // Record error metrics
-    recordAPIErrorMetrics(event, error)
 
     if (isApiError(error)) {
       throw error

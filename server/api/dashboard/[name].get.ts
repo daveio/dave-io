@@ -1,8 +1,7 @@
 import { z } from "zod"
-import { recordAPIErrorMetrics, recordAPIMetrics } from "../../middleware/metrics"
 import { getCloudflareEnv, getKVNamespace } from "../../utils/cloudflare"
 import { parseRSSFeed } from "../../utils/formatters"
-import { createApiError, isApiError, logRequest } from "../../utils/response"
+import { createApiError, isApiError } from "../../utils/response"
 import { createTypedApiResponse } from "../../utils/response-types"
 
 interface DashboardItem {
@@ -170,9 +169,6 @@ export default defineEventHandler(async (event) => {
     // Add cache status header
     setHeader(event, "X-Data-Source", source)
 
-    // Record standard API metrics
-    recordAPIMetrics(event, 200)
-
     // Log successful request
     logRequest(event, "dashboard/{name}", "GET", 200, {
       dashboardName: name,
@@ -198,9 +194,6 @@ export default defineEventHandler(async (event) => {
       source: "error",
       itemCount: 0
     })
-
-    // Record error metrics
-    recordAPIErrorMetrics(event, error)
 
     // Re-throw API errors
     if (isApiError(error)) {
