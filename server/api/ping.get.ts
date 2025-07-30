@@ -5,6 +5,13 @@ import { getCloudflareRequestInfo, getCloudflareEnv, getKVNamespace, getCachedRe
 import { createTypedApiResponse } from "../utils/response-types"
 import { PingResponseSchema } from "../utils/schemas"
 
+/// <reference types="../../worker-configuration" />
+
+// Type for accessing secrets from Cloudflare environment
+interface SecretsEnv {
+  API_JWT_SECRET?: SecretsStoreSecret
+}
+
 // Define the result schema for the ping endpoint
 const PingResultSchema = z.object({
   pingData: PingResponseSchema,
@@ -49,9 +56,18 @@ export default defineEventHandler(async (event) => {
   const token = extractToken(event)
 
   if (token) {
-    // Get secret from Nuxt runtime config
-    const config = useRuntimeConfig()
-    const secret = config.apiJwtSecret
+    // Get secret from Cloudflare Secrets Store
+    const secretsEnv = env as SecretsEnv
+    let secret: string | null = null
+
+    if (secretsEnv?.API_JWT_SECRET) {
+      try {
+        secret = await secretsEnv.API_JWT_SECRET.get()
+      } catch (error) {
+        console.error("Failed to retrieve API_JWT_SECRET from Secrets Store:", error)
+        // Continue with null secret to mark token as invalid
+      }
+    }
 
     if (secret) {
       try {

@@ -1,6 +1,14 @@
 import type { H3Event } from "h3"
 import { jwtVerify } from "jose"
 import type { JWTPayload } from "jose"
+import { createApiError } from "./response"
+
+/// <reference types="../../worker-configuration" />
+
+// Type for accessing secrets from Cloudflare environment
+interface SecretsEnv {
+  API_JWT_SECRET?: SecretsStoreSecret
+}
 
 // JWT payload structure matching dave-io Worker
 export interface JWTTokenPayload extends JWTPayload {
@@ -155,24 +163,22 @@ export async function authorizeEndpoint(
       return { success: false, error: "No token provided" }
     }
 
-    // Get JWT secret from Cloudflare Secrets Store or runtime config
+    // Get JWT secret from Cloudflare Secrets Store
     let secret: string
 
-    const env = event.context.cloudflare?.env as { API_JWT_SECRET?: SecretsStoreSecret }
-    const configSecret = useRuntimeConfig(event).apiJwtSecret
+    const env = event.context.cloudflare?.env as SecretsEnv
 
-    // Prefer Cloudflare Workers secret when available
+    // Get secret from Cloudflare Workers Secrets Store
     if (env?.API_JWT_SECRET) {
       try {
         secret = await env.API_JWT_SECRET.get()
       } catch (error) {
         console.error("Failed to retrieve API_JWT_SECRET from Secrets Store:", error)
-        // Fallback to runtime config for non-Cloudflare environments
-        secret = configSecret
+        throw createApiError(503, "Failed to retrieve JWT secret")
       }
     } else {
-      // Fallback to runtime config for non-Cloudflare environments
-      secret = configSecret
+      console.error("API_JWT_SECRET binding not available")
+      throw createApiError(503, "JWT secret not configured")
     }
 
     if (!secret || secret === "dev-secret-change-in-production") {
