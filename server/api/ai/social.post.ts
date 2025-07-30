@@ -21,7 +21,7 @@ const AiSocialResultSchema = z.object({
 export default defineEventHandler(async (event) => {
   try {
     // Check authorization for AI social text generation using helper
-    const auth = await requireAIAuth(event, "social")
+    const _auth = await requireAIAuth(event, "social")
 
     // Get environment bindings using helper
     const env = getCloudflareEnv(event)
@@ -128,16 +128,7 @@ Return a JSON object with a "networks" property containing arrays of posts for e
 
       _aiSuccess = true
 
-      const processingTime = Date.now() - startTime
-
-      // Log successful request
-      logRequest(event, "ai/social", "POST", 200, {
-        user: auth.payload?.sub || "anonymous",
-        inputLength: validatedRequest.input.length,
-        networksCount: validatedRequest.networks.length,
-        processingTime,
-        success: true
-      })
+      const _processingTime = Date.now() - startTime
 
       return createTypedApiResponse({
         result: {
@@ -155,17 +146,6 @@ Return a JSON object with a "networks" property containing arrays of posts for e
     }
   } catch (error: unknown) {
     console.error("AI social error:", error)
-
-    // Log error request
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const statusCode = isApiError(error) ? (error as any).statusCode || 500 : 500
-    logRequest(event, "ai/social", "POST", statusCode, {
-      user: "unknown",
-      inputLength: 0,
-      networksCount: 0,
-      processingTime: 0,
-      success: false
-    })
 
     // Re-throw API errors
     if (isApiError(error)) {

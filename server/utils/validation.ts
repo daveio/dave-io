@@ -310,7 +310,6 @@ export function validateImageQuality(value: unknown, paramName = "quality"): num
 
   // Automatically bump quality below 10 to minimum of 10
   if (quality < 10) {
-    console.log(`Quality ${quality} bumped to minimum value 10`)
     return 10
   }
 

@@ -160,8 +160,6 @@ export async function optimizeImageForClaude(imageData: Buffer, env: CloudflareE
       })
     }
 
-    console.log(`Optimizing image: original size ${(imageData.length / (1024 * 1024)).toFixed(2)}MB`)
-
     // Always resize to max 1024px on long edge with lossy WebP
     // Using scale-down ensures the image is never enlarged, only shrunk if needed
     // Setting both width and height to 1024 with scale-down preserves aspect ratio
@@ -181,10 +179,6 @@ export async function optimizeImageForClaude(imageData: Buffer, env: CloudflareE
     const response = result.response()
     const arrayBuffer = await response.arrayBuffer()
     const optimizedBuffer = Buffer.from(arrayBuffer)
-
-    console.log(
-      `Optimized image: final size ${(optimizedBuffer.length / (1024 * 1024)).toFixed(2)}MB, max 1024px on long edge, WebP format`
-    )
 
     return optimizedBuffer
   } catch (error) {

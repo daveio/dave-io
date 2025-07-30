@@ -86,11 +86,6 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Add request logging for both API and redirect routes
-    console.log(
-      `[${new Date().toISOString()}] ${method} ${url} - IP: ${ip} - Country: ${cfCountry} - Ray: ${cfRay} - UA: ${userAgent}`
-    )
-
     // Add security headers for all routes
     setHeaders(event, {
       "X-Content-Type-Options": "nosniff",

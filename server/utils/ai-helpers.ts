@@ -72,7 +72,6 @@ export async function getAIModelFromKV(env: CloudflareEnv, endpointName: string)
       return DEFAULT_MODEL
     }
 
-    console.log("Using AI model for", endpointName, ":", modelName)
     return modelName
   } catch (error) {
     console.error("Failed to read AI model from KV for endpoint", endpointName, ":", error)

@@ -75,10 +75,8 @@
 
 <script setup lang="ts">
 // Import page logging functionality
-const { logInteraction } = usePageLogging()
 
 // Track link clicks
-const handleLinkClick = (service: string, url: string) => {
-  logInteraction("click", "terminal-link", { service, url })
+const handleLinkClick = (_service: string, _url: string) => {
 }
 </script>

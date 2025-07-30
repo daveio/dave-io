@@ -14,15 +14,13 @@ interface Props {
   from?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const _props = withDefaults(defineProps<Props>(), {
   from: "page"
 })
 
 // Page logging
-const { logInteraction } = usePageLogging()
 
 // Track back button clicks
 const handleBackClick = () => {
-  logInteraction("click", "navigation", { action: "back-to-home", from: props.from })
 }
 </script>

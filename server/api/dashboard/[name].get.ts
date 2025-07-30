@@ -169,13 +169,6 @@ export default defineEventHandler(async (event) => {
     // Add cache status header
     setHeader(event, "X-Data-Source", source)
 
-    // Log successful request
-    logRequest(event, "dashboard/{name}", "GET", 200, {
-      dashboardName: name,
-      source,
-      itemCount: items.length
-    })
-
     return createTypedApiResponse({
       result: response,
       message: `Dashboard '${name}' retrieved successfully`,
@@ -186,14 +179,6 @@ export default defineEventHandler(async (event) => {
     console.error("Dashboard error:", error)
 
     // Log error request
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const statusCode = isApiError(error) ? (error as any).statusCode || 500 : 500
-    const name = getRouterParam(event, "name") || "unknown"
-    logRequest(event, "dashboard/{name}", "GET", statusCode, {
-      dashboardName: name,
-      source: "error",
-      itemCount: 0
-    })
 
     // Re-throw API errors
     if (isApiError(error)) {

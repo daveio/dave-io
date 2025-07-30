@@ -18,7 +18,7 @@ const AiWordResultSchema = z.object({
 export default defineEventHandler(async (event) => {
   try {
     // Check authorization for AI word alternative generation using helper
-    const auth = await requireAIAuth(event, "word")
+    const _auth = await requireAIAuth(event, "word")
 
     // Get environment bindings using helper
     const env = getCloudflareEnv(event)
@@ -127,16 +127,7 @@ The word "${validatedRequest.target_word}" needs a better alternative. What woul
 
       _aiSuccess = true
 
-      const processingTime = Date.now() - startTime
-
-      // Log successful request
-      logRequest(event, "ai/word", "POST", 200, {
-        user: auth.payload?.sub || "anonymous",
-        mode: validatedRequest.mode,
-        inputWord: validatedRequest.mode === "single" ? validatedRequest.word : validatedRequest.target_word,
-        processingTime,
-        success: true
-      })
+      const _processingTime = Date.now() - startTime
 
       return createTypedApiResponse({
         result: {
@@ -156,16 +147,6 @@ The word "${validatedRequest.target_word}" needs a better alternative. What woul
     console.error("AI word error:", error)
 
     // Log error request
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const statusCode = isApiError(error) ? (error as any).statusCode || 500 : 500
-    logRequest(event, "ai/word", "POST", statusCode, {
-      user: "unknown",
-      mode: "unknown",
-      inputWord: "",
-      processingTime: 0,
-      success: false
-    })
-
     // Re-throw API errors
     if (isApiError(error)) {
       throw error

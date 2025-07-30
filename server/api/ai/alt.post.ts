@@ -21,7 +21,7 @@ const AiAltResultSchema = z.object({
 export default defineEventHandler(async (event) => {
   try {
     // Check authorization for AI alt text generation
-    const auth = await requireAIAuth(event, "alt")
+    const _auth = await requireAIAuth(event, "alt")
 
     // Get environment bindings
     const env = getCloudflareEnv(event)
@@ -105,17 +105,7 @@ The confidence score should be between 0 and 1, representing how confident you a
 
       _aiSuccess = true
 
-      const processingTime = Date.now() - startTime
-
-      // Log successful request
-      logRequest(event, "ai/alt", "POST", 200, {
-        user: auth.payload?.sub || "anonymous",
-        imageSize: imageFile.data.length,
-        imageType: mimeType,
-        filename: imageFile.filename || "unknown",
-        processingTime,
-        success: true
-      })
+      const _processingTime = Date.now() - startTime
 
       return createTypedApiResponse({
         result: {
@@ -142,17 +132,6 @@ The confidence score should be between 0 and 1, representing how confident you a
     console.error("AI alt error:", error)
 
     // Log error request
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const statusCode = isApiError(error) ? (error as any).statusCode || 500 : 500
-    logRequest(event, "ai/alt", "POST", statusCode, {
-      user: "unknown",
-      imageSize: 0,
-      imageType: "",
-      filename: "",
-      processingTime: 0,
-      success: false
-    })
-
     // Re-throw API errors
     if (isApiError(error)) {
       throw error

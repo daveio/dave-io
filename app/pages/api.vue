@@ -24,16 +24,8 @@ usePageSetup({
   image: "/images/dave-io-social-1280.png"
 })
 
-// Page logging
-const { logPageVisit } = usePageLogging()
-
 onMounted(() => {
-  // Log page visit
-  logPageVisit("/api", {
-    title: "api-documentation",
-    colorMode: "dark",
-    services: ["web"]
-  })
+  // Page mounted
 })
 </script>
 
