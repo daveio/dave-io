@@ -13,7 +13,7 @@ A modern web platform built with Nuxt 4 and Cloudflare Workers, featuring AI-pow
 
 ## 🚀 Quick Start
 
-**Prerequisites**: Node.js 22.17.0+, Bun
+**Prerequisites**: Node.js 22.18.0+, Bun
 
 ```bash
 # Install dependencies and start development server
