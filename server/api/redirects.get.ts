@@ -2,16 +2,9 @@ import { z } from "zod"
 import { getCloudflareEnv, getKVNamespace, getCachedRedirectList } from "../utils/cloudflare"
 import { createApiError, isApiError } from "../utils/response"
 import { createTypedApiResponse } from "../utils/response-types"
+import { RedirectsResponseSchema } from "../utils/schemas"
 
 /// <reference types="../../worker-configuration" />
-
-const RedirectsResultSchema = z.object({
-  redirects: z
-    .array(z.string())
-    .min(0)
-    .max(100)
-    .describe("Array of available redirect slugs (truncated to 100 if more exist)")
-})
 
 export default defineEventHandler(async (event) => {
   try {
@@ -35,7 +28,7 @@ export default defineEventHandler(async (event) => {
       // Continue with empty array if KV lookup fails
     }
 
-    const redirectsData = RedirectsResultSchema.parse({
+    const redirectsData = RedirectsResponseSchema.parse({
       redirects: redirectSlugs
     })
 
@@ -43,7 +36,7 @@ export default defineEventHandler(async (event) => {
       result: redirectsData,
       message: "Redirects retrieved successfully",
       error: null,
-      resultSchema: RedirectsResultSchema
+      resultSchema: RedirectsResponseSchema
     })
   } catch (error) {
     console.error("Error in redirects endpoint:", error)
