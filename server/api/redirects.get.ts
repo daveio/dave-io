@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { getCloudflareEnv, getKVNamespace, getCachedRedirectList } from "../utils/cloudflare"
 import { createApiError, isApiError } from "../utils/response"
 import { createTypedApiResponse } from "../utils/response-types"
