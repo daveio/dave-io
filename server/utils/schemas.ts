@@ -112,6 +112,14 @@ export const WorkerInfoSchema = z.object({
   })
 })
 
+export const RedirectsResponseSchema = z.object({
+  redirects: z
+    .array(z.string())
+    .min(0)
+    .max(100)
+    .describe("Array of available redirect slugs (truncated to 100 if more exist)")
+})
+
 // Ping endpoint schema (new restructured format)
 export const PingResponseSchema = z.object({
   cloudflare: z.object({
@@ -146,12 +154,7 @@ export const PingResponseSchema = z.object({
     runtime: z.string(),
     server_side_rendering: z.boolean(),
     version: z.string()
-  }),
-  redirects: z
-    .array(z.string())
-    .min(0)
-    .max(100)
-    .describe("Array of available redirect slugs (truncated to 100 if more exist)")
+  })
 })
 
 // Enhanced ping endpoint schema (includes auth and headers)
@@ -370,6 +373,7 @@ export type AuthSuccessResponse = z.infer<typeof AuthSuccessResponseSchema>
 export type AuthIntrospection = z.infer<typeof AuthIntrospectionSchema>
 export type HealthCheck = z.infer<typeof HealthCheckSchema>
 export type WorkerInfo = z.infer<typeof WorkerInfoSchema>
+export type RedirectsResponse = z.infer<typeof RedirectsResponseSchema>
 export type PingResponse = z.infer<typeof PingResponseSchema>
 export type EnhancedPingResponse = z.infer<typeof EnhancedPingResponseSchema>
 export type UrlRedirect = z.infer<typeof UrlRedirectSchema>
