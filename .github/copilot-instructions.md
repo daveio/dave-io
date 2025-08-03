@@ -164,7 +164,7 @@ const tokenId = auth.payload?.jti
 
 - **Methods**: `Authorization: Bearer <jwt>` + `?token=<jwt>`
 - **JWT**: `{sub, iat, exp?, jti?}` | **Permissions**: `category:resource` (parent grants child) | **Categories**: `api`, `ai`, `dashboard`, `admin`, `*`
-- **Public**: `/api/ping`, `/go/{slug}`
+- **Public**: `/api/ping`, `/api/redirects`, `/go/{slug}`
 - **Protected**: `/api/ai/social` (`ai:social`+), `/api/ai/alt` (`ai:alt`+), `/api/ai/word` (`ai:word`+), `/api/token/{uuid}/*` (`api:token`+)
 
 ## Breaking Changes
@@ -190,6 +190,7 @@ const tokenId = auth.payload?.jti
 - **KV Export Output Path**: Added configurable output path for KV export command. Exports now default to timestamped files in current directory (e.g., `kv-20250730-120000.yaml`) instead of fixed `data/kv/` directory. Use `bun run kv export [output-path]` to specify custom file path.
 - **D1 Utility**: New `bin/d1.ts` utility script for D1 database operations. Supports listing, searching, and deleting entries from D1 tables. Also supports running custom SQL queries with parameters. This enables proper cleanup of test tokens and general D1 database management.
 - **Integration Test Improvements**: Enhanced `bin/api.ts` integration tests with proper image URL handling for local/remote modes, POST image file upload support, alt text validation for "duck" keyword (case-insensitive), and real token creation/revocation testing with automatic cleanup in both KV and D1.
+- **Redirect API Separation**: Created new `/api/redirects` endpoint to retrieve redirect slugs. Removed redirect data from `/api/ping` endpoint along with its caching logic. The ping endpoint now always returns fresh data, while the new redirects endpoint handles cached redirect lookups with the same 100-item truncation logic.
 
 ## Core
 

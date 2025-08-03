@@ -1,7 +1,7 @@
 import { getHeaders } from "h3"
 import { z } from "zod"
 import { extractToken, verifyJWT } from "../utils/auth"
-import { getCloudflareRequestInfo, getCloudflareEnv, getKVNamespace, getCachedRedirectList } from "../utils/cloudflare"
+import { getCloudflareRequestInfo, getCloudflareEnv } from "../utils/cloudflare"
 import { createTypedApiResponse } from "../utils/response-types"
 import { PingResponseSchema } from "../utils/schemas"
 
@@ -46,9 +46,8 @@ export default defineEventHandler(async (event) => {
   // Get Cloudflare request information
   const cfInfo = getCloudflareRequestInfo(event)
 
-  // Get KV namespace for redirect lookup
+  // Get Cloudflare environment
   const env = getCloudflareEnv(event)
-  const kv = getKVNamespace(env)
 
   // Try to extract and validate JWT token (optional)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -177,23 +176,6 @@ export default defineEventHandler(async (event) => {
     // Default to https if parsing fails
   }
 
-  // Fetch available redirect slugs from cached KV
-  let redirectSlugs: string[] = []
-  try {
-    const allRedirects = await getCachedRedirectList(kv)
-
-    // Handle case where more than 100 redirects exist
-    if (allRedirects.length > 100) {
-      console.error(`Warning: ${allRedirects.length} redirects found, truncating to 100 for API response`)
-      redirectSlugs = allRedirects.slice(0, 100)
-    } else {
-      redirectSlugs = allRedirects
-    }
-  } catch (error) {
-    console.error("Failed to fetch cached redirect slugs:", error)
-    // Continue with empty array if KV lookup fails
-  }
-
   // Create the new restructured response data
   const pingData = PingResponseSchema.parse({
     cloudflare: {
@@ -228,8 +210,7 @@ export default defineEventHandler(async (event) => {
       runtime: "cloudflare-workers",
       server_side_rendering: true,
       version: "1.0.0"
-    },
-    redirects: redirectSlugs
+    }
   })
 
   const _responseTime = Date.now() - startTime

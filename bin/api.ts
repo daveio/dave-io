@@ -478,18 +478,17 @@ class APITester {
 
     const pingResult = await this.makeRequest("/api/ping")
 
-    // Validate ping response structure
+    // Validate ping response structure (redirects field removed in DIO-140)
     if (pingResult.success && pingResult.response && typeof pingResult.response === "object") {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response = pingResult.response as any
 
-      // Check for expected structure
-      const hasValidStructure =
-        response.result && response.result.pingData && Array.isArray(response.result.pingData.redirects)
+      // Check for expected structure (without redirects field)
+      const hasValidStructure = response.result && response.result.pingData && response.result.pingData.cloudflare
 
       if (!hasValidStructure) {
         pingResult.success = false
-        pingResult.error = "Missing redirects field in ping response"
+        pingResult.error = "Missing expected fields in ping response"
       }
     }
 
@@ -519,25 +518,45 @@ class APITester {
     // Test ping endpoint (should be public and provide all system info)
     const pingResult = await this.makeRequest("/api/ping")
 
-    // Validate ping response structure and redirects field
+    // Validate ping response structure (redirects moved to separate endpoint in DIO-140)
     if (pingResult.success && pingResult.response && typeof pingResult.response === "object") {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response = pingResult.response as any
 
-      // Check for expected structure with redirects field
-      const hasValidStructure =
-        response.result && response.result.pingData && Array.isArray(response.result.pingData.redirects)
+      // Check for expected structure (without redirects field)
+      const hasValidStructure = response.result && response.result.pingData && response.result.pingData.cloudflare
 
       if (!hasValidStructure) {
         pingResult.success = false
-        pingResult.error = "Missing or invalid redirects field in ping response"
+        pingResult.error = "Missing expected fields in ping response"
       } else if (!this.scriptMode) {
-        // Log redirects count for validation
-        console.log(`   ✅ Found ${response.result.pingData.redirects.length} redirects in ping response`)
+        // Log successful ping validation
+        console.log(`   ✅ Ping response structure validated`)
       }
     }
 
     results.push(pingResult)
+
+    const redirectsResult = await this.makeRequest("/api/redirects")
+
+    // Validate redirects response structure
+    if (redirectsResult.success && redirectsResult.response && typeof redirectsResult.response === "object") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const response = redirectsResult.response as any
+
+      // Check for expected structure with redirects field
+      const hasValidStructure = response.result && Array.isArray(response.result.redirects)
+
+      if (!hasValidStructure) {
+        redirectsResult.success = false
+        redirectsResult.error = "Missing or invalid redirects field in redirects response"
+      } else if (!this.scriptMode) {
+        // Log redirects count for validation
+        console.log(`   ✅ Found ${response.result.redirects.length} redirects in redirects endpoint`)
+      }
+    }
+
+    results.push(redirectsResult)
 
     const passed = results.filter((r) => r.success).length
     const failed = results.length - passed
