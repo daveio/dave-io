@@ -6,9 +6,12 @@ import { RedirectsResponseSchema } from "../utils/schemas"
 
 /// <reference types="../../worker-configuration" />
 
-// Define the result schema for the redirects endpoint
 const RedirectsResultSchema = z.object({
-  redirects: z.array(z.string())
+  redirects: z
+    .array(z.string())
+    .min(0)
+    .max(100)
+    .describe("Array of available redirect slugs (truncated to 100 if more exist)")
 })
 
 export default defineEventHandler(async (event) => {
@@ -33,7 +36,7 @@ export default defineEventHandler(async (event) => {
       // Continue with empty array if KV lookup fails
     }
 
-    const redirectsData = RedirectsResponseSchema.parse({
+    const redirectsData = RedirectsResultSchema.parse({
       redirects: redirectSlugs
     })
 
