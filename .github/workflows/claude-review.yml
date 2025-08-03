@@ -33,6 +33,7 @@ jobs:
             - Test coverage
 
             Be constructive and helpful in your feedback.
+            You have access to a wide variety of tools which you can use to evaluate this pull request. You should NOT, however, make any changes without explicitly being asked to do so.
           if: |
             !contains(github.event.pull_request.title, '[skip-review]') &&
             !contains(github.event.pull_request.title, '[WIP]')
