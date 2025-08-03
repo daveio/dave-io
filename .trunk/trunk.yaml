@@ -80,6 +80,7 @@ lint:
         - gitleaks
       paths:
         - data/kv/*.yaml
+        - yaak/*.yaml
     - linters:
         - markdownlint
       paths:
