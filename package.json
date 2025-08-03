@@ -32,7 +32,7 @@
     "zod": "4.0.14"
   },
   "devDependencies": {
-    "@anthropic-ai/claude-code": "^1.0.65",
+    "@anthropic-ai/claude-code": "^1.0.67",
     "@catppuccin/daisyui": "^2.1.1",
     "@catppuccin/tailwindcss": "^1.0.0",
     "@eslint/js": "^9.32.0",
@@ -108,7 +108,6 @@
     "lint:format:trunk": "trunk fmt -a",
     "lint:trunk": "bun run trunk check -a --fix",
     "lint:types": "tsc --noEmit",
-    "postinstall": "bun run generate",
     "reset": "bun run-s reset:clean reset:packages",
     "reset:clean": "bun run rimraf .nuxt .output .wrangler *.d.ts",
     "reset:kv": "bun run kv import data/kv/_init.yaml --wipe --yes",
