@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
 
       // Handle case where more than 100 redirects exist
       if (allRedirects.length > 100) {
-        console.error(`Warning: ${allRedirects.length} redirects found, truncating to 100 for API response`)
+        console.warn(`${allRedirects.length} redirects found, truncating to 100 for API response`)
         redirectSlugs = allRedirects.slice(0, 100)
       } else {
         redirectSlugs = allRedirects
