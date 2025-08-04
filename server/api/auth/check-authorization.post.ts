@@ -2,11 +2,14 @@ import { getSupabaseAdmin, ensureServerOnly } from "../../utils/supabase-admin"
 import type { AuthorizationCheckRequest, AuthorizationCheckResponse, AuthorizedUser } from "../../../types/auth"
 import { z } from "zod"
 
-// Request validation schema
+// Request validation schema with E.164 phone number validation
 const requestSchema = z
   .object({
     email: z.email().optional(),
-    phone: z.number().optional()
+    phone: z
+      .string()
+      .regex(/^\+?[1-9]\d{1,14}$/, "Invalid phone number format (E.164)")
+      .optional()
   })
   .refine((data) => data.email || data.phone, {
     message: "Either email or phone must be provided"

@@ -22,6 +22,11 @@ export function getSupabaseAdmin(): SupabaseClient {
     throw new Error("Missing Supabase environment variables. Ensure SUPABASE_URL and SUPABASE_KEY are set.")
   }
 
+  // Validate that we're using a service role key (starts with sb_secret_)
+  if (!supabaseKey.startsWith("sb_secret_")) {
+    throw new Error("Invalid Supabase key format. Use service role key starting with sb_secret_")
+  }
+
   // Create admin client with API key
   // Disable auth features that are not needed for server-side operations
   adminClient = createClient(supabaseUrl, supabaseKey, {

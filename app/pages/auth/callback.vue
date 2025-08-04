@@ -15,13 +15,10 @@
 const route = useRoute()
 const loading = ref(true)
 const error = ref<string | null>(null)
+const supabase = useSupabaseClient()
 
 onMounted(async () => {
   try {
-    // The Supabase Nuxt module handles the callback automatically
-    // It will exchange the token and set the session
-    // We just need to wait for it to complete
-    
     // Check if there's an error in the URL
     const errorParam = route.query.error as string
     const errorDescription = route.query.error_description as string
@@ -32,23 +29,31 @@ onMounted(async () => {
       return
     }
 
-    // Give Supabase module time to process the callback
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    // Check if we have a user after callback processing
-    const user = useSupabaseUser()
-    
-    if (user.value) {
-      // User is authenticated, redirect to protected page
-      await navigateTo('/pandorica')
-    } else {
-      // No user found after callback
-      error.value = 'Authentication failed. Please try again.'
-    }
+    // Use onAuthStateChange to properly wait for authentication
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        // User is authenticated, clean up listener and redirect
+        authListener?.subscription.unsubscribe()
+        await navigateTo('/pandorica')
+      } else if (event === 'USER_UPDATED' && !session) {
+        // Authentication failed
+        error.value = 'Authentication failed. Please try again.'
+        loading.value = false
+        authListener?.subscription.unsubscribe()
+      }
+    })
+
+    // Set a timeout as a fallback
+    setTimeout(() => {
+      if (loading.value) {
+        error.value = 'Authentication timeout. Please try again.'
+        loading.value = false
+        authListener?.subscription.unsubscribe()
+      }
+    }, 5000)
   } catch (err) {
     console.error('Auth callback error:', err)
     error.value = 'An unexpected error occurred during authentication.'
-  } finally {
     loading.value = false
   }
 })
