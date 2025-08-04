@@ -5,8 +5,8 @@ import { z } from "zod"
 // Request validation schema
 const requestSchema = z
   .object({
-    email: z.string().email().optional(),
-    phone: z.string().optional()
+    email: z.email().optional(),
+    phone: z.number().optional()
   })
   .refine((data) => data.email || data.phone, {
     message: "Either email or phone must be provided"
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event): Promise<AuthorizationCheckRespo
     }
 
     const { data, error } = await supabase
-      .from("authorized_users")
+      .from("contacts")
       .select("id, email, phone, permissions, is_active, created_at, updated_at")
       .or(conditions.join(","))
       .eq("is_active", true)
