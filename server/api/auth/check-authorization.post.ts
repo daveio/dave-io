@@ -27,6 +27,7 @@ export default defineEventHandler(async (event) => {
   return {
     authorized: true,
     user: data,
+    // @ts-expect-error - data is not typed
     permissions: data.permissions
   }
 })
