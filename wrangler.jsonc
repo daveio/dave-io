@@ -138,7 +138,8 @@
     "CLOUDFLARE_ACCOUNT_ID": "def50674a738cee409235f71819973cf",
     "NUXT_PUBLIC_API_BASE_URL": "/api",
     // trunk-ignore(gitleaks/generic-api-key)
-    "CLOUDFLARE_SECRET_STORE_ID": "c38e38cf995f4db08a71c9b616169d33"
+    "CLOUDFLARE_SECRET_STORE_ID": "c38e38cf995f4db08a71c9b616169d33",
+    "SUPABASE_URL": "https://iqqrmfegpesjvpbpssct.supabase.co"
     // Secrets (encrypted) should be managed via `wrangler secret put` command
     // or .dev.vars file for local development
   },
