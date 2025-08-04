@@ -55,10 +55,12 @@ function logError(error: unknown, category: ErrorCategory, context: ErrorContext
 
   // Log categorized errors for debugging with enhanced formatting
   console.error(
-    `[ERROR:${category.toUpperCase()}] ${message}\n` +
-      `Request: ${context.method} ${context.url}\n` +
-      `Request ID: ${context.requestId}\n` +
-      `Details:`,
+    "[ERROR:%s] %s\nRequest: %s %s\nRequest ID: %s\nDetails:",
+    category.toUpperCase(),
+    message,
+    context.method,
+    context.url,
+    context.requestId,
     JSON.stringify(logEntry, null, 2)
   )
 

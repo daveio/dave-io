@@ -80,11 +80,10 @@ function validateApiResponse(response: ApiSuccessResponse | ApiErrorResponse): A
     }
 
     console.error(
-      `[VALIDATION_ERROR] Response validation failed\n` +
-        `Error: ${errorDetails.error_message}\n` +
-        `Type: ${errorDetails.error_type}\n` +
-        `Response OK: ${typeof errorDetails.response_structure === "object" ? errorDetails.response_structure?.ok : "N/A"}\n` +
-        `Details:`,
+      "[VALIDATION_ERROR] Response validation failed\nError: %s\nType: %s\nResponse OK: %s\nDetails:",
+      errorDetails.error_message,
+      errorDetails.error_type,
+      typeof errorDetails.response_structure === "object" ? errorDetails.response_structure?.ok : "N/A",
       JSON.stringify(errorDetails, null, 2)
     )
 
