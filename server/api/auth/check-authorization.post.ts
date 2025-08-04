@@ -28,21 +28,22 @@ export default defineEventHandler(async (event): Promise<AuthorizationCheckRespo
     // Use admin client for secure database access
     const supabase = getSupabaseAdmin()
 
-    // Build query conditions safely
-    const conditions: string[] = []
-    if (validatedData.email) {
-      conditions.push(`email.eq.${validatedData.email}`)
-    }
-    if (validatedData.phone) {
-      conditions.push(`phone.eq.${validatedData.phone}`)
-    }
-
-    const { data, error } = await supabase
+    // Build query using proper Supabase query builder methods
+    let query = supabase
       .from("contacts")
       .select("id, email, phone, permissions, is_active, created_at, updated_at")
-      .or(conditions.join(","))
       .eq("is_active", true)
-      .single()
+
+    // Add conditions safely using query builder
+    if (validatedData.email && validatedData.phone) {
+      query = query.or(`email.eq.${validatedData.email},phone.eq.${validatedData.phone}`)
+    } else if (validatedData.email) {
+      query = query.eq("email", validatedData.email)
+    } else if (validatedData.phone) {
+      query = query.eq("phone", validatedData.phone)
+    }
+
+    const { data, error } = await query.single()
 
     if (error || !data) {
       return {

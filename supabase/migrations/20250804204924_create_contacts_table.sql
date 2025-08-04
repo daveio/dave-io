@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS public.contacts (
     updated_at TIMESTAMPTZ DEFAULT NOW(),
 
     -- Ensure at least one identifier is provided
-    CONSTRAINT check_identifier CHECK (email IS NOT NULL OR phone IS NOT NULL)
+    CONSTRAINT check_identifier CHECK (email IS NOT NULL OR phone IS NOT NULL),
     CONSTRAINT check_phone_e164 CHECK (
         phone IS NULL OR phone ~ '^\+?[1-9]\d{1,14}$'
     )
@@ -22,6 +22,10 @@ CREATE TABLE IF NOT EXISTS public.contacts (
 CREATE INDEX IF NOT EXISTS idx_contacts_email ON public.contacts(email) WHERE email IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_contacts_phone ON public.contacts(phone) WHERE phone IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_contacts_active ON public.contacts(is_active) WHERE is_active = true;
+
+-- Create composite index for common query pattern
+CREATE INDEX IF NOT EXISTS idx_contacts_lookup ON public.contacts(email, phone, is_active) 
+  WHERE is_active = true;
 
 -- Create updated_at trigger
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()

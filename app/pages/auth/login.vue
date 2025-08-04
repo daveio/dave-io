@@ -38,15 +38,18 @@
       <div v-else-if="step === 'verify'">
         <p>Enter the 6-digit code sent to <strong>{{ email || phone }}</strong></p>
         <input 
+          ref="otpInput"
           v-model="otpCode" 
           type="text" 
           placeholder="000000" 
           maxlength="6" 
           pattern="[0-9]{6}"
           inputmode="numeric"
+          autocomplete="one-time-code"
           :disabled="loading"
           required
-          @input="clearError" 
+          @input="clearError"
+          @paste="handleOtpPaste" 
         >
         <div class="form-actions">
           <button type="button" :disabled="loading || otpCode.length !== 6" @click="verifyOTP">
@@ -73,11 +76,37 @@ const step = ref<'credentials' | 'verify'>('credentials')
 const loading = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
+const otpInput = ref<HTMLInputElement | null>(null)
 
 // Clear error message when user types
 const clearError = () => {
   errorMessage.value = ''
 }
+
+// Handle OTP paste for better mobile experience
+const handleOtpPaste = (event: ClipboardEvent) => {
+  const pastedText = event.clipboardData?.getData('text') || ''
+  const cleaned = pastedText.replace(/\D/g, '').slice(0, 6)
+  if (cleaned.length === 6) {
+    event.preventDefault()
+    otpCode.value = cleaned
+    // Auto-submit if valid 6-digit code is pasted
+    nextTick(() => {
+      if (otpCode.value.length === 6) {
+        verifyOTP()
+      }
+    })
+  }
+}
+
+// Auto-focus OTP input when switching to verify step
+watch(step, (newStep) => {
+  if (newStep === 'verify') {
+    nextTick(() => {
+      otpInput.value?.focus()
+    })
+  }
+})
 
 // Reset form to initial state
 const resetForm = () => {

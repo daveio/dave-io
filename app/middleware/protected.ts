@@ -119,6 +119,11 @@ export default defineNuxtRouteMiddleware(async (_to, _from) => {
 })
 
 // Export helper to clear cache when needed (e.g., on logout)
+/**
+ * Clears the authentication cache for a specific user or all users
+ *
+ * @param userIdentifier - Optional email or phone to clear specific user cache
+ */
 export const clearAuthCache = (userIdentifier?: string) => {
   if (userIdentifier) {
     authCache.delete(userIdentifier)
