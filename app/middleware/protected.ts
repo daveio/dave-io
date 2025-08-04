@@ -1,4 +1,14 @@
 import type { AuthorizationCheckResponse } from "../../types/auth"
+import type { User } from "@supabase/supabase-js"
+
+// Type for user objects used in this middleware
+type MiddlewareUser =
+  | Pick<User, "id" | "email" | "phone">
+  | {
+      id?: string
+      email?: string | null
+      phone?: string | null
+    }
 
 // Cache duration in milliseconds (5 minutes)
 const CACHE_DURATION = 5 * 60 * 1000
@@ -37,7 +47,7 @@ let lastCleanup = Date.now()
  * Creates a consistent cache key based on user ID to prevent collision risks
  * Falls back to email/phone only if ID is not available (edge case)
  */
-function createSecureCacheKey(user: any): string {
+function createSecureCacheKey(user: MiddlewareUser): string {
   // Always prioritize user ID for consistency
   if (user.id) {
     return `user:${user.id}`
@@ -211,7 +221,7 @@ export default defineNuxtRouteMiddleware(async (_to, _from) => {
  *
  * @param user - Optional user object to clear specific user cache
  */
-export const clearAuthCache = (user?: any) => {
+export const clearAuthCache = (user?: MiddlewareUser) => {
   if (user) {
     const cacheKey = createSecureCacheKey(user)
     authCache.delete(cacheKey)
