@@ -14,8 +14,17 @@ export default defineNuxtConfig({
     "@nuxtjs/seo",
     "@nuxtjs/tailwindcss",
     "@pinia/nuxt",
-    "nitro-cloudflare-dev"
+    "nitro-cloudflare-dev",
+    "@nuxtjs/supabase"
   ],
+  supabase: {
+    useSsrCookies: true, // Essential for server-side auth
+    redirectOptions: {
+      login: "/auth/login",
+      callback: "/auth/callback",
+      exclude: ["/api/*", "/go/*", "/", "/api", "/gender"]
+    }
+  },
   devtools: { enabled: true },
   colorMode: {
     preference: "dark",
