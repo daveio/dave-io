@@ -5,7 +5,7 @@
 CREATE TABLE IF NOT EXISTS public.contacts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email TEXT UNIQUE,
-    phone BIGINT UNIQUE,
+    phone TEXT UNIQUE,
     permissions JSONB DEFAULT '{}',
     is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -13,6 +13,9 @@ CREATE TABLE IF NOT EXISTS public.contacts (
 
     -- Ensure at least one identifier is provided
     CONSTRAINT check_identifier CHECK (email IS NOT NULL OR phone IS NOT NULL)
+    CONSTRAINT check_phone_e164 CHECK (
+        phone IS NULL OR phone ~ '^\+?[1-9]\d{1,14}$'
+    )
 );
 
 -- Create indexes for faster lookups
@@ -48,7 +51,7 @@ CREATE POLICY "Service role can manage authorized users" ON public.contacts
 -- Add comment to table
 COMMENT ON TABLE public.contacts IS 'Whitelist of users authorized to access protected routes';
 COMMENT ON COLUMN public.contacts.email IS 'User email address for authentication';
-COMMENT ON COLUMN public.contacts.phone IS 'User phone number for authentication';
+COMMENT ON COLUMN public.contacts.phone IS 'User phone number in E.164 format for authentication';
 COMMENT ON COLUMN public.contacts.permissions IS 'JSON object containing user permissions';
 COMMENT ON COLUMN public.contacts.is_active IS 'Whether the user authorization is currently active';
 
