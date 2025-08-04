@@ -4,7 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js"
 let adminClient: SupabaseClient | null = null
 
 /**
- * Creates a Supabase client with service role privileges for admin operations
+ * Creates a Supabase client with API key for admin operations
  * This should ONLY be used in server-side code
  *
  * @returns Supabase client with admin privileges
@@ -16,15 +16,15 @@ export function getSupabaseAdmin(): SupabaseClient {
   }
 
   const supabaseUrl = process.env.SUPABASE_URL
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY
+  const supabaseKey = process.env.SUPABASE_KEY
 
-  if (!supabaseUrl || !supabaseServiceKey) {
-    throw new Error("Missing Supabase environment variables. Ensure SUPABASE_URL and SUPABASE_SERVICE_KEY are set.")
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error("Missing Supabase environment variables. Ensure SUPABASE_URL and SUPABASE_KEY are set.")
   }
 
-  // Create admin client with service role key
+  // Create admin client with API key
   // Disable auth features that are not needed for server-side operations
-  adminClient = createClient(supabaseUrl, supabaseServiceKey, {
+  adminClient = createClient(supabaseUrl, supabaseKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
