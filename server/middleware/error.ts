@@ -40,16 +40,30 @@ function categorizeError(error: unknown, _context: ErrorContext): ErrorCategory 
 
 function logError(error: unknown, category: ErrorCategory, context: ErrorContext) {
   const message = error instanceof Error ? error.message : String(error)
+  const stack = error instanceof Error ? error.stack : undefined
   const logEntry = {
     level: "error",
     category,
     message,
+    stack,
     context,
-    timestamp: context.timestamp
+    timestamp: context.timestamp,
+    // Add additional debugging info
+    error_type: error?.constructor?.name || typeof error,
+    node_env: process.env.NODE_ENV
   }
 
-  // Log categorized errors for debugging
-  console.error("[ERROR:%s]", category.toUpperCase(), JSON.stringify(logEntry, null, 2))
+  // Log categorized errors for debugging with enhanced formatting
+  console.error(
+    `[ERROR:${category.toUpperCase()}] ${message}\n` +
+      `Request: ${context.method} ${context.url}\n` +
+      `Request ID: ${context.requestId}\n` +
+      `Details:`,
+    JSON.stringify(logEntry, null, 2)
+  )
+
+  // Also log to structured format for potential log aggregation
+  console.error("STRUCTURED_ERROR:", JSON.stringify(logEntry))
 }
 
 export default defineEventHandler(async (event) => {
