@@ -1,14 +1,27 @@
 {
-  "go.goroot": "${workspaceFolder}/.vscode/mise-tools/goRoot",
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
   "debug.javascript.defaultRuntimeExecutable": {
     "pwa-node": "${workspaceFolder}/.vscode/mise-tools/node"
   },
-  "python.defaultInterpreterPath": "${workspaceFolder}/.vscode/mise-tools/python",
-  "go.alternateTools": {
-    "go": "${workspaceFolder}/.vscode/mise-tools/go",
-    "gopls": "/Users/dave/.local/share/mise/shims/gopls"
-  },
-  "workbench.colorCustomizations": {},
+  "deno.enablePaths": ["supabase/functions"],
+  "deno.lint": true,
+  "deno.unstable": [
+    "bare-node-builtins",
+    "byonm",
+    "sloppy-imports",
+    "unsafe-proto",
+    "webgpu",
+    "broadcast-channel",
+    "worker-options",
+    "cron",
+    "kv",
+    "ffi",
+    "fs",
+    "http",
+    "net"
+  ],
   "files.exclude": {
     ".cursor": true,
     ".nuxt": true,
@@ -17,5 +30,14 @@
     ".wrangler": true,
     "node_modules": true,
     "worker-configuration.d.ts": true
-  }
+  },
+  "go.alternateTools": {
+    "go": "${workspaceFolder}/.vscode/mise-tools/go",
+    "gopls": "/Users/dave/.local/share/mise/shims/gopls"
+  },
+  "go.goroot": "${workspaceFolder}/.vscode/mise-tools/goRoot",
+  "python.defaultInterpreterPath": "${workspaceFolder}/.vscode/mise-tools/python",
+  "workbench.colorCustomizations": {},
+  "deno.path": "/Users/dave/.local/share/mise/shims/deno",
+  "deno.enable": true
 }
