@@ -41,7 +41,7 @@ import BackToHomeButton from "../components/ui/BackToHomeButton.vue"
 
 // Apply the access control middleware to this page
 definePageMeta({
-  middleware: 'auth'
+  middleware: 'protection'
 })
 
 usePageSetup({

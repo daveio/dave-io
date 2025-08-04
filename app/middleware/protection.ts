@@ -3,6 +3,7 @@
  *
  * Simple middleware that runs a conditional check to decide whether to allow a page to render.
  * Currently uses a simple `true` check but designed to be expanded for real access control logic.
+ * 'auth' is taken over by Supabase apparently, so we call ourselves 'protection'.
  *
  * @example
  * // Apply to a specific page:
