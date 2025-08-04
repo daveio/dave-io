@@ -1,10 +1,4 @@
 {
-  "[typescript]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
-  },
-  "debug.javascript.defaultRuntimeExecutable": {
-    "pwa-node": "${workspaceFolder}/.vscode/mise-tools/node"
-  },
   "deno.enablePaths": ["supabase/functions"],
   "deno.lint": true,
   "deno.unstable": [
@@ -31,13 +25,6 @@
     "node_modules": true,
     "worker-configuration.d.ts": true
   },
-  "go.alternateTools": {
-    "go": "${workspaceFolder}/.vscode/mise-tools/go",
-    "gopls": "/Users/dave/.local/share/mise/shims/gopls"
-  },
-  "go.goroot": "${workspaceFolder}/.vscode/mise-tools/goRoot",
-  "python.defaultInterpreterPath": "${workspaceFolder}/.vscode/mise-tools/python",
-  "workbench.colorCustomizations": {},
   "deno.path": "/Users/dave/.local/share/mise/shims/deno",
   "deno.enable": true
 }
