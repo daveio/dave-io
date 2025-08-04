@@ -6,7 +6,7 @@
         {{ loggingOut ? 'Logging out...' : 'Logout' }}
       </button>
     </div>
-    
+
     <div class="user-info">
       <h2>Welcome!</h2>
       <p>You are logged in as: <strong>{{ user?.email || user?.phone }}</strong></p>
@@ -35,21 +35,20 @@ const loggingOut = ref(false)
 // Logout function with cache clearing
 async function logout() {
   loggingOut.value = true
-  
+
   try {
     // Clear the auth cache for this user
-    const userIdentifier = user.value?.email || user.value?.phone || user.value?.id
-    if (userIdentifier) {
-      clearAuthCache(userIdentifier)
+    if (user.value) {
+      clearAuthCache(user.value)
     }
-    
+
     // Sign out from Supabase
     const { error } = await supabase.auth.signOut()
-    
+
     if (error) {
       console.error('Logout error:', error)
     }
-    
+
     // Always redirect to login page
     await navigateTo('/auth/login')
   } catch (error) {
@@ -143,27 +142,28 @@ h1 {
   .pandorica-container {
     color: #e5e7eb;
   }
-  
+
   .header {
     border-bottom-color: #374151;
   }
-  
-  h1, .user-info h2 {
+
+  h1,
+  .user-info h2 {
     color: #f3f4f6;
   }
-  
+
   .user-info {
     background-color: #1f2937;
   }
-  
+
   .user-info p {
     color: #9ca3af;
   }
-  
+
   .user-id {
     color: #6b7280;
   }
-  
+
   .content {
     background-color: #111827;
     border-color: #374151;

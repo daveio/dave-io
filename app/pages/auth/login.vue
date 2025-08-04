@@ -25,6 +25,7 @@
 
       <div v-else-if="step === 'verify'">
         <p>Enter the 6-digit code sent to <strong>{{ email || phone }}</strong></p>
+        <!-- eslint-disable-next-line vue/first-attribute-linebreak -->
         <input ref="otpInput" v-model="otpCode" type="text" placeholder="000000" maxlength="6" pattern="[0-9]{6}"
           inputmode="numeric" autocomplete="one-time-code" :disabled="loading" required @input="clearError"
           @paste="handleOtpPaste">
@@ -94,7 +95,7 @@ const resetForm = () => {
 }
 
 // Safely normalize any error to our expected format
-const normalizeAuthError = (error: any): SupabaseAuthError => {
+const normalizeAuthError = (error: SupabaseAuthError): SupabaseAuthError => {
   // Handle null/undefined errors
   if (!error) {
     return { message: 'An unexpected error occurred' }
