@@ -44,18 +44,19 @@ function mockH3Event(headers: Record<string, string> = {}, query: Record<string,
     $fetch: {} as unknown,
     toJSON: () => ({})
   } as unknown as H3Event
-}
-// Mock getHeader function
-;(global as unknown as { getHeader: (event: H3Event, name: string) => string | undefined }).getHeader = (
-  event: H3Event,
-  name: string
-) => {
-  return (event as unknown as { node: { req: { headers: Record<string, string> } } })?.node?.req?.headers?.[
-    name.toLowerCase()
-  ]
-}
+} // Mock getHeader function
 
-// Mock getQuery function
+;(
+  global as unknown as {
+    getHeader: (event: H3Event, name: string) => string | undefined
+  }
+).getHeader = (event: H3Event, name: string) => {
+  return (
+    event as unknown as {
+      node: { req: { headers: Record<string, string> } }
+    }
+  )?.node?.req?.headers?.[name.toLowerCase()]
+} // Mock getQuery function
 ;(global as unknown as { getQuery: (event: H3Event) => Record<string, unknown> }).getQuery = (event: H3Event) => {
   return (event as unknown as { query: Record<string, unknown> })?.query || {}
 }
@@ -275,7 +276,11 @@ describe("Authentication System", () => {
           }
         }
       }
-      ;(global as typeof globalThis & { useRuntimeConfig: () => { apiJwtSecret: string } }).useRuntimeConfig = () => ({
+      ;(
+        global as typeof globalThis & {
+          useRuntimeConfig: () => { apiJwtSecret: string }
+        }
+      ).useRuntimeConfig = () => ({
         apiJwtSecret: configSecret
       })
 
