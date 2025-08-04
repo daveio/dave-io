@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <h1>Protected Access</h1>
-    
+
     <!-- Error Display -->
     <div v-if="errorMessage" class="error-message">
       <p>{{ errorMessage }}</p>
@@ -15,20 +15,8 @@
 
     <form @submit.prevent="handleLogin">
       <div v-if="step === 'credentials'">
-        <input 
-          v-model="email" 
-          type="email" 
-          placeholder="Email address" 
-          :disabled="loading"
-          @input="clearError"
-        >
-        <input 
-          v-model="phone" 
-          type="tel" 
-          placeholder="Phone number (optional)" 
-          :disabled="loading"
-          @input="clearError"
-        >
+        <input v-model="email" type="email" placeholder="Email address" :disabled="loading" @input="clearError">
+        <input v-model="phone" type="tel" placeholder="Phone number (optional)" :disabled="loading" @input="clearError">
         <p class="form-hint">Enter either email or phone number</p>
         <button type="submit" :disabled="loading || (!email && !phone)">
           {{ loading ? 'Sending...' : 'Send OTP Code' }}
@@ -37,20 +25,9 @@
 
       <div v-else-if="step === 'verify'">
         <p>Enter the 6-digit code sent to <strong>{{ email || phone }}</strong></p>
-        <input 
-          ref="otpInput"
-          v-model="otpCode" 
-          type="text" 
-          placeholder="000000" 
-          maxlength="6" 
-          pattern="[0-9]{6}"
-          inputmode="numeric"
-          autocomplete="one-time-code"
-          :disabled="loading"
-          required
-          @input="clearError"
-          @paste="handleOtpPaste" 
-        >
+        <input ref="otpInput" v-model="otpCode" type="text" placeholder="000000" maxlength="6" pattern="[0-9]{6}"
+          inputmode="numeric" autocomplete="one-time-code" :disabled="loading" required @input="clearError"
+          @paste="handleOtpPaste">
         <div class="form-actions">
           <button type="button" :disabled="loading || otpCode.length !== 6" @click="verifyOTP">
             {{ loading ? 'Verifying...' : 'Verify Code' }}
@@ -116,6 +93,31 @@ const resetForm = () => {
   successMessage.value = ''
 }
 
+// Safely normalize any error to our expected format
+const normalizeAuthError = (error: any): SupabaseAuthError => {
+  // Handle null/undefined errors
+  if (!error) {
+    return { message: 'An unexpected error occurred' }
+  }
+
+  // If error is already in correct format, use it
+  if (typeof error === 'object' && typeof error.message === 'string') {
+    return {
+      message: error.message,
+      status: typeof error.status === 'number' ? error.status : undefined,
+      code: typeof error.code === 'string' ? error.code : undefined
+    }
+  }
+
+  // If error is a string, treat it as the message
+  if (typeof error === 'string') {
+    return { message: error }
+  }
+
+  // Fallback for any other error type
+  return { message: error?.toString() || 'An unexpected error occurred' }
+}
+
 // Handle user-friendly error messages
 const getErrorMessage = (error: SupabaseAuthError): string => {
   if (error.message.includes('User not found')) {
@@ -133,7 +135,7 @@ const getErrorMessage = (error: SupabaseAuthError): string => {
   if (error.message.includes('Token has expired')) {
     return 'Verification code has expired. Please request a new one.'
   }
-  
+
   // Generic error fallback
   return error.message || 'An unexpected error occurred. Please try again.'
 }
@@ -150,8 +152,8 @@ async function handleLogin() {
     }
 
     // Prepare credentials
-    const credentials = email.value 
-      ? { email: email.value.trim() } 
+    const credentials = email.value
+      ? { email: email.value.trim() }
       : { phone: phone.value.trim() }
 
     const { error } = await supabase.auth.signInWithOtp({
@@ -162,19 +164,19 @@ async function handleLogin() {
     })
 
     if (error) {
-      errorMessage.value = getErrorMessage(error as SupabaseAuthError)
+      errorMessage.value = getErrorMessage(normalizeAuthError(error))
       return
     }
 
     // Success - move to verification step
     successMessage.value = 'Verification code sent! Check your email/SMS.'
     step.value = 'verify'
-    
+
     // Clear success message after 5 seconds
     setTimeout(() => {
       successMessage.value = ''
     }, 5000)
-    
+
   } catch (error) {
     console.error('Login error:', error)
     errorMessage.value = 'An unexpected error occurred. Please try again later.'
@@ -199,16 +201,16 @@ async function verifyOTP() {
       : { phone: phone.value.trim(), token: otpCode.value, type: 'sms' as const }
 
     const { error } = await supabase.auth.verifyOtp(credentials)
-    
+
     if (error) {
-      errorMessage.value = getErrorMessage(error as SupabaseAuthError)
+      errorMessage.value = getErrorMessage(normalizeAuthError(error))
       return
     }
 
     // Success - redirect to protected page
     successMessage.value = 'Login successful! Redirecting...'
     await navigateTo("/pandorica")
-    
+
   } catch (error) {
     console.error('Verification error:', error)
     errorMessage.value = 'An unexpected error occurred. Please try again later.'
@@ -336,23 +338,23 @@ button:disabled {
   .login-container {
     color: #e5e7eb;
   }
-  
+
   input {
     background-color: #374151;
     border-color: #4b5563;
     color: #e5e7eb;
   }
-  
+
   input:disabled {
     background-color: #1f2937;
   }
-  
+
   .error-message {
     background-color: #7f1d1d;
     border-color: #991b1b;
     color: #fee2e2;
   }
-  
+
   .success-message {
     background-color: #14532d;
     border-color: #166534;
