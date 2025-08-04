@@ -60,36 +60,8 @@ function validateApiResponse(response: ApiSuccessResponse | ApiErrorResponse): A
       return result.data
     }
   } catch (error) {
-    // Enhanced logging for validation errors
-    const errorDetails = {
-      error_message: error instanceof Error ? error.message : String(error),
-      error_type: error?.constructor?.name || typeof error,
-      stack_trace: error instanceof Error ? error.stack : undefined,
-      response_structure: response
-        ? {
-            ok: response.ok,
-            has_result: "result" in response,
-            has_error: "error" in response,
-            has_message: "message" in response,
-            has_status: "status" in response,
-            timestamp: "timestamp" in response ? response.timestamp : undefined
-          }
-        : "response_undefined",
-      node_env: process.env.NODE_ENV,
-      timestamp: new Date().toISOString()
-    }
-
-    console.error(
-      "[VALIDATION_ERROR] Response validation failed\nError: %s\nType: %s\nResponse OK: %s\nDetails:",
-      errorDetails.error_message,
-      errorDetails.error_type,
-      typeof errorDetails.response_structure === "object" ? errorDetails.response_structure?.ok : "N/A",
-      JSON.stringify(errorDetails, null, 2)
-    )
-
-    // Also log structured for aggregation
-    console.error("STRUCTURED_VALIDATION_ERROR:", JSON.stringify(errorDetails))
-
+    // Log the validation error but don't expose details to client
+    console.error("Response validation error:", error)
     // Throw a generic error that will be caught by the error handler
     throw createError({
       statusCode: 500,

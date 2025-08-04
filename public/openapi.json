@@ -1108,6 +1108,954 @@
     "parameters": {}
   },
   "paths": {
+    "/api/ping": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Get ping",
+        "description": "System health and information",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cloudflare": {
+                      "type": "object",
+                      "properties": {
+                        "connectingIP": {
+                          "type": "string"
+                        },
+                        "country": {
+                          "type": "object",
+                          "properties": {
+                            "ip": {
+                              "type": "string"
+                            },
+                            "primary": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["ip", "primary"]
+                        },
+                        "datacentre": {
+                          "type": "string"
+                        },
+                        "ray": {
+                          "type": "string"
+                        },
+                        "request": {
+                          "type": "object",
+                          "properties": {
+                            "agent": {
+                              "type": "string"
+                            },
+                            "host": {
+                              "type": "string"
+                            },
+                            "method": {
+                              "type": "string"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "proto": {
+                              "type": "object",
+                              "properties": {
+                                "forward": {
+                                  "type": "string"
+                                },
+                                "request": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": ["forward", "request"]
+                            },
+                            "version": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["agent", "host", "method", "path", "proto", "version"]
+                        }
+                      },
+                      "required": ["connectingIP", "country", "datacentre", "ray", "request"]
+                    },
+                    "worker": {
+                      "type": "object",
+                      "properties": {
+                        "edge_functions": {
+                          "type": "boolean"
+                        },
+                        "environment": {
+                          "type": "string"
+                        },
+                        "limits": {
+                          "type": "object",
+                          "properties": {
+                            "cpu_time": {
+                              "type": "string"
+                            },
+                            "memory": {
+                              "type": "string"
+                            },
+                            "request_timeout": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["cpu_time", "memory", "request_timeout"]
+                        },
+                        "preset": {
+                          "type": "string"
+                        },
+                        "runtime": {
+                          "type": "string"
+                        },
+                        "server_side_rendering": {
+                          "type": "boolean"
+                        },
+                        "version": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "edge_functions",
+                        "environment",
+                        "limits",
+                        "preset",
+                        "runtime",
+                        "server_side_rendering",
+                        "version"
+                      ]
+                    }
+                  },
+                  "required": ["cloudflare", "worker"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/word": {
+      "post": {
+        "tags": ["AI"],
+        "summary": "Create/Update word",
+        "description": "POST operation for /api/ai/word",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "options": [{}, {}]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [true]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "message", "error", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/alt": {
+      "post": {
+        "tags": ["AI"],
+        "summary": "Create/Update alt",
+        "description": "Generate descriptive alt-text for images using AI",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [true]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "message", "error", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["AI"],
+        "summary": "Get alt",
+        "description": "Generate descriptive alt-text for images using AI",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [true]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "message", "error", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/social": {
+      "post": {
+        "tags": ["AI"],
+        "summary": "Create/Update social",
+        "description": "POST operation for /api/ai/social",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [true]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "message", "error", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/redirects": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Get redirects",
+        "description": "GET operation for /api/redirects",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "redirects": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "minItems": 0,
+                      "maxItems": 100,
+                      "description": "Array of available redirect slugs (truncated to 100 if more exist)"
+                    }
+                  },
+                  "required": ["redirects"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/token/{uuid}": {
       "get": {
         "tags": ["Token"],
@@ -1137,6 +2085,181 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [true]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "message", "error", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/token/{uuid}/revoke": {
+      "post": {
+        "tags": ["Token"],
+        "summary": "Create/Update revoke",
+        "description": "Token management operations",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -1607,492 +2730,6 @@
         }
       }
     },
-    "/api/token/{uuid}/revoke": {
-      "post": {
-        "tags": ["Token"],
-        "summary": "Create/Update revoke",
-        "description": "Token management operations",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "path",
-            "required": true,
-            "description": "UUID identifier",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Insufficient permissions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/check-authorization": {
-      "post": {
-        "tags": ["System"],
-        "summary": "Create/Update check-authorization",
-        "description": "POST operation for /api/auth/check-authorization",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/redirects": {
-      "get": {
-        "tags": ["System"],
-        "summary": "Get redirects",
-        "description": "GET operation for /api/redirects",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {}
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "redirects": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "minItems": 0,
-                      "maxItems": 100,
-                      "description": "Array of available redirect slugs (truncated to 100 if more exist)"
-                    }
-                  },
-                  "required": ["redirects"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/docs": {
-      "get": {
-        "tags": ["Documentation"],
-        "summary": "Get docs",
-        "description": "API documentation",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/dashboard/{name}": {
       "get": {
         "tags": ["Dashboard"],
@@ -2217,199 +2854,11 @@
         }
       }
     },
-    "/api/ping": {
+    "/api/docs": {
       "get": {
-        "tags": ["System"],
-        "summary": "Get ping",
-        "description": "System health and information",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {}
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "cloudflare": {
-                      "type": "object",
-                      "properties": {
-                        "connectingIP": {
-                          "type": "string"
-                        },
-                        "country": {
-                          "type": "object",
-                          "properties": {
-                            "ip": {
-                              "type": "string"
-                            },
-                            "primary": {
-                              "type": "string"
-                            }
-                          },
-                          "required": ["ip", "primary"]
-                        },
-                        "datacentre": {
-                          "type": "string"
-                        },
-                        "ray": {
-                          "type": "string"
-                        },
-                        "request": {
-                          "type": "object",
-                          "properties": {
-                            "agent": {
-                              "type": "string"
-                            },
-                            "host": {
-                              "type": "string"
-                            },
-                            "method": {
-                              "type": "string"
-                            },
-                            "path": {
-                              "type": "string"
-                            },
-                            "proto": {
-                              "type": "object",
-                              "properties": {
-                                "forward": {
-                                  "type": "string"
-                                },
-                                "request": {
-                                  "type": "string"
-                                }
-                              },
-                              "required": ["forward", "request"]
-                            },
-                            "version": {
-                              "type": "string"
-                            }
-                          },
-                          "required": ["agent", "host", "method", "path", "proto", "version"]
-                        }
-                      },
-                      "required": ["connectingIP", "country", "datacentre", "ray", "request"]
-                    },
-                    "worker": {
-                      "type": "object",
-                      "properties": {
-                        "edge_functions": {
-                          "type": "boolean"
-                        },
-                        "environment": {
-                          "type": "string"
-                        },
-                        "limits": {
-                          "type": "object",
-                          "properties": {
-                            "cpu_time": {
-                              "type": "string"
-                            },
-                            "memory": {
-                              "type": "string"
-                            },
-                            "request_timeout": {
-                              "type": "string"
-                            }
-                          },
-                          "required": ["cpu_time", "memory", "request_timeout"]
-                        },
-                        "preset": {
-                          "type": "string"
-                        },
-                        "runtime": {
-                          "type": "string"
-                        },
-                        "server_side_rendering": {
-                          "type": "boolean"
-                        },
-                        "version": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "edge_functions",
-                        "environment",
-                        "limits",
-                        "preset",
-                        "runtime",
-                        "server_side_rendering",
-                        "version"
-                      ]
-                    }
-                  },
-                  "required": ["cloudflare", "worker"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/ai/alt": {
-      "post": {
-        "tags": ["AI"],
-        "summary": "Create/Update alt",
-        "description": "Generate descriptive alt-text for images using AI",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
+        "tags": ["Documentation"],
+        "summary": "Get docs",
+        "description": "API documentation",
         "responses": {
           "200": {
             "description": "Success",
@@ -2471,568 +2920,6 @@
           },
           "400": {
             "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Insufficient permissions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "tags": ["AI"],
-        "summary": "Get alt",
-        "description": "Generate descriptive alt-text for images using AI",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {}
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Insufficient permissions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/ai/word": {
-      "post": {
-        "tags": ["AI"],
-        "summary": "Create/Update word",
-        "description": "POST operation for /api/ai/word",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "options": [{}, {}]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Insufficient permissions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/ai/social": {
-      "post": {
-        "tags": ["AI"],
-        "summary": "Create/Update social",
-        "description": "POST operation for /api/ai/social",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {}
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Insufficient permissions",
             "content": {
               "application/json": {
                 "schema": {
