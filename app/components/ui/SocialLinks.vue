@@ -1,7 +1,8 @@
 <template>
   <div class="mb-4">
     <div
-      class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto max-md:grid-cols-[0.7fr_1.2fr] max-md:text-sm max-md:max-w-full">
+      class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto max-md:grid-cols-[0.7fr_1.2fr] max-md:text-sm max-md:max-w-full"
+    >
       <!-- Bluesky -->
       <div class="contents">
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
@@ -19,8 +20,10 @@
           Dreamwidth
         </span>
         <NuxtLink
-href="/go/dreamwidth" class="break-all link-url"
-          @click="handleLinkClick('Dreamwidth', '/go/dreamwidth')">
+          href="/go/dreamwidth"
+          class="break-all link-url"
+          @click="handleLinkClick('Dreamwidth', '/go/dreamwidth')"
+        >
           dave.io/go/dreamwidth
         </NuxtLink>
       </div>
@@ -51,8 +54,10 @@ href="/go/dreamwidth" class="break-all link-url"
           Instagram
         </span>
         <NuxtLink
-href="/go/instagram" class="break-all link-url"
-          @click="handleLinkClick('Instagram', '/go/instagram')">
+          href="/go/instagram"
+          class="break-all link-url"
+          @click="handleLinkClick('Instagram', '/go/instagram')"
+        >
           dave.io/go/instagram
         </NuxtLink>
       </div>
@@ -83,8 +88,10 @@ href="/go/instagram" class="break-all link-url"
           Pillowfort
         </span>
         <NuxtLink
-href="/go/pillowfort" class="break-all link-url"
-          @click="handleLinkClick('Pillowfort', '/go/pillowfort')">
+          href="/go/pillowfort"
+          class="break-all link-url"
+          @click="handleLinkClick('Pillowfort', '/go/pillowfort')"
+        >
           dave.io/go/pillowfort
         </NuxtLink>
       </div>
@@ -134,6 +141,5 @@ href="/go/pillowfort" class="break-all link-url"
 // Import page logging functionality
 
 // Track link clicks
-const handleLinkClick = (_service: string, _url: string) => {
-}
+const handleLinkClick = (_service: string, _url: string) => {}
 </script>
