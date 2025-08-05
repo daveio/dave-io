@@ -1,3 +1,5 @@
+# Pandorica Implementation Guide
+
 > [!NOTE]
 > This guide outlines how to implement Supabase Auth with email OTP to protect the `/pandorica` frontend route in the dave.io application.
 
@@ -64,7 +66,7 @@ bun run secrets sync
 wrangler secrets-store secret create <STORE_ID> --name SUPABASE_SECRET_KEY --scopes workers --remote
 ```
 
-#### Configure bindings in `wrangler.jsonc`:
+#### Configure bindings in `wrangler.jsonc`
 
 ```jsonc
 {
@@ -84,7 +86,7 @@ wrangler secrets-store secret create <STORE_ID> --name SUPABASE_SECRET_KEY --sco
 }
 ```
 
-#### Note on Nuxt Configuration:
+#### Note on Nuxt Configuration
 
 Since Cloudflare Workers don't populate `process.env` with bindings, we won't use Nuxt's `runtimeConfig`. Instead, we'll access the values directly from the Cloudflare context in our code.
 
