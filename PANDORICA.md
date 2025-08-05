@@ -30,13 +30,16 @@ The implementation will:
 
 ### 1. Environment Configuration
 
-Add Supabase credentials to environment variables:
+Add Supabase credentials to environment variables (using new-style keys):
 
 ```bash
 # .env
 SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key  # For server-side operations
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_your-key  # For client-side operations
+SUPABASE_SECRET_KEY=sb_secret_your-key  # For server-side operations
+
+# Note: We're using the new-style Supabase keys (Publishable/Secret) instead of
+# the deprecated JWT-based keys (anon/service_role) for better security and flexibility
 ```
 
 Update `nuxt.config.ts`:
@@ -46,11 +49,11 @@ export default defineNuxtConfig({
   // ... existing config
   runtimeConfig: {
     // Server-side only
-    supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    supabaseSecretKey: process.env.SUPABASE_SECRET_KEY,
     public: {
       // Client-side accessible
       supabaseUrl: process.env.SUPABASE_URL,
-      supabaseAnonKey: process.env.SUPABASE_ANON_KEY
+      supabasePublishableKey: process.env.SUPABASE_PUBLISHABLE_KEY
     }
   }
 })
@@ -67,7 +70,7 @@ import type { Database } from "~/types/supabase"
 export const createBrowserClient = () => {
   const config = useRuntimeConfig()
 
-  return createClient<Database>(config.public.supabaseUrl, config.public.supabaseAnonKey, {
+  return createClient<Database>(config.public.supabaseUrl, config.public.supabasePublishableKey, {
     auth: {
       flowType: "pkce",
       autoRefreshToken: true,
@@ -112,23 +115,19 @@ import type { H3Event } from "h3"
 export const createServerClient = (event: H3Event) => {
   const config = useRuntimeConfig()
 
-  return createClient<Database>(
-    config.public.supabaseUrl,
-    config.supabaseServiceRoleKey || config.public.supabaseAnonKey,
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-        detectSessionInUrl: false
-      },
-      global: {
-        headers: {
-          // Pass through cookies from the request
-          cookie: getCookie(event, "sb-auth-token") || ""
-        }
+  return createClient<Database>(config.public.supabaseUrl, config.supabaseSecretKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false
+    },
+    global: {
+      headers: {
+        // Pass through cookies from the request
+        cookie: getCookie(event, "sb-auth-token") || ""
       }
     }
-  )
+  })
 }
 ```
 
@@ -556,8 +555,8 @@ In your Supabase dashboard:
 
    ```bash
    wrangler secret put SUPABASE_URL
-   wrangler secret put SUPABASE_ANON_KEY
-   wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+   wrangler secret put SUPABASE_PUBLISHABLE_KEY
+   wrangler secret put SUPABASE_SECRET_KEY
    ```
 
 2. Deploy: `bun run deploy`
