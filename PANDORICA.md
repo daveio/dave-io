@@ -2,6 +2,7 @@
 
 > [!NOTE]
 > This guide outlines how to implement Supabase Auth with email OTP.
+>
 > It will protect the `/pandorica` frontend route in the `dave.io` site.
 
 ## Overview
