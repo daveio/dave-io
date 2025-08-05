@@ -1,6 +1,6 @@
 # dave.io
 
-A modern web platform built with Nuxt 4 and Cloudflare Workers, featuring AI-powered text processing, image analysis, and URL redirection services.
+A truly hilarious web platform built with Nuxt 4 and Cloudflare Workers, featuring AI-powered text processing, image analysis, and URL redirection services.
 
 ## ✨ Features
 
