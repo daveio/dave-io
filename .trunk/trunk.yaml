@@ -63,7 +63,6 @@ lint:
         - .cursor/**
         - .cursor/rules/bash.mdc
         - .github/copilot-instructions.md
-        - .windsurf/**
         - "**/*.gif"
         - "**/*.ico"
         - "**/*.jpg"
@@ -85,8 +84,6 @@ lint:
         - markdownlint
       paths:
         - .cursor/**
-        - .windsurf/**
-        - rag/**
 plugins:
   # https://docs.trunk.io/plugins
   sources:
