@@ -49,10 +49,10 @@ The Supabase credentials are stored in Cloudflare Secrets Store for enhanced sec
 
 ```bash
 # Install the SSR package for cookie-based auth
-npm install @supabase/ssr
+bun add @supabase/ssr
 
 # Optional: Install nitro-cloudflare-dev for better development experience
-npm install --save-dev nitro-cloudflare-dev
+bun add -D nitro-cloudflare-dev
 ```
 
 #### Local Development Configuration
