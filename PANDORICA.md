@@ -1,6 +1,5 @@
-# Supabase Auth Implementation Guide for /pandorica Route Protection
-
-This guide outlines how to implement Supabase Auth with email OTP to protect the `/pandorica` frontend route in the dave.io application.
+> [!NOTE]
+> This guide outlines how to implement Supabase Auth with email OTP to protect the `/pandorica` frontend route in the dave.io application.
 
 ## Overview
 
@@ -34,44 +33,48 @@ The implementation will:
 
 The Supabase credentials are stored in Cloudflare Secrets Store for enhanced security. Secrets Store provides account-level secrets that can be shared across multiple Workers and environments.
 
-When configured in `wrangler.jsonc`, these secrets are automatically bound to environment variables at runtime. This means you can access them via `process.env` just like regular environment variables, but they're stored securely in Cloudflare's infrastructure rather than in your codebase or deployment configuration.
+**Important**: In Cloudflare Workers with Nuxt, environment variables and secrets are NOT available via `process.env`. Instead, they are accessible through the Cloudflare event context:
+
+- **Server-side**: Access via `event.context.cloudflare.env` in your server handlers
+- **Client-side**: Values must be passed from server to client through API calls or initial page props
+
+This is different from traditional Node.js environments where `process.env` is available. The `runtimeConfig` approach won't work for secrets from Cloudflare Secrets Store.
 
 ```bash
 # Local development (.dev.vars file)
-SUPABASE_URL=https://your-project.supabase.co  # This is non-secret
-SUPABASE_PUBLISHABLE_KEY=sb_publishable_your-key  # Secret - for client-side operations
-SUPABASE_SECRET_KEY=sb_secret_your-key  # Secret - for server-side operations
+SUPABASE_URL=https://your-project.supabase.co  # Non-secret
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_your-key  # Non-secret (designed to be public)
+SUPABASE_SECRET_KEY=sb_secret_your-key  # Secret - server-side only
 
-# Note: We're using the new-style Supabase keys (Publishable/Secret) instead of
-# the deprecated JWT-based keys (anon/service_role) for better security and flexibility
+# Note: The publishable key is meant to be exposed in client-side code.
+# Only the secret key needs to be kept secure.
 ```
 
 #### Sync secrets to Cloudflare Secrets Store
 
 ```bash
-# Sync your local secrets to Cloudflare Secrets Store
+# Only the secret key needs to be synced
+# Mark it with "# secret" comment in your .env file
+SUPABASE_SECRET_KEY=sb_secret_your-key # secret
+
+# Sync your secrets to Cloudflare Secrets Store
 bun run secrets sync
 
-# Or manually create/update individual secrets
-wrangler secrets-store secret create <STORE_ID> --name SUPABASE_PUBLISHABLE_KEY --scopes workers --remote
+# Or manually create/update the secret
 wrangler secrets-store secret create <STORE_ID> --name SUPABASE_SECRET_KEY --scopes workers --remote
 ```
 
-#### Configure Secrets Store bindings in `wrangler.jsonc`:
+#### Configure bindings in `wrangler.jsonc`:
 
 ```jsonc
 {
   // ... existing config
   "vars": {
-    // Non-secret values
-    "SUPABASE_URL": "https://your-project.supabase.co"
+    // Non-secret values - directly accessible
+    "SUPABASE_URL": "https://your-project.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_your-key"
   },
   "secrets_store_secrets": [
-    {
-      "binding": "SUPABASE_PUBLISHABLE_KEY",
-      "secret_name": "SUPABASE_PUBLISHABLE_KEY",
-      "store_id": "c38e38cf995f4db08a71c9b616169d33"
-    },
     {
       "binding": "SUPABASE_SECRET_KEY",
       "secret_name": "SUPABASE_SECRET_KEY",
@@ -81,22 +84,9 @@ wrangler secrets-store secret create <STORE_ID> --name SUPABASE_SECRET_KEY --sco
 }
 ```
 
-#### Update `nuxt.config.ts`:
+#### Note on Nuxt Configuration:
 
-```typescript
-export default defineNuxtConfig({
-  // ... existing config
-  runtimeConfig: {
-    // Server-side only - automatically populated from Secrets Store
-    supabaseSecretKey: process.env.SUPABASE_SECRET_KEY,
-    public: {
-      // Client-side accessible
-      supabaseUrl: process.env.SUPABASE_URL,
-      supabasePublishableKey: process.env.SUPABASE_PUBLISHABLE_KEY
-    }
-  }
-})
-```
+Since Cloudflare Workers don't populate `process.env` with bindings, we won't use Nuxt's `runtimeConfig`. Instead, we'll access the values directly from the Cloudflare context in our code.
 
 ### 2. Create Supabase Client Utilities
 
@@ -106,10 +96,16 @@ export default defineNuxtConfig({
 import { createClient } from "@supabase/supabase-js"
 import type { Database } from "~/types/supabase"
 
-export const createBrowserClient = () => {
-  const config = useRuntimeConfig()
+// These values need to be provided to the client
+// Option 1: Hardcode them (simplest for public values)
+const SUPABASE_URL = "https://your-project.supabase.co"
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_your-key"
 
-  return createClient<Database>(config.public.supabaseUrl, config.public.supabasePublishableKey, {
+// Option 2: Create a public config endpoint (see below)
+// const { supabaseUrl, supabasePublishableKey } = await $fetch('/api/config')
+
+export const createBrowserClient = () => {
+  return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
     auth: {
       flowType: "pkce",
       autoRefreshToken: true,
@@ -152,9 +148,14 @@ import type { Database } from "~/types/supabase"
 import type { H3Event } from "h3"
 
 export const createServerClient = (event: H3Event) => {
-  const config = useRuntimeConfig()
+  // Access Cloudflare bindings from the event context
+  const env = event.context.cloudflare?.env
 
-  return createClient<Database>(config.public.supabaseUrl, config.supabaseSecretKey, {
+  if (!env?.SUPABASE_URL || !env?.SUPABASE_SECRET_KEY) {
+    throw new Error("Supabase credentials not found in environment")
+  }
+
+  return createClient<Database>(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
@@ -169,6 +170,24 @@ export const createServerClient = (event: H3Event) => {
   })
 }
 ```
+
+#### Option 2: Create a config endpoint (alternative approach)
+
+If you prefer not to hardcode values in the client, create a public endpoint:
+
+```typescript
+// server/api/config.get.ts
+export default defineEventHandler((event) => {
+  const env = event.context.cloudflare?.env
+
+  return {
+    supabaseUrl: env?.SUPABASE_URL,
+    supabasePublishableKey: env?.SUPABASE_PUBLISHABLE_KEY
+  }
+})
+```
+
+Then update the client to fetch config on initialization.
 
 ### 3. Create Auth Composables
 
@@ -276,7 +295,8 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   // Server-side check
   if (process.server) {
-    const supabase = createServerClient(useEvent())
+    const event = useEvent()
+    const supabase = createServerClient(event)
     const {
       data: { user }
     } = await supabase.auth.getUser()
@@ -590,28 +610,35 @@ In your Supabase dashboard:
 
 ### Production Deployment
 
-1. Ensure your secrets are in Cloudflare Secrets Store:
+1. Ensure your secret is in Cloudflare Secrets Store:
 
    ```bash
-   # Mark secrets in .env file with "# secret" comment
-   SUPABASE_PUBLISHABLE_KEY="sb_publishable_your-key" # secret
+   # In your .env file, mark only the secret key
    SUPABASE_SECRET_KEY="sb_secret_your-key" # secret
 
-   # Sync all secrets to Cloudflare Secrets Store
+   # Sync secrets to Cloudflare Secrets Store
    bun run secrets sync
 
    # Or sync with force update for existing secrets
    bun run secrets sync --force
    ```
 
-2. Update `wrangler.jsonc` to include the SUPABASE_URL in vars (non-secret):
+2. Update `wrangler.jsonc` to include the public values in vars:
 
    ```jsonc
    {
      "vars": {
-       "SUPABASE_URL": "https://your-project.supabase.co"
+       "SUPABASE_URL": "https://your-project.supabase.co",
+       "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_your-key"
        // ... other non-secret vars
-     }
+     },
+     "secrets_store_secrets": [
+       {
+         "binding": "SUPABASE_SECRET_KEY",
+         "secret_name": "SUPABASE_SECRET_KEY",
+         "store_id": "your-store-id"
+       }
+     ]
    }
    ```
 
