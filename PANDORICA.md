@@ -30,25 +30,64 @@ The implementation will:
 
 ### 1. Environment Configuration
 
-Add Supabase credentials to environment variables (using new-style keys):
+#### Using Cloudflare Secrets Store
+
+The Supabase credentials are stored in Cloudflare Secrets Store for enhanced security. Secrets Store provides account-level secrets that can be shared across multiple Workers and environments.
+
+When configured in `wrangler.jsonc`, these secrets are automatically bound to environment variables at runtime. This means you can access them via `process.env` just like regular environment variables, but they're stored securely in Cloudflare's infrastructure rather than in your codebase or deployment configuration.
 
 ```bash
-# .env
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_PUBLISHABLE_KEY=sb_publishable_your-key  # For client-side operations
-SUPABASE_SECRET_KEY=sb_secret_your-key  # For server-side operations
+# Local development (.dev.vars file)
+SUPABASE_URL=https://your-project.supabase.co  # This is non-secret
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_your-key  # Secret - for client-side operations
+SUPABASE_SECRET_KEY=sb_secret_your-key  # Secret - for server-side operations
 
 # Note: We're using the new-style Supabase keys (Publishable/Secret) instead of
 # the deprecated JWT-based keys (anon/service_role) for better security and flexibility
 ```
 
-Update `nuxt.config.ts`:
+#### Sync secrets to Cloudflare Secrets Store
+
+```bash
+# Sync your local secrets to Cloudflare Secrets Store
+bun run secrets sync
+
+# Or manually create/update individual secrets
+wrangler secrets-store secret create <STORE_ID> --name SUPABASE_PUBLISHABLE_KEY --scopes workers --remote
+wrangler secrets-store secret create <STORE_ID> --name SUPABASE_SECRET_KEY --scopes workers --remote
+```
+
+#### Configure Secrets Store bindings in `wrangler.jsonc`:
+
+```jsonc
+{
+  // ... existing config
+  "vars": {
+    // Non-secret values
+    "SUPABASE_URL": "https://your-project.supabase.co"
+  },
+  "secrets_store_secrets": [
+    {
+      "binding": "SUPABASE_PUBLISHABLE_KEY",
+      "secret_name": "SUPABASE_PUBLISHABLE_KEY",
+      "store_id": "c38e38cf995f4db08a71c9b616169d33"
+    },
+    {
+      "binding": "SUPABASE_SECRET_KEY",
+      "secret_name": "SUPABASE_SECRET_KEY",
+      "store_id": "c38e38cf995f4db08a71c9b616169d33"
+    }
+  ]
+}
+```
+
+#### Update `nuxt.config.ts`:
 
 ```typescript
 export default defineNuxtConfig({
   // ... existing config
   runtimeConfig: {
-    // Server-side only
+    // Server-side only - automatically populated from Secrets Store
     supabaseSecretKey: process.env.SUPABASE_SECRET_KEY,
     public: {
       // Client-side accessible
@@ -551,15 +590,32 @@ In your Supabase dashboard:
 
 ### Production Deployment
 
-1. Set Cloudflare environment variables:
+1. Ensure your secrets are in Cloudflare Secrets Store:
 
    ```bash
-   wrangler secret put SUPABASE_URL
-   wrangler secret put SUPABASE_PUBLISHABLE_KEY
-   wrangler secret put SUPABASE_SECRET_KEY
+   # Mark secrets in .env file with "# secret" comment
+   SUPABASE_PUBLISHABLE_KEY="sb_publishable_your-key" # secret
+   SUPABASE_SECRET_KEY="sb_secret_your-key" # secret
+
+   # Sync all secrets to Cloudflare Secrets Store
+   bun run secrets sync
+
+   # Or sync with force update for existing secrets
+   bun run secrets sync --force
    ```
 
-2. Deploy: `bun run deploy`
+2. Update `wrangler.jsonc` to include the SUPABASE_URL in vars (non-secret):
+
+   ```jsonc
+   {
+     "vars": {
+       "SUPABASE_URL": "https://your-project.supabase.co"
+       // ... other non-secret vars
+     }
+   }
+   ```
+
+3. Deploy: `bun run deploy`
 
 ## Security Considerations
 
@@ -591,6 +647,17 @@ In your Supabase dashboard:
 - API endpoints continue using the current auth flow
 - Only frontend route protection uses Supabase Auth
 - No database migrations required (unless adding user profile tables)
+
+## Why Cloudflare Secrets Store Instead of App Secrets?
+
+We're using Cloudflare Secrets Store instead of Worker-specific secrets (set via `wrangler secret put`) for several reasons:
+
+1. **Account-level Management**: Secrets Store allows you to manage secrets at the account level and share them across multiple Workers
+2. **Centralized Updates**: Update a secret once in the store, and all Workers using it get the updated value
+3. **Better Organization**: Group related secrets together with descriptive names and comments
+4. **Audit Trail**: Track when secrets were created, updated, and by whom
+5. **Reduced Duplication**: No need to set the same secret multiple times for different environments or Workers
+6. **Simplified Deployment**: The `bin/secrets.ts` script provides automated syncing from local `.env` files marked with `# secret`
 
 ## Future Enhancements
 
