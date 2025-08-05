@@ -25,9 +25,7 @@
 </template>
 
 <script setup lang="ts">
-// Import page logging functionality
-
-// Copy curl command to clipboard and track the action
+// Copy curl command to clipboard
 const copyCurlCommand = async () => {
   const command = "curl https://dave.io | sh"
   try {

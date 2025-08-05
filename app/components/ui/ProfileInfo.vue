@@ -7,16 +7,7 @@
         <i class="i-mdi-light-gender-transgender mr-2 text-green w-5 h-5" />
         Pronouns
       </span>
-      <NuxtLink to="/gender" class="link-gender break-all" @click="handleLinkClick('gender', 'https://dave.io/gender')">
-        they/them (learn more)
-      </NuxtLink>
+      <NuxtLink to="/gender" class="link-gender break-all"> they/them (learn more) </NuxtLink>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-// Import page logging functionality
-
-// Track link clicks
-const handleLinkClick = (_service: string, _url: string) => {}
-</script>

@@ -38,5 +38,5 @@ jobs:
           if: |
             !contains(github.event.pull_request.title, '[skip-review]') &&
             !contains(github.event.pull_request.title, '[WIP]')
-          model: claude-opus-4-20250514
+          model: claude-opus-4-1-20250805
         uses: anthropics/claude-code-action@0c5d54472f57859665a75d5e3911e51e17fa58d4
