@@ -1,0 +1,30 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+.nuxt/
+.output/
+dist/
+
+# Environment and logs
+*.log
+.env*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Cache directories
+.cache/
+.turbo/
+
+# Generated files
+*.generated.*
+

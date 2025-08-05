@@ -18,7 +18,7 @@
 
 export default defineNuxtRouteMiddleware((to, _from) => {
   // Simple conditional check - expand this logic as needed
-  const allowAccess = false
+  const allowAccess = true
 
   if (!allowAccess) {
     console.error("Access denied for route:", to.path)

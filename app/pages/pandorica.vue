@@ -1,6 +1,7 @@
 <template>
   <div
-    class="min-h-screen bg-gradient-to-br from-base via-mantle to-base flex flex-col justify-center py-12 px-4 relative overflow-hidden">
+    class="min-h-screen bg-gradient-to-br from-base via-mantle to-base flex flex-col justify-center py-12 px-4 relative overflow-hidden"
+  >
     <Background />
 
     <div class="max-w-4xl mx-auto w-full relative z-10">
@@ -10,9 +11,8 @@
             <Icon name="i-mdi-shield-check" class="text-green w-16 h-16 mx-auto mb-4" />
             <h2 class="text-text font-bold text-2xl mb-4">Access Granted!</h2>
             <p class="text-subtext0 leading-relaxed">
-              This page is protected by the access control middleware.
-              Since the condition currently returns <code class="bg-surface1 px-2 py-1 rounded">true</code>,
-              you can see this content.
+              This page is protected by the access control middleware. Since the condition currently returns
+              <code class="bg-surface1 px-2 py-1 rounded">true</code>, you can see this content.
             </p>
           </div>
 
@@ -41,7 +41,7 @@ import BackToHomeButton from "../components/ui/BackToHomeButton.vue"
 
 // Apply the access control middleware to this page
 definePageMeta({
-  middleware: 'protection'
+  middleware: "protection"
 })
 
 usePageSetup({
@@ -53,6 +53,6 @@ usePageSetup({
 })
 
 onMounted(() => {
-  console.log('Protected page mounted successfully')
+  console.log("Protected page mounted successfully")
 })
 </script>

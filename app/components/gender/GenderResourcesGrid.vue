@@ -3,8 +3,11 @@
     <p class="text-neutral-300 leading-relaxed mb-4">Let me link a few resources - they might answer your question:</p>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <NuxtLink
-v-for="resource in resources" :key="resource.title" :to="resource.url"
-        class="inline-flex items-center justify-start px-4 py-3 border border-cyan-400 text-cyan-300 bg-transparent rounded-md font-medium hover:bg-cyan-400/10 transition-colors">
+        v-for="resource in resources"
+        :key="resource.title"
+        :to="resource.url"
+        class="inline-flex items-center justify-start px-4 py-3 border border-cyan-400 text-cyan-300 bg-transparent rounded-md font-medium hover:bg-cyan-400/10 transition-colors"
+      >
         <Icon :name="resource.icon" class="mr-2 w-5 h-5" />
         <strong>{{ resource.title }}</strong>
       </NuxtLink>
