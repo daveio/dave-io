@@ -1,9 +1,12 @@
 # Pandorica Implementation Guide
 
 > [!NOTE]
-> This guide outlines how to implement Supabase Auth with email OTP.
+> This guide outlines how to implement Supabase Auth with email OTP for Nuxt 4 on Cloudflare Workers.
 >
 > It will protect the `/pandorica` frontend route in the `dave.io` site.
+>
+> **Updated for Opus 4.1**: Now uses `@supabase/ssr` for proper cookie-based authentication,
+> correct Cloudflare environment variable access patterns, and Nuxt 4 best practices.
 
 ## Overview
 
@@ -26,8 +29,9 @@ The implementation will:
 ### Key Challenges
 
 1. **SSR Compatibility**: Cloudflare Workers runtime has limited Node.js API support
-2. **Cookie Management**: Need server-side cookie handling for session management
+2. **Cookie Management**: Need server-side cookie handling for session management using `@supabase/ssr`
 3. **Middleware Naming**: 'auth' middleware name is reserved by Supabase/Nuxt integrations
+4. **Environment Variables**: Must use `event.context.cloudflare.env` in Workers, not `process.env`
 
 ## Implementation Steps
 
@@ -37,12 +41,21 @@ The implementation will:
 
 The Supabase credentials are stored in Cloudflare Secrets Store for enhanced security. Secrets Store provides account-level secrets that can be shared across multiple Workers and environments.
 
-**Important**: In Cloudflare Workers with Nuxt, environment variables and secrets are NOT available via `process.env`. Instead, they are accessible through the Cloudflare event context:
+**Important**: In Cloudflare Workers with Nuxt 4, environment variables and secrets are NOT available via `process.env`. Instead, they are accessible through the Cloudflare event context:
 
 - **Server-side**: Access via `event.context.cloudflare.env` in your server handlers
-- **Client-side**: Values must be passed from server to client through API calls or initial page props
+- **Client-side**: Public values can be hardcoded or fetched from a config endpoint
+- **Cookies**: Use the `useCookie` composable for SSR-friendly cookie management
 
-This is different from traditional Node.js environments where `process.env` is available. The `runtimeConfig` approach won't work for secrets from Cloudflare Secrets Store.
+```bash
+# Install the SSR package for cookie-based auth
+npm install @supabase/ssr
+
+# Optional: Install nitro-cloudflare-dev for better development experience
+npm install --save-dev nitro-cloudflare-dev
+```
+
+#### Local Development Configuration
 
 ```bash
 # Local development (.dev.vars file)
@@ -97,7 +110,7 @@ Since Cloudflare Workers don't populate `process.env` with bindings, we won't us
 #### `app/utils/supabase.client.ts` - Browser client
 
 ```typescript
-import { createClient } from "@supabase/supabase-js"
+import { createBrowserClient as createClient } from "@supabase/ssr"
 import type { Database } from "~/types/supabase"
 
 // These values need to be provided to the client
@@ -110,34 +123,27 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_your-key"
 
 export const createBrowserClient = () => {
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-    auth: {
-      flowType: "pkce",
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-      persistSession: true,
-      storage: {
-        // Use cookies instead of localStorage for SSR compatibility
-        getItem: (key: string) => {
-          const cookie = useCookie(key, {
-            httpOnly: false,
-            sameSite: "lax",
-            secure: true
-          })
-          return cookie.value
-        },
-        setItem: (key: string, value: string) => {
-          const cookie = useCookie(key, {
-            httpOnly: false,
-            sameSite: "lax",
-            secure: true,
-            maxAge: 60 * 60 * 24 * 7 // 7 days
-          })
-          cookie.value = value
-        },
-        removeItem: (key: string) => {
-          const cookie = useCookie(key)
-          cookie.value = null
-        }
+    cookies: {
+      get(name: string) {
+        const cookie = useCookie(name, {
+          httpOnly: false,
+          sameSite: "lax",
+          secure: true
+        })
+        return cookie.value as string | undefined
+      },
+      set(name: string, value: string, options?: any) {
+        const cookie = useCookie(name, {
+          httpOnly: false,
+          sameSite: "lax",
+          secure: true,
+          maxAge: options?.maxAge
+        })
+        cookie.value = value
+      },
+      remove(name: string) {
+        const cookie = useCookie(name)
+        cookie.value = null
       }
     }
   })
@@ -147,7 +153,8 @@ export const createBrowserClient = () => {
 #### `server/utils/supabase.server.ts` - Server client
 
 ```typescript
-import { createClient } from "@supabase/supabase-js"
+import { createServerClient as createClient } from "@supabase/ssr"
+import { getCookie, setCookie } from "h3"
 import type { Database } from "~/types/supabase"
 import type { H3Event } from "h3"
 
@@ -160,15 +167,27 @@ export const createServerClient = (event: H3Event) => {
   }
 
   return createClient<Database>(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-      detectSessionInUrl: false
-    },
-    global: {
-      headers: {
-        // Pass through cookies from the request
-        cookie: getCookie(event, "sb-auth-token") || ""
+    cookies: {
+      get(name: string) {
+        return getCookie(event, name)
+      },
+      set(name: string, value: string, options?: any) {
+        setCookie(event, name, value, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "lax",
+          maxAge: options?.maxAge,
+          path: "/"
+        })
+      },
+      remove(name: string) {
+        setCookie(event, name, "", {
+          httpOnly: true,
+          secure: true,
+          sameSite: "lax",
+          maxAge: 0,
+          path: "/"
+        })
       }
     }
   })
@@ -198,6 +217,9 @@ Then update the client to fetch config on initialization.
 #### `app/composables/useSupabaseAuth.ts`
 
 ```typescript
+import type { User } from "@supabase/supabase-js"
+import { createBrowserClient } from "~/utils/supabase.client"
+
 export const useSupabaseAuth = () => {
   const supabase = createBrowserClient()
   const user = useState<User | null>("supabase-user", () => null)
@@ -227,7 +249,7 @@ export const useSupabaseAuth = () => {
       email,
       options: {
         shouldCreateUser: true,
-        emailRedirectTo: `${window.location.origin}/pandorica`
+        emailRedirectTo: `${window.location.origin}/auth/confirm`
       }
     })
     return { error }
@@ -268,6 +290,8 @@ export const useSupabaseAuth = () => {
 Replace `app/middleware/protection.ts`:
 
 ```typescript
+import { createServerClient } from "~/server/utils/supabase.server"
+
 export default defineNuxtRouteMiddleware(async (to, from) => {
   // Only protect the /pandorica route
   if (to.path !== "/pandorica") {
@@ -275,7 +299,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
 
   // Client-side check
-  if (process.client) {
+  if (import.meta.client) {
     const { user } = useSupabaseAuth()
 
     // Wait for auth state to be initialized
@@ -298,8 +322,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
 
   // Server-side check
-  if (process.server) {
-    const event = useEvent()
+  if (import.meta.server) {
+    const event = useRequestEvent()
+    if (!event) return
+
     const supabase = createServerClient(event)
     const {
       data: { user }
@@ -456,7 +482,65 @@ usePageSetup({
 </script>
 ```
 
-### 6. Update Pandorica Page
+### 6. Create Authentication Confirmation Route
+
+Create `app/pages/auth/confirm.vue` to handle the email confirmation:
+
+```vue
+<template>
+  <div class="min-h-screen bg-gradient-to-br from-base via-mantle to-base flex flex-col justify-center py-12 px-4">
+    <div class="max-w-md mx-auto w-full">
+      <Interface title="Confirming..." :use-monospace="false">
+        <div class="text-center">
+          <Icon name="i-mdi-loading" class="animate-spin text-blue w-12 h-12 mx-auto mb-4" />
+          <p class="text-subtext0">Verifying your email...</p>
+        </div>
+      </Interface>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import Interface from "~/app/components/layout/Interface.vue"
+import { createServerClient } from "~/server/utils/supabase.server"
+
+// Handle the confirmation on mount
+onMounted(async () => {
+  const route = useRoute()
+  const router = useRouter()
+
+  const tokenHash = route.query.token_hash as string
+  const type = route.query.type as string
+
+  if (!tokenHash || type !== "email") {
+    await router.push("/auth/login?error=Invalid confirmation link")
+    return
+  }
+
+  // Exchange the token hash for a session
+  const supabase = createBrowserClient()
+  const { error } = await supabase.auth.verifyOtp({
+    token_hash: tokenHash,
+    type: "email"
+  })
+
+  if (error) {
+    await router.push(`/auth/login?error=${encodeURIComponent(error.message)}`)
+  } else {
+    await router.push("/pandorica")
+  }
+})
+
+usePageSetup({
+  title: "Confirming Email - Pandorica",
+  description: "Confirming your email address",
+  keywords: ["auth", "confirm", "pandorica"],
+  icon: "/images/dave-io-icon-128.png"
+})
+</script>
+```
+
+### 7. Update Pandorica Page
 
 Modify `app/pages/pandorica.vue` to include sign-out functionality:
 
@@ -527,12 +611,15 @@ onMounted(() => {
 </script>
 ```
 
-### 7. Create API Endpoint for Session Validation (Optional)
+### 8. Create API Endpoint for Session Validation (Optional)
 
 If you need server-side session validation:
 
 ```typescript
 // server/api/auth/session.get.ts
+import { createServerClient } from "~/server/utils/supabase.server"
+import { createApiResponse } from "~/server/utils/responses"
+
 export default defineEventHandler(async (event) => {
   const supabase = createServerClient(event)
 
@@ -567,22 +654,43 @@ export default defineEventHandler(async (event) => {
 
 ### 1. Email Templates
 
-In your Supabase dashboard:
+In your Supabase dashboard, configure templates for PKCE flow:
+
+#### Magic Link Template
 
 1. Go to **Authentication** > **Email Templates**
 2. Select **Magic Link** template
-3. Update the template to send OTP instead:
+3. Update to support both OTP and token hash:
 
 ```html
-<h2>Your sign-in code</h2>
+<h2>Sign in to Pandorica</h2>
 
 <p>Hello!</p>
 
-<p>Your sign-in code is: <strong>{{ .Token }}</strong></p>
+<p>Click this link to sign in:</p>
+<p><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email">Sign In to Pandorica</a></p>
 
-<p>This code will expire in 1 hour.</p>
+<p>Or enter this code: <strong>{{ .Token }}</strong></p>
 
-<p>If you didn't request this code, you can safely ignore this email.</p>
+<p>This link/code will expire in 1 hour.</p>
+
+<p>If you didn't request this, you can safely ignore this email.</p>
+```
+
+#### Confirm Signup Template
+
+1. Select **Confirm signup** template
+2. Update similarly:
+
+```html
+<h2>Confirm your email</h2>
+
+<p>Welcome!</p>
+
+<p>Please confirm your email address by clicking this link:</p>
+<p><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email">Confirm Email</a></p>
+
+<p>If you didn't sign up, you can safely ignore this email.</p>
 ```
 
 ### 2. Auth Settings
@@ -601,11 +709,30 @@ In your Supabase dashboard:
 2. Set up appropriate RLS policies
 3. Configure rate limiting for OTP requests
 
+## Important Nuxt 4 and Cloudflare Considerations
+
+### Key Differences from Standard Nuxt
+
+1. **Environment Variables**: Use `event.context.cloudflare.env`, not `process.env`
+2. **Import Meta**: Use `import.meta.client/server` instead of `process.client/server`
+3. **SSR Package**: Use `@supabase/ssr` for proper cookie handling
+4. **Cookie Management**: Use `useCookie` composable for SSR-friendly cookies
+5. **Request Event**: Use `useRequestEvent()` to access the H3 event in composables
+
+### Cookie Security Settings
+
+For production on Cloudflare:
+
+- **httpOnly**: `true` for auth cookies (prevents XSS)
+- **secure**: `true` (HTTPS only)
+- **sameSite**: `"lax"` (CSRF protection)
+- **path**: `"/"` (available across the site)
+
 ## Testing Guide
 
 ### Local Development
 
-1. Set up environment variables
+1. Set up environment variables in `.dev.vars`
 2. Run `bun run dev`
 3. Navigate to `/pandorica`
 4. Should redirect to `/auth/login?redirect=/pandorica`
@@ -661,9 +788,11 @@ In your Supabase dashboard:
 ### Common Issues
 
 1. **"auth middleware not found"**: Ensure middleware is named `protection.ts`, not `auth.ts`
-2. **Cookie not persisting**: Check `sameSite` and `secure` settings
+2. **Cookie not persisting**: Check `sameSite` and `secure` settings, ensure using `@supabase/ssr`
 3. **OTP not received**: Verify email provider settings in Supabase
-4. **Session lost on refresh**: Ensure cookie storage is properly configured
+4. **Session lost on refresh**: Ensure cookie storage is properly configured with SSR package
+5. **`process.env` undefined**: Use `event.context.cloudflare.env` in Cloudflare Workers
+6. **Hydration mismatch**: Use `import.meta.client/server` for conditional rendering
 
 ### Debug Tips
 
@@ -671,6 +800,8 @@ In your Supabase dashboard:
 2. Monitor Supabase Auth logs in dashboard
 3. Use `supabase.auth.getSession()` to debug session state
 4. Check Cloudflare Workers logs for server-side issues
+5. Verify `.dev.vars` file is being loaded in development
+6. Use `refreshCookie()` if cookie values aren't updating in Nuxt 4
 
 ## Migration Notes
 
