@@ -12,4 +12,4 @@ node = { version = '22.18.0' }
 rust = { version = '1.88.0' }
 
 [tasks]
-'claude' = { run = "bun x @anthropic-ai/claude-code", description = "Invoke Claude Code", alias = "cc" }
+'claude' = { run = "claude", description = "Invoke Claude Code", alias = "cc" }
