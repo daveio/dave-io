@@ -39,4 +39,4 @@ jobs:
             !contains(github.event.pull_request.title, '[skip-review]') &&
             !contains(github.event.pull_request.title, '[WIP]')
           model: claude-opus-4-1-20250805
-        uses: anthropics/claude-code-action@188d526721c4b76a779f8af9a10fe73b500a2fbf
+        uses: anthropics/claude-code-action@15db2b3c79c0681556c056e9bc3f61fd3fc0347d
