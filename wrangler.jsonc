@@ -76,7 +76,7 @@
   // Automatic observability settings for telemetry data emitted from your Worker
   "observability": {
     "enabled": true, // Persist logs for the Worker
-    "head_sampling_rate": 1 // Sample rate: 0.0 = 0%, 1.0 = 100%
+    "head_sampling_rate": 1.0 // Sample rate: 0.0 = 0%, 1.0 = 100%
   },
   // ===============================
   // PLACEMENT & PERFORMANCE
