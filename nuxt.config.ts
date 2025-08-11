@@ -126,7 +126,7 @@ export default defineNuxtConfig({
 
   sentry: {
     // autoInjectServerSentry: "experimental_dynamic-import", // breaks build
-    autoInjectServerSentry: "top-level-import",
+    // autoInjectServerSentry: "top-level-import", // disabled: plugin approach
     sourceMapsUploadOptions: {
       org: "daveio",
       project: "dave-io"
@@ -134,6 +134,7 @@ export default defineNuxtConfig({
   },
 
   sourcemap: {
-    client: "hidden"
+    server: true,
+    client: true
   }
 })
