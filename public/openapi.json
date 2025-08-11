@@ -34,7 +34,9 @@
             "description": "URL of the image to analyze"
           }
         },
-        "required": ["image"],
+        "required": [
+          "image"
+        ],
         "title": "AI Alt Text GET Request",
         "description": "Request to generate alt text from an image URL"
       },
@@ -54,7 +56,9 @@
         "properties": {
           "ok": {
             "type": "boolean",
-            "enum": [true]
+            "enum": [
+              true
+            ]
           },
           "result": {
             "type": "object",
@@ -70,16 +74,23 @@
                 "description": "Confidence score for the generated alt text"
               }
             },
-            "required": ["alt_text"]
+            "required": [
+              "alt_text"
+            ]
           },
           "status": {
-            "type": ["object", "null"],
+            "type": [
+              "object",
+              "null"
+            ],
             "properties": {
               "message": {
                 "type": "string"
               }
             },
-            "required": ["message"]
+            "required": [
+              "message"
+            ]
           },
           "error": {
             "type": "null"
@@ -88,7 +99,13 @@
             "type": "string"
           }
         },
-        "required": ["ok", "result", "status", "error", "timestamp"],
+        "required": [
+          "ok",
+          "result",
+          "status",
+          "error",
+          "timestamp"
+        ],
         "title": "AI Alt Text Response",
         "description": "Response containing generated alt text for an image"
       },
@@ -103,7 +120,12 @@
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["bluesky", "mastodon", "threads", "x"]
+              "enum": [
+                "bluesky",
+                "mastodon",
+                "threads",
+                "x"
+              ]
             },
             "minItems": 1,
             "maxItems": 10
@@ -125,10 +147,16 @@
               ]
             },
             "maxItems": 10,
-            "default": ["sentence_boundary", "thread_optimize"]
+            "default": [
+              "sentence_boundary",
+              "thread_optimize"
+            ]
           }
         },
-        "required": ["input", "networks"],
+        "required": [
+          "input",
+          "networks"
+        ],
         "title": "AI Social Request",
         "description": "Request to split text into social media posts"
       },
@@ -137,7 +165,9 @@
         "properties": {
           "ok": {
             "type": "boolean",
-            "enum": [true]
+            "enum": [
+              true
+            ]
           },
           "result": {
             "type": "object",
@@ -180,16 +210,23 @@
                 }
               }
             },
-            "required": ["networks"]
+            "required": [
+              "networks"
+            ]
           },
           "status": {
-            "type": ["object", "null"],
+            "type": [
+              "object",
+              "null"
+            ],
             "properties": {
               "message": {
                 "type": "string"
               }
             },
-            "required": ["message"]
+            "required": [
+              "message"
+            ]
           },
           "error": {
             "type": "null"
@@ -198,7 +235,13 @@
             "type": "string"
           }
         },
-        "required": ["ok", "result", "status", "error", "timestamp"],
+        "required": [
+          "ok",
+          "result",
+          "status",
+          "error",
+          "timestamp"
+        ],
         "title": "AI Social Response",
         "description": "Response containing split text for each social network"
       },
@@ -209,7 +252,9 @@
             "properties": {
               "mode": {
                 "type": "string",
-                "enum": ["single"]
+                "enum": [
+                  "single"
+                ]
               },
               "word": {
                 "type": "string",
@@ -217,14 +262,19 @@
                 "maxLength": 100
               }
             },
-            "required": ["mode", "word"]
+            "required": [
+              "mode",
+              "word"
+            ]
           },
           {
             "type": "object",
             "properties": {
               "mode": {
                 "type": "string",
-                "enum": ["context"]
+                "enum": [
+                  "context"
+                ]
               },
               "text": {
                 "type": "string",
@@ -237,7 +287,11 @@
                 "maxLength": 100
               }
             },
-            "required": ["mode", "text", "target_word"]
+            "required": [
+              "mode",
+              "text",
+              "target_word"
+            ]
           }
         ],
         "title": "AI Word Request",
@@ -248,7 +302,9 @@
         "properties": {
           "ok": {
             "type": "boolean",
-            "enum": [true]
+            "enum": [
+              true
+            ]
           },
           "result": {
             "type": "object",
@@ -269,23 +325,32 @@
                       "description": "Confidence score for this suggestion"
                     }
                   },
-                  "required": ["word"]
+                  "required": [
+                    "word"
+                  ]
                 },
                 "minItems": 5,
                 "maxItems": 10,
                 "description": "Array of word suggestions ordered by likelihood"
               }
             },
-            "required": ["suggestions"]
+            "required": [
+              "suggestions"
+            ]
           },
           "status": {
-            "type": ["object", "null"],
+            "type": [
+              "object",
+              "null"
+            ],
             "properties": {
               "message": {
                 "type": "string"
               }
             },
-            "required": ["message"]
+            "required": [
+              "message"
+            ]
           },
           "error": {
             "type": "null"
@@ -294,7 +359,13 @@
             "type": "string"
           }
         },
-        "required": ["ok", "result", "status", "error", "timestamp"],
+        "required": [
+          "ok",
+          "result",
+          "status",
+          "error",
+          "timestamp"
+        ],
         "title": "AI Word Response",
         "description": "Response containing alternative word suggestions"
       },
@@ -312,14 +383,18 @@
             "description": "Confidence score for this suggestion"
           }
         },
-        "required": ["word"]
+        "required": [
+          "word"
+        ]
       },
       "ApiErrorResponseSchema": {
         "type": "object",
         "properties": {
           "ok": {
             "type": "boolean",
-            "enum": [false]
+            "enum": [
+              false
+            ]
           },
           "error": {
             "type": "string"
@@ -328,13 +403,18 @@
             "type": "string"
           },
           "status": {
-            "type": ["object", "null"],
+            "type": [
+              "object",
+              "null"
+            ],
             "properties": {
               "message": {
                 "type": "string"
               }
             },
-            "required": ["message"]
+            "required": [
+              "message"
+            ]
           },
           "details": {
             "type": "object"
@@ -351,14 +431,22 @@
             "type": "string"
           }
         },
-        "required": ["ok", "error", "message", "status", "timestamp"]
+        "required": [
+          "ok",
+          "error",
+          "message",
+          "status",
+          "timestamp"
+        ]
       },
       "ApiSuccessResponseSchema": {
         "type": "object",
         "properties": {
           "ok": {
             "type": "boolean",
-            "enum": [true]
+            "enum": [
+              true
+            ]
           },
           "result": {
             "type": "object"
@@ -370,13 +458,18 @@
             "type": "null"
           },
           "status": {
-            "type": ["object", "null"],
+            "type": [
+              "object",
+              "null"
+            ],
             "properties": {
               "message": {
                 "type": "string"
               }
             },
-            "required": ["message"]
+            "required": [
+              "message"
+            ]
           },
           "meta": {
             "type": "object",
@@ -402,7 +495,13 @@
             "type": "string"
           }
         },
-        "required": ["ok", "message", "error", "status", "timestamp"]
+        "required": [
+          "ok",
+          "message",
+          "error",
+          "status",
+          "timestamp"
+        ]
       },
       "AuthIntrospectionSchema": {
         "type": "object",
@@ -432,7 +531,10 @@
                     "type": "string"
                   }
                 },
-                "required": ["sub", "iat"]
+                "required": [
+                  "sub",
+                  "iat"
+                ]
               },
               "user": {
                 "type": "object",
@@ -444,19 +546,28 @@
                     "type": "string"
                   },
                   "expiresAt": {
-                    "type": ["string", "null"]
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "tokenId": {
                     "type": "string"
                   }
                 },
-                "required": ["id", "issuedAt", "expiresAt"]
+                "required": [
+                  "id",
+                  "issuedAt",
+                  "expiresAt"
+                ]
               },
               "error": {
                 "type": "string"
               }
             },
-            "required": ["valid"]
+            "required": [
+              "valid"
+            ]
           },
           "message": {
             "type": "string"
@@ -465,14 +576,20 @@
             "type": "string"
           }
         },
-        "required": ["ok", "data", "timestamp"]
+        "required": [
+          "ok",
+          "data",
+          "timestamp"
+        ]
       },
       "AuthSuccessResponseSchema": {
         "type": "object",
         "properties": {
           "ok": {
             "type": "boolean",
-            "enum": [true]
+            "enum": [
+              true
+            ]
           },
           "message": {
             "type": "string"
@@ -493,7 +610,10 @@
                 "type": "string"
               }
             },
-            "required": ["sub", "iat"]
+            "required": [
+              "sub",
+              "iat"
+            ]
           },
           "user": {
             "type": "object",
@@ -505,19 +625,32 @@
                 "type": "string"
               },
               "expiresAt": {
-                "type": ["string", "null"]
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "tokenId": {
                 "type": "string"
               }
             },
-            "required": ["id", "issuedAt", "expiresAt"]
+            "required": [
+              "id",
+              "issuedAt",
+              "expiresAt"
+            ]
           },
           "timestamp": {
             "type": "string"
           }
         },
-        "required": ["ok", "message", "jwt", "user", "timestamp"]
+        "required": [
+          "ok",
+          "message",
+          "jwt",
+          "user",
+          "timestamp"
+        ]
       },
       "CreateRedirectSchema": {
         "type": "object",
@@ -538,7 +671,10 @@
             "type": "string"
           }
         },
-        "required": ["slug", "url"]
+        "required": [
+          "slug",
+          "url"
+        ]
       },
       "EnhancedPingResponseSchema": {
         "type": "object",
@@ -562,7 +698,10 @@
                         "type": "string"
                       }
                     },
-                    "required": ["ip", "primary"]
+                    "required": [
+                      "ip",
+                      "primary"
+                    ]
                   },
                   "datacentre": {
                     "type": "string"
@@ -595,16 +734,32 @@
                             "type": "string"
                           }
                         },
-                        "required": ["forward", "request"]
+                        "required": [
+                          "forward",
+                          "request"
+                        ]
                       },
                       "version": {
                         "type": "string"
                       }
                     },
-                    "required": ["agent", "host", "method", "path", "proto", "version"]
+                    "required": [
+                      "agent",
+                      "host",
+                      "method",
+                      "path",
+                      "proto",
+                      "version"
+                    ]
                   }
                 },
-                "required": ["connectingIP", "country", "datacentre", "ray", "request"]
+                "required": [
+                  "connectingIP",
+                  "country",
+                  "datacentre",
+                  "ray",
+                  "request"
+                ]
               },
               "worker": {
                 "type": "object",
@@ -628,7 +783,11 @@
                         "type": "string"
                       }
                     },
-                    "required": ["cpu_time", "memory", "request_timeout"]
+                    "required": [
+                      "cpu_time",
+                      "memory",
+                      "request_timeout"
+                    ]
                   },
                   "preset": {
                     "type": "string"
@@ -654,7 +813,10 @@
                 ]
               }
             },
-            "required": ["cloudflare", "worker"]
+            "required": [
+              "cloudflare",
+              "worker"
+            ]
           },
           "auth": {
             "type": "object",
@@ -678,22 +840,38 @@
                         "type": "string"
                       },
                       "tokenId": {
-                        "type": ["string", "null"]
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       },
                       "issuedAt": {
                         "type": "string"
                       },
                       "expiresAt": {
-                        "type": ["string", "null"]
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       }
                     },
-                    "required": ["subject", "tokenId", "issuedAt", "expiresAt"]
+                    "required": [
+                      "subject",
+                      "tokenId",
+                      "issuedAt",
+                      "expiresAt"
+                    ]
                   }
                 },
-                "required": ["value", "valid"]
+                "required": [
+                  "value",
+                  "valid"
+                ]
               }
             },
-            "required": ["supplied"]
+            "required": [
+              "supplied"
+            ]
           },
           "headers": {
             "type": "object",
@@ -720,24 +898,40 @@
                 }
               }
             },
-            "required": ["count", "cloudflare", "forwarding", "other"]
+            "required": [
+              "count",
+              "cloudflare",
+              "forwarding",
+              "other"
+            ]
           },
           "ok": {
             "type": "boolean",
-            "enum": [true]
+            "enum": [
+              true
+            ]
           },
           "timestamp": {
             "type": "string"
           }
         },
-        "required": ["data", "auth", "headers", "ok", "timestamp"]
+        "required": [
+          "data",
+          "auth",
+          "headers",
+          "ok",
+          "timestamp"
+        ]
       },
       "HealthCheckSchema": {
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["ok", "error"]
+            "enum": [
+              "ok",
+              "error"
+            ]
           },
           "timestamp": {
             "type": "string"
@@ -758,7 +952,12 @@
             "type": "string"
           }
         },
-        "required": ["status", "timestamp", "version", "environment"]
+        "required": [
+          "status",
+          "timestamp",
+          "version",
+          "environment"
+        ]
       },
       "JWTDetailsSchema": {
         "type": "object",
@@ -776,7 +975,10 @@
             "type": "string"
           }
         },
-        "required": ["sub", "iat"]
+        "required": [
+          "sub",
+          "iat"
+        ]
       },
       "JWTPayloadSchema": {
         "type": "object",
@@ -794,7 +996,10 @@
             "type": "string"
           }
         },
-        "required": ["sub", "iat"]
+        "required": [
+          "sub",
+          "iat"
+        ]
       },
       "KVDataSchema": {
         "type": "object",
@@ -806,7 +1011,9 @@
             }
           }
         },
-        "required": ["redirect"]
+        "required": [
+          "redirect"
+        ]
       },
       "KVRedirectMappingSchema": {
         "type": "object",
@@ -833,7 +1040,10 @@
                     "type": "string"
                   }
                 },
-                "required": ["ip", "primary"]
+                "required": [
+                  "ip",
+                  "primary"
+                ]
               },
               "datacentre": {
                 "type": "string"
@@ -866,16 +1076,32 @@
                         "type": "string"
                       }
                     },
-                    "required": ["forward", "request"]
+                    "required": [
+                      "forward",
+                      "request"
+                    ]
                   },
                   "version": {
                     "type": "string"
                   }
                 },
-                "required": ["agent", "host", "method", "path", "proto", "version"]
+                "required": [
+                  "agent",
+                  "host",
+                  "method",
+                  "path",
+                  "proto",
+                  "version"
+                ]
               }
             },
-            "required": ["connectingIP", "country", "datacentre", "ray", "request"]
+            "required": [
+              "connectingIP",
+              "country",
+              "datacentre",
+              "ray",
+              "request"
+            ]
           },
           "worker": {
             "type": "object",
@@ -899,7 +1125,11 @@
                     "type": "string"
                   }
                 },
-                "required": ["cpu_time", "memory", "request_timeout"]
+                "required": [
+                  "cpu_time",
+                  "memory",
+                  "request_timeout"
+                ]
               },
               "preset": {
                 "type": "string"
@@ -925,7 +1155,10 @@
             ]
           }
         },
-        "required": ["cloudflare", "worker"]
+        "required": [
+          "cloudflare",
+          "worker"
+        ]
       },
       "RedirectsResponseSchema": {
         "type": "object",
@@ -940,14 +1173,18 @@
             "description": "Array of available redirect slugs (truncated to 100 if more exist)"
           }
         },
-        "required": ["redirects"]
+        "required": [
+          "redirects"
+        ]
       },
       "TokenMetricsSchema": {
         "type": "object",
         "properties": {
           "ok": {
             "type": "boolean",
-            "enum": [true]
+            "enum": [
+              true
+            ]
           },
           "data": {
             "type": "object",
@@ -971,13 +1208,22 @@
                 }
               }
             },
-            "required": ["total_requests", "successful_requests", "failed_requests", "redirect_clicks"]
+            "required": [
+              "total_requests",
+              "successful_requests",
+              "failed_requests",
+              "redirect_clicks"
+            ]
           },
           "timestamp": {
             "type": "string"
           }
         },
-        "required": ["ok", "data", "timestamp"]
+        "required": [
+          "ok",
+          "data",
+          "timestamp"
+        ]
       },
       "TokenUsageSchema": {
         "type": "object",
@@ -989,7 +1235,10 @@
             "type": "number"
           },
           "max_requests": {
-            "type": ["number", "null"]
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "created_at": {
             "type": "string"
@@ -998,7 +1247,11 @@
             "type": "string"
           }
         },
-        "required": ["token_id", "usage_count", "created_at"]
+        "required": [
+          "token_id",
+          "usage_count",
+          "created_at"
+        ]
       },
       "UrlRedirectSchema": {
         "type": "object",
@@ -1029,7 +1282,11 @@
             "type": "string"
           }
         },
-        "required": ["slug", "url", "created_at"]
+        "required": [
+          "slug",
+          "url",
+          "created_at"
+        ]
       },
       "UserSchema": {
         "type": "object",
@@ -1041,13 +1298,20 @@
             "type": "string"
           },
           "expiresAt": {
-            "type": ["string", "null"]
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "tokenId": {
             "type": "string"
           }
         },
-        "required": ["id", "issuedAt", "expiresAt"]
+        "required": [
+          "id",
+          "issuedAt",
+          "expiresAt"
+        ]
       },
       "WorkerInfoSchema": {
         "type": "object",
@@ -1089,7 +1353,11 @@
                 "type": "string"
               }
             },
-            "required": ["cpu_time", "memory", "request_timeout"]
+            "required": [
+              "cpu_time",
+              "memory",
+              "request_timeout"
+            ]
           }
         },
         "required": [
@@ -1108,27 +1376,13 @@
     "parameters": {}
   },
   "paths": {
-    "/api/token/{uuid}": {
+    "/api/ping": {
       "get": {
-        "tags": ["Token"],
-        "summary": "Get uuid",
-        "description": "Token management operations",
-        "security": [
-          {
-            "bearerAuth": []
-          }
+        "tags": [
+          "System"
         ],
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "path",
-            "required": true,
-            "description": "UUID identifier",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "summary": "Get ping",
+        "description": "System health and information",
         "requestBody": {
           "required": true,
           "content": {
@@ -1145,53 +1399,141 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
+                    "cloudflare": {
+                      "type": "object",
                       "properties": {
-                        "message": {
+                        "connectingIP": {
+                          "type": "string"
+                        },
+                        "country": {
+                          "type": "object",
+                          "properties": {
+                            "ip": {
+                              "type": "string"
+                            },
+                            "primary": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "ip",
+                            "primary"
+                          ]
+                        },
+                        "datacentre": {
+                          "type": "string"
+                        },
+                        "ray": {
+                          "type": "string"
+                        },
+                        "request": {
+                          "type": "object",
+                          "properties": {
+                            "agent": {
+                              "type": "string"
+                            },
+                            "host": {
+                              "type": "string"
+                            },
+                            "method": {
+                              "type": "string"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "proto": {
+                              "type": "object",
+                              "properties": {
+                                "forward": {
+                                  "type": "string"
+                                },
+                                "request": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "forward",
+                                "request"
+                              ]
+                            },
+                            "version": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "agent",
+                            "host",
+                            "method",
+                            "path",
+                            "proto",
+                            "version"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "connectingIP",
+                        "country",
+                        "datacentre",
+                        "ray",
+                        "request"
+                      ]
+                    },
+                    "worker": {
+                      "type": "object",
+                      "properties": {
+                        "edge_functions": {
+                          "type": "boolean"
+                        },
+                        "environment": {
+                          "type": "string"
+                        },
+                        "limits": {
+                          "type": "object",
+                          "properties": {
+                            "cpu_time": {
+                              "type": "string"
+                            },
+                            "memory": {
+                              "type": "string"
+                            },
+                            "request_timeout": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "cpu_time",
+                            "memory",
+                            "request_timeout"
+                          ]
+                        },
+                        "preset": {
+                          "type": "string"
+                        },
+                        "runtime": {
+                          "type": "string"
+                        },
+                        "server_side_rendering": {
+                          "type": "boolean"
+                        },
+                        "version": {
                           "type": "string"
                         }
                       },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
+                      "required": [
+                        "edge_functions",
+                        "environment",
+                        "limits",
+                        "preset",
+                        "runtime",
+                        "server_side_rendering",
+                        "version"
+                      ]
                     }
                   },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
+                  "required": [
+                    "cloudflare",
+                    "worker"
+                  ]
                 }
               }
             }
@@ -1205,7 +1547,9 @@
                   "properties": {
                     "ok": {
                       "type": "boolean",
-                      "enum": [false]
+                      "enum": [
+                        false
+                      ]
                     },
                     "error": {
                       "type": "string"
@@ -1214,13 +1558,18 @@
                       "type": "string"
                     },
                     "status": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "message": {
                           "type": "string"
                         }
                       },
-                      "required": ["message"]
+                      "required": [
+                        "message"
+                      ]
                     },
                     "details": {
                       "type": "object"
@@ -1237,53 +1586,13 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Insufficient permissions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
                 }
               }
             }
@@ -1293,7 +1602,9 @@
     },
     "/api/token/{uuid}/{path}": {
       "get": {
-        "tags": ["Token"],
+        "tags": [
+          "Token"
+        ],
         "summary": "Get path",
         "description": "Token management operations",
         "security": [
@@ -1339,7 +1650,9 @@
                   "properties": {
                     "ok": {
                       "type": "boolean",
-                      "enum": [true]
+                      "enum": [
+                        true
+                      ]
                     },
                     "result": {
                       "type": "object"
@@ -1351,13 +1664,18 @@
                       "type": "null"
                     },
                     "status": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "message": {
                           "type": "string"
                         }
                       },
-                      "required": ["message"]
+                      "required": [
+                        "message"
+                      ]
                     },
                     "meta": {
                       "type": "object",
@@ -1383,7 +1701,13 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
+                  "required": [
+                    "ok",
+                    "message",
+                    "error",
+                    "status",
+                    "timestamp"
+                  ]
                 }
               }
             }
@@ -1397,7 +1721,9 @@
                   "properties": {
                     "ok": {
                       "type": "boolean",
-                      "enum": [false]
+                      "enum": [
+                        false
+                      ]
                     },
                     "error": {
                       "type": "string"
@@ -1406,13 +1732,18 @@
                       "type": "string"
                     },
                     "status": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "message": {
                           "type": "string"
                         }
                       },
-                      "required": ["message"]
+                      "required": [
+                        "message"
+                      ]
                     },
                     "details": {
                       "type": "object"
@@ -1429,7 +1760,13 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
                 }
               }
             }
@@ -1443,7 +1780,9 @@
                   "properties": {
                     "ok": {
                       "type": "boolean",
-                      "enum": [false]
+                      "enum": [
+                        false
+                      ]
                     },
                     "error": {
                       "type": "string"
@@ -1452,13 +1791,18 @@
                       "type": "string"
                     },
                     "status": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "message": {
                           "type": "string"
                         }
                       },
-                      "required": ["message"]
+                      "required": [
+                        "message"
+                      ]
                     },
                     "details": {
                       "type": "object"
@@ -1475,7 +1819,13 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
                 }
               }
             }
@@ -1485,7 +1835,9 @@
     },
     "/api/token/{uuid}/usage": {
       "get": {
-        "tags": ["Token"],
+        "tags": [
+          "Token"
+        ],
         "summary": "Get usage",
         "description": "Token management operations",
         "parameters": [
@@ -1509,7 +1861,9 @@
                   "properties": {
                     "ok": {
                       "type": "boolean",
-                      "enum": [true]
+                      "enum": [
+                        true
+                      ]
                     },
                     "result": {
                       "type": "object"
@@ -1521,13 +1875,18 @@
                       "type": "null"
                     },
                     "status": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "message": {
                           "type": "string"
                         }
                       },
-                      "required": ["message"]
+                      "required": [
+                        "message"
+                      ]
                     },
                     "meta": {
                       "type": "object",
@@ -1553,7 +1912,13 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
+                  "required": [
+                    "ok",
+                    "message",
+                    "error",
+                    "status",
+                    "timestamp"
+                  ]
                 }
               }
             }
@@ -1567,7 +1932,9 @@
                   "properties": {
                     "ok": {
                       "type": "boolean",
-                      "enum": [false]
+                      "enum": [
+                        false
+                      ]
                     },
                     "error": {
                       "type": "string"
@@ -1576,13 +1943,18 @@
                       "type": "string"
                     },
                     "status": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "message": {
                           "type": "string"
                         }
                       },
-                      "required": ["message"]
+                      "required": [
+                        "message"
+                      ]
                     },
                     "details": {
                       "type": "object"
@@ -1599,7 +1971,13 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
                 }
               }
             }
@@ -1609,7 +1987,9 @@
     },
     "/api/token/{uuid}/revoke": {
       "post": {
-        "tags": ["Token"],
+        "tags": [
+          "Token"
+        ],
         "summary": "Create/Update revoke",
         "description": "Token management operations",
         "security": [
@@ -1638,7 +2018,9 @@
                   "properties": {
                     "ok": {
                       "type": "boolean",
-                      "enum": [true]
+                      "enum": [
+                        true
+                      ]
                     },
                     "result": {
                       "type": "object"
@@ -1650,13 +2032,18 @@
                       "type": "null"
                     },
                     "status": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "message": {
                           "type": "string"
                         }
                       },
-                      "required": ["message"]
+                      "required": [
+                        "message"
+                      ]
                     },
                     "meta": {
                       "type": "object",
@@ -1682,7 +2069,13 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
+                  "required": [
+                    "ok",
+                    "message",
+                    "error",
+                    "status",
+                    "timestamp"
+                  ]
                 }
               }
             }
@@ -1696,7 +2089,9 @@
                   "properties": {
                     "ok": {
                       "type": "boolean",
-                      "enum": [false]
+                      "enum": [
+                        false
+                      ]
                     },
                     "error": {
                       "type": "string"
@@ -1705,13 +2100,18 @@
                       "type": "string"
                     },
                     "status": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "message": {
                           "type": "string"
                         }
                       },
-                      "required": ["message"]
+                      "required": [
+                        "message"
+                      ]
                     },
                     "details": {
                       "type": "object"
@@ -1728,7 +2128,13 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
                 }
               }
             }
@@ -1742,7 +2148,9 @@
                   "properties": {
                     "ok": {
                       "type": "boolean",
-                      "enum": [false]
+                      "enum": [
+                        false
+                      ]
                     },
                     "error": {
                       "type": "string"
@@ -1751,13 +2159,18 @@
                       "type": "string"
                     },
                     "status": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "message": {
                           "type": "string"
                         }
                       },
-                      "required": ["message"]
+                      "required": [
+                        "message"
+                      ]
                     },
                     "details": {
                       "type": "object"
@@ -1774,7 +2187,1377 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/token/{uuid}": {
+      "get": {
+        "tags": [
+          "Token"
+        ],
+        "summary": "Get uuid",
+        "description": "Token management operations",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "description": "UUID identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "message",
+                    "error",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/social": {
+      "post": {
+        "tags": [
+          "AI"
+        ],
+        "summary": "Create/Update social",
+        "description": "POST operation for /api/ai/social",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "message",
+                    "error",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/alt": {
+      "get": {
+        "tags": [
+          "AI"
+        ],
+        "summary": "Get alt",
+        "description": "Generate descriptive alt-text for images using AI",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "message",
+                    "error",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AI"
+        ],
+        "summary": "Create/Update alt",
+        "description": "Generate descriptive alt-text for images using AI",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "message",
+                    "error",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/word": {
+      "post": {
+        "tags": [
+          "AI"
+        ],
+        "summary": "Create/Update word",
+        "description": "POST operation for /api/ai/word",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "options": [
+                  {},
+                  {}
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "message",
+                    "error",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/{name}": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get name",
+        "description": "Dashboard data operations",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "Name identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "message",
+                    "error",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/docs": {
+      "get": {
+        "tags": [
+          "Documentation"
+        ],
+        "summary": "Get docs",
+        "description": "API documentation",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        true
+                      ]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "message",
+                    "error",
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [
+                        false
+                      ]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
                 }
               }
             }
@@ -1784,7 +3567,9 @@
     },
     "/api/redirects": {
       "get": {
-        "tags": ["System"],
+        "tags": [
+          "System"
+        ],
         "summary": "Get redirects",
         "description": "GET operation for /api/redirects",
         "requestBody": {
@@ -1813,7 +3598,9 @@
                       "description": "Array of available redirect slugs (truncated to 100 if more exist)"
                     }
                   },
-                  "required": ["redirects"]
+                  "required": [
+                    "redirects"
+                  ]
                 }
               }
             }
@@ -1827,7 +3614,9 @@
                   "properties": {
                     "ok": {
                       "type": "boolean",
-                      "enum": [false]
+                      "enum": [
+                        false
+                      ]
                     },
                     "error": {
                       "type": "string"
@@ -1836,433 +3625,18 @@
                       "type": "string"
                     },
                     "status": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/docs": {
-      "get": {
-        "tags": ["Documentation"],
-        "summary": "Get docs",
-        "description": "API documentation",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/dashboard/{name}": {
-      "get": {
-        "tags": ["Dashboard"],
-        "summary": "Get name",
-        "description": "Dashboard data operations",
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "description": "Name identifier",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/ping": {
-      "get": {
-        "tags": ["System"],
-        "summary": "Get ping",
-        "description": "System health and information",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {}
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "cloudflare": {
-                      "type": "object",
-                      "properties": {
-                        "connectingIP": {
-                          "type": "string"
-                        },
-                        "country": {
-                          "type": "object",
-                          "properties": {
-                            "ip": {
-                              "type": "string"
-                            },
-                            "primary": {
-                              "type": "string"
-                            }
-                          },
-                          "required": ["ip", "primary"]
-                        },
-                        "datacentre": {
-                          "type": "string"
-                        },
-                        "ray": {
-                          "type": "string"
-                        },
-                        "request": {
-                          "type": "object",
-                          "properties": {
-                            "agent": {
-                              "type": "string"
-                            },
-                            "host": {
-                              "type": "string"
-                            },
-                            "method": {
-                              "type": "string"
-                            },
-                            "path": {
-                              "type": "string"
-                            },
-                            "proto": {
-                              "type": "object",
-                              "properties": {
-                                "forward": {
-                                  "type": "string"
-                                },
-                                "request": {
-                                  "type": "string"
-                                }
-                              },
-                              "required": ["forward", "request"]
-                            },
-                            "version": {
-                              "type": "string"
-                            }
-                          },
-                          "required": ["agent", "host", "method", "path", "proto", "version"]
-                        }
-                      },
-                      "required": ["connectingIP", "country", "datacentre", "ray", "request"]
-                    },
-                    "worker": {
-                      "type": "object",
-                      "properties": {
-                        "edge_functions": {
-                          "type": "boolean"
-                        },
-                        "environment": {
-                          "type": "string"
-                        },
-                        "limits": {
-                          "type": "object",
-                          "properties": {
-                            "cpu_time": {
-                              "type": "string"
-                            },
-                            "memory": {
-                              "type": "string"
-                            },
-                            "request_timeout": {
-                              "type": "string"
-                            }
-                          },
-                          "required": ["cpu_time", "memory", "request_timeout"]
-                        },
-                        "preset": {
-                          "type": "string"
-                        },
-                        "runtime": {
-                          "type": "string"
-                        },
-                        "server_side_rendering": {
-                          "type": "boolean"
-                        },
-                        "version": {
                           "type": "string"
                         }
                       },
                       "required": [
-                        "edge_functions",
-                        "environment",
-                        "limits",
-                        "preset",
-                        "runtime",
-                        "server_side_rendering",
-                        "version"
+                        "message"
                       ]
-                    }
-                  },
-                  "required": ["cloudflare", "worker"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
                     },
                     "details": {
                       "type": "object"
@@ -2279,800 +3653,13 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/ai/alt": {
-      "post": {
-        "tags": ["AI"],
-        "summary": "Create/Update alt",
-        "description": "Generate descriptive alt-text for images using AI",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Insufficient permissions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "tags": ["AI"],
-        "summary": "Get alt",
-        "description": "Generate descriptive alt-text for images using AI",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {}
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Insufficient permissions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/ai/word": {
-      "post": {
-        "tags": ["AI"],
-        "summary": "Create/Update word",
-        "description": "POST operation for /api/ai/word",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "options": [{}, {}]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Insufficient permissions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/ai/social": {
-      "post": {
-        "tags": ["AI"],
-        "summary": "Create/Update social",
-        "description": "POST operation for /api/ai/social",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {}
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Insufficient permissions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/sentry-example-api": {
-      "get": {
-        "tags": ["System"],
-        "summary": "Get sentry-example-api",
-        "description": "GET operation for /api/sentry-example-api",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [true]
-                    },
-                    "result": {
-                      "type": "object"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "null"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "total": {
-                          "type": "number"
-                        },
-                        "page": {
-                          "type": "number"
-                        },
-                        "per_page": {
-                          "type": "number"
-                        },
-                        "total_pages": {
-                          "type": "number"
-                        },
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "enum": [false]
-                    },
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": ["object", "null"],
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": ["message"]
-                    },
-                    "details": {
-                      "type": "object"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "properties": {
-                        "request_id": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "timestamp": {
-                      "type": "string"
-                    }
-                  },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
                 }
               }
             }
@@ -3082,7 +3669,9 @@
     },
     "/go/{slug}": {
       "get": {
-        "tags": ["Redirects"],
+        "tags": [
+          "Redirects"
+        ],
         "summary": "Get slug",
         "description": "URL redirection service",
         "parameters": [
@@ -3115,7 +3704,9 @@
                   "properties": {
                     "ok": {
                       "type": "boolean",
-                      "enum": [true]
+                      "enum": [
+                        true
+                      ]
                     },
                     "result": {
                       "type": "object"
@@ -3127,13 +3718,18 @@
                       "type": "null"
                     },
                     "status": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "message": {
                           "type": "string"
                         }
                       },
-                      "required": ["message"]
+                      "required": [
+                        "message"
+                      ]
                     },
                     "meta": {
                       "type": "object",
@@ -3159,7 +3755,13 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "message", "error", "status", "timestamp"]
+                  "required": [
+                    "ok",
+                    "message",
+                    "error",
+                    "status",
+                    "timestamp"
+                  ]
                 }
               }
             }
@@ -3173,7 +3775,9 @@
                   "properties": {
                     "ok": {
                       "type": "boolean",
-                      "enum": [false]
+                      "enum": [
+                        false
+                      ]
                     },
                     "error": {
                       "type": "string"
@@ -3182,13 +3786,18 @@
                       "type": "string"
                     },
                     "status": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "message": {
                           "type": "string"
                         }
                       },
-                      "required": ["message"]
+                      "required": [
+                        "message"
+                      ]
                     },
                     "details": {
                       "type": "object"
@@ -3205,7 +3814,13 @@
                       "type": "string"
                     }
                   },
-                  "required": ["ok", "error", "message", "status", "timestamp"]
+                  "required": [
+                    "ok",
+                    "error",
+                    "message",
+                    "status",
+                    "timestamp"
+                  ]
                 }
               }
             }
