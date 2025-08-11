@@ -20,7 +20,7 @@ onMounted(async () => {
   try {
     const result = await Sentry.diagnoseSdkConnectivity()
     isConnected.value = result !== "sentry-unreachable"
-  } catch (error) {
+  } catch {
     isConnected.value = false
   }
 })
@@ -46,7 +46,6 @@ async function getSentryData() {
 </script>
 
 <template>
-  <title>Sentry Onboarding</title>
   <div>
     <main>
       <div class="flex-spacer" />
@@ -65,7 +64,7 @@ async function getSentryData() {
         <a target="_blank" href="https://docs.sentry.io/platforms/javascript/guides/nuxt/">read our docs</a>.
       </p>
 
-      <button type="button" @click="getSentryData" :disabled="!isConnected">
+      <button type="button" :disabled="!isConnected" @click="getSentryData">
         <span> Throw Sample Error </span>
       </button>
 
