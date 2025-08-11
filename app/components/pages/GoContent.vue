@@ -5,7 +5,7 @@
         src="/gifs/nedry.gif"
         alt="You didn't say the magic word"
         class="mx-auto max-w-lg w-full h-auto rounded-lg"
-      />
+      >
     </div>
 
     <div class="alert alert-error border-red border-2 bg-surface1/60 backdrop-blur-sm">

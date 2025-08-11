@@ -8,7 +8,7 @@ import { getCloudflareRequestInfo } from "./cloudflare"
  * Log levels for structured logging
  * Aligned with Cloudflare Workers standard log levels
  */
-export type LogLevel = "error" | "warn" | "log" | "debug"
+export type LogLevel = "error" | "warn" | "info" | "trace"
 
 /**
  * Common context data available in all endpoints from H3Event
@@ -142,7 +142,7 @@ export function extractEndpointContext(event: H3Event, auth?: AuthResult): Endpo
  * const context = extractEndpointContext(event, auth)
  *
  * // Log info
- * log("log", "Token validated", context, {
+ * log("info", "Token validated", context, {
  *   tokenUuid: uuid,
  *   operation: "get_usage"
  * })
@@ -197,15 +197,14 @@ export function log(
       case "warn":
         console.warn(logMessage)
         break
-      case "log":
-        console.log(logMessage)
+      case "info":
+        console.info(logMessage)
         break
-      case "debug":
-        // Debug logs use console.log in Workers environment
-        console.log(logMessage)
+      case "trace":
+        console.trace(logMessage)
         break
       default:
-        console.log(logMessage)
+        console.info(logMessage)
     }
   } catch (logError) {
     // Fallback to basic logging if structured logging fails
@@ -226,7 +225,7 @@ export function log(
  * ```typescript
  * const auth = await requireAPIAuth(event, "token")
  * const logger = createLogger(extractEndpointContext(event, auth))
- * logger.log("Processing request", { step: "validation" })
+ * logger.info("Processing request", { step: "validation" })
  * logger.error("Request failed", { reason: "invalid_token" }, error)
  * ```
  */
@@ -235,10 +234,7 @@ export function createLogger(context: EndpointContext) {
     error: (message: string, data?: Record<string, unknown>, error?: Error | unknown) =>
       log("error", message, context, data, error),
     warn: (message: string, data?: Record<string, unknown>) => log("warn", message, context, data),
-    log: (message: string, data?: Record<string, unknown>) => log("log", message, context, data),
-    debug: (message: string, data?: Record<string, unknown>) => log("debug", message, context, data),
-    // Aliases for backwards compatibility
-    info: (message: string, data?: Record<string, unknown>) => log("log", message, context, data),
-    trace: (message: string, data?: Record<string, unknown>) => log("debug", message, context, data)
+    info: (message: string, data?: Record<string, unknown>) => log("info", message, context, data),
+    trace: (message: string, data?: Record<string, unknown>) => log("trace", message, context, data)
   }
 }
