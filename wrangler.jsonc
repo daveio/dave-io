@@ -34,6 +34,9 @@
       "migrations_dir": "./migrations" // Directory containing migration files
     }
   ],
+  "version_metadata": {
+    "binding": "CF_VERSION_METADATA"
+  },
   // If true, Wrangler will traverse the file tree below base_dir for additional modules
   "find_additional_modules": false,
   // Cloudflare Images binding for image transformations
@@ -138,7 +141,8 @@
     "CLOUDFLARE_ACCOUNT_ID": "def50674a738cee409235f71819973cf",
     "NUXT_PUBLIC_API_BASE_URL": "/api",
     // trunk-ignore(gitleaks/generic-api-key)
-    "CLOUDFLARE_SECRET_STORE_ID": "c38e38cf995f4db08a71c9b616169d33"
+    "CLOUDFLARE_SECRET_STORE_ID": "c38e38cf995f4db08a71c9b616169d33",
+    "SENTRY_DSN": "https://9d89cd983c39d62a5982f0f5cefce01b@o374595.ingest.us.sentry.io/4509822235246592"
     // Secrets (encrypted) should be managed via `wrangler secret put` command
     // or .dev.vars file for local development
   },

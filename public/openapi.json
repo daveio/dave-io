@@ -2967,6 +2967,119 @@
         }
       }
     },
+    "/api/sentry-example-api": {
+      "get": {
+        "tags": ["System"],
+        "summary": "Get sentry-example-api",
+        "description": "GET operation for /api/sentry-example-api",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [true]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "page": {
+                          "type": "number"
+                        },
+                        "per_page": {
+                          "type": "number"
+                        },
+                        "total_pages": {
+                          "type": "number"
+                        },
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "message", "error", "status", "timestamp"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "enum": [false]
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    },
+                    "details": {
+                      "type": "object"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["ok", "error", "message", "status", "timestamp"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/go/{slug}": {
       "get": {
         "tags": ["Redirects"],
