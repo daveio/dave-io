@@ -32,7 +32,10 @@ export default defineNuxtConfig({
     cloudflareApiToken: process.env.CLOUDFLARE_API_TOKEN || "",
     public: {
       // Client-side environment variables
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || "/api"
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || "/api",
+      sentry: {
+        dsn: process.env.SENTRY_DSN || ""
+      }
     }
   },
 

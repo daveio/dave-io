@@ -1,4 +1,4 @@
-# -*- mode: go-template; tab_size: 4; hard_tabs: false -*-
+# code: language=ssh_config insertSpaces=true tabSize=2
 
 Host github.com *.github.com
   Port 22
