@@ -75,6 +75,16 @@ Workflow: Create tickets for TODOs with "TODO" label. Check Linear for existing 
 **ALWAYS**: Break compatibility • Test everything • Real data only • Complete code • Extract duplicates • KV hierarchical keys • Linear tickets for TODOs
 **NEVER**: Migration code (except database migrations) • Mock data • Silent failures • Copy-paste • Outdated docs • Complex KV values
 
+### 🖥️ DEV SERVER MANAGEMENT
+
+**Important**: I cannot reliably start or stop the dev server myself. Please:
+
+- **Start the dev server**: Run `bun run dev` and confirm it's available on `localhost:3000`
+- **Stop the dev server**: Use Ctrl+C in the terminal or close the terminal window
+- **Restart if needed**: If the server needs restarting, please do this manually
+
+I can test endpoints and make API calls once you confirm the server is running.
+
 ## Tech Stack
 
 - **Runtime**: Nuxt 4 + Cloudflare Workers | **Auth**: JWT + JOSE hierarchical | **Validation**: Zod + TypeScript | **Testing**: Vitest + HTTP API | **Tools**: Bun, Biome
@@ -567,3 +577,7 @@ Error logs include stack traces:
 ## Immediate Plans
 
 - None currently. DIO-118 has been completed - runtime validation for API responses is now implemented.
+
+## Memories
+
+- You are unable to handle starting or stopping the dev server yourself. If it needs to be restarted, started, or stopped, you should IMMEDIATELY STOP and ask the user.
