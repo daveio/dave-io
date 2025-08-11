@@ -18,7 +18,7 @@ jobs:
         id: checkout
         with:
           fetch-depth: 1
-        uses: actions/checkout@8edcb1bdb4e267140fa742c62e395cd74f332709
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
       - name: review
         id: review
         with:
@@ -35,8 +35,8 @@ jobs:
             Be constructive and helpful in your feedback.
             You have access to a wide variety of tools which you can use to evaluate this pull request. You should NOT, however, make any changes without explicitly being asked to do so.
             If configuring co-authorship, use Dave Williams, email dave@dave.io, GitHub username daveio.
-          if: |
-            !contains(github.event.pull_request.title, '[skip-review]') &&
-            !contains(github.event.pull_request.title, '[WIP]')
           model: claude-opus-4-1-20250805
-        uses: anthropics/claude-code-action@15db2b3c79c0681556c056e9bc3f61fd3fc0347d
+        if: |
+          !contains(github.event.pull_request.title, '[skip-review]') &&
+          !contains(github.event.pull_request.title, '[WIP]')
+        uses: anthropics/claude-code-action@4f4f43f0444d2d14cf449afc644f13facd71ebc4
