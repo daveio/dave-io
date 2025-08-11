@@ -446,6 +446,124 @@ curl -X POST "https://dave.io/api/ai/word" \
   -d '{"mode": "context", "text": "I am very happy about the result.", "target_word": "happy"}'
 ```
 
+## Structured Logging
+
+The application uses structured JSON logging for consistent observability. All endpoints should use this for logging operations.
+
+### Usage in Endpoints
+
+```typescript
+import { extractEndpointContext, log, createLogger } from "~/server/utils/logging"
+import { requireAPIAuth } from "~/server/utils/auth-helpers"
+
+export default defineEventHandler(async (event) => {
+  // Extract context after auth (if applicable)
+  const auth = await requireAPIAuth(event, "resource")
+  const context = extractEndpointContext(event, auth)
+
+  // Option 1: Direct logging
+  log("info", "Starting operation", context, {
+    customField: "value",
+    operation: "process"
+  })
+
+  // Option 2: Create bound logger
+  const logger = createLogger(context)
+  logger.info("Processing request", { step: "validation" })
+  logger.warn("Approaching limit", { remaining: 5 })
+
+  try {
+    // ... operation
+  } catch (error) {
+    // Log errors with full stack traces
+    logger.error(
+      "Operation failed",
+      {
+        operation: "database_query",
+        query: "SELECT * FROM tokens"
+      },
+      error
+    )
+    throw error
+  }
+})
+```
+
+### Log Levels
+
+- **error**: Failures, exceptions, critical issues (console.error)
+- **warn**: Warnings, deprecations, non-critical issues (console.warn)
+- **info**: Normal operations, state changes (console.info)
+- **trace**: Debug details, verbose output (console.trace)
+
+### Context Structure
+
+The `extractEndpointContext()` function captures:
+
+```typescript
+{
+  request: {
+    method: string         // HTTP method
+    path: string          // Request path
+    url: string           // Full URL
+    httpVersion: string   // HTTP version
+    userAgent: string     // User agent
+    headers: Record<string, string | undefined>
+  },
+  cloudflare: {
+    ray: string          // CF Ray ID
+    country: string      // Country code
+    ip: string          // Client IP
+    datacenter: string   // CF datacenter
+    userAgent: string    // User agent
+    requestUrl: string   // Request URL
+  },
+  auth?: {              // If auth provided
+    authenticated: boolean
+    subject?: string     // JWT subject
+    tokenId?: string     // JWT ID
+    permissions?: string[]
+    issuedAt?: Date
+    expiresAt?: Date
+  },
+  errorContext?: {      // If error middleware set
+    requestId: string
+    timestamp: string
+    cfRay: string
+  },
+  requestId: string     // Unique request ID
+  timestamp: string     // ISO timestamp
+}
+```
+
+### Implementation Pattern
+
+```typescript
+// At the start of every endpoint that needs logging:
+const auth = await requireAuth(event, "category", "resource") // if auth needed
+const context = extractEndpointContext(event, auth)
+const logger = createLogger(context)
+
+// Use logger throughout endpoint
+logger.info("Starting", { data })
+// ... operations
+logger.info("Completed", { result })
+```
+
+### Output Format
+
+All logs output as single-line JSON to the appropriate console method:
+
+```json
+{"level":"info","message":"Token validated","context":{...},"data":{...}}
+```
+
+Error logs include stack traces:
+
+```json
+{"level":"error","message":"Failed","context":{...},"data":{...},"error":{"message":"...","stack":"...","code":"..."}}
+```
+
 ## Immediate Plans
 
 - None currently. DIO-118 has been completed - runtime validation for API responses is now implemented.
