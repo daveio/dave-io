@@ -37,9 +37,9 @@ The implementation will:
 
 ### 1. Environment Configuration
 
-#### Using Cloudflare Secrets Store
+#### Using Cloudflare local secrets
 
-The Supabase credentials are stored in Cloudflare Secrets Store for enhanced security. Secrets Store provides account-level secrets that can be shared across multiple Workers and environments.
+The Supabase credentials are stored in Cloudflare worker-local secrets.
 
 **Important**: In Cloudflare Workers with Nuxt 4, environment variables and secrets are NOT available via `process.env`. Instead, they are accessible through the Cloudflare event context:
 
@@ -59,27 +59,23 @@ bun add -D nitro-cloudflare-dev
 
 ```bash
 # Local development (.dev.vars file)
-SUPABASE_URL=https://your-project.supabase.co  # Non-secret
-SUPABASE_PUBLISHABLE_KEY=sb_publishable_your-key  # Non-secret (designed to be public)
-SUPABASE_SECRET_KEY=sb_secret_your-key  # Secret - server-side only
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_your-key
+SUPABASE_SECRET_KEY=sb_secret_your-key  # local secret
 
 # Note: The publishable key is meant to be exposed in client-side code.
 # Only the secret key needs to be kept secure.
 ```
 
-#### Sync secrets to Cloudflare Secrets Store
+#### Sync secrets to Cloudflare
 
-```bash
+````bash
 # Only the secret key needs to be synced
 # Mark it with "# secret" comment in your .env file
-SUPABASE_SECRET_KEY=sb_secret_your-key # secret
+SUPABASE_SECRET_KEY=sb_secret_your-key # local secret
 
-# Sync your secrets to Cloudflare Secrets Store
+# Sync your secrets to Cloudflare
 bun run secrets sync
-
-# Or manually create/update the secret
-wrangler secrets-store secret create <STORE_ID> --name SUPABASE_SECRET_KEY --scopes workers --remote
-```
 
 #### Configure bindings in `wrangler.jsonc`
 
@@ -90,16 +86,9 @@ wrangler secrets-store secret create <STORE_ID> --name SUPABASE_SECRET_KEY --sco
     // Non-secret values - directly accessible
     "SUPABASE_URL": "https://your-project.supabase.co",
     "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_your-key"
-  },
-  "secrets_store_secrets": [
-    {
-      "binding": "SUPABASE_SECRET_KEY",
-      "secret_name": "SUPABASE_SECRET_KEY",
-      "store_id": "c38e38cf995f4db08a71c9b616169d33"
-    }
-  ]
+  }
 }
-```
+````
 
 #### Note on Nuxt Configuration
 
@@ -741,13 +730,13 @@ For production on Cloudflare:
 
 ### Production Deployment
 
-1. Ensure your secret is in Cloudflare Secrets Store:
+1. Ensure your secret is in Cloudflare:
 
    ```bash
    # In your .env file, mark only the secret key
-   SUPABASE_SECRET_KEY="sb_secret_your-key" # secret
+   SUPABASE_SECRET_KEY="sb_secret_your-key" # local secret
 
-   # Sync secrets to Cloudflare Secrets Store
+   # Sync secrets to Cloudflare
    bun run secrets sync
 
    # Or sync with force update for existing secrets
@@ -762,14 +751,7 @@ For production on Cloudflare:
        "SUPABASE_URL": "https://your-project.supabase.co",
        "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_your-key"
        // ... other non-secret vars
-     },
-     "secrets_store_secrets": [
-       {
-         "binding": "SUPABASE_SECRET_KEY",
-         "secret_name": "SUPABASE_SECRET_KEY",
-         "store_id": "your-store-id"
-       }
-     ]
+     }
    }
    ```
 
@@ -809,17 +791,6 @@ For production on Cloudflare:
 - API endpoints continue using the current auth flow
 - Only frontend route protection uses Supabase Auth
 - No database migrations required (unless adding user profile tables)
-
-## Why Cloudflare Secrets Store Instead of App Secrets?
-
-We're using Cloudflare Secrets Store instead of Worker-specific secrets (set via `wrangler secret put`) for several reasons:
-
-1. **Account-level Management**: Secrets Store allows you to manage secrets at the account level and share them across multiple Workers
-2. **Centralized Updates**: Update a secret once in the store, and all Workers using it get the updated value
-3. **Better Organization**: Group related secrets together with descriptive names and comments
-4. **Audit Trail**: Track when secrets were created, updated, and by whom
-5. **Reduced Duplication**: No need to set the same secret multiple times for different environments or Workers
-6. **Simplified Deployment**: The `bin/secrets.ts` script provides automated syncing from local `.env` files marked with `# secret`
 
 ## Future Enhancements
 
