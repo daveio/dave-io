@@ -450,3 +450,6 @@ pids
 
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 .env.secrets
+
+# Sentry Config File
+.env.sentry-build-plugin
