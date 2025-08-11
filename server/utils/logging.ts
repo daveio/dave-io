@@ -6,8 +6,9 @@ import { getCloudflareRequestInfo } from "./cloudflare"
 
 /**
  * Log levels for structured logging
+ * Aligned with Cloudflare Workers standard log levels
  */
-export type LogLevel = "error" | "warn" | "info" | "trace"
+export type LogLevel = "error" | "warn" | "log" | "debug"
 
 /**
  * Common context data available in all endpoints from H3Event
@@ -127,7 +128,7 @@ export function extractEndpointContext(event: H3Event, auth?: AuthResult): Endpo
 
 /**
  * Log structured JSON to the appropriate console method
- * @param level - Log level (error, warn, info, trace)
+ * @param level - Log level (error, warn, log, debug)
  * @param message - Log message
  * @param context - Common endpoint context from the event
  * @param data - Optional custom data specific to this log entry
@@ -141,7 +142,7 @@ export function extractEndpointContext(event: H3Event, auth?: AuthResult): Endpo
  * const context = extractEndpointContext(event, auth)
  *
  * // Log info
- * log("info", "Token validated", context, {
+ * log("log", "Token validated", context, {
  *   tokenUuid: uuid,
  *   operation: "get_usage"
  * })
@@ -188,6 +189,7 @@ export function log(
     const logMessage = JSON.stringify(logEntry)
 
     // Route to appropriate console method
+    // Using Cloudflare Workers standard console methods
     switch (level) {
       case "error":
         console.error(logMessage)
@@ -195,14 +197,15 @@ export function log(
       case "warn":
         console.warn(logMessage)
         break
-      case "info":
-        console.info(logMessage)
+      case "log":
+        console.log(logMessage)
         break
-      case "trace":
-        console.trace(logMessage)
+      case "debug":
+        // Debug logs use console.log in Workers environment
+        console.log(logMessage)
         break
       default:
-        console.info(logMessage)
+        console.log(logMessage)
     }
   } catch (logError) {
     // Fallback to basic logging if structured logging fails
@@ -223,7 +226,7 @@ export function log(
  * ```typescript
  * const auth = await requireAPIAuth(event, "token")
  * const logger = createLogger(extractEndpointContext(event, auth))
- * logger.info("Processing request", { step: "validation" })
+ * logger.log("Processing request", { step: "validation" })
  * logger.error("Request failed", { reason: "invalid_token" }, error)
  * ```
  */
@@ -232,7 +235,10 @@ export function createLogger(context: EndpointContext) {
     error: (message: string, data?: Record<string, unknown>, error?: Error | unknown) =>
       log("error", message, context, data, error),
     warn: (message: string, data?: Record<string, unknown>) => log("warn", message, context, data),
-    info: (message: string, data?: Record<string, unknown>) => log("info", message, context, data),
-    trace: (message: string, data?: Record<string, unknown>) => log("trace", message, context, data)
+    log: (message: string, data?: Record<string, unknown>) => log("log", message, context, data),
+    debug: (message: string, data?: Record<string, unknown>) => log("debug", message, context, data),
+    // Aliases for backwards compatibility
+    info: (message: string, data?: Record<string, unknown>) => log("log", message, context, data),
+    trace: (message: string, data?: Record<string, unknown>) => log("debug", message, context, data)
   }
 }
