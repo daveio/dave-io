@@ -216,6 +216,93 @@ bun run deploy
 - `CLOUDFLARE_ACCOUNT_ID` - Cloudflare account ID
 - `OPENROUTER_API_KEY` - OpenRouter API key
 
+## 📊 Structured Logging
+
+The application uses structured JSON logging for better observability. All logs output JSON to the appropriate console method (error, warn, info, trace).
+
+**Basic Usage**:
+
+```typescript
+import { extractEndpointContext, log } from "~/server/utils/logging"
+
+// In an endpoint
+export default defineEventHandler(async (event) => {
+  const auth = await requireAPIAuth(event, "token")
+  const context = extractEndpointContext(event, auth)
+
+  // Log info with custom data
+  log("info", "Processing token request", context, {
+    tokenId: "uuid-here",
+    operation: "validate"
+  })
+
+  // Log errors with stack traces
+  try {
+    // ... operation
+  } catch (error) {
+    log("error", "Token validation failed", context, { tokenId: "uuid-here" }, error)
+  }
+})
+```
+
+**Using Logger Instance**:
+
+```typescript
+import { extractEndpointContext, createLogger } from "~/server/utils/logging"
+
+// Create a logger bound to the request context
+const logger = createLogger(extractEndpointContext(event, auth))
+
+// Use throughout the endpoint
+logger.info("Starting operation", { step: 1 })
+logger.warn("Rate limit approaching", { remaining: 5 })
+logger.error("Operation failed", { reason: "timeout" }, error)
+logger.trace("Debug details", { internal: data })
+```
+
+**Log Output Structure**:
+
+```json
+{
+  "level": "info",
+  "message": "Token validated successfully",
+  "context": {
+    "request": {
+      "method": "GET",
+      "path": "/api/token/abc-123",
+      "url": "/api/token/abc-123",
+      "httpVersion": "1.1",
+      "userAgent": "Mozilla/5.0...",
+      "headers": {
+        /* all request headers */
+      }
+    },
+    "cloudflare": {
+      "ray": "8abc123def456",
+      "country": "US",
+      "ip": "1.2.3.4",
+      "datacenter": "SJC",
+      "userAgent": "Mozilla/5.0...",
+      "requestUrl": "/api/token/abc-123"
+    },
+    "auth": {
+      "authenticated": true,
+      "subject": "api:token",
+      "tokenId": "jwt-uuid-here",
+      "permissions": ["api", "token"],
+      "issuedAt": "2025-01-01T00:00:00.000Z",
+      "expiresAt": "2025-02-01T00:00:00.000Z"
+    },
+    "requestId": "req-uuid-here",
+    "timestamp": "2025-01-01T00:00:00.000Z"
+  },
+  "data": {
+    "tokenId": "abc-123",
+    "operation": "validate"
+  }
+}
+```
+
 ## 🔧 Troubleshooting
 
 **Build Issues**:
@@ -239,6 +326,7 @@ bun run test         # Run tests
 - Validate UUIDs with `getValidatedUUID()`
 - Protect URLs with `validateURL()`
 - Handle errors with `createApiError()`
+- Log operations with `extractEndpointContext()` and `log()`
 
 ## 📋 Response Format
 
