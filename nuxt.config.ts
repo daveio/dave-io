@@ -125,8 +125,8 @@ export default defineNuxtConfig({
   },
 
   sentry: {
-    autoInjectServerSentry: "experimental_dynamic-import", // breaks build
-    // autoInjectServerSentry: "top-level-import",
+    // autoInjectServerSentry: "experimental_dynamic-import", // breaks build
+    autoInjectServerSentry: "top-level-import",
     sourceMapsUploadOptions: {
       org: "daveio",
       project: "dave-io"
