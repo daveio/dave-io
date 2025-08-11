@@ -14,32 +14,43 @@ export default defineNuxtConfig({
     "@nuxtjs/seo",
     "@nuxtjs/tailwindcss",
     "@pinia/nuxt",
-    "nitro-cloudflare-dev"
+    "nitro-cloudflare-dev",
+    "@sentry/nuxt/module"
   ],
+
   devtools: { enabled: true },
+
   colorMode: {
     preference: "dark",
     fallback: "dark",
     storageKey: "nuxt-color-mode"
   },
+
   runtimeConfig: {
     // Server-side environment variables
     apiJwtSecret: process.env.API_JWT_SECRET || "dev-secret-change-in-production",
     cloudflareApiToken: process.env.CLOUDFLARE_API_TOKEN || "",
     public: {
       // Client-side environment variables
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || "/api"
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || "/api",
+      sentry: {
+        dsn: process.env.SENTRY_DSN || ""
+      }
     }
   },
+
   compatibilityDate: "2025-07-19",
+
   future: {
     compatibilityVersion: 4
   },
+
   experimental: {
     viewTransition: true,
     componentIslands: true,
     lazyHydration: true
   },
+
   nitro: {
     preset: "cloudflare_module",
     cloudflare: {
@@ -88,9 +99,10 @@ export default defineNuxtConfig({
   // Vite configuration to disable sourcemaps in production
   vite: {
     build: {
-      sourcemap: true // Enable sourcemaps in production (disable if warnings)
+      // sourcemap: true // Enable sourcemaps in production (disable if warnings)
     }
   },
+
   fonts: {
     defaults: {
       weights: [400],
@@ -106,11 +118,26 @@ export default defineNuxtConfig({
       prefix: "/_fonts/"
     }
   },
+
   tailwindcss: {
     cssPath: "~/app/assets/css/tailwind.css",
     configPath: "./tailwind.config.ts",
     editorSupport: true,
     viewer: false,
     exposeConfig: false
+  },
+
+  sentry: {
+    // autoInjectServerSentry: "experimental_dynamic-import", // breaks build
+    // autoInjectServerSentry: "top-level-import", // disabled: plugin approach
+    sourceMapsUploadOptions: {
+      org: "daveio",
+      project: "dave-io"
+    }
+  },
+
+  sourcemap: {
+    server: true,
+    client: true
   }
 })
