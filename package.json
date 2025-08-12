@@ -5,7 +5,7 @@
     "@iconify-json/mdi-light": "^1.2.2",
     "@noble/hashes": "^1.8.0",
     "@nuxt/fonts": "^0.11.4",
-    "@nuxt/icon": "^1.15.0",
+    "@nuxt/icon": "^2.0.0",
     "@nuxt/image": "^1.11.0",
     "@nuxt/scripts": "^0.11.10",
     "@nuxtjs/color-mode": "^3.5.2",
