@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
       - name: claude
         id: claude
-        uses: anthropics/claude-code-action@194fca8b05f044ca6678c516c60c73d6b1d6dbae
+        uses: anthropics/claude-code-action@9f02f6f6d43ec1d1da0f80028250535a057f3f32
         with:
           allowed_tools: Bash,Edit,Glob,Grep,ListMcpResourcesTool,LS,MultiEdit,NotebookEdit,NotebookRead,Read,ReadMcpResourceTool,Task,TodoWrite,WebFetch,WebSearch,Write
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
