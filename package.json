@@ -3,7 +3,7 @@
     "@asteasolutions/zod-to-openapi": "^8.1.0",
     "@iconify-json/heroicons": "^1.2.2",
     "@iconify-json/mdi-light": "^1.2.2",
-    "@noble/hashes": "^1.8.0",
+    "@noble/hashes": "^2.0.0",
     "@nuxt/fonts": "^0.11.4",
     "@nuxt/icon": "^2.0.0",
     "@nuxt/image": "^1.11.0",
