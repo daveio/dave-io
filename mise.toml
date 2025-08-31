@@ -1,5 +1,5 @@
 [env]
-NEXT_DAVE_IO_MISE_ACTIVE = 'true'
+DAVE_IO_MISE_ACTIVE = 'true'
 
 [settings]
 env_file = '.env'
@@ -7,8 +7,8 @@ idiomatic_version_file = false
 idiomatic_version_file_enable_tools = []
 
 [tools]
-bun = { version = '1.2.20' }
-node = { version = '24.6.0' }
+bun = { version = '1.2.21' }
+node = { version = '22.19.0' }
 rust = { version = '1.89.0' }
 
 [tasks]
