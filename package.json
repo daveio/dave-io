@@ -15,7 +15,7 @@
     "@supabase/supabase-js": "^2.56.1",
     "@tanstack/vue-table": "^8.21.3",
     "@unhead/vue": "^2.0.14",
-    "cloudflare": "^4.5.0",
+    "cloudflare": "^5.0.0",
     "dashkit": "^0.1.0",
     "date-fns": "^4.1.0",
     "fast-xml-parser": "^5.2.5",
