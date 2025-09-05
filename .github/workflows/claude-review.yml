@@ -39,4 +39,4 @@ jobs:
         if: |
           !contains(github.event.pull_request.title, '[skip-review]') &&
           !contains(github.event.pull_request.title, '[WIP]')
-        uses: anthropics/claude-code-action@a6888c03f22170d00d2a92fa2317584ca7d5e108
+        uses: anthropics/claude-code-action@2e6fc44bd4c8c7f287e83a4dccc480a220f8ae4a
