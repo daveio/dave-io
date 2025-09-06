@@ -1,11 +1,13 @@
 import { ok } from "../../utils/response"
+import { logger } from "../../utils/logging"
 import { unblockDomain } from "../../utils/ctrld"
 import type { ctrldUnblockRequest } from "~~/shared/types/ctrld"
 
 export default defineEventHandler(async (event) => {
   const { domain, auth, profile, permanent } = await readBody<ctrldUnblockRequest>(event)
 
-  console.log("Received unblock request:", { domain, auth, profile, permanent })
+  // Do not log auth; include request context for correlation
+  logger.info("Received unblock request", { domain, profile, permanent }, event)
 
   if (auth !== useRuntimeConfig(event).ctrldAuthKey) {
     return error(event, {}, "Invalid auth", 401)

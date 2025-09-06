@@ -1,4 +1,5 @@
 import { ok, error } from "~~/server/utils/response"
+import { logger } from "~~/server/utils/logging"
 
 // trunk-ignore-all(trunk-toolbox/todo)
 
@@ -21,15 +22,19 @@ export default defineEventHandler(async (event) => {
     return error(event, {}, "Missing required fields: title and description", 422)
   }
 
-  // Log for visibility during local/dev testing
-  console.log("/api/todo (stub) received:", {
-    title: body.title,
-    type: body.type,
-    priority: body.priority,
-    name: body.name,
-    email: body.email,
-    descriptionLength: body.description?.length || 0,
-  })
+  // Structured log for visibility during local/dev testing
+  logger.info(
+    "/api/todo (stub) received",
+    {
+      title: body.title,
+      type: body.type,
+      priority: body.priority,
+      name: body.name,
+      email: body.email,
+      descriptionLength: body.description?.length || 0,
+    },
+    event,
+  )
 
   // Reply with a stub response
   return ok(

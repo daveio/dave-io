@@ -1,5 +1,7 @@
 import { DateTime } from "luxon"
+import { parse } from "tldts"
 import type { H3Event } from "h3"
+import { logger } from "./logging"
 
 export interface UnblockRequest {
   domain: string
@@ -13,16 +15,30 @@ export interface DeleteCustomRuleResponse {
   message: string
 }
 
-function normaliseDomain(domain: string): string {
-  // Remove www prefix
-  if (domain.startsWith("www.")) {
-    domain = domain.slice(4)
+function normaliseDomain(input: string): string {
+  // Defensive normalization: trim, lower-case, unify dot variants, drop trailing noise
+  let host = (input ?? "").trim().toLowerCase()
+  host = host.replace(/[。．｡]/g, ".") // normalize unicode dots to ASCII dot
+  host = host.replace(/[\s/]+$/g, "") // strip trailing slashes/whitespace
+
+  logger.info("Normalising input domain", { input, normalised: host })
+
+  const { domain } = parse(host, {
+    allowIcannDomains: true,
+    allowPrivateDomains: true,
+    detectIp: false, // we never want IPs because we're dealing with DNS
+    extractHostname: true,
+    validateHostname: true,
+    mixedInputs: true,
+  })
+
+  if (domain) {
+    logger.info("Parsed domain from input", { input, normalised: domain })
+  } else {
+    logger.warn("Falling back to best-effort host", { input, normalised: host })
   }
-  // Remove trailing slash
-  if (domain.endsWith("/")) {
-    domain = domain.slice(0, -1)
-  }
-  return domain
+
+  return domain ?? host // fallback to best-effort host if parsing fails
 }
 
 export async function unblockDomain(request: UnblockRequest, apiKey: string) {
@@ -43,9 +59,11 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
   }
 
   if (!(await ensureRuleDeleted(request, apiKey))) {
-    console.error(
-      `Failed to ensure deletion of existing override for ${request.domain} on profile ${request.profileId}, proceeding anyway...`,
-    )
+    logger.error("Failed to ensure deletion of existing override", {
+      domain: request.domain,
+      profileId: request.profileId,
+      proceeding: true,
+    })
   }
 
   return await $fetch(`https://api.controld.com/profiles/${request.profileId}/rules`, {
@@ -74,6 +92,6 @@ async function ensureRuleDeleted(request: UnblockRequest, apiKey: string) {
 }
 
 export async function checkDomain(event: H3Event, domain: string) {
-  console.log(event)
+  logger.info("checkDomain invoked", { domain }, event)
   return { safe: true, reasoning: `${domain}: AI checks not yet implemented` }
 }

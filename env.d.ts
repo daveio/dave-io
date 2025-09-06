@@ -8,6 +8,8 @@ declare module "h3" {
       env: Env
       context: ExecutionContext
     }
+    /** Per-request correlation identifier (CF-Ray or generated). */
+    requestId?: string
   }
 }
 
