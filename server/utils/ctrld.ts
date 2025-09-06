@@ -78,15 +78,16 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
 }
 
 async function ensureRuleDeleted(request: UnblockRequest, apiKey: string) {
-  const normalisedDomain = normaliseDomain(request.domain)
-
-  const response = (await $fetch(`https://api.controld.com/profiles/${request.profileId}/rules/${normalisedDomain}`, {
-    method: "DELETE",
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${apiKey}`,
+  const response = (await $fetch(
+    `https://api.controld.com/profiles/${request.profileId}/rules/${normaliseDomain(request.domain)}`,
+    {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
     },
-  })) as DeleteCustomRuleResponse // idempotent; succeeds anyway if no deletion
+  )) as DeleteCustomRuleResponse // idempotent; succeeds anyway if no deletion
 
   return response.success
 }
