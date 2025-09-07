@@ -206,6 +206,8 @@ usePageSetup({
   description: "Understanding non-binary gender identity and they/them pronouns - a friendly educational guide"
 })
 
+breakFrontend()
+
 onMounted(() => {
   // Page mounted
 })
