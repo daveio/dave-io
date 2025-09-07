@@ -1,15 +1,12 @@
 <template>
   <span>
     <NuxtTurnstile v-model="token" />
-    <span v-if="!error && !emailAddress" class="text-yellow font-mono">
-      Checking your browser...
-      <Icon name="i-oui-compute" class="animate-ping ml-2" size="0.75em" />
-    </span>
+    <span v-if="!error && !emailAddress" class="text-yellow font-mono animate-ping">Evaluating humanity...</span>
     <span v-else-if="error" class="text-red font-mono">
       {{ error }}
     </span>
-    <span v-else-if="emailAddress" class="text-text font-mono">
-      <a :href="`mailto:${emailAddress}`" class="link-url">
+    <span v-else-if="emailAddress" class="font-mono">
+      <a :href="`mailto:${emailAddress}`" class="text-yellow link-url">
         {{ emailAddress }}
       </a>
     </span>

@@ -13,7 +13,10 @@ declare global {
 export default defineNuxtConfig({
   app: {
     head: {
-      link: [{ rel: "icon", type: "image/vnd.microsoft.icon", href: "/images/icon.ico" }],
+      link: [
+        { rel: "icon", type: "image/vnd.microsoft.icon", href: "/images/icon.ico" },
+        { rel: "me", href: "https://basilisk.gallery/@dave" },
+      ],
     },
   },
   colorMode: {
