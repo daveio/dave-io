@@ -18,6 +18,12 @@ export default defineNuxtConfig({
     "@sentry/nuxt/module"
   ],
 
+  app: {
+    head: {
+      link: [{ rel: "me", href: "https://basilisk.gallery/@dave" }]
+    }
+  },
+
   devtools: { enabled: true },
 
   colorMode: {
