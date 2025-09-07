@@ -2,13 +2,15 @@
   <div>
     <div class="pt-4 mb-4 flex flex-col items-center">
       <div
-        class="rounded-xl p-0.5 w-[420px] h-[70px] flex items-center justify-center bg-rainbow-gradient max-md:w-[98vw] max-md:min-w-0 max-md:max-w-full max-md:h-[60px] max-md:text-base">
+        class="rounded-xl p-0.5 w-[420px] h-[70px] flex items-center justify-center bg-rainbow-gradient max-md:w-[98vw] max-md:min-w-0 max-md:max-w-full max-md:h-[60px] max-md:text-base"
+      >
         <div class="bg-[#111] rounded-[10px] w-full h-full flex items-center justify-center">
           <span class="font-bold text-lg text-white">Dave Williams</span>
         </div>
       </div>
       <div
-        class="text-center text-xl font-extrabold rainbow-gradient-text mb-4 flex items-center justify-center gap-2 pt-4">
+        class="text-center text-xl font-extrabold rainbow-gradient-text mb-4 flex items-center justify-center gap-2 pt-4"
+      >
         <Icon name="i-heroicons-rocket-launch" class="text-orange-400" />
         <span class="max-md:hidden">Weapons-grade DevOps engineer, developer, and tinkerer</span>
         <span class="md:hidden text-sm">Weapons-grade engineer and tinkerer</span>
@@ -17,7 +19,8 @@
     </div>
     <div class="mb-4">
       <div
-        class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto pb-4 max-md:grid-cols-[0.7fr_1.2fr] max-md:text-sm max-md:max-w-full">
+        class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto pb-4 max-md:grid-cols-[0.7fr_1.2fr] max-md:text-sm max-md:max-w-full"
+      >
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
           <i class="i-mdi-light-gender-transgender mr-2 text-green w-5 h-5" />
           Email
@@ -27,7 +30,8 @@
     </div>
     <div class="mb-4">
       <div
-        class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto pb-4 max-md:grid-cols-[0.7fr_1.2fr] max-md:text-sm max-md:max-w-full">
+        class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto pb-4 max-md:grid-cols-[0.7fr_1.2fr] max-md:text-sm max-md:max-w-full"
+      >
         <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
           <i class="i-mdi-light-gender-transgender mr-2 text-green w-5 h-5" />
           Pronouns
@@ -37,7 +41,8 @@
     </div>
     <div class="mb-4">
       <div
-        class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto md:gap-x-4 max-md:text-sm max-md:max-w-full max-md:pl-4">
+        class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto md:gap-x-4 max-md:text-sm max-md:max-w-full max-md:pl-4"
+      >
         <!-- API Link -->
         <div class="contents">
           <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
@@ -50,7 +55,8 @@
     </div>
     <div class="mb-8">
       <div
-        class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto md:gap-x-4 max-md:text-sm max-md:max-w-full max-md:pl-4">
+        class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto md:gap-x-4 max-md:text-sm max-md:max-w-full max-md:pl-4"
+      >
         <!-- TODO Link -->
         <div class="contents">
           <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
@@ -63,7 +69,8 @@
     </div>
     <div class="mb-4">
       <div
-        class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto max-md:grid-cols-[0.7fr_1.2fr] max-md:text-sm max-md:max-w-full">
+        class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto max-md:grid-cols-[0.7fr_1.2fr] max-md:text-sm max-md:max-w-full"
+      >
         <!-- Bluesky -->
         <div class="contents">
           <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
@@ -165,7 +172,8 @@
     <!-- trunk-ignore-all(trunk-toolbox/todo) -->
     <div class="mt-8">
       <div
-        class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto md:gap-x-4 max-md:text-sm max-md:max-w-full max-md:pl-4">
+        class="grid grid-cols-2 gap-y-2 gap-x-4 max-w-3xl mx-auto md:gap-x-4 max-md:text-sm max-md:max-w-full max-md:pl-4"
+      >
         <!-- CV Link -->
         <div class="contents">
           <span class="font-medium text-right pr-1 inline-flex justify-end items-center">
@@ -206,6 +214,7 @@
 
 <script setup lang="ts">
 import Email from "~/components/shared/Email.vue"
+import { logger } from "@sentry/nuxt"
 
 usePageSetup({
   title: "home"
@@ -220,6 +229,6 @@ definePageMeta({
 })
 
 onMounted(() => {
-  // Page mounted
+  logger.info("Page mounted", { log_source: "/" })
 })
 </script>
