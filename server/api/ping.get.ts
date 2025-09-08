@@ -11,7 +11,6 @@ import { ok } from "~~/server/utils/response"
  *   A response object containing the message and redirects from the database.
  */
 export default defineEventHandler(async (event) => {
-  breakBackend()
   return ok(event, {
     message: "pong!",
   })

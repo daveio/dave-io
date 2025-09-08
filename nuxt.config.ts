@@ -142,6 +142,7 @@ export default defineNuxtConfig({
     sourceMapsUploadOptions: {
       org: "daveio",
       project: "rebuild-dave-io",
+      authToken: process.env.SENTRY_AUTH_TOKEN,
     },
   },
   site: {
