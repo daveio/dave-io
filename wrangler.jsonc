@@ -47,8 +47,11 @@
   "minify": true,
   "name": "dave-io",
   "observability": {
-    "enabled": true,
-    "head_sampling_rate": 1
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1.0,
+      "invocation_logs": true
+    }
   },
   "placement": {
     "mode": "smart"
