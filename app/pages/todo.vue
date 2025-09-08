@@ -6,7 +6,6 @@
       <h1 class="text-2xl font-bold mb-4 bg-gradient-to-r from-green via-teal to-cyan bg-clip-text text-transparent">
         TODO
       </h1>
-      <p class="text-xl text-subtext1 mb-1">Fill out this form to send me a ticket in Linear.</p>
       <p class="text-lg text-subtext0">Just describe what you want me to do and I'll take it from there.</p>
     </div>
 
@@ -28,15 +27,8 @@
             <fieldset class="fieldset">
               <legend class="fieldset-legend">Title <span class="text-red-400">*</span></legend>
               <label class="label" for="title">Short summary</label>
-              <input
-                id="title"
-                v-model.trim="form.title"
-                type="text"
-                class="input"
-                placeholder="e.g. Add RSS to blog"
-                required
-                :disabled="submitting"
-              />
+              <input id="title" v-model.trim="form.title" type="text" class="input" placeholder="e.g. Add RSS to blog"
+                required :disabled="submitting" />
             </fieldset>
 
             <fieldset class="fieldset">
@@ -68,49 +60,30 @@
             <fieldset class="fieldset">
               <legend class="fieldset-legend">Your Name</legend>
               <label class="label" for="name">Optional</label>
-              <input
-                id="name"
-                v-model.trim="form.name"
-                type="text"
-                class="input"
-                placeholder="Jane Doe"
-                :disabled="submitting"
-              />
+              <input id="name" v-model.trim="form.name" type="text" class="input" placeholder="Jane Doe"
+                :disabled="submitting" />
             </fieldset>
 
             <fieldset class="fieldset">
               <legend class="fieldset-legend">Email</legend>
               <label class="label" for="email">Optional (so I can reply)</label>
-              <input
-                id="email"
-                v-model.trim="form.email"
-                type="email"
-                class="input"
-                placeholder="you@example.com"
-                :disabled="submitting"
-              />
+              <input id="email" v-model.trim="form.email" type="email" class="input" placeholder="you@example.com"
+                :disabled="submitting" />
             </fieldset>
           </div>
 
           <!-- Description -->
           <fieldset class="fiqweldset">
             <legend class="fieldset-legend">Details <span class="text-red-400">*</span></legend>
-            <label class="label" for="description"
-              >What should I do? Include links, context, examples. You can optionally use
-              <NuxtLink to="https://www.markdownguide.org/cheat-sheet"
-                >Markdown
+            <label class="label" for="description">What should I do? Include links, context, examples. You can
+              optionally use
+              <NuxtLink to="https://www.markdownguide.org/cheat-sheet">Markdown
                 <Icon name="pepicons-pop-question-circle-filled" class="text-red-400" />
               </NuxtLink>
               here.
             </label>
-            <textarea
-              id="description"
-              v-model.trim="form.description"
-              class="textarea h-40 w-full"
-              placeholder="Describe the task…"
-              required
-              :disabled="submitting"
-            ></textarea>
+            <textarea id="description" v-model.trim="form.description" class="textarea h-40 w-full"
+              placeholder="Describe the task…" required :disabled="submitting"></textarea>
           </fieldset>
 
           <!-- Actions -->
@@ -140,7 +113,7 @@ import BackToHomeButton from "~/components/shared/BackToHomeButton.vue"
 usePageSetup({
   title: "todo",
   keywords: ["linear", "ticket", "todo", "feature request", "bug report"],
-  description: "Send me a TODO — this creates a Linear ticket on my end"
+  description: "Send me a Linear ticket the easy way"
 })
 
 type TodoType = "feature" | "bug" | "chore" | "question" | "other"

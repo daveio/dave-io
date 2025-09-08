@@ -146,7 +146,7 @@ export default defineNuxtConfig({
     },
   },
   site: {
-    name: "Rebuild of dave.io",
+    name: "dave.io",
     url: "https://dave.io",
     indexable: true,
   },

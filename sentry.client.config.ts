@@ -20,7 +20,6 @@ Sentry.init({
       // Additional SDK configuration goes in here, for example:
       colorScheme: "system",
     }),
-    Sentry.consoleIntegration(),
     //  user-feedback
   ],
   //  session-replay
