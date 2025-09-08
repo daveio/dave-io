@@ -122,7 +122,7 @@ export default defineNuxtConfig({
       cloudflare: {
         accountId: "def50674a738cee409235f71819973cf",
       },
-      siteUrl: "https://rebuild.dave.io",
+      siteUrl: "https://dave.io",
       turnstile: {
         siteKey: "0x4AAAAAABraTjA80I4Pmf1K",
       },
@@ -141,13 +141,13 @@ export default defineNuxtConfig({
     autoInjectServerSentry: "top-level-import",
     sourceMapsUploadOptions: {
       org: "daveio",
-      project: "rebuild-dave-io",
+      project: "dave-io",
       authToken: process.env.SENTRY_AUTH_TOKEN,
     },
   },
   site: {
     name: "Rebuild of dave.io",
-    url: "https://rebuild.dave.io",
+    url: "https://dave.io",
     indexable: true,
   },
   sourcemap: {

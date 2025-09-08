@@ -22,7 +22,7 @@ useScript("https://browser.sentry-cdn.com/sentry-toolbar/latest/toolbar.min.js",
     if (window.SentryToolbar) {
       window.SentryToolbar.init({
         organizationSlug: "daveio",
-        projectIdOrSlug: "rebuild-dave-io"
+        projectIdOrSlug: "dave-io"
       })
     }
     return null

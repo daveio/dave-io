@@ -1,8 +1,8 @@
-# `rebuild-dave-io`
+# `dave-io`
 
 ## Project Overview
 
-This is a Nuxt 4 application (a rebuild of `dave.io`) using:
+This is a Nuxt 4 application using:
 
 - **Runtime**: Node.js (Nuxt itself), Bun (package manager and `bin/` script runtime)
 - **Framework**: Nuxt 4.0.3 with Vue 3.5.18

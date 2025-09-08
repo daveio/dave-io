@@ -7,7 +7,7 @@
   "analytics_engine_datasets": [
     {
       "binding": "ANALYTICS",
-      "dataset": "rebuild-dave-io"
+      "dataset": "dave-io"
     }
   ],
   "assets": {
@@ -17,13 +17,13 @@
   "browser": {
     "binding": "BROWSER"
   },
-  "compatibility_date": "2025-08-13",
+  "compatibility_date": "2025-09-07",
   "compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
   "d1_databases": [
     {
       "binding": "DB",
-      "database_id": "0ab649a2-661b-47e4-90d7-e5b8af597dad",
-      "database_name": "rebuild-dave-io"
+      "database_id": "b7438090-d76e-4b31-9041-2df146c88cae",
+      "database_name": "dave-io"
     }
   ],
   "images": {
@@ -33,11 +33,11 @@
   "kv_namespaces": [
     {
       "binding": "CACHE",
-      "id": "5bf2560b1ef9476fa1dc97d50f39b8ed"
+      "id": "55698aec82e54c0b903b0ae75dcb1faa"
     },
     {
       "binding": "KV",
-      "id": "bc851a0a2c0e4d2fbd44cb5612f9c96c"
+      "id": "7ea47b9cb1ce47d7abefd311ad5b5515"
     }
   ],
   "limits": {
@@ -45,7 +45,7 @@
   },
   "logpush": false,
   "minify": true,
-  "name": "rebuild-dave-io",
+  "name": "dave-io",
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1
@@ -57,33 +57,28 @@
   "r2_buckets": [
     {
       "binding": "BLOB",
-      "bucket_name": "rebuild-dave-io"
+      "bucket_name": "dave-io"
     }
   ],
   "routes": [
+    {
+      "custom_domain": true,
+      "pattern": "dave.io"
+    },
+    {
+      "custom_domain": true,
+      "pattern": "www.dave.io"
+    },
     {
       "custom_domain": true,
       "pattern": "rebuild.dave.io"
     }
   ],
   "send_metrics": true,
-  "unsafe": {
-    "bindings": [
-      {
-        "name": "AI_LIMITER",
-        "namespace_id": "613834656",
-        "simple": {
-          "limit": 5, // max requests per period
-          "period": 60 // can be 10 or 60, in seconds
-        },
-        "type": "ratelimit"
-      }
-    ]
-  },
   "upload_source_maps": true,
   "vars": {
     "CLOUDFLARE_ACCOUNT_ID": "def50674a738cee409235f71819973cf",
-    "CLOUDFLARE_DATABASE_ID": "0ab649a2-661b-47e4-90d7-e5b8af597dad",
+    "CLOUDFLARE_DATABASE_ID": "b7438090-d76e-4b31-9041-2df146c88cae",
     "SENTRY_ENVIRONMENT": "production"
   },
   "version_metadata": {
