@@ -1,6 +1,9 @@
 import * as Sentry from "@sentry/nuxt"
+
+const isProduction = process.env.SENTRY_ENVIRONMENT === "production"
+
 Sentry.init({
-  debug: false,
+  debug: !isProduction,
   // If set up, you can use the Nuxt runtime config here
   // dsn: useRuntimeConfig().public.sentry.dsn
   // modify depending on your custom runtime config
@@ -17,6 +20,7 @@ Sentry.init({
       // Additional SDK configuration goes in here, for example:
       colorScheme: "system",
     }),
+    Sentry.consoleIntegration(),
     //  user-feedback
   ],
   //  session-replay
