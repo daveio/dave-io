@@ -65,7 +65,7 @@
     "bun": "^1.2.21",
     "node": "^22.19.0"
   },
-  "name": "rebuild-dave-io",
+  "name": "dave-io",
   "packageManager": "bun@1.2.21",
   "private": true,
   "scripts": {
