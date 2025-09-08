@@ -18,9 +18,6 @@ updates:
     open-pull-requests-limit: 100
     assignees:
       - daveio
-    ignore:
-      - dependency-name: zod
-        versions: [">=4.0.0"]
     groups:
       all-dependencies:
         patterns:

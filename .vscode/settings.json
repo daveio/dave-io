@@ -16,15 +16,6 @@
     "http",
     "net"
   ],
-  "files.exclude": {
-    ".cursor": true,
-    ".nuxt": true,
-    ".output": true,
-    ".windsurf": true,
-    ".wrangler": true,
-    "node_modules": true,
-    "worker-configuration.d.ts": true
-  },
-  "deno.path": "/Users/dave/.local/share/mise/shims/deno",
+  "eslint.useFlatConfig": true,
   "deno.enable": true
 }

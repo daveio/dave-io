@@ -1,99 +1,54 @@
-# https://docs.trunk.io/cli | https://docs.trunk.io/reference/trunk-yaml
-actions:
-  definitions:
-    - display_name: typecheck
-      id: typecheck
-      run: bun lint:types
-      triggers:
-        - git_hooks:
-            - pre-commit
+# This file controls the behavior of Trunk: https://docs.trunk.io/cli
+# To learn more about the format of this file, see https://docs.trunk.io/reference/trunk-yaml
+version: 0.1
+cli:
+  version: 1.25.0
+# Trunk provides extensibility via plugins. (https://docs.trunk.io/plugins)
+plugins:
+  sources:
+    - id: trunk
+      ref: v1.7.2
+      uri: https://github.com/trunk-io/plugins
+# Many linters and tools depend on runtimes - configure them here. (https://docs.trunk.io/runtimes)
+runtimes:
   enabled:
-    - typecheck
+    - node@22.16.0
+    - python@3.10.8
+# This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
+lint:
+  disabled:
+    - osv-scanner
+  enabled:
+    - trunk-toolbox@0.5.4
+    - oxipng@9.1.5
+    - actionlint@1.7.7
+    - checkov@3.2.469
+    - eslint@9.34.0
+    - git-diff-check
+    - markdownlint@0.45.0
+    - prettier@3.6.2
+    - taplo@0.10.0
+    - trufflehog@3.90.6
+    - yamllint@1.37.1
+  ignore:
+    - linters:
+        - ALL
+      paths:
+        - env.d.ts
+        - worker-configuration.d.ts
+    - linters:
+        - trunk-toolbox
+      paths:
+        - "**/*.png"
+        - "**/*.jpg"
+        - "**/*.webp"
+        - "**/*.gif"
+        - "**/*.ico"
+        - .devcontainer/devcontainer.json
+        - sql/redirects.sql
+actions:
+  enabled:
     - trunk-announce
     - trunk-check-pre-push
     - trunk-fmt-pre-commit
     - trunk-upgrade-available
-cli:
-  version: 1.25.0
-lint:
-  # https://docs.trunk.io/check/configuration
-  disabled:
-    - codespell
-    - markdown-link-check
-    - stylelint
-    - vale
-  enabled:
-    - gitleaks@8.28.0
-    - eslint@9.33.0:
-        packages:
-          - "@eslint/js"
-          - "@nuxt/eslint"
-          - "@stylistic/eslint-plugin"
-          - eslint-plugin-import
-          - eslint-plugin-vue
-          - globals
-          - typescript-eslint
-    - prettier@3.6.2
-    - djlint@1.36.4
-    - clippy
-    - rustfmt
-    - gofmt@1.20.4
-    - golangci-lint2
-    - actionlint@1.7.7
-    - checkov@3.2.461
-    - dustilock@1.2.0
-    - git-diff-check
-    - hadolint@2.12.1-beta
-    - markdownlint@0.45.0
-    - osv-scanner@2.0.3
-    - oxipng@9.1.5
-    - semgrep@1.132.1
-    - shellcheck@0.10.0
-    - shfmt@3.6.0
-    - sourcery@1.37.0
-    - svgo@4.0.0
-    - taplo@0.9.3
-    - trufflehog@3.90.5
-    - trunk-toolbox@0.5.4
-    - yamllint@1.37.1
-  ignore:
-    - linters:
-        - trunk-toolbox
-      paths:
-        - .cursor/**
-        - .cursor/rules/bash.mdc
-        - .github/copilot-instructions.md
-        - "**/*.gif"
-        - "**/*.ico"
-        - "**/*.jpg"
-        - "**/*.png"
-        - AGENTS.md
-        - CLAUDE.md
-        - README.md
-        - data/kv/*.yaml
-        - nuxt.config.ts
-        - server/middleware/shell-scripts.ts
-        - rag/**
-        - data/images/**
-    - linters:
-        - gitleaks
-      paths:
-        - data/kv/*.yaml
-        - yaak/*.yaml
-    - linters:
-        - markdownlint
-      paths:
-        - .cursor/**
-plugins:
-  # https://docs.trunk.io/plugins
-  sources:
-    - id: trunk
-      ref: v1.7.1
-      uri: https://github.com/trunk-io/plugins
-runtimes:
-  # https://docs.trunk.io/runtimes
-  enabled:
-    - go@1.24.6
-    - node@24.5.0
-    - python@3.10.8
-version: 0.1

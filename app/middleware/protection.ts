@@ -29,8 +29,8 @@ export default defineNuxtRouteMiddleware((to, _from) => {
       statusMessage: "Access Denied",
       data: {
         path: to.path,
-        reason: "Access control check failed"
-      }
+        reason: "Access control check failed",
+      },
     })
   }
 

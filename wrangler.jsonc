@@ -1,151 +1,100 @@
 {
-  // JSON Schema for validation and IntelliSense
   "$schema": "node_modules/wrangler/config-schema.json",
-  // Account ID associated with your zone (can also be set via CLOUDFLARE_ACCOUNT_ID env var)
   "account_id": "def50674a738cee409235f71819973cf",
-  // Cloudflare AI binding for machine learning models
   "ai": {
-    "binding": "AI" // Available in your Worker as env.AI
+    "binding": "AI"
   },
-  // Browser rendering bindings for headless browser automation
-  "browser": {
-    "binding": "BROWSER" // Variable name in your Worker
-  },
-  // The path to the entrypoint of your Worker that will be executed
-  // Set by the build process
-  // "main": "./dist/index.js",
-  // Compatibility date - determines which version of the Workers runtime is used
-  "compatibility_date": "2025-07-19",
-  // ===============================
-  // RUNTIME CONFIGURATION
-  // ===============================
-  // List of flags that enable features from upcoming versions of the Workers runtime
-  "compatibility_flags": [
-    // nitropack forces nodejs_compat v1 due to compat issues
-    "nodejs_compat", // Enable Node.js compatibility
-    "nodejs_compat_populate_process_env" // Populate process.env
-  ],
-  // D1 database bindings for SQL databases
-  "d1_databases": [
+  "analytics_engine_datasets": [
     {
-      "binding": "D1", // Variable name in your Worker
-      "database_id": "308650a8-2263-426c-9ff8-746e743ffcb2",
-      "database_name": "dave-io",
-      "migrations_dir": "./migrations" // Directory containing migration files
+      "binding": "ANALYTICS",
+      "dataset": "rebuild-dave-io"
     }
   ],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./.output/public/"
+  },
+  "browser": {
+    "binding": "BROWSER"
+  },
+  "compatibility_date": "2025-08-13",
+  "compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_id": "0ab649a2-661b-47e4-90d7-e5b8af597dad",
+      "database_name": "rebuild-dave-io"
+    }
+  ],
+  "images": {
+    "binding": "IMAGES"
+  },
+  "keep_names": true,
+  "kv_namespaces": [
+    {
+      "binding": "CACHE",
+      "id": "5bf2560b1ef9476fa1dc97d50f39b8ed"
+    },
+    {
+      "binding": "KV",
+      "id": "bc851a0a2c0e4d2fbd44cb5612f9c96c"
+    }
+  ],
+  "limits": {
+    "cpu_ms": 30000
+  },
+  "logpush": false,
+  "minify": true,
+  "name": "rebuild-dave-io",
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "placement": {
+    "mode": "smart"
+  },
+  "preview_urls": true,
+  "r2_buckets": [
+    {
+      "binding": "BLOB",
+      "bucket_name": "rebuild-dave-io"
+    }
+  ],
+  "routes": [
+    {
+      "custom_domain": true,
+      "pattern": "rebuild.dave.io"
+    }
+  ],
+  "send_metrics": true,
+  "unsafe": {
+    "bindings": [
+      {
+        "name": "AI_LIMITER",
+        "namespace_id": "613834656",
+        "simple": {
+          "limit": 5, // max requests per period
+          "period": 60 // can be 10 or 60, in seconds
+        },
+        "type": "ratelimit"
+      }
+    ]
+  },
+  "upload_source_maps": true,
+  "vars": {
+    "CLOUDFLARE_ACCOUNT_ID": "def50674a738cee409235f71819973cf",
+    "CLOUDFLARE_DATABASE_ID": "0ab649a2-661b-47e4-90d7-e5b8af597dad",
+    "SENTRY_ENVIRONMENT": "production"
+  },
   "version_metadata": {
     "binding": "CF_VERSION_METADATA"
   },
-  // If true, Wrangler will traverse the file tree below base_dir for additional modules
-  "find_additional_modules": false,
-  // Cloudflare Images binding for image transformations
-  "images": {
-    "binding": "IMAGES" // Available in your Worker as env.IMAGES
-  },
-  // Whether esbuild should apply keepNames logic to preserve function names
-  "keep_names": true,
-  // Whether Wrangler should keep variables configured in the dashboard on deploy
-  "keep_vars": false,
-  // KV namespace bindings for key-value storage
-  "kv_namespaces": [
-    {
-      "binding": "KV", // Variable name in your Worker
-      "id": "e3e72ca981224309a3306e50b8226bf3"
-    }
-  ],
-  // Runtime limits (only enforced in production, not local development)
-  "limits": {
-    // Maximum CPU time allowed per invocation in milliseconds (max: 300,000ms = 5 minutes)
-    "cpu_ms": 30000
-  },
-  // Enable Workers Trace Events Logpush (automatically picked up by Logpush job)
-  "logpush": false,
-  // Minify the Worker script before uploading
-  "minify": true,
-  // ===============================
-  // REQUIRED CONFIGURATION
-  // ===============================
-  // Worker name - alphanumeric characters and dashes only (no underscores)
-  "name": "dave-io",
-  // ===============================
-  // BUILD CONFIGURATION
-  // ===============================
-  // Skip internal build steps and directly deploy your Worker script
-  "no_bundle": false,
-  // ===============================
-  // OBSERVABILITY & MONITORING
-  // ===============================
-  // Automatic observability settings for telemetry data emitted from your Worker
-  "observability": {
-    "enabled": true, // Persist logs for the Worker
-    "head_sampling_rate": 1.0 // Sample rate: 0.0 = 0%, 1.0 = 100%
-  },
-  // ===============================
-  // PLACEMENT & PERFORMANCE
-  // ===============================
-  // Worker placement configuration
-  "placement": {
-    "mode": "smart" // Cloudflare automatically places Workers optimally
-  },
-  // Preserve file names of additional modules (instead of content hash prefixes)
-  "preserve_file_names": false,
-  // Enable Preview URLs to test your Worker
-  "preview_urls": true,
-  // ===============================
-  // ROUTING CONFIGURATION
-  // ===============================
-  // Routes that your Worker should be deployed to
-  "routes": [
-    {
-      "custom_domain": true, // Use Custom Domain (no DNS changes required)
-      "pattern": "dave.io"
-    },
-    {
-      "custom_domain": true, // Use Custom Domain (no DNS changes required)
-      "pattern": "www.dave.io"
-    }
-  ],
-  // Secrets Store
-  "secrets_store_secrets": [
-    {
-      "binding": "API_JWT_SECRET",
-      "secret_name": "API_JWT_SECRET",
-      "store_id": "c38e38cf995f4db08a71c9b616169d33"
-    },
-    {
-      "binding": "CLOUDFLARE_API_TOKEN",
-      "secret_name": "CLOUDFLARE_API_TOKEN",
-      "store_id": "c38e38cf995f4db08a71c9b616169d33"
-    },
-    {
-      "binding": "OPENROUTER_API_KEY",
-      "secret_name": "OPENROUTER_API_KEY",
-      "store_id": "c38e38cf995f4db08a71c9b616169d33"
-    }
-  ],
-  // Whether Wrangler should send usage data to Cloudflare for this project
-  "send_metrics": true,
-  // Upload source maps for better error debugging
-  "upload_source_maps": true,
-  // Module loading rules for additional files
-  // "rules": [
-  //   // Example: Include WASM files as compiled WebAssembly
-  //   { "type": "CompiledWasm", "globs": ["**/*.wasm"], "fallthrough": false },
-  // ],
-  // ===============================
-  // BINDINGS & SERVICES
-  // ===============================
-  // Environment variables (non-encrypted, visible in dashboard)
-  "vars": {
-    "CLOUDFLARE_ACCOUNT_ID": "def50674a738cee409235f71819973cf",
-    "NUXT_PUBLIC_API_BASE_URL": "/api",
-    // trunk-ignore(gitleaks/generic-api-key)
-    "CLOUDFLARE_SECRET_STORE_ID": "c38e38cf995f4db08a71c9b616169d33",
-    "SENTRY_DSN": "https://9d89cd983c39d62a5982f0f5cefce01b@o374595.ingest.us.sentry.io/4509822235246592"
-    // Secrets (encrypted) should be managed via `wrangler secret put` command
-    // or .dev.vars file for local development
-  },
-  // Enable usage of *.workers.dev subdomain to deploy your Worker
-  "workers_dev": false
+  "workers_dev": false,
+  "dev": {
+    "enable_containers": true,
+    "container_engine": "docker",
+    "inspector_port": 9229,
+    "host": "dave-mbp.manticore-minor.ts.net",
+    "port": 443
+  }
 }

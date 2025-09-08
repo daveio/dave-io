@@ -8,7 +8,7 @@
       <Icon name="i-mdi-chat-question" class="w-6 h-6" />
       <!-- Tooltip -->
       <div
-        class="absolute bottom-16 right-0 mb-2 px-3 py-2 bg-neutral-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none bg-surface2"
+        class="absolute bottom-16 right-0 mb-2 px-3 py-2 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none bg-surface2"
       >
         Ask me about gender identity! (Coming Soon)
         <div

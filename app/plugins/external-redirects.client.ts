@@ -36,7 +36,7 @@ export default defineNuxtPlugin((nuxtApp) => {
           }
         }
       },
-      { capture: true }
+      { capture: true },
     )
   }
 })

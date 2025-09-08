@@ -1,63 +1,39 @@
-import { sendRedirect } from "h3"
-import { getCloudflareEnv, getKVNamespace } from "../../utils/cloudflare"
-import { createApiError, isApiError } from "../../utils/response"
-import { UrlRedirectSchema } from "../../utils/schemas"
+import { eq } from "drizzle-orm"
+import { defineEventHandler, getRouterParam, sendRedirect } from "h3"
+import { redirects } from "~~/server/db/schema"
+import { getDB } from "~~/server/utils/cloudflare"
+import { error } from "~~/server/utils/response"
 
-interface RedirectData {
-  slug: string
-  url: string
-  title?: string
-  description?: string
-  created_at: string
-  updated_at: string
-}
-
+/**
+ * Handles HTTP GET requests for redirecting based on a slug parameter.
+ * Looks up the destination URL for the given slug and issues a 302 redirect, or returns an error if not found.
+ *
+ * Args:
+ *   event: The incoming HTTP event containing the request and context.
+ *
+ * Returns:
+ *   A redirect response to the destination URL if the slug is found, or an error response otherwise.
+ */
 export default defineEventHandler(async (event) => {
-  try {
-    const env = getCloudflareEnv(event)
-    const kv = getKVNamespace(env)
+  // Get database connection from the event context
+  const db = getDB(event)
 
-    const slug = getRouterParam(event, "slug")
+  // Extract the slug parameter from the route (e.g., /redirect/:slug)
+  const slug = getRouterParam(event, "slug")
 
-    if (!slug) {
-      throw createApiError(400, "Slug parameter is required")
-    }
-
-    // Get redirect URL from simple KV keys
-    let redirectData: RedirectData | undefined
-
-    try {
-      // Get redirect URL using simple KV keys
-      const redirectUrl = await kv.get(`redirect:${slug}`)
-
-      if (redirectUrl) {
-        redirectData = {
-          slug: slug,
-          url: redirectUrl,
-          created_at: Date.now().toString(),
-          updated_at: Date.now().toString()
-        }
-      }
-    } catch (error) {
-      console.error("KV redirect lookup failed:", error)
-      throw createApiError(500, "Failed to lookup redirect")
-    }
-
-    if (!redirectData) {
-      throw createApiError(404, `Redirect not found for slug: ${slug}`)
-    }
-
-    // Validate redirect data
-    const redirect = UrlRedirectSchema.parse(redirectData)
-
-    // Perform proper HTTP redirect
-    await sendRedirect(event, redirect.url, 302)
-  } catch (error: unknown) {
-    // Re-throw API errors
-    if (isApiError(error)) {
-      throw error
-    }
-
-    throw createApiError(500, "Redirect failed")
+  // Validate that slug exists and is not empty
+  if (!slug || slug.length === 0) {
+    return error(event, {}, "Slug is required", 400)
   }
+
+  // Query the redirects table for a matching slug
+  const redirect = await db.select().from(redirects).where(eq(redirects.slug, slug)).limit(1)
+
+  // Check if redirect was found in the database
+  if (!redirect || redirect.length === 0) {
+    return error(event, {}, "Redirect not found", 404)
+  }
+
+  // Perform the redirect to the stored destination URL with 302 (temporary) status
+  await sendRedirect(event, redirect[0].destination, 302)
 })

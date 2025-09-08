@@ -1,9 +1,67 @@
-import { defineNuxtConfig } from "nuxt/config"
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
+import tailwindcss from "@tailwindcss/vite"
+
+declare global {
+  interface Window {
+    SentryToolbar?: {
+      init(config: { organizationSlug: string; projectIdOrSlug: string }): void
+    }
+  }
+}
+
 export default defineNuxtConfig({
+  app: {
+    head: {
+      link: [
+        { rel: "icon", type: "image/vnd.microsoft.icon", href: "/images/icon.ico" },
+        { rel: "me", href: "https://basilisk.gallery/@dave" },
+      ],
+    },
+  },
+  colorMode: {
+    preference: "dark",
+    fallback: "dark",
+    storageKey: "nuxt-color-mode",
+  },
+  compatibilityDate: "2025-08-13",
+  css: ["~/assets/css/main.css"],
+  devtools: {
+    enabled: true,
+    timeline: {
+      enabled: true,
+    },
+  },
+  eslint: {
+    checker: true,
+  },
+  experimental: {
+    componentIslands: true,
+    inlineRouteRules: true,
+    lazyHydration: true,
+    viewTransition: true,
+  },
+  fonts: {
+    assets: {
+      prefix: "/_fonts/",
+    },
+    families: [
+      { name: "Sixtyfour Convergence", provider: "bunny" },
+      { name: "Sono", provider: "bunny" },
+      { name: "Victor Mono", provider: "bunny" },
+    ],
+    defaults: {
+      styles: ["normal", "italic"],
+      subsets: ["latin-ext", "latin"],
+      weights: [400],
+    },
+  },
+  future: {
+    compatibilityVersion: 4,
+  },
   modules: [
+    // "@nuxt/content", // disabled for later
+    "@formkit/auto-animate/nuxt",
     "@nuxt/eslint",
     "@nuxt/fonts",
     "@nuxt/icon",
@@ -11,65 +69,25 @@ export default defineNuxtConfig({
     "@nuxt/scripts",
     "@nuxt/test-utils",
     "@nuxtjs/color-mode",
+    "@nuxtjs/device",
     "@nuxtjs/seo",
-    "@nuxtjs/tailwindcss",
+    "@nuxtjs/turnstile",
     "@pinia/nuxt",
+    "@sentry/nuxt/module",
+    "magic-regexp/nuxt",
     "nitro-cloudflare-dev",
-    "@sentry/nuxt/module"
+    "nuxt-security",
+    "nuxt-gtag",
   ],
-
-  app: {
-    head: {
-      link: [{ rel: "me", href: "https://basilisk.gallery/@dave" }]
-    }
-  },
-
-  devtools: { enabled: true },
-
-  colorMode: {
-    preference: "dark",
-    fallback: "dark",
-    storageKey: "nuxt-color-mode"
-  },
-
-  runtimeConfig: {
-    // Server-side environment variables
-    apiJwtSecret: process.env.API_JWT_SECRET || "dev-secret-change-in-production",
-    cloudflareApiToken: process.env.CLOUDFLARE_API_TOKEN || "",
-    public: {
-      // Client-side environment variables
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || "/api",
-      sentry: {
-        dsn: process.env.SENTRY_DSN || ""
-      }
-    }
-  },
-
-  compatibilityDate: "2025-07-19",
-
-  future: {
-    compatibilityVersion: 4
-  },
-
-  experimental: {
-    viewTransition: true,
-    componentIslands: true,
-    lazyHydration: true
-  },
-
   nitro: {
-    preset: "cloudflare_module",
     cloudflare: {
       deployConfig: true,
-      nodeCompat: true
+      nodeCompat: true,
     },
     experimental: {
-      wasm: true
+      wasm: true,
     },
-    rollupConfig: {
-      external: [],
-      plugins: []
-    },
+    preset: "cloudflare_module",
     routeRules: {
       "/api/**": {
         cors: true,
@@ -77,73 +95,72 @@ export default defineNuxtConfig({
           "Cache-Control": "no-cache, no-store, must-revalidate",
           "X-Content-Type-Options": "nosniff",
           "X-Frame-Options": "DENY",
-          "X-XSS-Protection": "0" // Updated per best practices
-        }
+          "X-XSS-Protection": "0",
+        },
       },
       "/go/**": {
         headers: {
-          "Cache-Control": "no-cache, no-store, must-revalidate"
-        }
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+        },
       },
-      // Static redirects from original Worker
-      "/301": { redirect: { to: "https://www.youtube.com/watch?v=fEM21kmPPik", statusCode: 301 } },
-      "/302": { redirect: { to: "https://www.youtube.com/watch?v=BDERfRP2GI0", statusCode: 302 } },
-      "/cv": { redirect: { to: "https://cv.dave.io", statusCode: 302 } },
-      "/nerd-fonts": { redirect: { to: "https://dave.io/go/nerd-fonts", statusCode: 302 } },
-      "/contact": { redirect: { to: "https://dave.io/dave-williams.vcf", statusCode: 302 } },
-      "/public-key": { redirect: { to: "https://dave.io/dave-williams.asc", statusCode: 302 } },
-      "/todo": { redirect: { to: "https://dave.io/go/todo", statusCode: 302 } },
-      // CORS headers for nostr.json
       "/.well-known/nostr.json": {
         headers: {
-          "Access-Control-Allow-Origin": "*"
-        }
-      }
-    }
-  },
-
-  // Vite configuration to disable sourcemaps in production
-  vite: {
-    build: {
-      // sourcemap: true // Enable sourcemaps in production (disable if warnings)
-    }
-  },
-
-  fonts: {
-    defaults: {
-      weights: [400],
-      styles: ["normal", "italic"],
-      subsets: ["latin-ext", "latin"]
+          "Access-Control-Allow-Origin": "*",
+        },
+      },
     },
-    families: [
-      { name: "Sixtyfour Convergence", provider: "google" },
-      { name: "Sono", provider: "google" },
-      { name: "Victor Mono", provider: "google" }
-    ],
-    assets: {
-      prefix: "/_fonts/"
-    }
   },
-
-  tailwindcss: {
-    cssPath: "~/app/assets/css/tailwind.css",
-    configPath: "./tailwind.config.ts",
-    editorSupport: true,
-    viewer: false,
-    exposeConfig: false
+  robots: {
+    mergeWithRobotsTxtPath: "app/assets/robots.txt",
   },
-
+  runtimeConfig: {
+    ctrldApiKey: "",
+    ctrldAuthKey: "",
+    openRouterApiKey: "", // overridden by environment variable
+    public: {
+      apiBase: "/api",
+      cloudflare: {
+        accountId: "def50674a738cee409235f71819973cf",
+      },
+      siteUrl: "https://rebuild.dave.io",
+      turnstile: {
+        siteKey: "0x4AAAAAABraTjA80I4Pmf1K",
+      },
+    },
+    turnstileSecretKey: "", // overridden by environment variable
+  },
+  security: {
+    ssg: {
+      hashScripts: true,
+      hashStyles: true,
+      meta: true,
+    },
+    sri: true,
+  },
   sentry: {
-    // autoInjectServerSentry: "experimental_dynamic-import", // breaks build
-    // autoInjectServerSentry: "top-level-import", // disabled: plugin approach
+    autoInjectServerSentry: "top-level-import",
     sourceMapsUploadOptions: {
       org: "daveio",
-      project: "dave-io"
-    }
+      project: "rebuild-dave-io",
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    },
   },
-
+  site: {
+    name: "Rebuild of dave.io",
+    url: "https://rebuild.dave.io",
+    indexable: true,
+  },
   sourcemap: {
+    client: "hidden",
     server: true,
-    client: true
-  }
+  },
+  turnstile: {
+    siteKey: "0x4AAAAAABraTjA80I4Pmf1K",
+  },
+  vite: {
+    plugins: [tailwindcss()],
+    build: {
+      minify: "esbuild",
+    },
+  },
 })

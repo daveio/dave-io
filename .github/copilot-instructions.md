@@ -1,583 +1,445 @@
-# `dave.io`
+# `.github/copilot-instructions.md` / `AGENTS.md` / `CLAUDE.md` / `WARP.md`
 
-## 🛑 MANDATORY RULES - CHECK BEFORE EVERY ACTION
+This file provides guidance to AI agents, including Claude Code (<https://claude.ai/code>), when working
+with code in this repository.
 
-### PRE-TASK CHECKLIST (Mental Review Required)
+## Context Files
 
-□ Am I following ALL 11 rules below?
-□ Have I checked `.github/copilot-instructions.md` for latest specs?
-□ Will my code be production-ready?
+This project is set up to support multiple AI agents, expecting multiple different paths to their context file.
 
-### THE 11 COMMANDMENTS
+- GitHub Copilot is unable to resolve symlinks, so the canonical path to the context file is `.github/copilot-instructions.md`.
+- For Claude Code, `CLAUDE.md` is a symlink to `.github/copilot-instructions.md`.
+- For Warp terminal, `WARP.md` is a symlink to `.github/copilot-instructions.md`.
+- For other AI agents, `AGENTS.md` is a symlink to `.github/copilot-instructions.md`.
 
-**1. BREAK**: Ship breaking changes freely. Document in `.github/copilot-instructions.md`. Never add migration code. THIS DOES NOT APPLY TO DATABASE MIGRATIONS.
+When updating any of these three files, you only need to write updates to one of them. The symlinks should allow you
+to write to whichever file you prefer, but it's recommended to update `.github/copilot-instructions.md` as that
+doesn't depend on any symlink resolution.
 
-**2. PERFECT**: Take unlimited time/calls for correctness. Refactor aggressively. No "good enough".
+## Project Overview
 
-**3. TEST**: Test everything with logic/side effects. Commands: `bun run test`, `bun run test:ui`, `bun run test:api`. Skip only: trivial getters, UI components, config.
+Nuxt 4 application deployed to Cloudflare Workers with full-stack capabilities:
 
-**4. SYNC**: `.github/copilot-instructions.md` = agent context. `README.md` = human documentation. Update both after API/feature/auth changes, or anything which should be documented. `CLAUDE.md` and `AGENTS.md` are symbolic links to `.github/copilot-instructions.md`, so you only need to update `.github/copilot-instructions.md`.
+- **Framework**: Nuxt 4.0.3 (Vue 3.5.18) with SSR/SSG on Cloudflare Workers
+- **Package Manager**: Bun (v1.2.20) - NOT npm/yarn/pnpm
+- **Deployment**: Cloudflare Workers via Wrangler
+- **Database**: Cloudflare D1 (SQLite) with Drizzle ORM
+- **Storage**: Cloudflare R2 (S3-compatible) + KV namespace
+- **Styling**: Tailwind CSS v4 with Catppuccin theme
+- **Monitoring**: Sentry for errors, Cloudflare Analytics for metrics
 
-**5. VERIFY**: `bun run build` → `bun run lint:eslint`, `bun run lint:trunk`, `bun run lint:types`, `bun run test` → `bun run check`. Never continue with errors.
+## Essential Commands
 
-**6. COMMIT**: `git add -A . && oco --fgm --yes` after each feature/fix/refactor.
-
-**7. REAL**: Use actual service calls only (`env.AI.run()`, `env.KV.get/put()`). Crash on failure. No mocks/randoms/delays (except tests).
-
-**8. COMPLETE**: Finish all code or mark `TODO: [description]`. Fail explicitly, never silently.
-
-**9. TRACK**: Use Linear tickets for TODO tracking. Open new tickets as required. Team "Dave IO" (DIO), tickets begin "DIO-".
-
-Write comments if a TODO has a code location:
-
-```typescript
-// TODO: (DIO-118) Skip Bun mocking - test separately
-```
-
-_IMPORTANT_: Put TODO comments on their own line, with a `//` comment, so my tooling can find them.
-
-This is wrong:
-
-```typescript
-/*
- * foo bar baz
- * TODO: (DIO-118) Skip Bun mocking - test separately
- * foo bar baz
- */
-```
-
-This is correct:
-
-```typescript
-/*
- * foo bar baz
- * foo bar baz
- */
-
-// TODO: (DIO-118) Skip Bun mocking - test separately
-```
-
-Useful IDs:
-
-- Team ID: `5b759ac2-279b-4e9f-9e66-de66af7ba4bd`
-- `TODO` label ID: `1dff83f6-65fa-40cf-944d-7323653d49a4`
-
-Two-way sync with GitHub tickets is configured. Thus, creating a Linear ticket creates a GitHub ticket (and keeps it updated), and creating a GitHub ticket creates a Linear ticket (and keeps it updated). Prefer creating Linear tickets and letting the automation create GitHub tickets, not the other way around.
-
-Workflow: Create tickets for TODOs with "TODO" label. Check Linear for existing tickets. Reference ticket IDs in code comments as shown in example if a TODO has a code location. Create tickets without code locations where necessary.
-
-**10. KV**: Simple values only. Hierarchical keys: `auth:token-uuid`. Kebab-case. Update `data/kv/_init.yaml`. Use YAML anchors.
-
-**11. SHARE**: Extract duplicated logic to `server/utils/` immediately. Add JSDoc+tests+types.
-
-### ⚡ QUICK REFERENCE
-
-**ALWAYS**: Break compatibility • Test everything • Real data only • Complete code • Extract duplicates • KV hierarchical keys • Linear tickets for TODOs
-**NEVER**: Migration code (except database migrations) • Mock data • Silent failures • Copy-paste • Outdated docs • Complex KV values
-
-### 🖥️ DEV SERVER MANAGEMENT
-
-**Important**: I cannot reliably start or stop the dev server myself. Please:
-
-- **Start the dev server**: Run `bun run dev` and confirm it's available on `localhost:3000`
-- **Stop the dev server**: Use Ctrl+C in the terminal or close the terminal window
-- **Restart if needed**: If the server needs restarting, please do this manually
-
-I can test endpoints and make API calls once you confirm the server is running.
-
-## Tech Stack
-
-- **Runtime**: Nuxt 4 + Cloudflare Workers | **Auth**: JWT + JOSE hierarchical | **Validation**: Zod + TypeScript | **Testing**: Vitest + HTTP API | **Tools**: Bun, Biome
-
-## File Naming Conventions
-
-### API Endpoints
+### Development & Build
 
 ```bash
-server/api/example.get.ts          # GET /api/example
-server/api/example.post.ts         # POST /api/example
-server/api/users/[uuid].get.ts     # GET /api/users/{uuid}
-server/api/users/[uuid]/[...path].get.ts # GET /api/users/{uuid}/{path}
-server/routes/go/[slug].get.ts     # GET /go/{slug}
+# Start development server (http://localhost:3000)
+bun dev
+
+# Build for production - CRITICAL: Use 'run' prefix!
+bun run build  # NOT 'bun build' - conflicts with Bun's internal command
+
+# Generate static site
+bun run generate
+
+# Preview production build locally via Wrangler
+bun preview
 ```
-
-### Utilities & Tests
-
-```bash
-server/utils/feature-name.ts      # Utility functions
-server/utils/feature-helpers.ts   # Helper functions
-test/feature-name.test.ts         # Unit tests
-test/api-feature.test.ts          # API integration tests
-```
-
-### Schema & Type Files
-
-```bash
-server/utils/schemas.ts           # All Zod schemas + OpenAPI
-types/api.ts                      # Shared type definitions
-worker-configuration.d.ts        # Cloudflare bindings
-```
-
-## Development Patterns
-
-### Schema-First Development
-
-```typescript
-1. Define Zod schema in schemas.ts with .openapi() metadata
-2. Use schema.parse() in endpoint for validation
-3. Export schema type: `export type Example = z.infer<typeof ExampleSchema>`
-4. Run: bun run generate:openapi
-5. Verify public/openapi.json updated
-```
-
-### Redirect Handling
-
-Server-side redirects in `/go/{slug}` routes are handled by:
-
-- **Server Route**: `server/routes/go/[slug].get.ts` performs actual redirects using KV data
-- **Client Plugin**: `app/plugins/external-redirects.client.ts` forces external navigation for `/go/*` links
-- **Route Rules**: Nuxt config disables caching for `/go/**` routes to ensure fresh redirects
-- **Behavior**: Links bypass client-side routing and trigger full page loads to hit server handlers
-
-### Error Handling Standards
-
-```typescript
-// Always use createApiError for consistent format
-throw createApiError(400, "Validation failed", validationDetails)
-
-// Always use createApiResponse for success
-return createApiResponse({
-  result: data,
-  message: "Operation successful",
-  error: null
-})
-
-// Log errors before throwing
-console.error("Endpoint error:", error)
-throw error
-```
-
-### Authentication Flow
-
-```typescript
-// Use auth helpers for consistent patterns
-const auth = await requireAPIAuth(event, "resource") // api:resource
-const auth = await requireAIAuth(event, "social") // ai:social
-const auth = await requireAdminAuth(event) // admin
-
-// Access user info from auth.payload
-const userId = auth.payload?.sub
-const tokenId = auth.payload?.jti
-```
-
-## Auth & Endpoints
-
-- **Methods**: `Authorization: Bearer <jwt>` + `?token=<jwt>`
-- **JWT**: `{sub, iat, exp?, jti?}` | **Permissions**: `category:resource` (parent grants child) | **Categories**: `api`, `ai`, `dashboard`, `admin`, `*`
-- **Public**: `/api/ping`, `/api/redirects`, `/go/{slug}`
-- **Protected**: `/api/ai/social` (`ai:social`+), `/api/ai/alt` (`ai:alt`+), `/api/ai/word` (`ai:word`+), `/api/token/{uuid}/*` (`api:token`+)
-
-## Breaking Changes
-
-- **CLI**: Removed `bun try internal ping` → use `bun try ping`
-- **API Responses**: Standardized structure with `{ok, result, error, status, timestamp}`, sorted object keys
-- **Endpoints**: Merged `/api/internal/*` → `/api/ping`
-- **API Structure**: Converted all endpoints to singular: `/tokens/` → `/token/`
-- **Auth**: `--auth` auto-generates tokens, `--token <JWT>` for provided tokens
-- **Dev**: No reset cycle, starts in seconds, `test:all` for full suite
-- **KV**: Individual keys vs JSON blob, hierarchical colon-separated, YAML anchors
-- **Redirects**: Fixed `/go/*` routes to bypass client-side routing - links now redirect properly on first click instead of requiring a page refresh
-- **AI Social**: New `/api/ai/social` endpoint for splitting text into social media posts using Claude 4 Sonnet via OpenRouter and AI Gateway with automatic threading indicators (`🧵 x/y`). Uses strategy-based intelligent splitting with configurable strategies for optimal text processing.
-- **AI Model Migration**: Migrated `/api/ai/social` from Cloudflare AI Llama model to Anthropic Claude 4 Sonnet via AI Gateway for improved text processing quality and observability.
-- **AI Alt Text**: New `/api/ai/alt` endpoint for generating alt text for images using Claude 4 Sonnet via OpenRouter and AI Gateway. Supports both GET (with image URL) and POST (with image upload) methods. Includes image size validation and SSRF protection.
-- **AI Alt Text Image Optimization**: Enhanced image optimization to always process images via Cloudflare Images API. All images up to 10MB are automatically resized to max 1024px on long edge and converted to lossy WebP (quality 60) for optimal size and Claude compatibility.
-- **AI Image Size Validation Fix**: Fixed potential issue where optimized images between 5-10MB could bypass Claude's 5MB limit. Now validates optimized image size against Claude's 5MB limit after Cloudflare Images processing to ensure compatibility.
-- **AI Word Alternative Finding**: New `/api/ai/word` endpoint for finding word alternatives using Claude 4 Sonnet via OpenRouter and AI Gateway. Supports two modes: single word alternatives and context-based word replacement suggestions. Returns 5-10 ordered suggestions with confidence scores.
-- **OpenRouter Integration**: Migrated all AI operations from direct Anthropic API to OpenRouter via Cloudflare AI Gateway. This enables dynamic model selection without frontend changes. All AI endpoints now use OpenRouter with the `openai` library for improved flexibility while maintaining Claude 4 Sonnet (`anthropic/claude-sonnet-4`) as the default model.
-- **API Response Validation**: All API responses now undergo runtime validation using Zod schemas. Responses are validated against `ApiSuccessResponseSchema` or `ApiErrorResponseSchema` before being returned. Validation errors are logged server-side but return generic 500 errors to clients for security. New typed response system with `createTypedApiResponse()` provides compile-time and runtime type safety.
-- **Nuxt 4 Migration**: Upgraded to Nuxt 4.0.0. Added experimental features: View Transitions API, Component Islands, and Lazy Hydration for improved performance. Project structure has been migrated to Nuxt 4 conventions with components, pages, and assets now located under the `app/` directory.
-- **Metrics and Logging Removal**: Removed all metrics collection, Analytics Engine integration, and non-error logging code to reduce complexity. Only error logging via `console.error()` remains. This includes removal of KV metrics, API request metrics, redirect metrics, and page logging. Will be reimplemented in a cleaner way at a later date.
-- **KV Export Output Path**: Added configurable output path for KV export command. Exports now default to timestamped files in current directory (e.g., `kv-20250730-120000.yaml`) instead of fixed `data/kv/` directory. Use `bun run kv export [output-path]` to specify custom file path.
-- **D1 Utility**: New `bin/d1.ts` utility script for D1 database operations. Supports listing, searching, and deleting entries from D1 tables. Also supports running custom SQL queries with parameters. This enables proper cleanup of test tokens and general D1 database management.
-- **Integration Test Improvements**: Enhanced `bin/api.ts` integration tests with proper image URL handling for local/remote modes, POST image file upload support, alt text validation for "duck" keyword (case-insensitive), and real token creation/revocation testing with automatic cleanup in both KV and D1.
-- **Redirect API Separation**: Created new `/api/redirects` endpoint to retrieve redirect slugs. Removed redirect data from `/api/ping` endpoint along with its caching logic. The ping endpoint now always returns fresh data, while the new redirects endpoint handles cached redirect lookups with the same 100-item truncation logic.
-
-## Core
-
-- **Response**: Success `{ok: true, result, error: null, status: {message}, timestamp}` | Error `{ok: false, error, status: {message}?, timestamp}`
-- **Environment**: `API_JWT_SECRET`, `OPENROUTER_API_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Bindings: KV(KV), D1(D1), AI, BROWSER, IMAGES
-- **CLI**: JWT(`init|create|verify|list|revoke`) | API-Test(`--auth-only|--ai-only`) | Try(`--auth|--token`) | KV(`export|import|list|wipe --local`) | D1(`list|search|delete|query`)
-- **Testing**: Unit(`bun run test|test:ui`) | HTTP(`bun run test:api`) | Remote(`--url https://example.com`)
-
-## Commands 🚀 (~3s dev startup, no circular deps)
-
-| Workflow     | Command            | Purpose                |
-| ------------ | ------------------ | ---------------------- |
-| **Dev**      | `bun run dev`      | Types + dev server     |
-| **Build**    | `bun run build`    | Clean + types + build  |
-| **Deploy**   | `bun run deploy`   | Build + env + deploy   |
-| **Check**    | `bun run check`    | CI/CD validation       |
-| **Test**     | `bun run test`     | Quick unit tests       |
-| **Test All** | `bun run test:all` | Unit + UI + coverage   |
-| **Clean**    | `bun run clean`    | Remove build artifacts |
-| **Reset**    | `bun run reset`    | Nuclear option         |
-
-## Setup
-
-**Prerequisites**: Node.js 22.17.0+, Bun
-
-```bash
-bun install && bun run dev  # Starts in ~3s
-```
-
-**Structure**: `server/{api,utils,middleware}`, `test/`, `bin/`, `types/`, `data/kv/`
-
-## API Examples
-
-```bash
-curl http://localhost:3000/api/ping  # Status
-curl -X POST -H "Authorization: Bearer <token>" -d '{"input": "Long text...", "networks": ["bluesky", "mastodon"]}' /api/ai/social  # Split text
-```
-
-## CLI Usage
-
-```bash
-bun jwt init && bun jwt create --sub "api:token" --expiry "30d"  # JWT
-bun run kv export  # Export KV to timestamped file (e.g., kv-20250730-120000.yaml)
-bun run kv export backup.yaml  # Export KV to specific file
-bun run kv export --all data/kv/full-export.yaml  # Export all KV data to specific path
-bun run kv --local import backup.yaml  # Import KV from file
-bun try --auth ai social "Long text to split"  # AI Social
-bun try --auth ai word "happy"  # AI Word (single mode)
-bun try --auth ai word context "I am happy" "happy"  # AI Word (context mode)
-bun run test:api --ai-only --url https://dave.io  # Test
-bun run d1 list jwt_tokens  # List all JWT tokens in D1
-bun run d1 search jwt_tokens sub "api"  # Search tokens by subject
-bun run d1 delete jwt_tokens uuid "..." --yes  # Delete token from D1
-```
-
-## Deployment & Config
-
-```bash
-wrangler kv:namespace create KV && wrangler d1 create NEXT_API_AUTH_METADATA
-bun jwt init && bun run deploy
-```
-
-**KV YAML**: AI Social: `ai:social:characters:bluesky = "300"`
-**Linting**: `// eslint-disable-next-line @typescript-eslint/no-explicit-any`
-**AI Social**: Character limits in KV (`ai:social:characters:{network}`). Uses strategy-based splitting with default strategies `["sentence_boundary", "paragraph_preserve"]`. Available strategies: `sentence_boundary` (split at sentences), `word_boundary` (split at words), `paragraph_preserve` (keep paragraphs intact), `thread_optimize` (optimize threading), `hashtag_preserve` (keep hashtags with content). Multi-post threads automatically get threading indicators (`🧵 1/3`, `🧵 2/3`, etc.) with 10 chars reserved per post.
-
-## Best Practices
-
-### KV Storage
-
-- **Keys**: Hierarchical, kebab-case `auth:token-uuid`
-- **Values**: Simple only, no complex objects
-- **Pattern**: `await kv.put("auth:token-uuid", "value")` ✅ vs `JSON.stringify(object)` ❌
-
-### Security (MANDATORY)
-
-- **Input**: Always validate with `RequestSchema.parse()`, use `getValidatedUUID()`, `validateURL()`
-- **Secrets**: Environment variables only, never hardcode
-- **Output**: Log internally, return safe public messages via `createApiError()`
-- **Responses**: Filter sensitive fields before returning
-
-### Performance
-
-- **Services**: Real calls only (`env.AI.run()`, `env.KV.get()`), no mocks except tests
 
 ### Code Quality
 
-- **DRY**: Extract duplicated logic immediately to `server/utils/`
-- **Errors**: Always handle explicitly, never fail silently
-- **Responses**: Use `createApiResponse()` for consistent format
-- **Tests**: Test business logic, skip trivial getters/UI components
+```bash
+# Run complete lint suite (Trunk + TypeScript)
+bun run lint
 
-### Code Standards
+# Individual lint commands
+bun run lint:trunk        # Trunk Check only
+bun run lint:types        # TypeScript type checking
+bun run lint:eslint       # ESLint only
+bun run lint:fix          # Auto-fix all fixable issues
 
-- **JSDoc**: All exported functions need full JSDoc with `@param`, `@returns`, `@throws`
-- **Comments**: Business logic only, not obvious code
-- **Linting**: Use `// eslint-disable-next-line @typescript-eslint/no-explicit-any` when needed
-
-## Troubleshooting
-
-- **Build**: `bun run lint:eslint` → `bun run lint:types` → `bun run test`
-- **Runtime**: Check env vars (`API_JWT_SECRET`, `OPENROUTER_API_KEY`), Cloudflare bindings (KV, AI), auth permissions
-- **Common**: Use absolute paths, check schema imports, add `requireAuth()`, use `getValidatedUUID()`
-
-## AI Social Media Text Splitting
-
-**Endpoint**: `/api/ai/social` - Splits long text for social networks with character limits in KV (`ai:social:characters:{network}`)
-
-**AI Model**: Uses Claude 4 Sonnet via OpenRouter and Cloudflare AI Gateway for intelligent text processing
-
-**Strategy-Based Processing**: Uses configurable splitting strategies with sensible defaults
-
-- **Default strategies**: `["sentence_boundary", "paragraph_preserve"]` (applied when no strategies specified)
-- **Available strategies**: `sentence_boundary`, `word_boundary`, `paragraph_preserve`, `thread_optimize`, `hashtag_preserve`
-
-**Features**: Auto threading (`🧵 1/3`), voice preservation, standalone posts, network optimization, AI Gateway observability
-
-**Usage**: `bun try --auth ai social split "text" --networks "bluesky,mastodon"`
-
-## AI Alt Text Generation
-
-**Endpoints**:
-
-- `GET /api/ai/alt?image=<url>` - Generate alt text from image URL
-- `POST /api/ai/alt` - Generate alt text from uploaded image file
-
-**AI Model**: Uses Claude 4 Sonnet via OpenRouter and Cloudflare AI Gateway for intelligent image analysis
-
-**Features**:
-
-- **Image URL Processing**: Fetch and analyze images from URLs with SSRF protection
-- **File Upload**: Accept direct image uploads via multipart form data
-- **Size Validation**: Automatic validation against 10MB limit (Cloudflare Images max)
-- **Image Optimization**: All images are automatically processed via Cloudflare Images API - resized to max 1024px on long edge and converted to lossy WebP (quality 60)
-- **Format Detection**: Supports JPEG, PNG, GIF, WebP image formats (input)
-- **Security**: URL validation prevents localhost/private network access
-- **AI Gateway**: Full observability and monitoring via Cloudflare AI Gateway
-
-**Authentication**: Requires `ai:alt` permission
-
-**Response Format**:
-
-```json
-{
-  "ok": true,
-  "result": {
-    "alt_text": "Generated descriptive alt text for the image",
-    "confidence": 0.95
-  },
-  "status": { "message": "Alt text generated successfully" },
-  "error": null,
-  "timestamp": "2025-01-07T..."
-}
+# Format code
+bun run format            # Prettier + Trunk formatting
 ```
 
-**Error Handling**:
-
-- `400`: Invalid image format, malformed URL, or missing image data
-- `413`: Image exceeds 10MB size limit
-- `500`: Claude API failures or processing errors
-- `503`: Missing API keys or service unavailable
-
-**Usage Examples**:
+### Deployment
 
 ```bash
-# GET with image URL
-curl "https://dave.io/api/ai/alt?image=https://example.com/image.jpg" \
-  -H "Authorization: Bearer <token>"
+# Deploy to production (rebuild.dave.io)
+bun run deploy
 
-# POST with file upload
-curl -X POST "https://dave.io/api/ai/alt" \
-  -H "Authorization: Bearer <token>" \
-  -F "image=@/path/to/image.jpg"
+# Deploy to staging/preview
+bun run deploy:nonprod
+
+# Local Wrangler dev server (simulates CF Workers)
+bun run preview:wrangler
+
+# Generate Cloudflare types
+bun run types
 ```
 
-## AI Word Alternative Finding
-
-**Endpoint**: `/api/ai/word` - Find word alternatives and synonyms using AI assistance
-
-**AI Model**: Uses Claude 4 Sonnet via OpenRouter and Cloudflare AI Gateway for intelligent word analysis
-
-**Modes**:
-
-- **Single Mode**: Find alternatives for a single word
-- **Context Mode**: Find better word within a specific text block
-
-**Features**:
-
-- **Intelligent Suggestions**: 5-10 word alternatives ordered by likelihood
-- **Context Awareness**: Considers context when suggesting replacements
-- **Confidence Scoring**: Optional confidence scores for each suggestion
-- **Multiple Contexts**: Handles various use cases and writing styles
-- **AI Gateway**: Full observability and monitoring via Cloudflare AI Gateway
-
-**Authentication**: Requires `ai:word` permission
-
-**Request Format**:
-
-```json
-// Single word mode
-{
-  "mode": "single",
-  "word": "happy"
-}
-
-// Context mode
-{
-  "mode": "context",
-  "text": "I am very happy about the result.",
-  "target_word": "happy"
-}
-```
-
-**Response Format**:
-
-```json
-{
-  "ok": true,
-  "result": {
-    "suggestions": [
-      { "word": "delighted", "confidence": 0.95 },
-      { "word": "pleased", "confidence": 0.9 },
-      { "word": "satisfied", "confidence": 0.85 },
-      { "word": "content", "confidence": 0.8 },
-      { "word": "thrilled", "confidence": 0.75 }
-    ]
-  },
-  "status": { "message": "Word alternatives generated successfully" },
-  "error": null,
-  "timestamp": "2025-07-11T..."
-}
-```
-
-**Error Handling**:
-
-- `400`: Invalid mode, missing word/text, or validation errors
-- `500`: Claude API failures or processing errors
-- `503`: Missing API keys or service unavailable
-
-**Usage Examples**:
+### Database Operations
 
 ```bash
-# Single word mode
-curl -X POST "https://dave.io/api/ai/word" \
-  -H "Authorization: Bearer <token>" \
-  -H "Content-Type: application/json" \
-  -d '{"mode": "single", "word": "happy"}'
+# Generate new migration
+bunx drizzle-kit generate
 
-# Context mode
-curl -X POST "https://dave.io/api/ai/word" \
-  -H "Authorization: Bearer <token>" \
-  -H "Content-Type: application/json" \
-  -d '{"mode": "context", "text": "I am very happy about the result.", "target_word": "happy"}'
+# Apply migrations to D1
+bunx drizzle-kit push
+
+# Open Drizzle Studio
+bunx drizzle-kit studio
 ```
 
-## Structured Logging
+## Architecture
 
-The application uses structured JSON logging for consistent observability. All endpoints should use this for logging operations.
+### Request Flow
 
-### Usage in Endpoints
+1. **Cloudflare Edge** → Routes to Workers based on `wrangler.jsonc` patterns
+2. **Nitro Server** → Handles SSR/API via `cloudflare_module` preset
+3. **Nuxt App** → Vue components render with auto-imports from `app/` directory
+4. **API Routes** → `server/api/*.ts` files become `/api/*` endpoints
+5. **Middleware** → `server/middleware/` processes all requests
+
+### Key Directories
+
+- `app/` - Vue components, layouts, pages (auto-imported)
+- `server/` - Nitro backend: API routes, middleware, DB schema
+- `public/` - Static assets served directly from CF edge
+- `.output/` - Build artifacts for Cloudflare Workers
+- `drizzle/` - Database migrations
+
+## Cloudflare Bindings
+
+All bindings defined in `wrangler.jsonc` are available in server context:
+
+| Binding     | Type              | Usage                  | Access                                   |
+| ----------- | ----------------- | ---------------------- | ---------------------------------------- |
+| `KV`        | KV Namespace      | Cache, session storage | `event.context.cloudflare.env.KV`        |
+| `DB`        | D1 Database       | SQLite database        | `event.context.cloudflare.env.DB`        |
+| `BLOB`      | R2 Bucket         | File storage           | `event.context.cloudflare.env.BLOB`      |
+| `AI`        | Workers AI        | ML models              | `event.context.cloudflare.env.AI`        |
+| `ANALYTICS` | Analytics Engine  | Custom metrics         | `event.context.cloudflare.env.ANALYTICS` |
+| `BROWSER`   | Browser Rendering | Puppeteer              | `event.context.cloudflare.env.BROWSER`   |
+| `IMAGES`    | Image Resizing    | On-the-fly transforms  | `event.context.cloudflare.env.IMAGES`    |
+
+### Accessing Bindings in Server Code
 
 ```typescript
-import { extractEndpointContext, log, createLogger } from "~/server/utils/logging"
-import { requireAPIAuth } from "~/server/utils/auth-helpers"
-
+// server/api/example.ts
 export default defineEventHandler(async (event) => {
-  // Extract context after auth (if applicable)
-  const auth = await requireAPIAuth(event, "resource")
-  const context = extractEndpointContext(event, auth)
+  // Get Cloudflare bindings
+  const { env } = event.context.cloudflare
 
-  // Option 1: Direct logging
-  log("info", "Starting operation", context, {
-    customField: "value",
-    operation: "process"
+  // Use KV
+  await env.KV.put("key", "value")
+  const cached = await env.KV.get("key")
+
+  // Use D1 with Drizzle
+  const db = drizzle(env.DB)
+  const results = await db.select().from(users)
+
+  // Use R2
+  const object = await env.BLOB.get("file.pdf")
+
+  // Use AI
+  const response = await env.AI.run("@cf/meta/llama-2-7b-chat-int8", {
+    prompt: "Hello"
   })
-
-  // Option 2: Create bound logger
-  const logger = createLogger(context)
-  logger.info("Processing request", { step: "validation" })
-  logger.warn("Approaching limit", { remaining: 5 })
-
-  try {
-    // ... operation
-  } catch (error) {
-    // Log errors with full stack traces
-    logger.error(
-      "Operation failed",
-      {
-        operation: "database_query",
-        query: "SELECT * FROM tokens"
-      },
-      error
-    )
-    throw error
-  }
 })
 ```
 
-### Log Levels
+## Environment Variables
 
-- **error**: Failures, exceptions, critical issues (console.error)
-- **warn**: Warnings, deprecations, non-critical issues (console.warn)
-- **info**: Normal operations, state changes (console.info)
-- **trace**: Debug details, verbose output (console.trace)
+### Required Secrets (`.env`)
 
-### Context Structure
+| Variable                    | Purpose                  | Example        |
+| --------------------------- | ------------------------ | -------------- |
+| `NUXT_OPENROUTER_API_KEY`   | OpenRouter API access    | `sk-or-v1-...` |
+| `NUXT_TURNSTILE_SECRET_KEY` | Cloudflare Turnstile     | `0x4AAA...`    |
+| `SENTRY_AUTH_TOKEN`         | Sentry deployment        | `sntrys_...`   |
+| `CLOUDFLARE_D1_TOKEN`       | D1 API access (dev only) | `v1_...`       |
 
-The `extractEndpointContext()` function captures:
+### Public Configuration (`nuxt.config.ts`)
 
 ```typescript
-{
-  request: {
-    method: string         // HTTP method
-    path: string          // Request path
-    url: string           // Full URL
-    httpVersion: string   // HTTP version
-    userAgent: string     // User agent
-    headers: Record<string, string | undefined>
-  },
-  cloudflare: {
-    ray: string          // CF Ray ID
-    country: string      // Country code
-    ip: string          // Client IP
-    datacenter: string   // CF datacenter
-    userAgent: string    // User agent
-    requestUrl: string   // Request URL
-  },
-  auth?: {              // If auth provided
-    authenticated: boolean
-    subject?: string     // JWT subject
-    tokenId?: string     // JWT ID
-    permissions?: string[]
-    issuedAt?: Date
-    expiresAt?: Date
-  },
-  errorContext?: {      // If error middleware set
-    requestId: string
-    timestamp: string
-    cfRay: string
-  },
-  requestId: string     // Unique request ID
-  timestamp: string     // ISO timestamp
+runtimeConfig: {
+  // Private (server-only)
+  openRouterApiKey: '', // Override with NUXT_OPENROUTER_API_KEY
+  turnstileSecretKey: '', // Override with NUXT_TURNSTILE_SECRET_KEY
+
+  // Public (client + server)
+  public: {
+    siteUrl: 'https://rebuild.dave.io',
+    cloudflare: {
+      accountId: 'def50674a738cee409235f71819973cf'
+    },
+    turnstile: {
+      siteKey: '0x4AAAAAABraTjA80I4Pmf1K'
+    }
+  }
 }
 ```
 
-### Implementation Pattern
+## Nuxt 4 Configuration
+
+### Active Modules (`nuxt.config.ts`)
 
 ```typescript
-// At the start of every endpoint that needs logging:
-const auth = await requireAuth(event, "category", "resource") // if auth needed
-const context = extractEndpointContext(event, auth)
-const logger = createLogger(context)
-
-// Use logger throughout endpoint
-logger.info("Starting", { data })
-// ... operations
-logger.info("Completed", { result })
+modules: [
+  "@formkit/auto-animate/nuxt", // Auto-animate Vue transitions
+  "@nuxt/eslint", // ESLint integration
+  "@nuxt/fonts", // Web font optimization (Bunny CDN)
+  "@nuxt/icon", // Icon components (Iconify)
+  "@nuxt/image", // Image optimization
+  "@nuxt/scripts", // Third-party script management
+  "@nuxtjs/color-mode", // Dark/light mode (forced dark)
+  "@nuxtjs/device", // Device detection
+  "@nuxtjs/seo", // SEO meta tags
+  "@nuxtjs/turnstile", // Cloudflare Turnstile CAPTCHA
+  "@pinia/nuxt", // State management
+  "@sentry/nuxt/module", // Error tracking
+  "magic-regexp/nuxt", // Readable regex
+  "nitro-cloudflare-dev", // Local CF dev environment
+  "nuxt-security" // Security headers (CSP, SRI)
+]
 ```
 
-### Output Format
+### Experimental Features Enabled
 
-All logs output as single-line JSON to the appropriate console method:
-
-```json
-{"level":"info","message":"Token validated","context":{...},"data":{...}}
+```typescript
+experimental: {
+  componentIslands: true,    // Selective hydration
+  inlineRouteRules: true,    // Route-level Nitro rules
+  lazyHydration: true,       // Defer hydration
+  viewTransition: true,      // Native view transitions API
+}
 ```
 
-Error logs include stack traces:
+### Critical Settings
 
-```json
-{"level":"error","message":"Failed","context":{...},"data":{...},"error":{"message":"...","stack":"...","code":"..."}}
+- **Compatibility Date**: `2025-08-13` - Uses latest Nuxt 4 & CF features
+- **Nitro Preset**: `cloudflare_module` - Required for Workers
+- **Node Compat**: Enabled via `nodejs_compat` flag
+- **Source Maps**: Hidden on client, enabled on server for Sentry
+
+## Development Patterns
+
+### State Management (Pinia)
+
+```typescript
+// stores/example.ts
+export const useExampleStore = defineStore("example", () => {
+  const count = ref(0)
+  const doubled = computed(() => count.value * 2)
+
+  function increment() {
+    count.value++
+  }
+
+  return { count, doubled, increment }
+})
 ```
 
-## Immediate Plans
+### API Route with D1
 
-- None currently. DIO-118 has been completed - runtime validation for API responses is now implemented.
+```typescript
+// server/api/users.get.ts
+import { drizzle } from "drizzle-orm/d1"
+import { users } from "~/server/db/schema"
+
+export default defineEventHandler(async (event) => {
+  const db = drizzle(event.context.cloudflare.env.DB)
+  return await db.select().from(users).limit(10)
+})
+```
+
+### Composables with Auto-imports
+
+```typescript
+// composables/pageSetup.ts - already auto-imported everywhere
+export function usePageSetup(title: string, description?: string) {
+  useHead({
+    title,
+    meta: [{ name: "description", content: description }]
+  })
+
+  // Any shared page logic
+}
+```
+
+### Tailwind v4 with Catppuccin
+
+```vue
+<!-- Using Catppuccin Mocha theme tokens -->
+<template>
+  <div class="bg-base text-text">
+    <button class="bg-blue text-base hover:bg-sky">Click Me</button>
+  </div>
+</template>
+```
+
+## Deployment Workflow
+
+### Production Deploy
+
+```bash
+# 1. Ensure tests pass (none currently, per CLAUDE.md)
+bun run lint
+
+# 2. Build and deploy to Cloudflare
+bun run deploy
+
+# 3. Verify deployment
+curl https://rebuild.dave.io/api/ping
+```
+
+### Preview/Staging Deploy
+
+```bash
+# Create preview deployment
+bun run deploy:nonprod
+
+# Wrangler will output preview URL like:
+# https://abc123.rebuild-dave-io.workers.dev
+```
+
+### Rollback
+
+```bash
+# List deployments
+bun run wrangler deployments list
+
+# Rollback to previous
+bun run wrangler rollback
+```
+
+## Monitoring & Debugging
+
+### Sentry Integration
+
+- **DSN**: Hardcoded in `sentry.client.config.ts`
+- **Source Maps**: Auto-uploaded during build
+- **Environments**: Detects via `process.env.NODE_ENV`
+- **Toolbar**: Loads in development via `app.vue`
+
+### Cloudflare Analytics
+
+```typescript
+// Track custom event
+event.context.cloudflare.env.ANALYTICS.writeDataPoint({
+  indexes: ["user_action"],
+  doubles: [1],
+  blobs: ["button_click"]
+})
+```
+
+### Local Debugging
+
+```bash
+# Tail production logs
+bunx wrangler tail
+
+# Local debugging with Cloudflare bindings
+bun run preview:wrangler
+
+# View D1 data locally
+bunx drizzle-kit studio
+```
+
+## Common Issues & Solutions
+
+### Issue: "bun build" doesn't create Nuxt build
+
+**Solution**: Always use `bun run build` (with 'run') as `bun build` is Bun's internal bundler command.
+
+### Issue: Environment variables not loading
+
+**Solution**: Nuxt requires `NUXT_` prefix for auto-loading. Check `.env.example` for correct naming.
+
+### Issue: Cloudflare bindings undefined in dev
+
+**Solution**: Use `bun run preview:wrangler` instead of `bun dev` to get full CF environment locally.
+
+### Issue: Hydration mismatch errors
+
+**Solution**: Ensure color mode is consistent - this app forces dark mode:
+
+```typescript
+const colorMode = useColorMode()
+colorMode.preference = "dark"
+```
+
+### Issue: Trunk Check fails on CI
+
+**Solution**: The project uses specific tool versions via `mise.toml`:
+
+- Bun 1.2.20
+- Node 22.18.0
+- Rust 1.89.0
+
+Ensure CI matches these versions.
+
+## Quick Task Reference
+
+### Add new API endpoint
+
+```bash
+# Create file
+echo 'export default defineEventHandler(() => ({ ok: true }))' > server/api/health.get.ts
+
+# Test locally
+bun dev
+curl http://localhost:3000/api/health
+```
+
+### Add new page
+
+```bash
+# Create page component
+mkdir -p app/pages
+echo '<template><div>New Page</div></template>' > app/pages/new.vue
+
+# Page auto-routes to /new
+```
+
+### Update D1 schema
+
+```bash
+# 1. Edit schema
+$EDITOR server/db/schema.ts
+
+# 2. Generate migration
+bunx drizzle-kit generate
+
+# 3. Apply to D1
+bunx drizzle-kit push
+```
+
+### Add Cloudflare KV cache
+
+```typescript
+// In any server handler
+const cached = await event.context.cloudflare.env.KV.get("cache-key")
+if (cached) return JSON.parse(cached)
+
+const fresh = await expensiveOperation()
+await event.context.cloudflare.env.KV.put(
+  "cache-key",
+  JSON.stringify(fresh),
+  { expirationTtl: 3600 } // 1 hour
+)
+return fresh
+```
+
+## External Resources
+
+- [Nuxt 4 Docs](https://nuxt.com/docs/getting-started/introduction)
+- [Cloudflare Workers Docs](https://developers.cloudflare.com/workers/)
+- [Drizzle ORM D1 Guide](https://orm.drizzle.team/docs/cloudflare-d1)
+- [Tailwind CSS v4 Beta](https://tailwindcss.com/blog/tailwindcss-v4-beta)
+- [Project Plans (Notion)](https://www.notion.so/daveio/Rebuild-of-dave-io-24db7795690c802489f7d3f8f53d2ec0)
 
 ## Memories
 
-- You are unable to handle starting or stopping the dev server yourself. If it needs to be restarted, started, or stopped, you should IMMEDIATELY STOP and ask the user.
+Memories added by CLIs will be appended here.

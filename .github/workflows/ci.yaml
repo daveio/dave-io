@@ -8,23 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@8edcb1bdb4e267140fa742c62e395cd74f332709
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
       - name: bun
-        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76
+        uses: oven-sh/setup-bun@22457c87c1b161cf7dde222c3e82b2b5f8d2bed2
         with:
-          bun-version: 1.2.16
-      - name: vars
-        run: cp .env.example .dev.vars
+          bun-version: 1.2.20
       - name: install
         run: bun install
-      - name: build
-        run: bun run build
-      - name: eslint
-        run: bun run lint:eslint
       - name: trunk
         uses: trunk-io/trunk-action@1c401dfb3626be3d242d50537e2f020e12424329
-        with:
-          # trunk-ignore(trunk-toolbox)
-          arguments: --filter=-trunk-toolbox/todo
       - name: typecheck
         run: bun run lint:types
+      - name: build
+        run: bun run build
