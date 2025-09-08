@@ -8,7 +8,7 @@ usePageSetup({
 })
 
 definePageMeta({
-  layout: 'default',
+  layout: "default",
   layoutProps: {
     showHero: false,
     showCurlCommand: false,

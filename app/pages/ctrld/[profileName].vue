@@ -17,7 +17,13 @@
           <DomainCheck :auth="auth" :domain="domain" />
 
           <!-- Action buttons and modal confirmation -->
-          <UnblockConfirmActions :domain="domain" :auth="auth" :profile="profile" @success="onSuccess" @error="onError" />
+          <UnblockConfirmActions
+            :domain="domain"
+            :auth="auth"
+            :profile="profile"
+            @success="onSuccess"
+            @error="onError"
+          />
 
           <!-- Status message display with appropriate styling -->
           <div v-if="statusMessage" role="alert" :class="['alert mt-4', statusClass]">
