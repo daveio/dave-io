@@ -43,9 +43,7 @@ function directConsoleLog() {
 }
 
 function sentryLoggerLog() {
-  // Using the Sentry logger API; cast to any to avoid TS conflicts
-  // @ts-expect-error Sentry class doesn't resolve?
-  Sentry.logger.log("Sentry logger log message")
+  console.log("console.log statement")
 }
 </script>
 
