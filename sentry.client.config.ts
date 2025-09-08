@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/nuxt"
 Sentry.init({
+  debug: false,
   // If set up, you can use the Nuxt runtime config here
   // dsn: useRuntimeConfig().public.sentry.dsn
   // modify depending on your custom runtime config
