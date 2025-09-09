@@ -66,6 +66,9 @@
     "node": "^22.19.0"
   },
   "name": "dave-io",
+  "overrides": {
+    "simple-swizzle": "0.2.2"
+  },
   "packageManager": "bun@1.2.21",
   "private": true,
   "scripts": {
