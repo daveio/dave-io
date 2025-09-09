@@ -1,9 +1,8 @@
 import * as Sentry from "@sentry/nuxt"
-
-const isProduction = process.env.SENTRY_ENVIRONMENT === "production"
+import { isProduction } from "./shared/util"
 
 Sentry.init({
-  debug: !isProduction,
+  debug: !isProduction(),
   // If set up, you can use the Nuxt runtime config here
   // dsn: useRuntimeConfig().public.sentry.dsn
   // modify depending on your custom runtime config

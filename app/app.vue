@@ -9,6 +9,8 @@
 </template>
 
 <script setup lang="ts">
+import { isProduction } from "~~/shared/util"
+
 declare global {
   interface Window {
     SentryToolbar?: {
@@ -17,18 +19,19 @@ declare global {
   }
 }
 
-useScript("https://browser.sentry-cdn.com/sentry-toolbar/latest/toolbar.min.js", {
-  use() {
-    if (window.SentryToolbar) {
-      window.SentryToolbar.init({
-        organizationSlug: "daveio",
-        projectIdOrSlug: "dave-io"
-      })
+if (!isProduction()) {
+  useScript("https://browser.sentry-cdn.com/sentry-toolbar/latest/toolbar.min.js", {
+    use() {
+      if (window.SentryToolbar) {
+        window.SentryToolbar.init({
+          organizationSlug: "daveio",
+          projectIdOrSlug: "dave-io"
+        })
+      }
+      return null
     }
-    return null
-  }
-})
-
+  })
+}
 // Set default color mode preference
 const colorMode = useColorMode()
 if (import.meta.client) {
