@@ -12,12 +12,12 @@
     "@nuxtjs/seo": "3.1.0",
     "@nuxtjs/turnstile": "1.1.0",
     "@pinia/nuxt": "^0.11.2",
-    "@sentry/nuxt": "^10.10.0",
+    "@sentry/nuxt": "^10.11.0",
     "@tailwindcss/vite": "^4.1.13",
     "@types/luxon": "^3.7.1",
     "@unhead/vue": "^2.0.14",
     "cloudflare": "^5.0.0",
-    "daisyui": "^5.1.8",
+    "daisyui": "^5.1.9",
     "dotenv": "^17.2.2",
     "drizzle-orm": "^0.44.5",
     "eslint": "^9.35.0",
@@ -27,7 +27,7 @@
     "nuxt": "^4.1.1",
     "nuxt-gtag": "4.0.0",
     "nuxt-security": "2.4.0",
-    "openai": "^5.19.1",
+    "openai": "^5.20.0",
     "tailwindcss": "^4.1.13",
     "tldts": "^7.0.13",
     "unstorage": "^1.17.1",
@@ -38,7 +38,7 @@
     "zod": "^4.1.5"
   },
   "devDependencies": {
-    "@anthropic-ai/claude-code": "^1.0.108",
+    "@anthropic-ai/claude-code": "^1.0.109",
     "@catppuccin/daisyui": "^2.1.1",
     "@catppuccin/tailwindcss": "^1.0.0",
     "@iconify-json/heroicons": "^1.2.2",
@@ -59,7 +59,7 @@
     "tsx": "^4.20.5",
     "untun": "^0.1.3",
     "vite-plugin-eslint2": "^5.0.4",
-    "wrangler": "^4.34.0"
+    "wrangler": "^4.35.0"
   },
   "engines": {
     "bun": "^1.2.21",
