@@ -17,7 +17,7 @@
     "@types/luxon": "^3.7.1",
     "@unhead/vue": "^2.0.14",
     "cloudflare": "^5.0.0",
-    "daisyui": "^5.1.9",
+    "daisyui": "^5.1.10",
     "dotenv": "^17.2.2",
     "drizzle-orm": "^0.44.5",
     "eslint": "^9.35.0",
@@ -27,7 +27,7 @@
     "nuxt": "^4.1.1",
     "nuxt-gtag": "4.0.0",
     "nuxt-security": "2.4.0",
-    "openai": "^5.20.0",
+    "openai": "^5.20.1",
     "tailwindcss": "^4.1.13",
     "tldts": "^7.0.13",
     "unstorage": "^1.17.1",
@@ -38,7 +38,7 @@
     "zod": "^4.1.5"
   },
   "devDependencies": {
-    "@anthropic-ai/claude-code": "^1.0.109",
+    "@anthropic-ai/claude-code": "^1.0.110",
     "@catppuccin/daisyui": "^2.1.1",
     "@catppuccin/tailwindcss": "^1.0.0",
     "@iconify-json/heroicons": "^1.2.2",
