@@ -4,29 +4,47 @@ import type { H3Event } from "h3"
 import { drizzle } from "drizzle-orm/d1"
 
 /**
- * Retrieves the Cloudflare environment object from the event context.
- * This function provides access to environment variables and bindings for the current request.
+ * Retrieves the Cloudflare environment from the given event.
+ * Throws an error if the environment is not found in the event context.
  *
  * Args:
  *   event: The H3Event containing the Cloudflare environment context.
  *
  * Returns:
- *   The environment object cast as type Env.
+ *   The Cloudflare environment object extracted from the event.
+ *
+ * Raises:
+ *   Error: If the environment is not found in the event context.
  */
 export function getEnv(event: H3Event) {
-  return (event.context.cloudflare?.env || {}) as Env
+  const env = (event.context.cloudflare?.env || null) as Env
+
+  if (!env) {
+    throw new Error("Environment not found in event context")
+  }
+
+  return env
 }
 
 /**
- * Returns a database client instance for the current event.
- * This function retrieves the database binding from the event's environment and initializes a Drizzle ORM client.
+ * Returns a database connection for the given event.
+ * Retrieves the environment from the event and initializes a Drizzle ORM database instance.
  *
  * Args:
  *   event: The H3Event containing the Cloudflare environment context.
  *
  * Returns:
- *   A Drizzle ORM database client instance.
+ *   A Drizzle ORM database instance connected to the environment's DB.
+ *
+ * Raises:
+ *   Error: If the environment or database is not found in the event context.
  */
 export function getDB(event: H3Event) {
-  return drizzle(getEnv(event).DB)
+  const env = getEnv(event)
+
+  if (!env.DB) {
+    throw new Error("Database not found in environment")
+  }
+
+  return drizzle(env.DB)
 }
