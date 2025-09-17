@@ -13,18 +13,28 @@ export default defineEventHandler(async (event) => {
     return error(event, {}, "Invalid auth", 401)
   }
 
+  if (!domain || !profile) {
+    return error(event, {}, "Missing required fields: domain and profile", 400)
+  }
+
+  type Profiles = {
+    main: string
+    permissive: string
+    parents: string
+  }
+
   // Add runtime validation
-  const profiles = {
+  const profiles: Profiles = {
     main: "751219lhr3b5",
     permissive: "753829amsizb",
     parents: "753215amsnk2",
   }
 
-  if (!profiles[profile as keyof typeof profiles]) {
+  if (!profiles[profile as keyof Profiles]) {
     return error(event, {}, `Invalid profile: ${profile}`, 400)
   }
 
-  const profileId = profiles[profile as keyof typeof profiles]
+  const profileId = profiles[profile as keyof Profiles]
 
   // let's roll
 
