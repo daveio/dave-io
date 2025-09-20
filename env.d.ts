@@ -1,3 +1,4 @@
+/// <reference types=".nuxt/nuxt" />
 /// <reference types="./worker-configuration.d.ts" />
 
 declare module "h3" {
