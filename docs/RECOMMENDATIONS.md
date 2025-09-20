@@ -1,6 +1,6 @@
 # Code Review Recommendations
 
-<!-- trunk-ignore(trunk-toolbox/todo) -->
+<!-- trunk-ignore-all(trunk-toolbox/todo) -->
 
 ## Executive Summary
 
