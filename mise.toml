@@ -9,7 +9,7 @@ idiomatic_version_file_enable_tools = []
 [tools]
 bun = { version = '1.2.22' }
 node = { version = '22.19.0' }
-rust = { version = '1.89.0' }
+rust = { version = '1.90.0' }
 
 [tasks]
 'claude' = { run = "claude", description = "Invoke Claude Code", alias = "cc" }
