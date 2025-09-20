@@ -1,5 +1,7 @@
 # Code Review Recommendations
 
+<!-- trunk-ignore(trunk-toolbox/todo) -->
+
 ## Executive Summary
 
 This Nuxt 4 project demonstrates solid modern web development practices with Cloudflare Workers deployment, TypeScript, and proper security configurations. However, there are opportunities to improve performance, remove unused dependencies, and better leverage Nuxt 4's capabilities.

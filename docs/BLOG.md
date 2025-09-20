@@ -125,7 +125,7 @@ These transform your markdown during build, not runtime, keeping your Worker lea
 
 ### Why Directory Structure Matters
 
-```
+```plaintext
 content/
 └── blog/
     ├── 2024/
