@@ -29,6 +29,9 @@ watch(
     loading.value = true
     error.value = undefined
 
+    // 5-second delay to further confound bots
+    await new Promise(resolve => setTimeout(resolve, 5000))
+
     try {
       const response = await $fetch("/api/util/email", {
         method: "POST",
