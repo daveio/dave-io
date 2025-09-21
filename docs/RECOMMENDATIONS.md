@@ -112,6 +112,9 @@ export default defineEventHandler(async (event) => {
 
 **Issue**: Development-only code in main app.vue.
 
+> [!NOTE]
+> The Sentry toolbar has been disabled by removing its code.
+
 ```typescript
 // plugins/sentry-toolbar.client.ts
 export default defineNuxtPlugin(() => {
