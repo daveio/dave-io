@@ -96,6 +96,7 @@ async function performUnblock(permanent: boolean) {
     isSubmittingPermanent.value = permanent
 
     const { error } = await useFetch("/api/ctrld/unblock", {
+      key: "ctrld-unblock",
       method: "POST",
       body: {
         domain: props.domain,
