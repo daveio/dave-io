@@ -27,46 +27,9 @@ export default defineEventHandler(async (event) => {
 })
 ```
 
-### 2. Add Error Boundaries
+## Security Enhancements (Priority 2)
 
-**Issue**: No error handling UI.
-
-```vue
-<!-- app/error.vue -->
-<template>
-  <div class="min-h-screen flex items-center justify-center">
-    <div class="text-center">
-      <h1 class="text-4xl font-bold text-red mb-4">{{ error.statusCode }}</h1>
-      <p class="text-subtext1">{{ error.statusMessage }}</p>
-      <NuxtLink to="/" class="mt-4 inline-block text-blue hover:text-sapphire"> Return Home </NuxtLink>
-    </div>
-  </div>
-</template>
-
-<script setup>
-defineProps(["error"])
-</script>
-```
-
-## Module Audit (Priority 2)
-
-### 3. Consider Removing Unused Modules
-
-Review necessity of:
-
-- `@nuxt/test-utils` (in dependencies, should be devDependencies)
-- `magic-regexp/nuxt` (check usage)
-- `@formkit/auto-animate` (minimal usage detected)
-
-```bash
-# Move to devDependencies
-bun remove @nuxt/test-utils
-bun add -d @nuxt/test-utils
-```
-
-## Security Enhancements (Priority 3)
-
-### 4. Add Rate Limiting
+### 2. Add Rate Limiting
 
 ```typescript
 // server/middleware/rate-limit.ts
@@ -87,52 +50,6 @@ export default defineEventHandler(async (event) => {
 
   await env.KV.put(key, String(parseInt(count || "0") + 1), {
     expirationTtl: 3600
-  })
-})
-```
-
-## Deployment Optimizations (Priority 4)
-
-### 5. Configure Build Optimizations
-
-```typescript
-// nuxt.config.ts
-vite: {
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'vue-vendor': ['vue', 'vue-router'],
-          'ui-vendor': ['@nuxt/icon', '@nuxt/image']
-        }
-      }
-    }
-  }
-}
-```
-
-### 6. Enable Payload Extraction
-
-```typescript
-// nuxt.config.ts
-experimental: {
-  payloadExtraction: false, // Set to true if using universal rendering
-}
-```
-
-## Testing Recommendations (Priority 5)
-
-### 7. Add Basic Tests
-
-```typescript
-// tests/api.test.ts
-import { describe, it, expect } from "vitest"
-import { $fetch } from "@nuxt/test-utils"
-
-describe("API", () => {
-  it("responds to ping", async () => {
-    const { message } = await $fetch("/api/ping")
-    expect(message).toBe("pong!")
   })
 })
 ```
