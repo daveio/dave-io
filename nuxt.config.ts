@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+// trunk-ignore-all(trunk-toolbox/todo)
 
 import tailwindcss from "@tailwindcss/vite"
 
@@ -89,6 +90,10 @@ export default defineNuxtConfig({
     },
     preset: "cloudflare_module",
     routeRules: {
+      "/": { prerender: true },
+      "/gender": { isr: 3600 },
+      "/api": { prerender: true },
+      "/todo": { ssr: false }, // Client-only interactive page
       "/api/**": {
         cors: true,
         headers: {
