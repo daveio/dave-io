@@ -221,6 +221,6 @@ definePageMeta({
 })
 
 onMounted(() => {
-  // Page mounted
+  logger.info("pages/index.vue mounted")
 })
 </script>
