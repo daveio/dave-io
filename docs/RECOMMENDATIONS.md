@@ -6,90 +6,9 @@
 
 This Nuxt 4 project demonstrates solid modern web development practices with Cloudflare Workers deployment, TypeScript, and proper security configurations. However, there are opportunities to improve performance, remove unused dependencies, and better leverage Nuxt 4's capabilities.
 
-## Critical Issues (Priority 1)
+## Code Quality Improvements (Priority 1)
 
-### 1. Remove Unused Pinia Store
-
-**Issue**: `@pinia/nuxt` is installed but no stores are implemented.
-
-```bash
-bun remove @pinia/nuxt
-```
-
-Remove from `nuxt.config.ts` modules array.
-
-### 2. Fix Redundant Color Mode Configuration
-
-**Issue**: Color mode is set both in config and runtime.
-
-```diff
-# app/app.vue
-- const colorMode = useColorMode()
-- if (import.meta.client) {
--   colorMode.preference = "dark"
-- }
-```
-
-### 3. Remove Empty Lifecycle Hooks
-
-**Issue**: Empty `onMounted` in `app/pages/index.vue:223-225`
-
-```diff
-- onMounted(() => {
--   // Page mounted
-- })
-```
-
-## Performance Optimizations (Priority 2)
-
-### 4. Optimize Font Loading
-
-**Issue**: Three font families loaded, only one used.
-
-```typescript
-// nuxt.config.ts
-fonts: {
-  families: [
-    { name: "Victor Mono", provider: "bunny" },
-    // Remove unused: Sixtyfour Convergence, Sono
-  ],
-}
-```
-
-### 5. Add Route Rules for Static Pages
-
-**Issue**: No ISR/prerendering configured.
-
-```typescript
-// nuxt.config.ts
-nitro: {
-  routeRules: {
-    '/': { prerender: true },
-    '/gender': { isr: 3600 },
-    '/api': { prerender: true },
-    '/todo': { ssr: false }, // Client-only interactive page
-    // Keep existing API rules
-  }
-}
-```
-
-### 6. Implement Proper Data Fetching Keys
-
-**Issue**: No explicit keys for `useFetch` calls.
-
-```typescript
-// Example fix:
-const { data } = await useFetch("/api/data", {
-  key: "unique-data-key",
-  getCachedData(key) {
-    return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
-  }
-})
-```
-
-## Code Quality Improvements (Priority 3)
-
-### 7. Standardize API Response Patterns
+### 1. Standardize API Response Patterns
 
 **Issue**: Custom response wrapper instead of H3 utilities.
 **Recommendation**: Use standard H3 response utilities:
@@ -108,7 +27,7 @@ export default defineEventHandler(async (event) => {
 })
 ```
 
-### 8. Optimize Tailwind CSS Classes
+### 2. Optimize Tailwind CSS Classes
 
 **Issue**: Mix of Tailwind v4 and custom classes.
 **Recommendation**: Use Tailwind utilities directly:
@@ -118,7 +37,7 @@ export default defineEventHandler(async (event) => {
 + Use: font-['Sixtyfour_Convergence'] directly in templates
 ```
 
-### 9. Add Error Boundaries
+### 3. Add Error Boundaries
 
 **Issue**: No error handling UI.
 
@@ -139,9 +58,9 @@ defineProps(["error"])
 </script>
 ```
 
-## Module Audit (Priority 4)
+## Module Audit (Priority 2)
 
-### 10. Consider Removing Unused Modules
+### 4. Consider Removing Unused Modules
 
 Review necessity of:
 
@@ -155,9 +74,9 @@ bun remove @nuxt/test-utils
 bun add -d @nuxt/test-utils
 ```
 
-## Security Enhancements
+## Security Enhancements (Priority 3)
 
-### 11. Add Rate Limiting
+### 5. Add Rate Limiting
 
 ```typescript
 // server/middleware/rate-limit.ts
@@ -182,9 +101,9 @@ export default defineEventHandler(async (event) => {
 })
 ```
 
-## Deployment Optimizations
+## Deployment Optimizations (Priority 4)
 
-### 12. Configure Build Optimizations
+### 6. Configure Build Optimizations
 
 ```typescript
 // nuxt.config.ts
@@ -202,7 +121,7 @@ vite: {
 }
 ```
 
-### 13. Enable Payload Extraction
+### 7. Enable Payload Extraction
 
 ```typescript
 // nuxt.config.ts
@@ -211,9 +130,9 @@ experimental: {
 }
 ```
 
-## Testing Recommendations
+## Testing Recommendations (Priority 5)
 
-### 14. Add Basic Tests
+### 8. Add Basic Tests
 
 ```typescript
 // tests/api.test.ts
