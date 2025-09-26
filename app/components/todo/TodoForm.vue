@@ -88,7 +88,8 @@
           </div>
 
           <p class="text-xs text-subtext0">
-            This form posts to <code class="font-mono">/api/todo</code>. The backend route is stubbed and will accept
+            This form posts to <code class="font-['Victor_Mono']">/api/todo</code>. The backend route is stubbed and
+            will accept
             data via POST.
           </p>
         </form>

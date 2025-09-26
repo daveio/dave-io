@@ -2,7 +2,8 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "account_id": "def50674a738cee409235f71819973cf",
   "ai": {
-    "binding": "AI"
+    "binding": "AI",
+    "remote": true
   },
   "analytics_engine_datasets": [
     {

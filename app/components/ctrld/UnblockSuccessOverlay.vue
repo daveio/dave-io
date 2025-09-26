@@ -5,14 +5,8 @@
         <div class="max-w-4xl mx-auto p-8 text-center">
           <!-- Success icon -->
           <div class="mb-8 flex justify-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-32 w-32 text-success animate-bounce"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="1.5"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-32 w-32 text-success animate-bounce" fill="none"
+              viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
@@ -83,7 +77,7 @@
           <div class="mt-8 p-6 bg-surface0 rounded-lg">
             <p class="text-2xl">
               <strong>Unblocked domain:</strong>
-              <span class="text-green font-mono">{{ domain }}</span>
+              <span class="text-green font-['Victor_Mono']">{{ domain }}</span>
             </p>
             <p v-if="!permanent" class="text-xl text-yellow mt-2">
               ⏰ This is temporary - the block will return in 15 minutes

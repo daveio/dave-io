@@ -27,17 +27,7 @@ export default defineEventHandler(async (event) => {
 })
 ```
 
-### 2. Optimize Tailwind CSS Classes
-
-**Issue**: Mix of Tailwind v4 and custom classes.
-**Recommendation**: Use Tailwind utilities directly:
-
-```diff
-- .font-header { font-family: "Sixtyfour Convergence", sans-serif; }
-+ Use: font-['Sixtyfour_Convergence'] directly in templates
-```
-
-### 3. Add Error Boundaries
+### 2. Add Error Boundaries
 
 **Issue**: No error handling UI.
 
@@ -60,7 +50,7 @@ defineProps(["error"])
 
 ## Module Audit (Priority 2)
 
-### 4. Consider Removing Unused Modules
+### 3. Consider Removing Unused Modules
 
 Review necessity of:
 
@@ -76,7 +66,7 @@ bun add -d @nuxt/test-utils
 
 ## Security Enhancements (Priority 3)
 
-### 5. Add Rate Limiting
+### 4. Add Rate Limiting
 
 ```typescript
 // server/middleware/rate-limit.ts
@@ -103,7 +93,7 @@ export default defineEventHandler(async (event) => {
 
 ## Deployment Optimizations (Priority 4)
 
-### 6. Configure Build Optimizations
+### 5. Configure Build Optimizations
 
 ```typescript
 // nuxt.config.ts
@@ -121,7 +111,7 @@ vite: {
 }
 ```
 
-### 7. Enable Payload Extraction
+### 6. Enable Payload Extraction
 
 ```typescript
 // nuxt.config.ts
@@ -132,7 +122,7 @@ experimental: {
 
 ## Testing Recommendations (Priority 5)
 
-### 8. Add Basic Tests
+### 7. Add Basic Tests
 
 ```typescript
 // tests/api.test.ts
