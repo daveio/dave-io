@@ -168,14 +168,6 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
     build: {
       minify: "esbuild",
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            "vue-vendor": ["vue", "vue-router"],
-            "ui-vendor": ["@nuxt/icon", "@nuxt/image"],
-          },
-        },
-      },
     },
   },
 })
