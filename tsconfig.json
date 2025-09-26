@@ -4,7 +4,7 @@
   "compilerOptions": {
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["./worker-configuration.d.ts", ".nuxt/nuxt"]
+    "types": ["./worker-configuration", ".nuxt/components", ".nuxt/imports", ".nuxt/nuxt"]
   },
   "references": [
     {

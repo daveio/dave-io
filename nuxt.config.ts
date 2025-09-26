@@ -73,7 +73,6 @@ export default defineNuxtConfig({
     "@nuxtjs/device",
     "@nuxtjs/seo",
     "@nuxtjs/turnstile",
-    "@pinia/nuxt",
     "@sentry/nuxt/module",
     "magic-regexp/nuxt",
     "nitro-cloudflare-dev",
