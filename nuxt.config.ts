@@ -114,8 +114,10 @@ export default defineNuxtConfig({
     mergeWithRobotsTxtPath: "app/assets/robots.txt",
   },
   runtimeConfig: {
-    ctrldApiKey: "",
-    ctrldAuthKey: "",
+    anthropicApiKey: "", // overridden by environment variable
+    ctrldApiKey: "", // overridden by environment variable
+    ctrldAuthKey: "", // overridden by environment variable
+    linearApiKey: "", // overridden by environment variable
     openRouterApiKey: "", // overridden by environment variable
     public: {
       apiBase: "/api",

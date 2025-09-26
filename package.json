@@ -63,7 +63,7 @@
   },
   "engines": {
     "bun": "^1.2.22",
-    "node": "^24.8.0"
+    "node": "^24.9.0"
   },
   "name": "dave-io",
   "packageManager": "bun@1.2.22",
