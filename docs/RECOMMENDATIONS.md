@@ -108,32 +108,7 @@ export default defineEventHandler(async (event) => {
 })
 ```
 
-### 8. Move Sentry Dev Toolbar to Plugin
-
-**Issue**: Development-only code in main app.vue.
-
-> [!NOTE]
-> The Sentry toolbar has been disabled by removing its code.
-
-```typescript
-// plugins/sentry-toolbar.client.ts
-export default defineNuxtPlugin(() => {
-  if (!isProduction()) {
-    useScript("https://browser.sentry-cdn.com/sentry-toolbar/latest/toolbar.min.js", {
-      use() {
-        if (window.SentryToolbar) {
-          window.SentryToolbar.init({
-            organizationSlug: "daveio",
-            projectIdOrSlug: "dave-io"
-          })
-        }
-      }
-    })
-  }
-})
-```
-
-### 9. Optimize Tailwind CSS Classes
+### 8. Optimize Tailwind CSS Classes
 
 **Issue**: Mix of Tailwind v4 and custom classes.
 **Recommendation**: Use Tailwind utilities directly:
@@ -143,7 +118,7 @@ export default defineNuxtPlugin(() => {
 + Use: font-['Sixtyfour_Convergence'] directly in templates
 ```
 
-### 10. Add Error Boundaries
+### 9. Add Error Boundaries
 
 **Issue**: No error handling UI.
 
@@ -166,7 +141,7 @@ defineProps(["error"])
 
 ## Module Audit (Priority 4)
 
-### 11. Consider Removing Unused Modules
+### 10. Consider Removing Unused Modules
 
 Review necessity of:
 
@@ -182,7 +157,7 @@ bun add -d @nuxt/test-utils
 
 ## Security Enhancements
 
-### 12. Add Rate Limiting
+### 11. Add Rate Limiting
 
 ```typescript
 // server/middleware/rate-limit.ts
@@ -209,7 +184,7 @@ export default defineEventHandler(async (event) => {
 
 ## Deployment Optimizations
 
-### 13. Configure Build Optimizations
+### 12. Configure Build Optimizations
 
 ```typescript
 // nuxt.config.ts
@@ -227,7 +202,7 @@ vite: {
 }
 ```
 
-### 14. Enable Payload Extraction
+### 13. Enable Payload Extraction
 
 ```typescript
 // nuxt.config.ts
@@ -238,7 +213,7 @@ experimental: {
 
 ## Testing Recommendations
 
-### 15. Add Basic Tests
+### 14. Add Basic Tests
 
 ```typescript
 // tests/api.test.ts
