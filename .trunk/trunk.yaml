@@ -39,11 +39,13 @@ lint:
     - linters:
         - trunk-toolbox
       paths:
-        - "**/*.png"
-        - "**/*.jpg"
-        - "**/*.webp"
         - "**/*.gif"
         - "**/*.ico"
+        - "**/*.jpg"
+        - "**/*.pdf"
+        - "**/*.png"
+        - "**/*.webp"
+        - "**/*.zip"
         - .devcontainer/devcontainer.json
         - sql/redirects.sql
 actions:
