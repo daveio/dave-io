@@ -5,25 +5,17 @@ slug: how-i-turned-notion-into-a-blog
 snippet: Notion is a versatile note-taking app that allows real-time editing, supports various formats, and offers extensive customization through templates and widgets. It can be used for blogging by organizing content in databases with different views, such as galleries. The author transitioned from other platforms to Notion for its ease of use, integrating features like Google Analytics and a comments system, while noting areas for improvement such as the lack of RSS feeds and custom fonts.
 ---
 
-# How I turned Notion into a blog
-
-![](https://images.unsplash.com/photo-1683114010575-3ead4403180e?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb)
-
----
-
----
-
-# A quick summary of [**Notion**](https://notion.com)
+## A quick summary of [**Notion**](https://notion.com)
 
 First, let's talk about what [**Notion**](https://notion.com) is and what it does.
 
-## The short version
+### The short version
 
 At its core, [**Notion**](https://notion.com) is a note-taking app with features that encourage general organisation. Editing is real-time, with edits to published or shared pages being reflected as you type.
 
 It's not Markdown-based, but you can write using Markdown syntax which [**Notion**](https://notion.com) translates to its own primitives like three levels of headings, bullet lists, links, and more. You can also configure these with formatting menus, Markdown syntax support is just there to operate as a shorthand.
 
-## Features
+### Features
 
 [**Notion**](https://notion.com) supports import and export of many formats, including PDF, Markdown, HTML, CSV, more application-specific formats like Word, Excel, and Powerpoint, and various online services like Google Docs, Evernote, Jira, and more.
 
@@ -41,7 +33,7 @@ Functionality extension is done using Widgets. There are a bunch of built-in ric
 
 AI features are useful without being intrusive. The two features I use the most are automatically generated and updated summaries and tags, which update as you edit a document. They have to be added with intent, there's no sneaky insertion of AI where you don't really want it.
 
-## Publishing
+### Publishing
 
 [**Notion**](https://notion.com) supports publishing to the Web. You get a free [`USERNAME.notion.site`](http://USERNAME.notion.site) address with your account, or you can add custom domains for $10/mo each. Any domains you add are additive rather than replacements, so you can manage multiple sites with their own homepages if you like.
 
@@ -49,7 +41,7 @@ AI features are useful without being intrusive. The two features I use the most 
 
 Published content, like shared content, updates in real time as you type, so if you need to make changes you can know they're immediately live even if someone has already loaded the page.
 
-## Databases
+### Databases
 
 Where [**Notion**](https://notion.com) gets really interesting, however, is Databases.
 
@@ -61,11 +53,11 @@ The important thing to take away is that they're a way of organising collections
 
 A way of displaying a collection of subpages in a very flexible way? Sounds ideal for a blog. And it's what we'll end up relying on.
 
-# How things evolved
+## How things evolved
 
 These are the stages that [**blog.dave.io**](https://blog.dave.io) went through.
 
-## [**Vue.js**](https://vuejs.org) with [**Nuxt**](https://nuxt.com)
+### [**Vue.js**](https://vuejs.org) with [**Nuxt**](https://nuxt.com)
 
 I started off spending far too much time building a [**Vue.js**](https://vuejs.org) app for the blog.
 
@@ -85,7 +77,7 @@ The [**YAML front matter**](https://docs.github.com/en/contributing/writing-for-
 
 It was a good learning experience, but it was a lot of work for something that was essentially a glorified Markdown renderer.
 
-## [**Inkdown**](https://inkdown.me)
+### [**Inkdown**](https://inkdown.me)
 
 As time passed, I got a bit annoyed at having to craft each Markdown file by hand, and looked into my options for an editor. Eventually, I came across [**Inkdown**](https://inkdown.me/).
 
@@ -101,7 +93,7 @@ It was all a bit odd.
 
 I could never fully get a handle on its behaviour, so I went back to the drawing board.
 
-## [**Obsidian**](https://obsidian.md)
+### [**Obsidian**](https://obsidian.md)
 
 [**Obsidian**](https://obsidian.md) is a [**Notion**](https://notion.com) competitor. It centres more on being local-first and is built very strongly around Markdown. This made it a great option for editing posts and front matter, with the front matter presented as document properties, and operates directly on files unlike Inkdown.
 
@@ -109,7 +101,7 @@ I could never fully get a handle on its behaviour, so I went back to the drawing
 
 It's quite good, and supports publishing, but it handles images and other embedded content as files and I could never get it feeling 'clean'. Also, I was still stuck with copying the file contents across to files inside the [**Vue.js**](https://vuejs.org) app and editing them to suit what it expected.
 
-## And finally, [**Notion**](https://notion.com)
+### And finally, [**Notion**](https://notion.com)
 
 I'd already been using [**Notion**](https://notion.com) for personal organisation and project management, and I'd needed to get a handle on the publishing system recently to share certain documents with an undefined audience. Running [**Obsidian**](https://obsidian.md) in parallel felt a bit redundant, so I came to the conclusion of using [**Notion**](https://notion.com) for all of it and running exports, then using the exported files in the [**Vue.js**](https://vuejs.org) app. It worked, but it still used a manual step.
 
@@ -119,11 +111,11 @@ One loss from [**Obsidian**](https://obsidian.md) was the support for front matt
 
 Suddenly, though, it struck me that maybe all that exporting, copying, and editing was unnecessary. Perhaps I could just use [**Notion**](https://notion.com) for all of it. The Gallery view of a database would work well for a blog; it wouldn't be amazing, but it would certainly do the job. I just had to see if I could make it serviceable and sustainable.
 
-# Getting set up
+## Getting set up
 
 With that, it's time to get the site going.
 
-## Moving everything to [**Notion**](https://notion.com)
+### Moving everything to [**Notion**](https://notion.com)
 
 To start off, I got exports together of all my content in Markdown format along with all the images for each post. This got me a good starting point where everything was standardised.
 
@@ -137,25 +129,17 @@ The second was `Published Date`. This was a date field. I configured automation 
 
 I set the default view to Gallery, set the sort order to `Published Date` descending, set the filter to `Published = Yes`, and published this database as the root of a new site, [\*\*blog.dave](https://blog.dave.io)[.io](http://blog.dave.io).\*\*
 
-I added the DNS `CNAME` and `TXT` records required by [\*\*Notion](https://notion.com).** Then I checked everything was rendering properly and [**Notion\*\*](https://notion.com) saw the site as ready.
+I added the DNS `CNAME` and `TXT` records required by [Notion](https://notion.com) Then I checked everything was rendering properly and [Notion](https://notion.com) saw the site as ready.
 
-<aside>
-
-![warning-sq-trans.png](How%20I%20turned%20Notion%20into%20a%20blog%2017eb7795690c801b89f5d6c9687294b0/warning-sq-trans.png)
-
-![cloudfare-sq-trans.png](How%20I%20turned%20Notion%20into%20a%20blog%2017eb7795690c801b89f5d6c9687294b0/cloudfare-sq-trans.png)
-
-If you use [**Cloudflare**](https://cloudflare.com), leave proxying **off** while you set things up. Once [**Notion**](https://notion.com) has validated the domain and it appears ready in the [**Notion**](https://notion.com) custom domain configuration, you can switch proxying **on**.
-
-This is because proxying changes the value returned for the `CNAME`. It doesn't affect the `TXT` record. It might work anyway, but leaving proxying **off** while you set things up makes absolutely certain that when [**Notion**](https://notion.com) checks, it gets the values it's expecting for both records.
-
-</aside>
+> If you use [**Cloudflare**](https://cloudflare.com), leave proxying **off** while you set things up. Once [**Notion**](https://notion.com) has validated the domain and it appears ready in the [**Notion**](https://notion.com) custom domain configuration, you can switch proxying **on**.
+>
+> This is because proxying changes the value returned for the `CNAME`. It doesn't affect the `TXT` record. It might work anyway, but leaving proxying **off** while you set things up makes absolutely certain that when [**Notion**](https://notion.com) checks, it gets the values it's expecting for both records.
 
 I configured the site settings for [**blog.dave.io**](https://blog.dave.io), adding [**Google Analytics**](https://analytics.google.com), disabling the [**Notion**](https://notion.com) logo and the **Duplicate as Template** button, enabling **dark mode**, and configuring the search engine preview text.
 
 Because the site is configured as a single database, the settings configured here will apply to all subpages by default. They can of course be edited for each page individually; what that translates to in practical terms is editing the search engine preview and URL path for each subpage.
 
-## Setting up comments
+### Setting up comments
 
 [**Notion**](https://notion.com) has support for comments, but they're unsuitable for a blog. They require being logged in with a [**Notion**](https://notion.com) account which most users won't have. I'd need to integrate some form of third-party comments system.
 
@@ -179,7 +163,7 @@ It's extremely basic, and still requires creating independent comment-type embed
 
 I attached comment embeds to each of the pages, and comments were up and running. You can see it in action at the bottom of this post.
 
-## Managing posts
+### Managing posts
 
 Along with the blog itself, I also created a private page embedding the blog database. The reason for this is that while the blog interface lists posts, by default it only lists posts where `Published` is set to `Yes`. In order to write posts and manage my queue, I'd need to be able to see all posts regardless of `Published` status.
 
@@ -189,7 +173,7 @@ An important consequence of this is that non-published posts **are not private**
 
 I also added a **Notes** section to the top of each post. I use this to hold sources, links, information, images, and bullet-point skeletons of what I'm going write about. I remove this before setting `Published` to `Yes` and going live with the post.
 
-## Bringing in AI
+### Bringing in AI
 
 While [**Notion AI**](https://www.notion.com/product/ai) isn't at all forced on you, I did find it useful.
 
@@ -199,7 +183,7 @@ I also added a `Topics` field, also set to display on the list of posts, which u
 
 I also display both on the post itself too, mostly for SEO reasons.
 
-## Making it look good
+### Making it look good
 
 While it would be possible to get exciting with the design by using a page with an embedded database as the main page, I chose to use the database itself with a **Gallery** view.
 
@@ -209,11 +193,11 @@ I then enabled all the properties on the post list page except for `Published`. 
 
 I configured the post list to display the cover image for the post rather than the beginnnings of the post text. The `Summary` provides an idea of what the post is about, and it looks better to have the post tiles centre around an image.
 
-# It's not perfect
+## It's not perfect
 
 There are improvements I'd like to make over time.
 
-## There's no RSS feed
+### There's no RSS feed
 
 While RSS isn't extensively used these days, it's something that I really would rather have for the few people who might use it.
 
@@ -229,9 +213,9 @@ If that works, the final hurdle is whether I can add a `<link>` tag using a [**C
 
 If I can't get it working, it's not a huge loss; as I say, RSS is underused these days. But it'd be nice to have one for the sake of completeness.
 
-## The comments system is very basic
+### The comments system is very basic
 
-The [\*\*Apption](https://apption.co)\*\* comments system does the job, but it's as barebones as it gets.
+The [**Apption**](https://apption.co) comments system does the job, but it's as barebones as it gets.
 
 It may be that there's a better way to implement [**Disqus**](https://disqus.com) which doesn't suffer from the problems I've experienced so far. If I find a way of bringing it in cleanly, that solves the problem; [**Disqus**](https://disqus.com) is very fully-featured.
 
@@ -241,7 +225,7 @@ If that doesn't work, it'll have to be a reimplementation of a comments system o
 
 This would be fairly significant effort, and I might just choose to stick with the basic [**Apption**](https://apption.co) comments.
 
-## Internal properties like `Published` are visible in view filters
+### Internal properties like `Published` are visible in view filters
 
 The view filter on the posts list page filters out posts where `Published` is set to anything but `Yes`. Since we're presenting the database as the home page, though, this view filter can be changed to show unpublished posts.
 
@@ -251,7 +235,7 @@ This would, however, increase the complexity of the private post management page
 
 The conclusion I've come to about this is that I'm happy with things as they are. There's nothing sensitive in unpublished posts - in that situation it could be noted on the private post management page.
 
-## The only analytics we can use are Google Analytics
+### The only analytics we can use are Google Analytics
 
 [**Notion**](https://notion.com) only supports [**Google Analytics**](https://analytics.google.com) on its pages.
 
@@ -259,7 +243,7 @@ It might be possible to embed other analytics solutions with custom embeds, or a
 
 I'm happy, for now, leaving it with [\*\*Google Analytics](https://analytics.google.com). I** also get some data through [**Cloudflare\*\*](https://cloudflare.com). Between the two of them that's plenty of data, and fundamentally the only thing I really want to pay attention to are traffic sources and number of hits by post.
 
-## We can't use custom fonts
+### We can't use custom fonts
 
 [**Notion**](https://notion.com) has no support for custom fonts.
 
@@ -267,14 +251,8 @@ There may be ways around this, including custom embeds and [**Cloudflare**](http
 
 Fundamentally though this is a minor thing. I'd like to prettify things with some custom fonts, but the posts are eminently readable with things how they are now.
 
-# And that's your lot
+## And that's your lot
 
 Hopefully this post has given you an idea on how I did things, and perhaps helps if you want to do something similar.
 
 If you do, I'm more than happy to take a look and give you my thoughts - just [**drop me an email**](mailto:dave@dave.io) and we can talk.
-
----
-
-# Comments
-
-[https://apption.co/app_posts/4d30759b](https://apption.co/app_posts/4d30759b)
