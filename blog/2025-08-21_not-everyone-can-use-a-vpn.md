@@ -21,19 +21,19 @@ But that technical knowledge **is privilege**.
 
 Less technical users are capable of doing things like installing Opera, for example, which offers an integrated VPN with a low barrier to entry.
 
-But here's the problem. Most people are simply not even _that_ technical. Most people don't know what a browser is. They just open “the internet”.
+But here's the problem. Most people are simply not even _that_ technical. Most people don't know what a browser is. They just open "the internet".
 
-We need to be aware of our privilege as technical people and understand that the very non-technical are **actually the norm**. We are outliers. They don't have access to the VPNs, and the VPSs, and even the integrated VPN services like Opera, because they don’t even know where to start.
+We need to be aware of our privilege as technical people and understand that the very non-technical are **actually the norm**. We are outliers. They don't have access to the VPNs, and the VPSs, and even the integrated VPN services like Opera, because they don't even know where to start.
 
-So what Starmer’s blocks do, other than blocking porn, is block information - particularly queer information, because it is decided to be under the topic of sex.
+So what Starmer's blocks do, other than blocking porn, is block information - particularly queer information, because it is decided to be under the topic of sex.
 
 We need to understand that we are creating a tiered society where there is a disconnect of access to information depending on privilege - depending on technical knowledge. And that's a disaster, frankly.
 
-There are plenty of queer and baby trans folks who are not technical, can't do what we can, and are stuck with the filtering. There are plenty of parents who are not supportive of their child's trans or queer identity. And they can't go to them and say, “Can you pass this age verification for me? I need to access this information.”
+There are plenty of queer and baby trans folks who are not technical, can't do what we can, and are stuck with the filtering. There are plenty of parents who are not supportive of their child's trans or queer identity. And they can't go to them and say, "Can you pass this age verification for me? I need to access this information."
 
 There are plenty of people, plenty of kids, for whom doing that is **actively dangerous**.
 
-So they don't have access to that information. And that's a disaster; that's dangerous. And it’s also bitterly, bitterly sad.
+So they don't have access to that information. And that's a disaster; that's dangerous. And it's also bitterly, bitterly sad.
 
 And it doesn't have to be this way.
 
@@ -43,16 +43,16 @@ You can absolutely help people get a VPN set up. I strongly recommend [**Mullvad
 
 But at the same time, that selects for people who know people like us.
 
-Hopefully they spread the same knowledge, but that’s just that; hope.
+Hopefully they spread the same knowledge, but that's just that; hope.
 
 ![@ambiguous_yelp@social.coop
 @dave downloading a vpn app like #mullvad is not that hard to learn, we need to use our privelege to help everyone bridge that gap](Not%20Everyone%20Can%20Use%20A%20VPN%20256b7795690c80e0873cc34af645d8ae/CleanShot_2025-08-21_at_14.01.392x.png)
 
 credit: [**@ambiguous_yelp@social.coop**](https://social.coop/@ambiguous_yelp)
 
-We can make a dent on it, but we’ll never be able to entirely address the structural issue here. I repeat that it shouldn’t stop you _trying_; not doing a thing because you can’t fix the whole problem is nonsense.
+We can make a dent on it, but we'll never be able to entirely address the structural issue here. I repeat that it shouldn't stop you _trying_; not doing a thing because you can't fix the whole problem is nonsense.
 
-Let’s try to have _some_ impact, at least.
+Let's try to have _some_ impact, at least.
 
 [Mullvad VPN - Free the internet](https://mullvad.net/en)
 

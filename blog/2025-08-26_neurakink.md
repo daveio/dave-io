@@ -25,32 +25,32 @@ Oh, and it has a new name. Project Neurakink. Yes, with an 'a'. Look, if Elon Mu
 
 Mine's - admittedly arguably - more useful to society anyway.
 
-# Yes, Alright, Let’s Talk About The Name
+# Yes, Alright, Let's Talk About The Name
 
 <aside>
 💬
 
-_“Neurakink”?_
+_"Neurakink"?_
 
 </aside>
 
-The project was called _Project Neurokink_ when it started, maybe ten years ago, before going on hiatus. It’s been long enough that I want to give it a new name to represent its resurrection.
+The project was called _Project Neurokink_ when it started, maybe ten years ago, before going on hiatus. It's been long enough that I want to give it a new name to represent its resurrection.
 
-I settled on _Neurakink_, to riff on Elon Musk’s most dystopian ~~money-laundering scheme~~ product yet. And that man _knows dystopian_.
+I settled on _Neurakink_, to riff on Elon Musk's most dystopian ~~money-laundering scheme~~ product yet. And that man _knows dystopian_.
 
 I had another name. The project _was_ going to be called the _Sensor-Quantified Universal Intensity Regulation Tool. Project S.Q.U.I.R.T._ for short. I am an adult.
 
 But, in the end, I settled on _Neurakink_ for three reasons:
 
-1. It’s snappier.
+1. It's snappier.
 2. It might piss Elon Musk off.
 3. Fuck you.
 
-Now, I’m quite aware than point 2 comes with the possible result of a cease & desist from some law firm with an improbably long name.
+Now, I'm quite aware than point 2 comes with the possible result of a cease & desist from some law firm with an improbably long name.
 
-Thing is, though, I’m not making any claims that would lead me to be confused with Musk’s ventures. I’d need to check with a lawyer, but I could likely ignore it because I’m not [**passing off**](https://en.wikipedia.org/wiki/Passing_off).
+Thing is, though, I'm not making any claims that would lead me to be confused with Musk's ventures. I'd need to check with a lawyer, but I could likely ignore it because I'm not [**passing off**](https://en.wikipedia.org/wiki/Passing_off).
 
-But if that happens - worst case scenario - I’ll check with said lawyer, who will probably tell me that Musk’s people have big enough sticks that actual reality ceases to be legal reality, and switch to Plan B. _Project S.Q.U.I.R.T._ will rise where _Neurakink_ fell.
+But if that happens - worst case scenario - I'll check with said lawyer, who will probably tell me that Musk's people have big enough sticks that actual reality ceases to be legal reality, and switch to Plan B. _Project S.Q.U.I.R.T._ will rise where _Neurakink_ fell.
 
 Until then, though, _Neurakink_ it is.
 
@@ -58,7 +58,7 @@ Until then, though, _Neurakink_ it is.
 
 For those just joining us (welcome, you delightfully curious perverts), let me explain what happens when you give an engineer with too much free time access to a Mattel MindFlex game. You see, beneath its family-friendly exterior beats the heart of a surprisingly sophisticated EEG sensor from [**NeuroSky**](https://neurosky.com/). And where most people saw a novelty game about floating foam balls with your thoughts, I saw... possibilities.
 
-You see, while the NeuroSky chipset in use produces an “attention” metric which the game uses, it can also be persuaded with the creative application of an Arduino to output raw EEG data. It’s only a single channel, but thoughts began to race.
+You see, while the NeuroSky chipset in use produces an "attention" metric which the game uses, it can also be persuaded with the creative application of an Arduino to output raw EEG data. It's only a single channel, but thoughts began to race.
 
 Specifically, I saw the possibility of creating sex toys that could read your mind. Not in a creepy "knows your PIN number" way, but in a "knows when you're about to climax and stops just to be difficult" way. The technical term is "edging," though I prefer "automated frustration delivery system."
 
@@ -76,7 +76,7 @@ The applications, as I discovered through extensive "research," were rather broa
 
 Of course, there were challenges. Mapping pleasure responses across different brains is like trying to write universal directions to Narnia - everyone's wardrobe is slightly different. The sensor needed training, the software needed refinement, and I needed to stop giggling every time I explained the project to someone new.
 
-Also, AI didn’t exist. Love it or hate it, multidimensional pattern matching like this is Tuesday to even the simplest model. All I need to do is, uh, learn how you train a model. I’m sure it’ll be simple.
+Also, AI didn't exist. Love it or hate it, multidimensional pattern matching like this is Tuesday to even the simplest model. All I need to do is, uh, learn how you train a model. I'm sure it'll be simple.
 
 Help.
 
@@ -104,9 +104,9 @@ For those with deeper pockets and fewer scruples about looking ridiculous, there
 
 ![image5.png](Neurakink%2025ab7795690c807ea3e0c7e89782e00c/image5.png)
 
-The truly ambitious can get 32 channels for about £850 with the [**FreeEEG32**](https://www.crowdsupply.com/neuroidss/freeeeg32), though you’ll need to stack electrodes on top of that. Thirty-two channels! The original MindFlex had one. That's like going from a kazoo to a symphony orchestra, except the symphony is playing the song of your junk. Minor problem: they’re no longer selling the boards, but the whole product is open source with [**the design files on GitHub**](https://github.com/neuroidss/FreeEEG32-beta) so it remains just about within the realm of possibility.
+The truly ambitious can get 32 channels for about £850 with the [**FreeEEG32**](https://www.crowdsupply.com/neuroidss/freeeeg32), though you'll need to stack electrodes on top of that. Thirty-two channels! The original MindFlex had one. That's like going from a kazoo to a symphony orchestra, except the symphony is playing the song of your junk. Minor problem: they're no longer selling the boards, but the whole product is open source with [**the design files on GitHub**](https://github.com/neuroidss/FreeEEG32-beta) so it remains just about within the realm of possibility.
 
-The only flaw, really, is that I’m unemployed and can barely pay my hosting bill. But these options go on my list of incredibly shiny shit to purchase if I have a windfall, and I can still develop with the good old MindFlex.
+The only flaw, really, is that I'm unemployed and can barely pay my hosting bill. But these options go on my list of incredibly shiny shit to purchase if I have a windfall, and I can still develop with the good old MindFlex.
 
 # The Second Coming (Pun Absolutely Intended)
 
@@ -114,9 +114,9 @@ So why am I bringing this all back now? Well, partly because the technology has 
 
 Project Neurakink is coming back. The headset is ready, the code is being resurrected from whatever digital grave I buried it in, and I'm ready to once again walk that fine line between innovation and insanity.
 
-At some point, I’ll start looking for volunteers again (now based in Swansea instead of London, but Welsh people are just damaged enough to be interested). If you have ideas about what one could do with brain-controlled sex toys (that won't land me on a watchlist), I'd love to hear those too. Equally, if you want to cover the project, I’d be happy to answer any questions.
+At some point, I'll start looking for volunteers again (now based in Swansea instead of London, but Welsh people are just damaged enough to be interested). If you have ideas about what one could do with brain-controlled sex toys (that won't land me on a watchlist), I'd love to hear those too. Equally, if you want to cover the project, I'd be happy to answer any questions.
 
-You can find my email address on [**dave.io**](https://rebuild.dave.io). It checks that you’re human first, but that shouldn’t get in the way of, you know, actual humans. No CAPTCHAs to solve, anyway.
+You can find my email address on [**dave.io**](https://rebuild.dave.io). It checks that you're human first, but that shouldn't get in the way of, you know, actual humans. No CAPTCHAs to solve, anyway.
 
 After all, someone needs to be asking the important questions. Like: "What happens when you give a vibrator the ability to read minds?"
 

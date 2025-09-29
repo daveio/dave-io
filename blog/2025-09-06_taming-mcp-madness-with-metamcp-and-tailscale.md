@@ -15,7 +15,7 @@ snippet: MetaMCP is a tool designed to simplify the configuration of multiple de
 
 ## Death by a Thousand Configurations
 
-You're a modern developer, which means you've got more development tools than a Victorian surgeon had bloodletting instruments. Cursor here, Visual Studio Code there, Claude Desktop lurking in the corner, and Goose doing... whatever it is Goose does. I’ve never quite figured it out. In any case, each one needs its own MCP configuration, and suddenly you're spending more time configuring tools than actually using them.
+You're a modern developer, which means you've got more development tools than a Victorian surgeon had bloodletting instruments. Cursor here, Visual Studio Code there, Claude Desktop lurking in the corner, and Goose doing... whatever it is Goose does. I've never quite figured it out. In any case, each one needs its own MCP configuration, and suddenly you're spending more time configuring tools than actually using them.
 
 It's rather like having to repeat your symptoms to every person long the phone chain to the doctor. Exhausting, repetitive, and frankly beneath us all.
 
@@ -23,7 +23,7 @@ It's rather like having to repeat your symptoms to every person long the phone c
 
 [https://github.com/metatool-ai/metamcp](https://github.com/metatool-ai/metamcp)
 
-MetaMCP wasn't supposed to be the solution to our collective configuration nightmare. It’s a MCP aggregator with debug facilities, and it’s far too early in its development to be what I’d call production-ready. But much like how I use my ESD tweezers for everything except handling delicate components, MetaMCP turns out to do the job just fine.
+MetaMCP wasn't supposed to be the solution to our collective configuration nightmare. It's a MCP aggregator with debug facilities, and it's far too early in its development to be what I'd call production-ready. But much like how I use my ESD tweezers for everything except handling delicate components, MetaMCP turns out to do the job just fine.
 
 Think of it as the Switzerland of MCP management - neutral territory where all your tools can peacefully coexist.
 
@@ -33,14 +33,14 @@ Setting up MetaMCP requires PostgreSQL, because of course it does. Fortunately, 
 
 You've got options for your Docker host:
 
-- **Docker Desktop**: The official choice. Runs anywhere a GUI does. Might be a hot mess, but it won’t get in your way. Has its own MCP platform, but it doesn’t compare to MetaMCP.
-- **Orb Stack**: macOS only, but less bloated, with interesting designs on virtualisation too. You’ll have to make minor adjustments (for example `docker compose` instead of `docker-compose`).
-- **A remote Docker instance:** if you’ve got a NAS handy, that’s a great choice as long as you can get Tailscale running on it (with access to the Tailscale CLI to set up `serve` or `funnel`) . I can tell you that this is possible with QNAP devices, because that’s what I use.
-- **Kubernetes:** godspeed, you YAML-wielding maniac. You might be able to generate initial objects from the Docker Compose file, but it’ll take some tinkering.
+- **Docker Desktop**: The official choice. Runs anywhere a GUI does. Might be a hot mess, but it won't get in your way. Has its own MCP platform, but it doesn't compare to MetaMCP.
+- **Orb Stack**: macOS only, but less bloated, with interesting designs on virtualisation too. You'll have to make minor adjustments (for example `docker compose` instead of `docker-compose`).
+- **A remote Docker instance:** if you've got a NAS handy, that's a great choice as long as you can get Tailscale running on it (with access to the Tailscale CLI to set up `serve` or `funnel`) . I can tell you that this is possible with QNAP devices, because that's what I use.
+- **Kubernetes:** godspeed, you YAML-wielding maniac. You might be able to generate initial objects from the Docker Compose file, but it'll take some tinkering.
 
 Pick your poison. The big takeaway, really, is that if you use a remote instance of some sort, you might have to do some massaging later.
 
-My recommendation: when you’re starting out exploring this, deploy locally. You can always get interesting once you’ve seen how it all fits together.
+My recommendation: when you're starting out exploring this, deploy locally. You can always get interesting once you've seen how it all fits together.
 
 ## Ports and Protocols
 
@@ -50,18 +50,18 @@ But what if you want to access your MCPs from other machines? What if your NAS i
 
 ## Gentlemen! Behold! Tailscale!
 
-This is where Tailscale enters, stage left, wearing a nifty cape and promising to solve all your networking woes. I used to be a ZeroTier devotee, but I've recently converted (in most part) to the Church of Tailscale, and it hasn’t let me down yet.
+This is where Tailscale enters, stage left, wearing a nifty cape and promising to solve all your networking woes. I used to be a ZeroTier devotee, but I've recently converted (in most part) to the Church of Tailscale, and it hasn't let me down yet.
 
 <aside>
 <img src="https://www.notion.so/icons/info-alternate_blue.svg" alt="https://www.notion.so/icons/info-alternate_blue.svg" width="40px" />
 
-“_In most part_”? Yeah. There’s one _very specific_ use case where ZeroTier can’t be beat, and that’s SD-WAN on Mikrotik routers. ZeroTier is a first-class citizen there.
+"_In most part_"? Yeah. There's one _very specific_ use case where ZeroTier can't be beat, and that's SD-WAN on Mikrotik routers. ZeroTier is a first-class citizen there.
 
-While you _can_ integrate Tailscale on beefier Mikrotiks by using the container system, it feels like a hack. This is because it’s a hack.
+While you _can_ integrate Tailscale on beefier Mikrotiks by using the container system, it feels like a hack. This is because it's a hack.
 
 ---
 
-_Tailscale. Darlings. Cozy up with Mikrotik. Maybe they’ve got a contract with ZeroTier, in which case there’s nothing much to be done, but if they **could** integrate Tailscale - even as an optional package - I’d be overjoyed._
+_Tailscale. Darlings. Cozy up with Mikrotik. Maybe they've got a contract with ZeroTier, in which case there's nothing much to be done, but if they **could** integrate Tailscale - even as an optional package - I'd be overjoyed._
 
 </aside>
 
@@ -71,14 +71,14 @@ Tailscale Serve is superb. It takes your plain HTTP port and wraps it in TLS lik
 
 [Tailscale Serve](https://tailscale.com/kb/1312/serve)
 
-The HTTPS endpoint on your Magic DNS hostname is then available **only inside your Tailnet**. You’re not exposing it to the world.
+The HTTPS endpoint on your Magic DNS hostname is then available **only inside your Tailnet**. You're not exposing it to the world.
 
 <aside>
 <img src="https://www.notion.so/icons/info-alternate_blue.svg" alt="https://www.notion.so/icons/info-alternate_blue.svg" width="40px" />
 
-It even sets some headers which you _could_ consume to use Tailscale to authenticate requests, if for example you’re using Device Sharing to share your endpoint with another Tailnet (which _does_ work with `tailscale serve`).
+It even sets some headers which you _could_ consume to use Tailscale to authenticate requests, if for example you're using Device Sharing to share your endpoint with another Tailnet (which _does_ work with `tailscale serve`).
 
-Tailscale are thinking about providing OAuth claims as well. We’ll get to that later.
+Tailscale are thinking about providing OAuth claims as well. We'll get to that later.
 
 </aside>
 
@@ -123,9 +123,9 @@ You can then assign each namespace its own endpoint. Depending on the endpoint y
 
 Not all applications are created equal when it comes to handling large numbers of tools:
 
-- **Visual Studio Code**: Copilot will immediately fail if it’s provided more than 128 tools for a request.
-- **Cursor**: Gets grumpy much earlier, around 40 tools, but that seems to be a soft limit designed to make best use of a model’s context window.
-- **Claude Code**: Can handle virtually anything you throw at it. I have a theory that it has a stage where it decides which tools might be useful for a task before starting that task, but that’s conjecture.
+- **Visual Studio Code**: Copilot will immediately fail if it's provided more than 128 tools for a request.
+- **Cursor**: Gets grumpy much earlier, around 40 tools, but that seems to be a soft limit designed to make best use of a model's context window.
+- **Claude Code**: Can handle virtually anything you throw at it. I have a theory that it has a stage where it decides which tools might be useful for a task before starting that task, but that's conjecture.
 
 ## The Flavours of HTTP
 
@@ -141,13 +141,13 @@ Deprecated, but refuses to die. Server-Sent Events (SSE) is the workhorse that r
 
 ### OpenAPI (with Schema)
 
-MetaMCP claims that its OpenAPI implementation exists to serve [**Open WebUI**](https://openwebui.com). Which is fine. This is an unusual choice for an MCP aggregator otherwise, but quite a cool one. It makes its tools available over a standard REST API, with a full (generated) schema. Unless you’re using [**Open WebUI**](https://openwebui.com) specifically, you probably won’t use this, but it provides extreme flexibility in terms of how you might consume its tools.
+MetaMCP claims that its OpenAPI implementation exists to serve [**Open WebUI**](https://openwebui.com). Which is fine. This is an unusual choice for an MCP aggregator otherwise, but quite a cool one. It makes its tools available over a standard REST API, with a full (generated) schema. Unless you're using [**Open WebUI**](https://openwebui.com) specifically, you probably won't use this, but it provides extreme flexibility in terms of how you might consume its tools.
 
 ## When Your Host Is Really Crusty
 
 Not every host supports HTTP MCPs, even with `SSE`. Many older or smaller hosts will only talk `STDIO`, where they fire up a process, yell at `STDIN`, and hope that something useful comes back from `STDOUT`.
 
-MetaMCP doesn’t speak `STDIO` directly. Fortunately, you can use the `mcp-remote` npm package to proxy everything through `STDIO`.
+MetaMCP doesn't speak `STDIO` directly. Fortunately, you can use the `mcp-remote` npm package to proxy everything through `STDIO`.
 
 Just run:
 
@@ -163,34 +163,34 @@ The MetaMCP web UI uses a username and password (and also OIDC). Boring, fine, d
 
 ### API Keys
 
-You can provision static API keys which are provided as `Bearer` tokens with the `Authorization` header. Simple, easy, does the job, but to my knowledge MetaMCP doesn’t offer an API which you could use to provision these tokens, leaving you to configure them through the UI. Or get creative and set up some kind of middleware which validates alternative tokens and uses the real token to hit the MCPs; bit of a hack.
+You can provision static API keys which are provided as `Bearer` tokens with the `Authorization` header. Simple, easy, does the job, but to my knowledge MetaMCP doesn't offer an API which you could use to provision these tokens, leaving you to configure them through the UI. Or get creative and set up some kind of middleware which validates alternative tokens and uses the real token to hit the MCPs; bit of a hack.
 
 ### OAuth
 
-MetaMCP’s GUI authentication can be configured to use OIDC. Then, each endpoint supports an “OAuth” option for token authorisation.
+MetaMCP's GUI authentication can be configured to use OIDC. Then, each endpoint supports an "OAuth" option for token authorisation.
 
-I haven’t been able to get this to work. It’s marked beta and seems to be so new that it’s not documented. I have high hopes about this one, though.
+I haven't been able to get this to work. It's marked beta and seems to be so new that it's not documented. I have high hopes about this one, though.
 
 <aside>
 <img src="https://www.notion.so/icons/info-alternate_blue.svg" alt="https://www.notion.so/icons/info-alternate_blue.svg" width="40px" />
 
-I’ve been talking to a Tailscale bigwig who mentions they’re thinking about how they might support OIDC through their automatic authentication (currently using the custom headers we spoke about previously).
+I've been talking to a Tailscale bigwig who mentions they're thinking about how they might support OIDC through their automatic authentication (currently using the custom headers we spoke about previously).
 
-If this happens, and if MetaMCP’s OAuth implementation matures in the direction I expect, it may become possible to let Tailscale handle the authentication flow; if you talk to MetaMCP via Tailscale, authenticated MCP endpoints might ‘just work’.
+If this happens, and if MetaMCP's OAuth implementation matures in the direction I expect, it may become possible to let Tailscale handle the authentication flow; if you talk to MetaMCP via Tailscale, authenticated MCP endpoints might 'just work'.
 
 Even if not, middleware may offer this ability. Strictly speaking, you could use middleware to accept the current custom headers set by `tailscale serve`. But middleware, too, is under active development.
 
-Currently, you have to configure it by editing JSON in the database directly. It’s a faff and a half. Yet again, MetaMCP proves very cool, but less than production-ready.
+Currently, you have to configure it by editing JSON in the database directly. It's a faff and a half. Yet again, MetaMCP proves very cool, but less than production-ready.
 
-This is all a little way off, if it even happens. But it’s an impressive possibility.
+This is all a little way off, if it even happens. But it's an impressive possibility.
 
 </aside>
 
 ## The Bottom Line
 
-MetaMCP might not be quite production-ready, but it’s a very impressive platform. Sometimes the best solutions are the crackpot ones. It's turned my configuration nightmare into something almost manageable, which in the world of developer tooling is practically a miracle.
+MetaMCP might not be quite production-ready, but it's a very impressive platform. Sometimes the best solutions are the crackpot ones. It's turned my configuration nightmare into something almost manageable, which in the world of developer tooling is practically a miracle.
 
-Now, if you'll excuse me, I need to go and add another seventeen MCPs to my setup. I’m not done until Claude can make the coffee.
+Now, if you'll excuse me, I need to go and add another seventeen MCPs to my setup. I'm not done until Claude can make the coffee.
 
 ---
 

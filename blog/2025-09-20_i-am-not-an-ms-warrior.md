@@ -15,11 +15,11 @@ snippet: Living with multiple sclerosis (MS) is not a battle to be won; it is a 
 
 # Hi, I Fall Over A Lot
 
-I have [**multiple sclerosis**](https://www.mssociety.org.uk/about-ms/what-is-ms). Specifically, relapsing-remitting multiple sclerosis ([**RRMS**](https://www.mssociety.org.uk/about-ms/types-of-ms/relapsing-remitting-ms)). There are two flavours; mine is the less bad version, the other being primary progressive multiple sclerosis ([**PPMS**](https://www.mssociety.org.uk/about-ms/types-of-ms/primary-progressive-ms)). My [**RRMS**](https://www.mssociety.org.uk/about-ms/types-of-ms/relapsing-remitting-ms) will eventually become [**SPMS**](https://www.mssociety.org.uk/about-ms/types-of-ms/secondary-progressive-ms). But trust me on this; even if it’s the better version, it's bad.
+I have [**multiple sclerosis**](https://www.mssociety.org.uk/about-ms/what-is-ms). Specifically, relapsing-remitting multiple sclerosis ([**RRMS**](https://www.mssociety.org.uk/about-ms/types-of-ms/relapsing-remitting-ms)). There are two flavours; mine is the less bad version, the other being primary progressive multiple sclerosis ([**PPMS**](https://www.mssociety.org.uk/about-ms/types-of-ms/primary-progressive-ms)). My [**RRMS**](https://www.mssociety.org.uk/about-ms/types-of-ms/relapsing-remitting-ms) will eventually become [**SPMS**](https://www.mssociety.org.uk/about-ms/types-of-ms/secondary-progressive-ms). But trust me on this; even if it's the better version, it's bad.
 
-When MS does its damage, that damage is forever. Your brain doesn't heal like the rest of you. For me, most of the damage is in my [**cerebellum**](https://en.wikipedia.org/wiki/Cerebellum) and [**brainstem**](https://en.wikipedia.org/wiki/Brainstem), causing [**permanent dizziness**](https://www.mssociety.org.uk/support-and-community/community-blog/ms-balance-problems-how-it-feels-when-world-wont-stop-spinning) (oh, hey, that author’s pretty rad) and spells of [**double vision**](https://www.mssociety.org.uk/about-ms/signs-and-symptoms/eyes-and-sight).
+When MS does its damage, that damage is forever. Your brain doesn't heal like the rest of you. For me, most of the damage is in my [**cerebellum**](https://en.wikipedia.org/wiki/Cerebellum) and [**brainstem**](https://en.wikipedia.org/wiki/Brainstem), causing [**permanent dizziness**](https://www.mssociety.org.uk/support-and-community/community-blog/ms-balance-problems-how-it-feels-when-world-wont-stop-spinning) (oh, hey, that author's pretty rad) and spells of [**double vision**](https://www.mssociety.org.uk/about-ms/signs-and-symptoms/eyes-and-sight).
 
-These symptoms will be there until the day I die, and they’ll get worse with time.
+These symptoms will be there until the day I die, and they'll get worse with time.
 
 That's the slow decline. As more of the brain gets damaged, more things go wrong. I will become incontinent at some point. I am losing fine motor control, and I will continue to. My memory is heavily impacted ([**and was terrible in a quite interesting way in the first place**](https://blog.dave.io/sdam)), having become a one-hour sliding window. I adapt by ticketing everything, no matter how small, in [**Linear**](https://linear.app). I have built my own tooling, and benefit heavily from AI ([**Claude**](https://claude.ai) particularly, because [**Anthropic**](https://anthropic.com) are by far the least worst in the field).
 
@@ -45,17 +45,17 @@ If you frame dealing with MS as a battle, then you fail when you don't successfu
 
 We _manage_ MS. There is no battle to be fought. No amount of positive thinking or beetroot or going for a walk or _fucking [**ivermectin**](https://en.wikipedia.org/wiki/Ivermectin#COVID-19_misinformation)_ is going to stop you having MS, and stop you having to deal with everything which comes with it.
 
-The toxic positivity of the “warrior” narrative also creates a false dichotomy: either you're "fighting bravely" or you're "giving up." There's no space for the nuanced reality that most of us with MS live in. Some days are about adaptation, some about rest, some about pushing through, and some about mourning what's been lost. None of these approaches makes you more or less worthy of support and understanding.
+The toxic positivity of the "warrior" narrative also creates a false dichotomy: either you're "fighting bravely" or you're "giving up." There's no space for the nuanced reality that most of us with MS live in. Some days are about adaptation, some about rest, some about pushing through, and some about mourning what's been lost. None of these approaches makes you more or less worthy of support and understanding.
 
 # It's Not Even About Us
 
 And let's be clear about something: the "warrior" language is often more about making other people comfortable than supporting those with MS. It's easier for the non-disabled world to process "inspiring fighter" than "person living with an unpredictable, sometimes devastating condition who occasionally needs to vent about it without being told they're not being positive enough."
 
-“You’re so brave” becomes code for “please don’t tell me how bad it really is”. I can forgive that, to a degree. Especially with people I'm close with. It protects them. But “warrior” rhetoric provides so many opportunities for empty pseudo-support without actually engaging with the situation.
+"You're so brave" becomes code for "please don't tell me how bad it really is". I can forgive that, to a degree. Especially with people I'm close with. It protects them. But "warrior" rhetoric provides so many opportunities for empty pseudo-support without actually engaging with the situation.
 
 The rhetoric also individualises what is fundamentally a medical condition. The warrior language implies that if you just fight hard enough, stay positive enough, you'll somehow "win" - which creates this insidious suggestion that if you're struggling, it's because you're _not warrioring hard enough_. It completely ignores the reality that MS is a neurological condition that does what it wants regardless of your attitude or fighting spirit.
 
-Sometimes the MS wins, and that doesn't make us failures or weak. We’ll get up and we'll carry on. Don't judge us for how long that takes.
+Sometimes the MS wins, and that doesn't make us failures or weak. We'll get up and we'll carry on. Don't judge us for how long that takes.
 
 We are not your inspiration porn. Instead, there's an opportunity for something better. _Solidarity porn_. _Validation porn_. _Recognition porn_.
 
@@ -70,7 +70,7 @@ So please, if you know someone with MS, maybe resist the urge to call them a war
 <aside>
 <img src="https://www.notion.so/icons/immigration_green.svg" alt="https://www.notion.so/icons/immigration_green.svg" width="40px" />
 
-This piece is _heavy_ opinion. If someone with MS tells you that they _like_ the warrior terminology, ignore absolutely everything I’ve said and call them a warrior. This is one person’s viewpoint and it will _not_ apply to everyone.
+This piece is _heavy_ opinion. If someone with MS tells you that they _like_ the warrior terminology, ignore absolutely everything I've said and call them a warrior. This is one person's viewpoint and it will _not_ apply to everyone.
 
 </aside>
 
@@ -79,7 +79,7 @@ This piece is _heavy_ opinion. If someone with MS tells you that they _like_ the
 
 One last thing. Many of the links on this page go to the MS Society.
 
-They do incredible work and fight tooth and nail for people like me. They also rely on donations. Chucking them a few quid isn’t the worst thing you could do today.
+They do incredible work and fight tooth and nail for people like me. They also rely on donations. Chucking them a few quid isn't the worst thing you could do today.
 
 [**Donate to them here.**](https://donate.mssociety.org.uk)
 

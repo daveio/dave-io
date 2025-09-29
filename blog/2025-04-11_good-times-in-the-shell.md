@@ -15,15 +15,15 @@ snippet: The author shares a collection of useful shell tools and functions, emp
 
 # Life in the Shell
 
-Over time, I’ve built up a collection of tools which make my life easier in the shell. I’m constantly exploring and trying new tools, most of which get ditched fairly rapidly, but there are some which have survived the perpetual cull.
+Over time, I've built up a collection of tools which make my life easier in the shell. I'm constantly exploring and trying new tools, most of which get ditched fairly rapidly, but there are some which have survived the perpetual cull.
 
-I’d like to share a few of them with you. You won’t find all of these useful in the same way that I do, but there might be some which are new to you and have some value.
+I'd like to share a few of them with you. You won't find all of these useful in the same way that I do, but there might be some which are new to you and have some value.
 
 # Which shell?
 
-Many of the tools I’ll mention are shell-agnostic, meaning that they don’t care which shell you’re using. The shell functions later in this piece are intended for https://github.com/fish-shell/fish-shell and in most cases will not work directly in `bash` or `zsh`.
+Many of the tools I'll mention are shell-agnostic, meaning that they don't care which shell you're using. The shell functions later in this piece are intended for https://github.com/fish-shell/fish-shell and in most cases will not work directly in `bash` or `zsh`.
 
-I am a big proponent of `fish`. It’s not nothing that the syntax differs from what you might be more familiar with, but I like the changes.
+I am a big proponent of `fish`. It's not nothing that the syntax differs from what you might be more familiar with, but I like the changes.
 
 One example is the following -
 
@@ -80,11 +80,11 @@ There is of course more, but this is just an example of how the syntax feels mor
 
 Autosuggestions and syntax highlighting come out of the box on `fish`, whereas you need a third-party plugin on `bash` or `zsh`.
 
-I’ll admit that if you disregard the syntax changes, you can implement pretty much anything you get on `fish` with `zsh`, using plugins. I can understand using either. I don’t see any compelling reason to ever use `bash`.
+I'll admit that if you disregard the syntax changes, you can implement pretty much anything you get on `fish` with `zsh`, using plugins. I can understand using either. I don't see any compelling reason to ever use `bash`.
 
 # Prompt
 
-I use https://github.com/IlanCosman/tide and adore it. It’s beautiful and asynchronous so it won’t slow you down.
+I use https://github.com/IlanCosman/tide and adore it. It's beautiful and asynchronous so it won't slow you down.
 
 ![CleanShot 2025-04-23 at 11.57.56@2x.png](Good%20Times%20in%20the%20Shell%201a2b7795690c80f28d17e8c525c3a81b/CleanShot_2025-04-23_at_11.57.562x.png)
 
@@ -117,7 +117,7 @@ wfxr/forgit                    # Git utilities - requires fzf!
 
 ```
 
-When you’ve installed `fisher` and created this file, just run `fisher update` to get set up. If you’ve added https://github.com/IlanCosman/tide then its configuration routine will also start at this point.
+When you've installed `fisher` and created this file, just run `fisher update` to get set up. If you've added https://github.com/IlanCosman/tide then its configuration routine will also start at this point.
 
 # Shell Functions
 
@@ -148,7 +148,7 @@ end
 
 ## Clean up `opencommit` when it hangs
 
-Much as I love `opencommit`, if the change is too big, it will hang instead of realising it’s over the token limit and failing. I use this function to clean it up when that happens.
+Much as I love `opencommit`, if the change is too big, it will hang instead of realising it's over the token limit and failing. I use this function to clean it up when that happens.
 
 ```bash
 function kill-oco
@@ -231,7 +231,7 @@ end
 
 I change my theme all the time.
 
-Currently I’m a fan of Monokai, using the excellent https://monokai.pro/ in my editor.
+Currently I'm a fan of Monokai, using the excellent https://monokai.pro/ in my editor.
 
 This sets `fish` up to match.
 
@@ -259,23 +259,23 @@ set fish_pager_color_secondary F8F8F2 # the background color of the every second
 
 # Standalone Utilities
 
-From here on, we’re dealing with stuff that doesn’t really care which shell you use. If they have shell integration, generally it works for `bash`, `zsh`, and `fish`.
+From here on, we're dealing with stuff that doesn't really care which shell you use. If they have shell integration, generally it works for `bash`, `zsh`, and `fish`.
 
-They’re sorted alphabetically rather than in any meaningful order.
+They're sorted alphabetically rather than in any meaningful order.
 
 ## `ai-shell` https://github.com/BuilderIO/ai-shell
 
-I use https://github.com/gnachman/iTerm2 as my terminal, after having tried Warp and generally enjoying it. However, I missed how `iTerm2` does things. I was missing the AI integration Warp offers - `iTerm2` has it but it’s not as nicely integrated - so I went looking for an alternative option. https://github.com/BuilderIO/ai-shell is that.
+I use https://github.com/gnachman/iTerm2 as my terminal, after having tried Warp and generally enjoying it. However, I missed how `iTerm2` does things. I was missing the AI integration Warp offers - `iTerm2` has it but it's not as nicely integrated - so I went looking for an alternative option. https://github.com/BuilderIO/ai-shell is that.
 
-Simple workflow. Invoke it, feed it a textual description of what you’re trying to do, out comes a shell command to take care of it. Great for complex bits of logic that you just want to get done without thinking too hard about it.
+Simple workflow. Invoke it, feed it a textual description of what you're trying to do, out comes a shell command to take care of it. Great for complex bits of logic that you just want to get done without thinking too hard about it.
 
 ## `atuin` https://github.com/atuinsh/atuin
 
-Oh, https://github.com/atuinsh/atuin, how I love thee. Its primary purpose is to sync your shell history between machines, and it does that very well. It also offers a simple synced key-value store and dotfile and script management, but I don’t use those.
+Oh, https://github.com/atuinsh/atuin, how I love thee. Its primary purpose is to sync your shell history between machines, and it does that very well. It also offers a simple synced key-value store and dotfile and script management, but I don't use those.
 
 ## `bat` https://github.com/sharkdp/bat
 
-It’s `cat`, but pretty! Smart enough to detect whether you’re trying to output to a terminal, and add syntax highlighting, line numbers, and file headers, or whether it’s being used in a pipe in which case it operates exactly the same as `cat`.
+It's `cat`, but pretty! Smart enough to detect whether you're trying to output to a terminal, and add syntax highlighting, line numbers, and file headers, or whether it's being used in a pipe in which case it operates exactly the same as `cat`.
 
 ## `chezmoi` https://github.com/twpayne/chezmoi
 
@@ -291,11 +291,11 @@ Replacement for `ls`. You can pretty much alias `ls` to it and never look back. 
 
 ## `fzf` https://github.com/junegunn/fzf
 
-A very important building block for other tools. Provides a user interface to select options from a list - that’s all. It can be - and is - used in interesting ways by other tools. Should be installed even if you never invoke it by hand.
+A very important building block for other tools. Provides a user interface to select options from a list - that's all. It can be - and is - used in interesting ways by other tools. Should be installed even if you never invoke it by hand.
 
 ## `lefthook` https://github.com/evilmartians/lefthook
 
-One of many Git hook managers, this one is just my choice. If I’m not using `trunk` in a repository (which has its own hook management) this does the job nicely.
+One of many Git hook managers, this one is just my choice. If I'm not using `trunk` in a repository (which has its own hook management) this does the job nicely.
 
 ## `mise` https://github.com/jdx/mise
 
@@ -303,19 +303,19 @@ Absolutely key to my workflow. Version manager, environment manager, task runner
 
 ## `opencommit` https://github.com/di-sukharev/opencommit
 
-I don’t know the last time I actually wrote a Git commit message. Uses an AI model to generate your commit message and pretty much always gets it right. Supports Gitmoji and Conventional Commits.
+I don't know the last time I actually wrote a Git commit message. Uses an AI model to generate your commit message and pretty much always gets it right. Supports Gitmoji and Conventional Commits.
 
 ## `pik` https://github.com/jacek-kurlit/pik
 
-Simple process killer. When you just want to nuke something and don’t want to think about it too much, `pik` is here to help.
+Simple process killer. When you just want to nuke something and don't want to think about it too much, `pik` is here to help.
 
 ## `ripgrep` https://github.com/BurntSushi/ripgrep
 
-It’s `grep` but specifically designed for codebases, and much faster because of it. Ignores things that you probably don’t want to be searching.
+It's `grep` but specifically designed for codebases, and much faster because of it. Ignores things that you probably don't want to be searching.
 
 ## `shadowenv` https://github.com/Shopify/shadowenv
 
-When `direnv` is too simple, there’s `shadowenv`. Uses a LISP config file and you can do some pretty interesting things with its logic.
+When `direnv` is too simple, there's `shadowenv`. Uses a LISP config file and you can do some pretty interesting things with its logic.
 
 ## `tlm` https://github.com/yusufcanb/tlm
 
@@ -331,13 +331,13 @@ We all love `tmux`, but `zellij` is `tmux` on steroids. More batteries included,
 
 ## `zoxide` https://github.com/ajeetdsouza/zoxide
 
-Directory jumper. Keeps track of all the directories you enter. When you want to go back into a directory, execute `z SEARCHTEXT` and you’ll `cd` into the most recently used directory matching `SEARCHTEXT`.
+Directory jumper. Keeps track of all the directories you enter. When you want to go back into a directory, execute `z SEARCHTEXT` and you'll `cd` into the most recently used directory matching `SEARCHTEXT`.
 
 # More!
 
-There are so many more utilities I use, but I’m going to leave that for another post. If you want to skip the wait and explore yourself, here’s my https://github.com/jdx/mise config file which you can use to install pretty much everything I use.
+There are so many more utilities I use, but I'm going to leave that for another post. If you want to skip the wait and explore yourself, here's my https://github.com/jdx/mise config file which you can use to install pretty much everything I use.
 
-I’ve split it into two sections because Notion disables syntax highlighting over 10k characters. They should be combined into `~/.config/mise/config.toml`.
+I've split it into two sections because Notion disables syntax highlighting over 10k characters. They should be combined into `~/.config/mise/config.toml`.
 
 ## Mise settings
 

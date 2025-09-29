@@ -17,7 +17,7 @@ _Image credit: [**See-ming Lee**](https://www.flickr.com/photos/48973657@N00/398
 
 # What is Microcommissioning?
 
-I’ve been thinking about what we can do in tech land to address the fact that artists have been undeniably shafted by the rise of generative AI.
+I've been thinking about what we can do in tech land to address the fact that artists have been undeniably shafted by the rise of generative AI.
 
 I'm exploring the concept of a microcommissioning platform – a dedicated space where people can connect with artists for small-scale artwork at accessible price points (typically £20 or less, though this is just an initial idea).
 
@@ -42,11 +42,11 @@ One artist has raised the idea of NSFW artwork, too, which PayPal refuse to be i
 
 If you're an artist, please share your thoughts below. I need to hear from you to determine whether this concept has legs.
 
-I’m not here to rinse artists, but this would be a profit-making venture. That’s why I ask about what you would consider a fair cut.
+I'm not here to rinse artists, but this would be a profit-making venture. That's why I ask about what you would consider a fair cut.
 
 # Weigh in
 
-I’d love to hear anything you have to say about the idea, not limited to the questions I’ve asked.
+I'd love to hear anything you have to say about the idea, not limited to the questions I've asked.
 
 ---
 
