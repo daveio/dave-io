@@ -5,17 +5,7 @@ slug: we-have-to-call-the-police-flying-with-flipper-zero
 snippet: London Gatwick security is instructed to call the police if a Flipper Zero is found in passenger luggage. It is advised to pack the device in hold baggage rather than hand luggage to avoid complications. A traveler experienced a delay due to security concerns over the device, which was eventually returned without police involvement, highlighting the overreaction to its potential uses.
 ---
 
-# "We have to call the police": Flying with Flipper Zero
-
-![](https://images.unsplash.com/photo-1543083362-383ecbfe3142?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb)
-
----
-
-<aside>
-
-TL;DR - London Gatwick security have been instructed to call police if a Flipper Zero is discovered in passenger luggage. If you plan to fly with your device, pack it in your hold baggage and not your hand luggage. I can't promise it'll fix the problem, but it'll make it less likely you get hassled.
-
-</aside>
+> TL;DR - London Gatwick security have been instructed to call police if a Flipper Zero is discovered in passenger luggage. If you plan to fly with your device, pack it in your hold baggage and not your hand luggage. I can't promise it'll fix the problem, but it'll make it less likely you get hassled.
 
 I recently flew out of London Gatwick on a short-haul flight. Went through security as per usual, unpacked the things that they asked me to unpack, but they didn't mention that they wanted power banks removed as well. As a result, my bag was shunted to the manual search queue.
 
@@ -46,9 +36,3 @@ I prepare for an argument.
 And with that, in a blinding flash of absolute bafflement, my allegedly terrifying implement of destruction is returned to me along with my passport and I'm free to go. Well, for some value of "free to go". Free to leg it as fast as possible to the gate before they close it on the sweaty mess they're presented with, because apparently it was important enough to detain me but not important enough for a cop to even bother showing their face.
 
 I found out later that [a similar experience had happened to a guy named Vitor Domingos](https://www.dailydot.com/debug/gatwick-airport-seizes-flipper-zero/), also at Gatwick, back in October. He had his device seized. I'm sure that the fact that I sound like a middle-class British citizen and he is a Portuguese native had absolutely no effect whatsoever on the difference in how we were treated.
-
----
-
-# Comments
-
-[https://apption.co/app_posts/9d2c9ac7](https://apption.co/app_posts/9d2c9ac7)

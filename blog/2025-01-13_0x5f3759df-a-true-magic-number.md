@@ -5,10 +5,6 @@ slug: 0x5f3759df-a-true-magic-number
 snippet: "The document discusses the magic number 0x5f3759df, used in the Quake 3: Arena source code for a fast calculation of the inverse square root. This technique, developed by John Carmack, utilizes bit manipulation to generate an approximation that is significantly faster than traditional methods, achieving results with acceptable tolerances in 3D rendering. The origins of this magic number remain unclear, adding to its mystique in programming history."
 ---
 
-![Quake 3: Arena](/images/blog/headers/2025-01-13_0x5f3759df-a-true-magic-number.jpg)
-
----
-
 ## `0x5f3759df`
 
 The use of 'magic numbers' in code is a well-known antipattern, meaning a common but bad practice. It refers to the inclusion of set values without documentation of their purpose, making it a thorough pain in the arse for anyone other than the original author to maintain and fix code that relies on them.
