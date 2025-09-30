@@ -2,13 +2,7 @@
 title: reproductiverights.gov
 date: 2025-01-23
 slug: reproductiverights-gov
-snippet: The site is a mirror of https://reproductiverights.gov, which was shut down by the Trump Administration. It provides updates on reproductive rights, including the availability of medication abortion and emergency medical care for pregnant women. The Biden-Harris Administration emphasizes the importance of protecting reproductive rights and ensuring access to necessary health care, including abortion and birth control. It also outlines rights related to emergency care, medication access, and civil rights complaints, while offering resources for individuals seeking reproductive health services.
----
-
-# reproductiverights.gov
-
-![pregnant.jpg](reproductiverights%20gov%20184b7795690c806ebe41fb7071a8d121/pregnant.jpg)
-
+snippet: "The site is a mirror of https://reproductiverights.gov, which was shut down by the Trump Administration. It provides updates on reproductive rights, including the availability of medication abortion and emergency medical care for pregnant women. The Biden-Harris Administration emphasizes the importance of protecting reproductive rights and ensuring access to necessary health care, including abortion and birth control. It also outlines rights related to emergency care, medication access, and civil rights complaints, while offering resources for individuals seeking reproductive health services."
 ---
 
 _This is a mirror of the_ `reproductiverights.gov` _site, shut down by the Trump Administration on **January 22nd, 2025**. The information may become out of date as more horrible things are increasingly introduced, but this is the information available as of **January 14th, 2025**._
@@ -25,9 +19,7 @@ _It is a Notion page, and can be cloned into your workspace if you want a local 
 
 ---
 
-<aside>
-
-# Update on Medication Abortion
+## Update on Medication Abortion
 
 On June 13, the Supreme Court issued a unanimous decision holding that the plaintiffs in FDA v. Alliance for Hippocratic Medicine lacked standing to challenge FDA's actions. Mifepristone - which FDA approved as safe and effective more than 20 years ago—remains available under the conditions of use approved by FDA.
 
@@ -37,11 +29,7 @@ The Biden-Harris Administration remains committed to protecting reproductive rig
 
 Read statements from [President Joe Biden](https://web.archive.org/web/20250114125622/https://www.whitehouse.gov/briefing-room/statements-releases/2024/06/13/statement-from-president-joe-biden-on-supreme-court-decision-on-fda-v-alliance-for-hippocratic-medicine/), [Attorney General Merrick Garland](https://web.archive.org/web/20250114125622/https://www.justice.gov/opa/pr/attorney-general-merrick-b-garland-statement-supreme-courts-decision-fda-v-alliance), and [Health and Human Services Secretary Xavier Becerra](https://web.archive.org/web/20250114125622/https://www.hhs.gov/about/news/2024/06/13/hhs-secretary-xavier-becerra-statement-supreme-court-decision-food-drug-administration-alliance-hippocratic-medicine.html).
 
-</aside>
-
-<aside>
-
-# **Update on Emergency Medical Care**
+## Update on Emergency Medical Care
 
 On June 27, the Supreme Court issued its order in _Moyle v. United States_, reinstating the protections of the Emergency Medical Treatment and Labor Act (EMTALA) for pregnant women experiencing emergency medical conditions in Idaho. On July 2, the Department of Health and Human Services sent a [letter](https://web.archive.org/web/20241221214117/https://www.hhs.gov/about/news/2024/07/02/biden-harris-administration-reaffirms-commitment-emtala-enforcement.html) reminding hospitals and provider associations that it is a hospital's legal duty to offer necessary stabilizing medical treatment, including abortion care (or transfer, if appropriate), to all patients in Medicare-participating hospitals who are found to have an emergency medical condition.
 
@@ -49,17 +37,11 @@ The Biden-Harris Administration remains committed to protecting reproductive rig
 
 Read statements from [President Joe Biden](https://web.archive.org/web/20241221214117/https://www.whitehouse.gov/briefing-room/statements-releases/2024/06/27/statement-from-president-joe-biden-on-moyle-v-united-states/), [Attorney General Merrick Garland](https://web.archive.org/web/20241221214117/https://www.justice.gov/opa/pr/attorney-general-merrick-b-garland-statement-supreme-courts-order-moyle-v-united-states), [Health and Human Services Secretary Xavier Becerra](https://web.archive.org/web/20241221214117/https://www.hhs.gov/about/news/2024/06/27/hhs-secretary-xavier-becerra-statement-supreme-court-decision-moyle-v-united-states.html), and [CMS Administrator Chiquita Brooks-LaSure](https://web.archive.org/web/20241221214117/https://www.cms.gov/newsroom/press-releases/statement-cms-administrator-chiquita-brooks-lasure-emtala-protections).
 
-</aside>
-
-<aside>
-
-# **Know Your Rights: Reproductive Health Care**
+## Know Your Rights: Reproductive Health Care
 
 Reproductive health care, including access to birth control and safe and legal abortion care, is an essential part of your health and well-being. While Roe v. Wade was overturned, abortion remains legal in many states, and other reproductive health care services remain protected by law. The U.S. Department of Health and Human Services (HHS) is committed to providing you with accurate and up-to-date information about access to and coverage of reproductive health care and resources. Our goal is to make sure you have appropriate information and support.
 
-</aside>
-
-# **Your Reproductive Rights**
+## Your Reproductive Rights
 
 Below you will find information on your right to access reproductive health care, what your health insurance is required to cover, and where to go if you need health insurance.
 
@@ -110,13 +92,13 @@ Some birth control methods are available over-the-counter and without a prescrip
 - Condoms
 - Birth control pills, like Opill®
 
-## **Your Right to Access Medication**
+## Your Right to Access Medication
 
 The law prohibits pharmacies that receive federal financial assistance from discriminating on the basis of race, color, national origin, sex, age, and disability in their health programs and activities. While pharmacies regularly dispense medications; make determinations regarding the suitability of a prescribed medication for a patient; and advise patients about medications and how to take them, pharmacies that receive federal financial assistance may not discriminate against pharmacy customers on the bases prohibited by statute when they do so. Read the guidance for the nation's retail pharmacies [here](https://web.archive.org/web/20250114125622/https://www.hhs.gov/civil-rights/for-individuals/special-topics/reproductive-healthcare/pharmacies-guidance/index.html).
 
 HHS is committed to ensuring that people are able to access health care free from discrimination. If you believe that you or another person's civil rights have been violated, you can file a complaint with HHS [here](https://web.archive.org/web/20250114125622/https://www.hhs.gov/civil-rights/filing-a-complaint/index.html)
 
-## **Your Right to Access Abortion**
+## Your Right to Access Abortion
 
 As a result of the Supreme Court's decision to overturn Roe v. Wade, access to abortion will depend on the state you live in even more than before.
 
@@ -136,7 +118,7 @@ Information about abortion funds and resources to help are available at [Abortio
 
 If you need information on your state's laws or legal help, consider [AbortionFinder.org](https://web.archive.org/web/20250114125622/https://www.abortionfinder.org/)
 
-## **Your Right to Coverage of Other Preventative Health Services**
+## Your Right to Coverage of Other Preventative Health Services
 
 Most employer health plans and health insurance plans must cover certain other preventive health services with no out-of-pocket costs because of the Affordable Care Act. Specifically, they are required to cover women's preventive health services, including:
 
@@ -148,18 +130,18 @@ Most employer health plans and health insurance plans must cover certain other p
 - Interpersonal violence screening and counselling (eg. sexual assault evidence collection)
 - HIV screening and sexually transmitted infection (STI) counselling
 
-## **If You Do Not Have Health Insurance Coverage**
+## If You Do Not Have Health Insurance Coverage
 
 - Go to [HealthCare.gov](https://web.archive.org/web/20250114125622/https://www.healthcare.gov/) and see if you qualify for insurance coverage and financial assistance to make coverage more affordable.
 - **Title X Family Planning Clinics** provide a broad range of family planning services and provide preventive health services that benefit reproductive health, such as STI and HIV testing, HIV counselling, and HPV vaccines. [Find a Title X Family Planning Clinic near you.](https://web.archive.org/web/20250114125622/https://opa-fpclinicdb.hhs.gov/)
 - **Health centres** are community-based organisations that deliver high-quality primary health care services, regardless of your ability to pay. [Find a health center near you.](https://web.archive.org/web/20250114125622/https://findahealthcenter.hrsa.gov/)
 - The **Ryan White HIV/AIDS Program** provides medical care, medications, and essential support services to people with HIV. [Find how to get HIV care and services through the Ryan White HIV/AIDS Program near you.](https://web.archive.org/web/20250114125622/https://ryanwhite.hrsa.gov/hiv-care/services)
 
-# Civil Rights Complaints
+## Civil Rights Complaints
 
 The U.S. Department of Health and Human Services' Office for Civil Rights (OCR) enforces federal civil rights laws that prohibit discrimination in health programs receiving federal financial assistance. If you believe that your or another person's civil rights or health information privacy rights have been violated, you can [file a complaint with HHS here](https://web.archive.org/web/20250114125622/https://www.hhs.gov/ocr/complaints/index.html).
 
-# Patient Privacy
+## Patient Privacy
 
 Federal law prohibits health care providers, health insurance plans, and other entities subject to the HIPAA Privacy Rule from using or sharing your health information to investigate or impose liability on yourself or any person for the mere act of seeking, obtaining, providing, or facilitating lawful reproductive health care. To learn more click [here](https://web.archive.org/web/20250114125622/https://www.hhs.gov/hipaa/for-professionals/special-topics/reproductive-health/index.html).
 
@@ -171,12 +153,6 @@ Guidance on the HIPAA Privacy Rule and Disclosures of Information Relating to Re
 
 Guidance on the Use of Online Tracking Technologies by HIPAA Covered Entities and Business Associates may be found [here](https://web.archive.org/web/20250114125622/https://www.hhs.gov/hipaa/for-professionals/privacy/guidance/hipaa-online-tracking/index.html).
 
-# Department of Justice Resources
+## Department of Justice Resources
 
 The U.S. Department of Justice is also working to protect access to reproductive health services under federal law. Visit the [Justice Department's Reproductive Rights Task Force](https://web.archive.org/web/20250114125622/https://www.justice.gov/reproductive-rights) website for more information.
-
----
-
-# Comments
-
-[https://apption.co/app_posts/1eceb7e4](https://apption.co/app_posts/1eceb7e4)
