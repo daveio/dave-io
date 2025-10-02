@@ -7,7 +7,7 @@ idiomatic_version_file = false
 idiomatic_version_file_enable_tools = []
 
 [tools]
-bun = { version = '1.2.22' }
+bun = { version = '1.2.23' }
 node = { version = '24.9.0' }
 rust = { version = '1.90.0' }
 
