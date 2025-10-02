@@ -44,6 +44,7 @@ lint:
         - "**/*.jpg"
         - "**/*.pdf"
         - "**/*.png"
+        - "**/*.avif"
         - "**/*.webp"
         - "**/*.zip"
         - .devcontainer/devcontainer.json
