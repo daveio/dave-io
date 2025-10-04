@@ -5,14 +5,6 @@ slug: taming-mcp-madness-with-metamcp-and-tailscale
 snippet: MetaMCP is a tool designed to simplify the configuration of multiple development tools, acting as an aggregator for MCP management. It requires PostgreSQL and can be deployed using Docker, with options for local or remote instances. Tailscale enhances accessibility by securely managing network connections, offering features like Tailscale Serve for HTTPS and Tailscale Funnel for broader internet exposure. MetaMCP allows for organized management of numerous tools through namespaces, and supports various communication protocols, including Streamable HTTP and OpenAPI. While still in development, it shows promise in alleviating configuration complexities for developers.
 ---
 
-# Taming MCP Madness with MetaMCP and Tailscale
-
-![robo-keys.jpg](Taming%20MCP%20Madness%20with%20MetaMCP%20and%20Tailscale%20261b7795690c80aeba57f436ad6796b0/robo-keys.jpg)
-
----
-
----
-
 ## Death by a Thousand Configurations
 
 You're a modern developer, which means you've got more development tools than a Victorian surgeon had bloodletting instruments. Cursor here, Visual Studio Code there, Claude Desktop lurking in the corner, and Goose doing... whatever it is Goose does. I've never quite figured it out. In any case, each one needs its own MCP configuration, and suddenly you're spending more time configuring tools than actually using them.
@@ -48,22 +40,15 @@ MetaMCP listens on port 12008 via HTTP, which is perfectly adequate if you're ke
 
 But what if you want to access your MCPs from other machines? What if your NAS is hosting the party, and your laptop wants an invite?
 
-## Gentlemen! Behold! Tailscale!
+## Behold! Tailscale
 
 This is where Tailscale enters, stage left, wearing a nifty cape and promising to solve all your networking woes. I used to be a ZeroTier devotee, but I've recently converted (in most part) to the Church of Tailscale, and it hasn't let me down yet.
-
-<aside>
-<img src="https://www.notion.so/icons/info-alternate_blue.svg" alt="https://www.notion.so/icons/info-alternate_blue.svg" width="40px" />
 
 "_In most part_"? Yeah. There's one _very specific_ use case where ZeroTier can't be beat, and that's SD-WAN on Mikrotik routers. ZeroTier is a first-class citizen there.
 
 While you _can_ integrate Tailscale on beefier Mikrotiks by using the container system, it feels like a hack. This is because it's a hack.
 
----
-
 _Tailscale. Darlings. Cozy up with Mikrotik. Maybe they've got a contract with ZeroTier, in which case there's nothing much to be done, but if they **could** integrate Tailscale - even as an optional package - I'd be overjoyed._
-
-</aside>
 
 ### Tailscale Serve: The Sensible Option
 
@@ -73,14 +58,9 @@ Tailscale Serve is superb. It takes your plain HTTP port and wraps it in TLS lik
 
 The HTTPS endpoint on your Magic DNS hostname is then available **only inside your Tailnet**. You're not exposing it to the world.
 
-<aside>
-<img src="https://www.notion.so/icons/info-alternate_blue.svg" alt="https://www.notion.so/icons/info-alternate_blue.svg" width="40px" />
-
 It even sets some headers which you _could_ consume to use Tailscale to authenticate requests, if for example you're using Device Sharing to share your endpoint with another Tailnet (which _does_ work with `tailscale serve`).
 
 Tailscale are thinking about providing OAuth claims as well. We'll get to that later.
-
-</aside>
 
 I use port `9443` for my deployment. To start this tunnel:
 
@@ -171,9 +151,6 @@ MetaMCP's GUI authentication can be configured to use OIDC. Then, each endpoint 
 
 I haven't been able to get this to work. It's marked beta and seems to be so new that it's not documented. I have high hopes about this one, though.
 
-<aside>
-<img src="https://www.notion.so/icons/info-alternate_blue.svg" alt="https://www.notion.so/icons/info-alternate_blue.svg" width="40px" />
-
 I've been talking to a Tailscale bigwig who mentions they're thinking about how they might support OIDC through their automatic authentication (currently using the custom headers we spoke about previously).
 
 If this happens, and if MetaMCP's OAuth implementation matures in the direction I expect, it may become possible to let Tailscale handle the authentication flow; if you talk to MetaMCP via Tailscale, authenticated MCP endpoints might 'just work'.
@@ -184,16 +161,8 @@ Currently, you have to configure it by editing JSON in the database directly. It
 
 This is all a little way off, if it even happens. But it's an impressive possibility.
 
-</aside>
-
 ## The Bottom Line
 
 MetaMCP might not be quite production-ready, but it's a very impressive platform. Sometimes the best solutions are the crackpot ones. It's turned my configuration nightmare into something almost manageable, which in the world of developer tooling is practically a miracle.
 
 Now, if you'll excuse me, I need to go and add another seventeen MCPs to my setup. I'm not done until Claude can make the coffee.
-
----
-
-# Comments
-
-[https://apption.co/app_posts/e40a42b5](https://apption.co/app_posts/e40a42b5)

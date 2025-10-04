@@ -63,7 +63,7 @@ I started off spending far too much time building a [**Vue.js**](https://vuejs.o
 
 [Vue.js](https://vuejs.org)
 
-I added [\*\*Nuxt](https://nuxt.com)\*\* to be able to plug in features without having to develop them from scratch.
+I added [**Nuxt**](https://nuxt.com) to be able to plug in features without having to develop them from scratch.
 
 [Nuxt: The Intuitive Vue Framework](https://nuxt.com)
 
@@ -127,7 +127,7 @@ The first was `Published`. This was a Select comprising two options: **Yes** and
 
 The second was `Published Date`. This was a date field. I configured automation to set it to today's date when a page was created. It remained freely editable, this just ensured that it was valid and not empty by default.
 
-I set the default view to Gallery, set the sort order to `Published Date` descending, set the filter to `Published = Yes`, and published this database as the root of a new site, [\*\*blog.dave](https://blog.dave.io)[.io](http://blog.dave.io).\*\*
+I set the default view to Gallery, set the sort order to `Published Date` descending, set the filter to `Published = Yes`, and published this database as the root of a new site, [**blog.dave.io**](https://blog.dave.io).
 
 I added the DNS `CNAME` and `TXT` records required by [Notion](https://notion.com) Then I checked everything was rendering properly and [Notion](https://notion.com) saw the site as ready.
 
@@ -241,7 +241,7 @@ The conclusion I've come to about this is that I'm happy with things as they are
 
 It might be possible to embed other analytics solutions with custom embeds, or add them at the [**Cloudflare**](https://cloudflare.com) stage with page rules.
 
-I'm happy, for now, leaving it with [\*\*Google Analytics](https://analytics.google.com). I** also get some data through [**Cloudflare\*\*](https://cloudflare.com). Between the two of them that's plenty of data, and fundamentally the only thing I really want to pay attention to are traffic sources and number of hits by post.
+I'm happy, for now, leaving it with [**Google Analytics**](https://analytics.google.com). I also get some data through [**Cloudflare**](https://cloudflare.com). Between the two of them that's plenty of data, and fundamentally the only thing I really want to pay attention to are traffic sources and number of hits by post.
 
 ### We can't use custom fonts
 

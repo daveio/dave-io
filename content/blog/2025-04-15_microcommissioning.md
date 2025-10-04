@@ -5,17 +5,7 @@ slug: microcommissioning
 snippet: Exploring the idea of a microcommissioning platform to connect artists with clients for affordable, small-scale artwork, aiming to counter the impact of generative AI. The platform would focus on quick, clearly-defined art requests, benefiting both artists and clients. Feedback from artists is sought to refine the concept, including questions about viability, features, and potential payment structures.
 ---
 
-# Microcommissioning
-
-![artist.jpg](Microcommissioning%201d6b7795690c80fb8ba9f7bf4402050a/artist.jpg)
-
-_Image credit: [**See-ming Lee**](https://www.flickr.com/photos/48973657@N00/3988318885)_
-
----
-
----
-
-# What is Microcommissioning?
+## What is Microcommissioning?
 
 I've been thinking about what we can do in tech land to address the fact that artists have been undeniably shafted by the rise of generative AI.
 
@@ -25,7 +15,7 @@ Unlike general freelance marketplaces, this platform would be specifically optim
 
 Artists would benefit from volume and efficiency, while clients would get authentic, human-created work without breaking the bank - and, most importantly, not resorting to a plagiarism machine.
 
-# Is this a good idea?
+## Is this a good idea?
 
 Before diving deeper into development, I'd love to hear from artists.
 
@@ -44,12 +34,6 @@ If you're an artist, please share your thoughts below. I need to hear from you t
 
 I'm not here to rinse artists, but this would be a profit-making venture. That's why I ask about what you would consider a fair cut.
 
-# Weigh in
+## Weigh in
 
 I'd love to hear anything you have to say about the idea, not limited to the questions I've asked.
-
----
-
-# Comments
-
-[https://apption.co/app_posts/41797761](https://apption.co/app_posts/41797761)

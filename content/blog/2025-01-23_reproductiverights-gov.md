@@ -11,11 +11,7 @@ _It is mirrored with the logic that if this page contains things the Trump Admin
 
 _Where possible, links go to the [**Internet Archive's Wayback Machine**](https://archive.org) in case other linked sites are taken down. This may impair things like form submissions, for which you'll need to load the original page if it's still up._
 
-_It has been reformatted to appear on a single page. You can always [**load the original version of this site via the Wayback Machine**](https://web.archive.org/web/20250114125622/https://reproductiverights.gov/) if you prefer._
-
-_It is a Notion page, and can be cloned into your workspace if you want a local copy or if you want to create your own mirror._
-
-[Downloadable versions](reproductiverights%20gov%20184b7795690c806ebe41fb7071a8d121/Downloadable%20versions%20184b7795690c80debdc3db583316b66d.csv)
+_It has been reformatted to appear on a single page. You can always [**load the original version via the Wayback Machine**](https://web.archive.org/web/20250114125622/https://reproductiverights.gov/) if you prefer._
 
 ---
 
@@ -23,7 +19,7 @@ _It is a Notion page, and can be cloned into your workspace if you want a local 
 
 On June 13, the Supreme Court issued a unanimous decision holding that the plaintiffs in FDA v. Alliance for Hippocratic Medicine lacked standing to challenge FDA's actions. Mifepristone - which FDA approved as safe and effective more than 20 years ago—remains available under the conditions of use approved by FDA.
 
-[FDA v. Alliance for Hippocratic Medicine.pdf](reproductiverights%20gov%20184b7795690c806ebe41fb7071a8d121/FDA_v._Alliance_for_Hippocratic_Medicine.pdf)
+[FDA v. Alliance for Hippocratic Medicine.pdf](files/blog/2025-01-23_reproductiverights-gov/FDA_v._Alliance_for_Hippocratic_Medicine.pdf)
 
 The Biden-Harris Administration remains committed to protecting reproductive rights, ensuring women can make their own decisions about their own bodies, and preserving the FDA's authority to make science-based determinations about what medications are safe and effective.
 
@@ -64,13 +60,13 @@ In light of the Supreme Court's decision to overturn Roe v. Wade, it's more impo
 - For **frontline health care providers**, EMTALA requires a hospital to provide stabilizing medical treatment to any pregnant patients presenting to the hospital with an emergency medical condition, **regardless of any directly conflicting restrictions in the state where you practice.**
 - This means that physicians and other qualified medical personnel are required by federal law to offer stabilizing medical treatment (or an appropriate transfer) to a patient who presents to the emergency department and is found to have an emergency medical condition. This requirement preempts any directly conflicting state law or mandate that might otherwise prohibit such treatment, such as state prohibitions or restrictions on abortions.
 - Stabilizing treatment could include medical and/or surgical interventions (such as abortion, removal of one or both fallopian tubes, anti-hypertensive therapy, or methotrexate therapy), irrespective of any directly conflicting state laws or mandates that apply to specific procedures.
-- Health care professionals and institutions with religious or conscience objections to providing abortions do not have to do so. To learn more [click here](https://web.archive.org/web/20241221214117/https://www.hhs.gov/conscience/index.html).
+- Health care professionals and institutions with religious or conscience objections to providing abortions do not have to do so. [Learn more](https://web.archive.org/web/20241221214117/https://www.hhs.gov/conscience/index.html).
 
 ### If you are a patient
 
 - If you present to the emergency department, you must be offered an appropriate medical screening examination to determine if you have an emergency medical condition. If you do, your health care providers in the emergency department are not permitted to wait until your emergency medical condition deteriorates before they provide stabilizing treatment.
 - The enforcement of EMTALA is a complaint driven process. If you or someone you know did not receive the emergency stabilizing medical care to which they were entitled, you can file an EMTALA complaint either by contacting your state's survey agency or by using the Centers for Medicare & Medicaid Services webform.
-  - To file a complaint with the Centers for Medicare & Medicaid Services, [click here](https://web.archive.org/web/20241221214117/https://www.cms.gov/priorities/your-patient-rights/emergency-room-rights).
+  - You can [file a complaint with the Centers for Medicare & Medicaid Services](https://web.archive.org/web/20241221214117/https://www.cms.gov/priorities/your-patient-rights/emergency-room-rights).
 
 ## Your Right to Birth Control Coverage
 
@@ -84,7 +80,7 @@ The Affordable Care Act requires most employer-based health plans and private he
 - Sterilization procedures
 - And additional forms of contraceptives approved, granted, or cleared by the Food and Drug Administration (FDA)
 
-To learn more about birth control coverage requirements for different types of health coverage, visit [here](https://web.archive.org/web/20250114125622/https://www.healthcare.gov/coverage/birth-control-benefits/). To learn more about birth control methods, visit [here](https://web.archive.org/web/20250114125622/https://www.fda.gov/consumers/womens-health-topics/birth-control).
+You can [learn more](https://web.archive.org/web/20250114125622/https://www.healthcare.gov/coverage/birth-control-benefits/) about birth control coverage requirements for different types of health coverage, or [learn more](https://web.archive.org/web/20250114125622/https://www.fda.gov/consumers/womens-health-topics/birth-control) about birth control methods.
 
 Some birth control methods are available over-the-counter and without a prescription including:
 
@@ -94,9 +90,9 @@ Some birth control methods are available over-the-counter and without a prescrip
 
 ## Your Right to Access Medication
 
-The law prohibits pharmacies that receive federal financial assistance from discriminating on the basis of race, color, national origin, sex, age, and disability in their health programs and activities. While pharmacies regularly dispense medications; make determinations regarding the suitability of a prescribed medication for a patient; and advise patients about medications and how to take them, pharmacies that receive federal financial assistance may not discriminate against pharmacy customers on the bases prohibited by statute when they do so. Read the guidance for the nation's retail pharmacies [here](https://web.archive.org/web/20250114125622/https://www.hhs.gov/civil-rights/for-individuals/special-topics/reproductive-healthcare/pharmacies-guidance/index.html).
+The law prohibits pharmacies that receive federal financial assistance from discriminating on the basis of race, color, national origin, sex, age, and disability in their health programs and activities. While pharmacies regularly dispense medications; make determinations regarding the suitability of a prescribed medication for a patient; and advise patients about medications and how to take them, pharmacies that receive federal financial assistance may not discriminate against pharmacy customers on the bases prohibited by statute when they do so. Read [the guidance for the nation's retail pharmacies](https://web.archive.org/web/20250114125622/https://www.hhs.gov/civil-rights/for-individuals/special-topics/reproductive-healthcare/pharmacies-guidance/index.html).
 
-HHS is committed to ensuring that people are able to access health care free from discrimination. If you believe that you or another person's civil rights have been violated, you can file a complaint with HHS [here](https://web.archive.org/web/20250114125622/https://www.hhs.gov/civil-rights/filing-a-complaint/index.html)
+HHS is committed to ensuring that people are able to access health care free from discrimination. If you believe that you or another person's civil rights have been violated, you can [file a complaint with HHS](https://web.archive.org/web/20250114125622/https://www.hhs.gov/civil-rights/filing-a-complaint/index.html)
 
 ## Your Right to Access Abortion
 
@@ -143,15 +139,15 @@ The U.S. Department of Health and Human Services' Office for Civil Rights (OCR) 
 
 ## Patient Privacy
 
-Federal law prohibits health care providers, health insurance plans, and other entities subject to the HIPAA Privacy Rule from using or sharing your health information to investigate or impose liability on yourself or any person for the mere act of seeking, obtaining, providing, or facilitating lawful reproductive health care. To learn more click [here](https://web.archive.org/web/20250114125622/https://www.hhs.gov/hipaa/for-professionals/special-topics/reproductive-health/index.html).
+Federal law prohibits health care providers, health insurance plans, and other entities subject to the HIPAA Privacy Rule from using or sharing your health information to investigate or impose liability on yourself or any person for the mere act of seeking, obtaining, providing, or facilitating lawful reproductive health care. [Learn more](https://web.archive.org/web/20250114125622/https://www.hhs.gov/hipaa/for-professionals/special-topics/reproductive-health/index.html).
 
-Understand your rights to protect your private medical information under federal law. If you think your privacy has been violated, click [here](https://web.archive.org/web/20250114125622/https://www.hhs.gov/hipaa/filing-a-complaint/complaint-process/index.html) to learn how to file a complaint.
+Understand your rights to protect your private medical information under federal law. If you think your privacy has been violated, [learn how to file a complaint](https://web.archive.org/web/20250114125622/https://www.hhs.gov/hipaa/filing-a-complaint/complaint-process/index.html).
 
-Guidance on Protecting the Privacy and Security of Your Health Information When Using Your Personal Cell Phone or Tablet may be found [here](https://web.archive.org/web/20250114125622/https://www.hhs.gov/hipaa/for-professionals/privacy/guidance/cell-phone-hipaa/index.html).
+Guidance on Protecting the Privacy and Security of Your Health Information When Using Your Personal Cell Phone or Tablet [is available here](https://web.archive.org/web/20250114125622/https://www.hhs.gov/hipaa/for-professionals/privacy/guidance/cell-phone-hipaa/index.html).
 
-Guidance on the HIPAA Privacy Rule and Disclosures of Information Relating to Reproductive Health Care may be found [here](https://web.archive.org/web/20250114125622/https://www.hhs.gov/hipaa/for-professionals/privacy/guidance/phi-reproductive-health/index.html).
+Guidance on the HIPAA Privacy Rule and Disclosures of Information Relating to Reproductive Health Care [may be found here](https://web.archive.org/web/20250114125622/https://www.hhs.gov/hipaa/for-professionals/privacy/guidance/phi-reproductive-health/index.html).
 
-Guidance on the Use of Online Tracking Technologies by HIPAA Covered Entities and Business Associates may be found [here](https://web.archive.org/web/20250114125622/https://www.hhs.gov/hipaa/for-professionals/privacy/guidance/hipaa-online-tracking/index.html).
+Guidance on the Use of Online Tracking Technologies by HIPAA Covered Entities and Business Associates [is available here](https://web.archive.org/web/20250114125622/https://www.hhs.gov/hipaa/for-professionals/privacy/guidance/hipaa-online-tracking/index.html).
 
 ## Department of Justice Resources
 

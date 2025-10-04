@@ -5,15 +5,7 @@ slug: not-everyone-can-use-a-vpn
 snippet: Technical knowledge creates a privilege gap in accessing VPNs and information, particularly affecting non-technical users and marginalized communities. Many individuals lack the skills to bypass filtering systems, which can be dangerous and isolating. While helping others set up VPNs like Mullvad can make a difference, it is essential to recognize the broader structural issues that limit access to information and support.
 ---
 
-# Not Everyone Can Use A VPN
-
-![A Soviet-era concrete apartment building with multiple stories of uniform windows and balconies. The grey concrete structure dominates the skyline, with some balconies showing signs of personal use. In the foreground, trees partially obscure the view, and there's a small structure with a corrugated roof. The image conveys the utilitarian architecture common in former Eastern Bloc countries.](Not%20Everyone%20Can%20Use%20A%20VPN%20256b7795690c80e0873cc34af645d8ae/photo-1567076350737-b1b0735028c8-1.jpg)
-
----
-
----
-
-# Here's the thing about VPNs
+## Here's the thing about VPNs
 
 We are quite capable, as technical users, of installing a VPN or even setting up a VPS and routing our traffic through it.
 
@@ -37,7 +29,7 @@ So they don't have access to that information. And that's a disaster; that's dan
 
 And it doesn't have to be this way.
 
-# But what can I do?
+## But what can I do?
 
 You can absolutely help people get a VPN set up. I strongly recommend [**Mullvad**](https://mullvad.net/en), which can be accessed through a standalone app or through Tailscale.
 
@@ -46,7 +38,7 @@ But at the same time, that selects for people who know people like us.
 Hopefully they spread the same knowledge, but that's just that; hope.
 
 ![@ambiguous_yelp@social.coop
-@dave downloading a vpn app like #mullvad is not that hard to learn, we need to use our privelege to help everyone bridge that gap](Not%20Everyone%20Can%20Use%20A%20VPN%20256b7795690c80e0873cc34af645d8ae/CleanShot_2025-08-21_at_14.01.392x.png)
+@dave downloading a vpn app like #mullvad is not that hard to learn, we need to use our privelege to help everyone bridge that gap](images/blog/2025-08-21_not-everyone-can-use-a-vpn/mullvad.png)
 
 credit: [**@ambiguous_yelp@social.coop**](https://social.coop/@ambiguous_yelp)
 
@@ -57,9 +49,3 @@ Let's try to have _some_ impact, at least.
 [Mullvad VPN - Free the internet](https://mullvad.net/en)
 
 _Note: I have no commercial interests with Mullvad, and receive nothing of any form for recommending them. The links are not referral links._
-
----
-
-# Comments
-
-[https://apption.co/app_posts/41e29ae9](https://apption.co/app_posts/41e29ae9)
