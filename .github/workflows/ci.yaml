@@ -16,7 +16,7 @@ jobs:
       - name: install
         run: bun install
       - name: trunk
-        uses: trunk-io/trunk-action@5c4a3a274e634b65e08939439c81c59ce672f196
+        uses: trunk-io/trunk-action@bf81325059d2534b31df5365182237788c5e0338
       - name: typecheck
         run: bun run lint:types
       - name: build
