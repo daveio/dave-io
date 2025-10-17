@@ -24,7 +24,7 @@
     "luxon": "^3.7.2",
     "magic-regexp": "^0.10.0",
     "nuxt": "^4.1.2",
-    "nuxt-gtag": "4.0.0",
+    "nuxt-gtag": "4.1.0",
     "nuxt-security": "2.4.0",
     "openai": "^6.1.0",
     "tailwindcss": "^4.1.14",
