@@ -1,5 +1,5 @@
 [env]
-REBUILD_DAVE_IO_MISE_ACTIVE = 'true'
+DAVE_IO_MISE_ACTIVE = 'true'
 
 [settings]
 env_file = '.env'
