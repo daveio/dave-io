@@ -49,6 +49,7 @@ lint:
         - "**/*.zip"
         - .devcontainer/devcontainer.json
         - sql/redirects.sql
+        - docs/**
 actions:
   definitions:
     - id: bun-install
