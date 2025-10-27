@@ -1,3 +1,5 @@
+<!-- trunk-ignore-all(trunk-toolbox/todo) -->
+
 # BUGFIXES.md - Issues Found and Fixed
 
 This document tracks bugs discovered and fixed during the codebase analysis.
