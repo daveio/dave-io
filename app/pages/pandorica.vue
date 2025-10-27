@@ -41,6 +41,6 @@ usePageSetup({
 })
 
 onMounted(() => {
-  console.log("Protected page mounted successfully")
+  // Protected page mounted successfully - no logging needed in production
 })
 </script>

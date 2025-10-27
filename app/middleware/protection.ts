@@ -21,9 +21,7 @@ export default defineNuxtRouteMiddleware((to, _from) => {
   const allowAccess = true
 
   if (!allowAccess) {
-    console.error("Access denied for route:", to.path)
-
-    // Redirect to access denied page or throw error
+    // Access denied - redirect to access denied page or throw error
     throw createError({
       statusCode: 403,
       statusMessage: "Access Denied",
@@ -35,5 +33,4 @@ export default defineNuxtRouteMiddleware((to, _from) => {
   }
 
   // Allow the page to render
-  console.log("Access granted for route:", to.path)
 })

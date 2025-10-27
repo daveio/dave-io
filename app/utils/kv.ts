@@ -16,8 +16,8 @@ export async function setKV<T>(key: string, value: T, ttl?: number): Promise<voi
   try {
     const serializedValue = JSON.stringify(value)
     await kv.setItem(key, serializedValue, { ttl })
-  } catch (error) {
-    console.error(`[KV] Error setting key "${key}":`, error)
+  } catch {
+    // KV errors are not logged in production - fail silently for client-side storage
   }
 }
 
@@ -34,8 +34,8 @@ export async function getKV<T>(key: string): Promise<T | null> {
       return null
     }
     return JSON.parse(storedValue) as T
-  } catch (error) {
-    console.error(`[KV] Error getting key "${key}":`, error)
+  } catch {
+    // KV errors are not logged in production - return null for client-side storage failures
     return null
   }
 }

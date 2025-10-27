@@ -18,8 +18,15 @@
             <fieldset class="fieldset">
               <legend class="fieldset-legend">Title <span class="text-red-400">*</span></legend>
               <label class="label" for="title">Short summary</label>
-              <input id="title" v-model.trim="form.title" type="text" class="input" placeholder="e.g. Add RSS to blog"
-                required :disabled="submitting" />
+              <input
+                id="title"
+                v-model.trim="form.title"
+                type="text"
+                class="input"
+                placeholder="e.g. Add RSS to blog"
+                required
+                :disabled="submitting"
+              />
             </fieldset>
 
             <fieldset class="fieldset">
@@ -51,15 +58,27 @@
             <fieldset class="fieldset">
               <legend class="fieldset-legend">Your Name</legend>
               <label class="label" for="name">Optional</label>
-              <input id="name" v-model.trim="form.name" type="text" class="input" placeholder="Jane Doe"
-                :disabled="submitting" />
+              <input
+                id="name"
+                v-model.trim="form.name"
+                type="text"
+                class="input"
+                placeholder="Jane Doe"
+                :disabled="submitting"
+              />
             </fieldset>
 
             <fieldset class="fieldset">
               <legend class="fieldset-legend">Email</legend>
               <label class="label" for="email">Optional (so I can reply)</label>
-              <input id="email" v-model.trim="form.email" type="email" class="input" placeholder="you@example.com"
-                :disabled="submitting" />
+              <input
+                id="email"
+                v-model.trim="form.email"
+                type="email"
+                class="input"
+                placeholder="you@example.com"
+                :disabled="submitting"
+              />
             </fieldset>
           </div>
 
@@ -67,16 +86,21 @@
           <fieldset class="fiqweldset">
             <legend class="fieldset-legend">Details <span class="text-red-400">*</span></legend>
             <label class="label" for="description">
-              What should I do? Include links, context, examples. You can
-              optionally use
+              What should I do? Include links, context, examples. You can optionally use
               <NuxtLink to="https://www.markdownguide.org/cheat-sheet">
                 Markdown
                 <Icon name="pepicons-pop-question-circle-filled" class="text-red-400" />
               </NuxtLink>
               here.
             </label>
-            <textarea id="description" v-model.trim="form.description" class="textarea h-40 w-full"
-              placeholder="Describe the task…" required :disabled="submitting"></textarea>
+            <textarea
+              id="description"
+              v-model.trim="form.description"
+              class="textarea h-40 w-full"
+              placeholder="Describe the task…"
+              required
+              :disabled="submitting"
+            ></textarea>
           </fieldset>
 
           <!-- Actions -->
@@ -89,8 +113,7 @@
 
           <p class="text-xs text-subtext0">
             This form posts to <code class="font-['Victor_Mono']">/api/todo</code>. The backend route is stubbed and
-            will accept
-            data via POST.
+            will accept data via POST.
           </p>
         </form>
       </div>
@@ -158,7 +181,9 @@ async function onSubmit() {
   } catch (e: unknown) {
     status.type = "error"
     status.message =
-      (e as { data?: { error?: string } })?.data?.error || (e as Error)?.message || "Submission failed. Please try again."
+      (e as { data?: { error?: string } })?.data?.error ||
+      (e as Error)?.message ||
+      "Submission failed. Please try again."
   } finally {
     submitting.value = false
   }

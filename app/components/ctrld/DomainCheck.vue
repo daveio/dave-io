@@ -6,7 +6,7 @@
     </div>
 
     <div class="bg-surface1/50 border border-surface2 rounded-lg p-4">
-      <div v-if="loading" class="flex items-center gap-2 text-subtext1 bg-{{ indicator }}">
+      <div v-if="loading" class="flex items-center gap-2 text-subtext1">
         <Icon name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin" />
         <span>Checking domain security...</span>
       </div>
@@ -65,8 +65,7 @@ const checkDomainSecurity = async () => {
     const res = response as unknown as { safe: boolean; reasoning: string }
     result.value = res.reasoning
     safety.value = res.safe
-  } catch (err) {
-    console.error("Domain check failed:", err)
+  } catch {
     error.value = "Failed to check domain security"
   } finally {
     loading.value = false

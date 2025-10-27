@@ -1,4 +1,4 @@
-import { logger } from "@sentry/nuxt"
+import { logger } from "~~/server/utils/logging"
 import { error, ok } from "~~/server/utils/response"
 
 /**

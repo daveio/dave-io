@@ -1,8 +1,9 @@
 <template>
   <span>
     <NuxtTurnstile v-model="token" />
-    <span v-if="!error && !emailAddress" class="text-yellow font-['Victor_Mono'] animate-ping">Evaluating
-      humanity...</span>
+    <span v-if="!error && !emailAddress" class="text-yellow font-['Victor_Mono'] animate-ping"
+      >Evaluating humanity...</span
+    >
     <span v-else-if="error" class="text-red font-['Victor_Mono']">
       {{ error }}
     </span>
@@ -31,7 +32,7 @@ watch(
     error.value = undefined
 
     // 5-second delay to further confound bots
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    await new Promise((resolve) => setTimeout(resolve, 5000))
 
     try {
       const response = await $fetch("/api/util/email", {
