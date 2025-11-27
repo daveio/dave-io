@@ -9,11 +9,11 @@ on:
   pull_request_review:
     types: [submitted]
 permissions:
+  actions: read
   contents: read
-  pull-requests: read
-  issues: read
+  pull-requests: write
+  issues: write
   id-token: write
-  actions: read # Required for Claude to read CI results on PRs
 jobs:
   claude:
     if: |
@@ -25,12 +25,14 @@ jobs:
     steps:
       - name: checkout
         id: checkout
-        uses: actions/checkout@v6.0.0
+        uses: actions/checkout@c2d88d3ecc89a9ef08eebf45d9637801dcee7eb5
         with:
           fetch-depth: 1
       - name: claude
         id: claude
-        uses: anthropics/claude-code-action@beta
+        uses: anthropics/claude-code-action@a7e4c51380c42dd89b127f5e5f9be7b54020bc6b
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          model: claude-opus-4-1-20250805
+          additional_permissions: |
+            actions: read
+          claude_args: --model opus --allowed-tools "Bash(gh issue view:*),Bash(gh search:*),Bash(gh issue list:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*)"
