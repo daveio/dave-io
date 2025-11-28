@@ -48,10 +48,10 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
     expiry = DateTime.now().plus({ minutes: 15 }).toUnixInteger()
   }
 
-  const body: { do: 1; status: 1; hostnames: string[]; ttl?: number } = {
+  const body: { do: 1; status: 1; hostnames: [string[]]; ttl?: number } = {
     do: 1,
     status: 1,
-    hostnames: [normaliseDomain(request.domain)],
+    hostnames: [[normaliseDomain(request.domain)]],
   }
 
   if (!request.permanent) {
