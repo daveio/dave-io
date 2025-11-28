@@ -66,6 +66,8 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
     })
   }
 
+  logger.info("Calling ControlD API", { apiRequestBody: body })
+
   return await $fetch(`https://api.controld.com/profiles/${request.profileId}/rules`, {
     method: "POST",
     headers: {
