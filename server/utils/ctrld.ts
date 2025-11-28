@@ -77,7 +77,7 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
     apiRequest: { requestUrl, body },
   })
 
-  return await $fetch(requestUrl, {
+  const fetchResult = await $fetch(requestUrl, {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -86,8 +86,11 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
     },
     body,
   })
-}
 
+  logger.info("ControlD API response received", { fetchResult })
+
+  return fetchResult
+}
 async function ensureRuleDeleted(request: UnblockRequest, apiKey: string) {
   const deletionResponse = (await $fetch(
     `https://api.controld.com/profiles/${request.profileId}/rules/${normaliseDomain(request.domain)}`,
