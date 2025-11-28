@@ -77,19 +77,33 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
     apiRequest: { requestUrl, body },
   })
 
-  const fetchResult = await $fetch(requestUrl, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body,
-  })
+  try {
+    const fetchResult = await $fetch(requestUrl, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body,
+    })
 
-  logger.info("ControlD API response received", { fetchResult })
+    logger.info("ControlD API response received", { fetchResult })
 
-  return fetchResult
+    return fetchResult
+  } catch (err) {
+    const fetchError = err as { response?: { status?: number; _data?: unknown } }
+
+    logger.error("ControlD API request failed", {
+      errorMessage: err instanceof Error ? err.message : String(err),
+      status: fetchError.response?.status,
+      responseData: fetchError.response?._data,
+      requestUrl,
+      previousDeleted,
+    })
+
+    throw err
+  }
 }
 async function ensureRuleDeleted(request: UnblockRequest, apiKey: string) {
   const deletionResponse = (await $fetch(
