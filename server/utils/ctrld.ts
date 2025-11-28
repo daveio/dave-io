@@ -21,8 +21,6 @@ function normaliseDomain(input: string): string {
   host = host.replace(/[。．｡]/g, ".") // normalize unicode dots to ASCII dot
   host = host.replace(/[\s/]+$/g, "") // strip trailing slashes/whitespace
 
-  logger.info("Normalising input domain", { input, normalised: host })
-
   const { domain } = parse(host, {
     allowIcannDomains: true,
     allowPrivateDomains: true,
@@ -32,9 +30,7 @@ function normaliseDomain(input: string): string {
     mixedInputs: true,
   })
 
-  if (domain) {
-    logger.info("Parsed domain from input", { input, normalised: domain })
-  } else {
+  if (!domain) {
     logger.warn("Falling back to best-effort host", { input, normalised: host })
   }
 
@@ -48,17 +44,19 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
     expiry = DateTime.now().plus({ minutes: 15 }).toUnixInteger()
   }
 
+  const normalisedDomain = normaliseDomain(request.domain)
+
   const body: { do: 1; status: 1; hostnames: string[]; ttl?: number } = {
     do: 1,
     status: 1,
-    hostnames: [normaliseDomain(request.domain)],
+    hostnames: [normalisedDomain],
   }
 
   if (!request.permanent) {
     body.ttl = expiry
   }
 
-  const previousDeleted = await ensureRuleDeleted(request, apiKey)
+  const previousDeleted = await ensureRuleDeleted(normalisedDomain, request.profileId, apiKey)
 
   if (!previousDeleted) {
     logger.error("Failed to ensure deletion of existing override", {
@@ -70,20 +68,8 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
 
   const requestUrl = `https://api.controld.com/profiles/${request.profileId}/rules`
 
-  // Log the raw body object for debugging
-  logger.info("Calling ControlD API", {
-    apiKeyLength: apiKey.length,
-    apiKeyLast4: apiKey.slice(-4),
-    previousDeleted,
-    apiRequest: { requestUrl, body },
-    bodyJson: JSON.stringify(body),
-    bodyHostnames: body.hostnames,
-    bodyHostnamesType: Array.isArray(body.hostnames) ? "array" : typeof body.hostnames,
-    bodyHostnamesLength: body.hostnames.length,
-  })
-
   try {
-    const fetchResult = await $fetch(requestUrl, {
+    return await $fetch(requestUrl, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -92,10 +78,6 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
       },
       body,
     })
-
-    logger.info("ControlD API response received", { fetchResult })
-
-    return fetchResult
   } catch (err) {
     const fetchError = err as { response?: { status?: number; _data?: unknown } }
 
@@ -110,24 +92,18 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
     throw err
   }
 }
-async function ensureRuleDeleted(request: UnblockRequest, apiKey: string) {
-  const deletionResponse = (await $fetch(
-    `https://api.controld.com/profiles/${request.profileId}/rules/${normaliseDomain(request.domain)}`,
-    {
+async function ensureRuleDeleted(normalisedDomain: string, profileId: string, apiKey: string) {
+  return (
+    (await $fetch(`https://api.controld.com/profiles/${profileId}/rules/${normalisedDomain}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
-    },
-  )) as DeleteCustomRuleResponse // idempotent; succeeds anyway if no deletion
-
-  logger.info("Attempted deletion", { deletionResponse })
-
-  return deletionResponse.success
+    })) as DeleteCustomRuleResponse
+  ).success // idempotent; succeeds anyway if no deletion
 }
 
 export async function checkDomain(event: H3Event, domain: string) {
-  logger.info("checkDomain invoked", { domain }, event)
   return { safe: true, reasoning: `${domain}: AI checks not yet implemented` }
 }
