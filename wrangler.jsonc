@@ -72,10 +72,6 @@
     {
       "custom_domain": true,
       "pattern": "www.dave.io"
-    },
-    {
-      "custom_domain": true,
-      "pattern": "rebuild.dave.io"
     }
   ],
   "send_metrics": true,
