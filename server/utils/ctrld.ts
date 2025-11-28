@@ -58,7 +58,9 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
     body.ttl = expiry
   }
 
-  if (!(await ensureRuleDeleted(request, apiKey))) {
+  const previousDeleted = await ensureRuleDeleted(request, apiKey)
+
+  if (!previousDeleted) {
     logger.error("Failed to ensure deletion of existing override", {
       domain: request.domain,
       profileId: request.profileId,
@@ -68,7 +70,7 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
 
   const requestUrl = `https://api.controld.com/profiles/${request.profileId}/rules`
 
-  logger.info("Calling ControlD API", { apiRequest: { requestUrl, body } })
+  logger.info("Calling ControlD API", { previousDeleted, apiRequest: { requestUrl, body } })
 
   return await $fetch(requestUrl, {
     method: "POST",
@@ -82,7 +84,7 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
 }
 
 async function ensureRuleDeleted(request: UnblockRequest, apiKey: string) {
-  const response = (await $fetch(
+  const deletionResponse = (await $fetch(
     `https://api.controld.com/profiles/${request.profileId}/rules/${normaliseDomain(request.domain)}`,
     {
       method: "DELETE",
@@ -93,7 +95,9 @@ async function ensureRuleDeleted(request: UnblockRequest, apiKey: string) {
     },
   )) as DeleteCustomRuleResponse // idempotent; succeeds anyway if no deletion
 
-  return response.success
+  logger.info("Attempted deletion", { deletionResponse })
+
+  return deletionResponse.success
 }
 
 export async function checkDomain(event: H3Event, domain: string) {
