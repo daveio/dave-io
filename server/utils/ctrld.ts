@@ -48,10 +48,10 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
     expiry = DateTime.now().plus({ minutes: 15 }).toUnixInteger()
   }
 
-  const body: { do: 1; status: 1; hostnames: [string[]]; ttl?: number } = {
+  const body: { do: 1; status: 1; hostnames: string[]; ttl?: number } = {
     do: 1,
     status: 1,
-    hostnames: [[normaliseDomain(request.domain)]],
+    hostnames: [normaliseDomain(request.domain)],
   }
 
   if (!request.permanent) {
@@ -70,11 +70,16 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
 
   const requestUrl = `https://api.controld.com/profiles/${request.profileId}/rules`
 
+  // Log the raw body object for debugging
   logger.info("Calling ControlD API", {
     apiKeyLength: apiKey.length,
     apiKeyLast4: apiKey.slice(-4),
     previousDeleted,
     apiRequest: { requestUrl, body },
+    bodyJson: JSON.stringify(body),
+    bodyHostnames: body.hostnames,
+    bodyHostnamesType: Array.isArray(body.hostnames) ? "array" : typeof body.hostnames,
+    bodyHostnamesLength: body.hostnames.length,
   })
 
   try {
@@ -83,7 +88,7 @@ export async function unblockDomain(request: UnblockRequest, apiKey: string) {
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
       },
       body,
     })
