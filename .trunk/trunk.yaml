@@ -45,11 +45,12 @@ lint:
         - "**/*.pdf"
         - "**/*.png"
         - "**/*.avif"
+        - "**/*.vsix"
         - "**/*.webp"
         - "**/*.zip"
         - .devcontainer/devcontainer.json
-        - sql/redirects.sql
         - docs/**
+        - sql/redirects.sql
 actions:
   definitions:
     - id: bun-install
