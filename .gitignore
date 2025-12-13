@@ -1,3 +1,6 @@
+# Vira VSIX
+!public/vira/vira*.vsix
+
 # Nuxt dev/build outputs
 .output
 .data
