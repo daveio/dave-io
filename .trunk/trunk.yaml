@@ -20,15 +20,15 @@ lint:
     - osv-scanner
   enabled:
     - trunk-toolbox@0.5.4
-    - oxipng@9.1.5
+    - oxipng@10.0.0
     - actionlint@1.7.9
     - checkov@3.2.495
-    - eslint@9.39.1
+    - eslint@9.39.2
     - git-diff-check
-    - markdownlint@0.46.0
-    - prettier@3.7.1
+    - markdownlint@0.47.0
+    - prettier@3.7.4
     - taplo@0.10.0
-    - trufflehog@3.91.1
+    - trufflehog@3.92.3
     - yamllint@1.37.1
   ignore:
     - linters:
