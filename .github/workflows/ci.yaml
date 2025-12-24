@@ -10,7 +10,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
       - name: bun
-        uses: oven-sh/setup-bun@635640504f6d7197d3bb29876a652f671028dc97
+        uses: oven-sh/setup-bun@bc6f04ce3baa207596266ba91e76b900bfe70da2
         with:
           bun-version: 1.2.20
       - name: install
