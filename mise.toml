@@ -3,8 +3,6 @@ DAVE_IO_MISE_ACTIVE = 'true'
 
 [settings]
 env_file = '.env'
-idiomatic_version_file = false
-idiomatic_version_file_enable_tools = []
 
 [tools]
 bun = { version = '1.3.5' }
