@@ -4,9 +4,9 @@ This document provides guidance for AI agents working on the dave.io codebase.
 
 ## Project Overview
 
-**Type:** Nuxt 4 application deployed to Cloudflare Workers  
-**Runtime:** Bun (package manager), Node.js (Nuxt runtime)  
-**Hosting:** Cloudflare Workers with D1 (SQLite), KV, R2, and Workers AI  
+**Type:** Nuxt 4 application deployed to Cloudflare Workers
+**Runtime:** Bun (package manager), Node.js (Nuxt runtime)
+**Hosting:** Cloudflare Workers with D1 (SQLite), KV, R2, and Workers AI
 **Domain:** dave.io
 
 ### Tech Stack
@@ -56,7 +56,7 @@ bun run types              # Generate Cloudflare Worker types (wrangler types)
 
 ## Project Structure
 
-```
+```plaintext
 dave-io/
 ├── app/                    # Nuxt 4 app directory
 │   ├── assets/css/         # Tailwind + Catppuccin styles
