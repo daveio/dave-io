@@ -145,6 +145,7 @@ export default defineNuxtConfig({
     sri: true,
   },
   sentry: {
+    enabled: process.env.SENTRY_ENVIRONMENT !== "production",
     autoInjectServerSentry: "top-level-import",
     sourceMapsUploadOptions: {
       org: "daveio",

@@ -229,6 +229,10 @@ definePageMeta({
 })
 
 onMounted(() => {
-  logger.info("pages/index.vue mounted")
+  try {
+    logger.info("pages/index.vue mounted")
+  } catch {
+    // Sentry not initialized (production)
+  }
 })
 </script>
