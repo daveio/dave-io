@@ -72,7 +72,7 @@ export default defineNuxtConfig({
     "@nuxt/test-utils",
     "@nuxtjs/color-mode",
     "@nuxtjs/device",
-    "@nuxtjs/seo",
+    // "@nuxtjs/seo", // disabled because of weird ENOTDIR: not a directory, stat '/Users/dave/src/github.com/daveio/dave-io/node_modules/nuxt-og-image/dist/runtime/mock/proxy-cjs.js/index.js'
     "@nuxtjs/turnstile",
     "@sentry/nuxt/module",
     "magic-regexp/nuxt",
