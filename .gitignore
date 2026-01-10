@@ -29,3 +29,10 @@ postgrestools.jsonc
 .eslintcache
 
 .wrangler
+
+# Playwright
+playwright-report/
+test-results/
+
+# Test coverage
+coverage/
