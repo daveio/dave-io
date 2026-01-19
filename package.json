@@ -26,7 +26,7 @@
     "nuxt": "^4.2.2",
     "nuxt-gtag": "4.1.0",
     "nuxt-og-image": "^5.1.13",
-    "nuxt-security": "2.5.0",
+    "nuxt-security": "2.5.1",
     "openai": "^6.16.0",
     "tailwindcss": "^4.1.18",
     "tldts": "^7.0.19",
