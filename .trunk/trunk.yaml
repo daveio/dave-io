@@ -25,14 +25,14 @@ lint:
     - trunk-toolbox@0.5.4
     - oxipng@10.0.0
     - actionlint@1.7.10
-    - checkov@3.2.497
+    - checkov@3.2.499
     - eslint@9.39.2
     - git-diff-check
     - markdownlint@0.47.0
-    - prettier@3.7.4
+    - prettier@3.8.1
     - taplo@0.10.0
     - trufflehog@3.92.4
-    - yamllint@1.37.1
+    - yamllint@1.38.0
   ignore:
     - linters:
         - ALL
