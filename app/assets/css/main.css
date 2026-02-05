@@ -1,0 +1,142 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* ═══════════════════════════════════════════════
+   NOSTROMO THEME — USCSS NOSTROMO / MU/TH/UR 6000
+   Industrial dark aesthetic inspired by Alien (1979)
+   ═══════════════════════════════════════════════ */
+
+@plugin "daisyui/theme" {
+  name: "nostromo";
+  default: true;
+  prefersdark: true;
+  color-scheme: dark;
+
+  /* Hull interior — dark gray-green */
+  --color-base-100: oklch(13% 0.01 160);
+  --color-base-200: oklch(18% 0.01 160);
+  --color-base-300: oklch(25% 0.02 155);
+  --color-base-content: oklch(72% 0.06 145);
+
+  /* CRT amber — primary actions */
+  --color-primary: oklch(75% 0.16 70);
+  --color-primary-content: oklch(13% 0.01 70);
+
+  /* Terminal green — secondary */
+  --color-secondary: oklch(58% 0.12 155);
+  --color-secondary-content: oklch(13% 0.01 155);
+
+  /* Alarm red — accent/danger */
+  --color-accent: oklch(55% 0.2 25);
+  --color-accent-content: oklch(95% 0.01 25);
+
+  /* Neutral — dark metal */
+  --color-neutral: oklch(22% 0.01 240);
+  --color-neutral-content: oklch(70% 0.04 240);
+
+  /* Status colors */
+  --color-info: oklch(60% 0.15 230);
+  --color-info-content: oklch(95% 0.01 230);
+  --color-success: oklch(62% 0.18 150);
+  --color-success-content: oklch(13% 0.01 150);
+  --color-warning: oklch(78% 0.16 80);
+  --color-warning-content: oklch(13% 0.01 80);
+  --color-error: oklch(58% 0.22 25);
+  --color-error-content: oklch(95% 0.01 25);
+
+  /* Industrial: sharp corners, heavy borders */
+  --radius-selector: 0;
+  --radius-field: 0;
+  --radius-box: 0;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 2px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/* ═══════════════════════════════════════════════
+   TYPOGRAPHY
+   ═══════════════════════════════════════════════ */
+
+body {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, monospace;
+}
+
+/* ═══════════════════════════════════════════════
+   TERMINAL EFFECTS
+   ═══════════════════════════════════════════════ */
+
+/* Amber CRT glow on primary text */
+.glow-amber {
+  text-shadow:
+    0 0 4px oklch(75% 0.16 70 / 0.6),
+    0 0 12px oklch(75% 0.16 70 / 0.3);
+}
+
+/* Green terminal glow */
+.glow-green {
+  text-shadow:
+    0 0 4px oklch(58% 0.12 155 / 0.6),
+    0 0 12px oklch(58% 0.12 155 / 0.3);
+}
+
+/* Red alarm glow */
+.glow-red {
+  text-shadow:
+    0 0 4px oklch(55% 0.2 25 / 0.6),
+    0 0 12px oklch(55% 0.2 25 / 0.3);
+}
+
+/* Scanline overlay effect */
+.scanlines::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    oklch(0% 0 0 / 0.04) 2px,
+    oklch(0% 0 0 / 0.04) 4px
+  );
+}
+
+/* Hazard stripe pattern */
+.hazard-stripe {
+  background: repeating-linear-gradient(
+    -45deg,
+    oklch(78% 0.16 80) 0px,
+    oklch(78% 0.16 80) 8px,
+    oklch(20% 0.01 0) 8px,
+    oklch(20% 0.01 0) 16px
+  );
+}
+
+/* Subtle CRT flicker animation */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.8; }
+  94% { opacity: 1; }
+  96% { opacity: 0.9; }
+  97% { opacity: 1; }
+}
+
+.crt-flicker {
+  animation: flicker 4s infinite;
+}
+
+/* Dashed industrial border */
+.border-industrial {
+  border: 2px solid oklch(25% 0.02 155);
+  box-shadow: inset 0 0 0 1px oklch(25% 0.02 155 / 0.3);
+}
+
+/* Password display specific styling */
+.password-text {
+  word-break: break-all;
+  letter-spacing: 0.05em;
+}
