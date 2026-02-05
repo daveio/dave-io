@@ -10,8 +10,8 @@ import { SCIFI_WORDS } from '~/utils/word-corpus'
  */
 export function usePasswordGenerator() {
   const wordCount = ref(4)
-  const capitalize = ref(false)
-  const appendSuffix = ref(false)
+  const capitalize = ref(true)
+  const appendSuffix = ref(true)
   const password = ref('')
   const strength = ref<ZxcvbnResult | null>(null)
   const copied = ref(false)
