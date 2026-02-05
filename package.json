@@ -30,5 +30,8 @@
   "trustedDependencies": [
     "@parcel/watcher",
     "unrs-resolver"
-  ]
+  ],
+  "devDependencies": {
+    "@iconify-json/lucide": "^1.2.88"
+  }
 }
