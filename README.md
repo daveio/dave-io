@@ -32,9 +32,15 @@ bun run format             # Prettier + Trunk formatting
 
 # Types
 bun run types              # Generate Cloudflare Worker types
+
+# Database Migrations (Drizzle + D1)
+bun run db:generate        # Generate SQL migrations from server/db/schema.ts into ./drizzle
+bun run db:migrate:local   # Apply pending migrations to local D1 (wrangler dev DB)
+bun run db:migrate:remote  # Apply pending migrations to remote D1
 ```
 
 > **Note:** Always use `bun run build`, not `bun build` (conflicts with Bun's bundler).
+> **Note:** `wrangler.jsonc` is configured with `"migrations_dir": "./drizzle"` for the `DB` D1 binding, so Wrangler and Drizzle use the same migration files.
 
 ## Documentation
 

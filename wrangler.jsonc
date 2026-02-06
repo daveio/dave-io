@@ -24,6 +24,7 @@
     {
       "binding": "DB",
       "database_id": "b7438090-d76e-4b31-9041-2df146c88cae",
+      "migrations_dir": "./drizzle",
       "database_name": "dave-io"
     }
   ],
