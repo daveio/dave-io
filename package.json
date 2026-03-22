@@ -72,11 +72,11 @@
     "wrangler": "^4.71.0"
   },
   "engines": {
-    "bun": "^1.3.10",
+    "bun": "^1.3.11",
     "node": "^24.14.0"
   },
   "name": "dave-io",
-  "packageManager": "bun@1.3.10",
+  "packageManager": "bun@1.3.11",
   "private": true,
   "scripts": {
     "build": "bun run nuxt build",
